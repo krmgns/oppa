@@ -7,7 +7,9 @@ class Configuration
 
     final public function __construct(array $options = []) {
         if (!empty($options)) {
-            $this->sets($options);
+            foreach ($options as $key => $value) {
+                $this->options[$key] = $value;
+            }
         }
     }
 
@@ -25,12 +27,6 @@ class Configuration
 
     final public function __unset($key) {
         return $this->offsetUnset($key);
-    }
-
-    final public function sets($options) {
-        foreach ($options as $key => $value) {
-            $this->set($key, $value);
-        }
     }
 
     final public function set($key, $value) {
