@@ -29,7 +29,7 @@ namespace Oppa;
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
-class Configuration
+final class Configuration
     implements \ArrayAccess
 {
     /**
