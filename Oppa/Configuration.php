@@ -3,7 +3,7 @@
 class Configuration
     implements \ArrayAccess
 {
-    protected $options = [];
+    private $options = [];
 
     final public function __construct(array $options = []) {
         if (!empty($options)) {
