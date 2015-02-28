@@ -30,9 +30,7 @@ namespace Oppa;
  */
 final class Helper
 {
-    /**
-     * Contains helper methods used in Oppa.
-     */
+    /* Contains helper methods used in Oppa. */
 
     /**
      * Get value from an array by key if exists, return or default value.
