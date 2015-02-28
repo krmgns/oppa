@@ -48,7 +48,7 @@ final class Autoload
      * @return Oppa\Autoload
      */
     final public static function initialize() {
-        if (self::$instance === null) {
+        if (self::$instance == null) {
             self::$instance = new self();
         }
 
