@@ -32,7 +32,7 @@ final class Autoload
 {
     /**
      * Singleton stuff.
-     * @var Autoload
+     * @var self
      */
     private static $instance;
 
@@ -45,7 +45,7 @@ final class Autoload
     /**
      * Create a fresh Autoload obejct or just return if already exits.
      *
-     * @return Oppa\Autoload
+     * @return self
      */
     final public static function initialize() {
         if (self::$instance == null) {
