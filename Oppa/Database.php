@@ -38,10 +38,10 @@ final class Database
     implements \Oppa\Shablon\Database\DatabaseInterface
 {
     /**
-     * Database info. @notimplemented
+     * Database info.
      * @var array|null
      */
-    private $info;
+    private $info; // @notimplemented
 
     /**
      * Database connector object.
