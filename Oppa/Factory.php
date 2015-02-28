@@ -33,7 +33,7 @@ final class Factory
     implements \Oppa\Shablon\FactoryInterface
 {
     /**
-     * Build as internal Oppa object.
+     * Built an internal Oppa object.
      *
      * @param  string     $className
      * @param  array|null $arguments
