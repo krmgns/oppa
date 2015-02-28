@@ -170,7 +170,7 @@ final class Mysqli
         return $this->query($query, $params, null, $fetchType)->getData();
     }
 
-    final public function select($table, array $fields, $where = null, array $params = null, $limit = null) {
+    final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null) {
         return $this->query(sprintf('SELECT %s FROM %s %s %s',
                 $this->escapeIdentifier($fields),
                 $this->escapeIdentifier($table),
@@ -256,6 +256,10 @@ final class Mysqli
     }
 
     final public function escapeIdentifier($input) {
+        if ($input == '*') {
+            return $input;
+        }
+
         return !is_array($input)
             ? '`'. trim($input, '` ') .'`'
             : join(', ', array_map([$this, 'escapeIdentifier'], $input));
