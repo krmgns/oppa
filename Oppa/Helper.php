@@ -59,22 +59,6 @@ final class Helper
     }
 
     /**
-     * Get value from an associative array by key if exists, return or default value.
-     *
-     * @param  string $key
-     * @param  array  $array
-     * @param  mixed  $defaultValue
-     * @return mixed
-     */
-    final public static function getArrayValueRandomAssoc($key, array $array, $defaultValue = null) {
-        $array = self::getArrayValue($key, $array);
-        if (!empty($array) && ($count = count($array))) {
-            return $array[mt_rand(0, $count - 1)];
-        }
-        return $defaultValue;
-    }
-
-    /**
      * Convert given input from underscore to camelcase.
      *
      * @param  string $input
