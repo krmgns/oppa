@@ -5,7 +5,7 @@ use \Oppa\Exception as Exception;
 final class Logger
     extends \Oppa\Shablon\Logger\Logger
 {
-    public function log($level, $message) {
+    final public function log($level, $message) {
         // no log command
         if (!$level || ($level & $this->level) == 0) {
             return;
