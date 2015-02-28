@@ -68,7 +68,7 @@ final class Mysqli
         // dirty ways to detect last insert id for multiple inserts
         // good point! http://stackoverflow.com/a/15664201/362780
         $id  = $link->insert_id;
-        $ids = [];
+        $ids = [$id];
 
         /**
          * // only last id
