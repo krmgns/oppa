@@ -50,7 +50,7 @@ final class Database
     private $connector;
 
     /**
-     * Create a fresh Database object.
+     * Create a fresh Database object with given configuration.
      *
      * @param Oppa\Configuration $configuration
      */
