@@ -124,7 +124,7 @@ final class Mysqli
         $link = $this->agent->getLink();
 
         // mayday mayday
-        $link->rollback(true);
+        $link->rollback();
 
         // free autocommits
         $link->autocommit(true);
