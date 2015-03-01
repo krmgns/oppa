@@ -25,10 +25,13 @@ use \Oppa\Configuration;
 
 // $db = Database\Factory::build(new Configuration($cfg));
 // $db->connect();
-// $db->disconnect();
 // pre($db);
 // pre($db->getConnection());
 // pre($db->getConnection('localhost'));
+
+// // $db->disconnect();
+// $db->disconnect('localhost');
+// pre($db->getConnection('localhost')); // err!
 
 /*** sharding ***/
 $cfg = [
