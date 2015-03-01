@@ -14,7 +14,7 @@ final class Mysqli
     }
 
     final public function reset() {
-        $this->id = null;
+        $this->id = [];
         $this->rowsCount = 0;
         $this->rowsAffected = 0;
         $this->data = [];

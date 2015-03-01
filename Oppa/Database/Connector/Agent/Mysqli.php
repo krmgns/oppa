@@ -1,4 +1,26 @@
-<?php namespace Oppa\Database\Connector\Agent;
+<?php
+/**
+ * Copyright (c) 2015 Kerem Gunes
+ *    <http://qeremy.com>
+ *
+ * GNU General Public License v3.0
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace Oppa\Database\Connector\Agent;
 
 use \Oppa\Helper;
 use \Oppa\Logger;
@@ -8,24 +30,49 @@ use \Oppa\Database\Query\Sql;
 use \Oppa\Database\Query\Result;
 use \Oppa\Exception\Database as Exception;
 
+/**
+ * @package    Oppa
+ * @subpackage Oppa\Database\Connector\Agent
+ * @object     Oppa\Database\Connector\Agent\Agent
+ * @uses       Oppa\Helper,
+               Oppa\Logger,
+               Oppa\Database\Batch,
+               Oppa\Database\Profiler,
+               Oppa\Database\Query\Sql,
+               Oppa\Database\Query\Result,
+               Oppa\Exception\Database
+ * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
+ * @version    v1.0
+ * @author     Kerem Gunes <qeremy@gmail>
+ */
 final class Mysqli
     extends \Oppa\Shablon\Database\Connector\Agent\Agent
 {
+    /**
+     * Create a fresh mysql agent using mysqli extensions.
+     *
+     * @param array $configuration
+     */
     final public function __construct(array $configuration) {
+        // we need it
         if (!extension_loaded('mysqli')) {
             throw new \RuntimeException('Mysqli extension is not loaded.');
         }
 
+        // assign configuration
+        $this->configuration = $configuration;
+
+        // assign transaction object
         $this->batch = new Batch\Mysqli($this);
 
+        // assign result object
         $this->result = new Result\Mysqli();
         $this->result->setFetchType(
             isset($configuration['fetch_type'])
                 ? $configuration['fetch_type'] : Result::FETCH_OBJECT
         );
 
-        $this->configuration = $configuration;
-
+        // assign logger if config'ed
         if (isset($configuration['query_log']) && $configuration['query_log'] == true) {
             $this->logger = new Logger();
             isset($configuration['query_log_level']) &&
@@ -35,25 +82,36 @@ final class Mysqli
             isset($configuration['query_log_filename_format']) &&
                 $this->logger->setFilenameFormat($configuration['query_log_filename_format']);
         }
+
+        // assign profiler if config'ed
         if (isset($configuration['profiling']) && $configuration['profiling'] == true) {
             $this->profiler = new Profiler();
         }
     }
 
+    /**
+     * Unplug itself before saying goodbye to world.
+     */
     final public function __destruct() {
         $this->disconnect();
     }
 
+    /**
+     * Open a connection with given options.
+     *
+     * @return object|resource
+     */
     final public function connect() {
+        // export credentials
         list($host, $name, $username, $password) = [
-            $this->configuration['host'],
-            $this->configuration['name'],
-            $this->configuration['username'],
-            $this->configuration['password'],
+            $this->configuration['host'], $this->configuration['name'],
+            $this->configuration['username'], $this->configuration['password'],
         ];
+        // get port/socket options
         $port = Helper::getArrayValue('port', $this->configuration);
         $socket = Helper::getArrayValue('socket', $this->configuration);
 
+        // call big boss
         $this->link = mysqli_init();
 
         // supported constants: http://php.net/mysqli.real_connect
@@ -73,6 +131,7 @@ final class Mysqli
             }
         }
 
+        // start connection profiling
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
         if (!$this->link->real_connect($host, $username, $password, $name, intval($port), $socket)) {
@@ -80,11 +139,14 @@ final class Mysqli
                 'Connection error! errno[%d] errmsg[%s]', $this->link->connect_errno, $this->link->connect_error));
         }
 
-        $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New connection via %s', $_SERVER['REMOTE_ADDR']));
-
+        // finish connection profiling
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
+        // log with info level
+        $this->logger && $this->logger->log(Logger::INFO,
+            sprintf('New connection via %s', $_SERVER['REMOTE_ADDR']));
+
+        // set charset for connection
         if (isset($this->configuration['charset'])) {
             $run = (bool) $this->link->set_charset($this->configuration['charset']);
             if ($run === false) {
@@ -94,6 +156,7 @@ final class Mysqli
             }
         }
 
+        // set timezone for connection
         if (isset($this->configuration['timezone'])) {
             $run = (bool) $this->link->query("SET time_zone='{$this->configuration['timezone']}'");
             if ($run === false) {
@@ -104,18 +167,41 @@ final class Mysqli
 
         return $this->link;
     }
+
+    /**
+     * Close a connection.
+     *
+     * @return void
+     */
     final public function disconnect() {
+        // time to say goodbye
         if ($this->link instanceof \mysqli) {
             $this->link->close();
             $this->link = null;
         }
     }
+
+    /**
+     * Check connection.
+     *
+     * @return boolean
+     */
     final public function isConnected() {
         return ($this->link instanceof \mysqli &&
                 $this->link->connect_errno === 0);
     }
 
+    /**
+     * Yes, "query" of the S(Query)L...
+     *
+     * @param  string      $query     Raw SQL query.
+     * @param  array|null  $params    Prapering params.
+     * @param  integer     $limit     Generally used in internal methods.
+     * @param  integer     $fetchType That will overwrite on Result.fetchType.
+     * @return
+     */
     final public function query($query, array $params = null, $limit = null, $fetchType = null) {
+        // reset result vars
         $this->result->reset();
 
         $query = trim($query);
