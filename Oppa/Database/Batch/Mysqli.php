@@ -110,7 +110,7 @@ final class Mysqli
         $this->totalTime = number_format((float) ($stop - $start), 10);
 
         // even transactions are designed for insert/update/delete/replace
-        // actions let it be sure resetting the result object
+        // actions, let it be sure resetting the result object
         $this->agent->getResult()->reset();
 
         // forgot to call self.unlock()?
