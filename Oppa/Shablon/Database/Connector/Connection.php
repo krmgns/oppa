@@ -139,28 +139,18 @@ abstract class Connection
         return $this->agentName;
     }
 
-    /**
-     * Action pattern.
-     */
+    /* Action pattern. */
     abstract public function open();
 
-    /**
-     * Action pattern.
-     */
+    /* Action pattern. */
     abstract public function close();
 
-    /**
-     * Action pattern.
-     */
+    /* Action pattern. */
     abstract public function status();
 
-    /**
-     * Action pattern.
-     */
+    /* Action pattern. */
     abstract protected function attachAgent();
 
-    /**
-     * Action pattern.
-     */
+    /* Action pattern. */
     abstract protected function detachAgent();
 }
