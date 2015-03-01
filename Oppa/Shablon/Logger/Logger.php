@@ -1,11 +1,41 @@
-<?php namespace Oppa\Shablon\Logger;
+<?php
+/**
+ * Copyright (c) 2015 Kerem Gunes
+ *    <http://qeremy.com>
+ *
+ * GNU General Public License v3.0
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
+namespace Oppa\Shablon\Logger;
+
+/* defined here first, cos cannot define a class contant sometimes easily in it */
 define(__namespace__.'\FAIL',  2);
 define(__namespace__.'\WARN',  4);
 define(__namespace__.'\INFO',  8);
 define(__namespace__.'\DEBUG', 16);
 define(__namespace__.'\ALL',   FAIL | WARN | INFO | DEBUG); // @WTF!
 
+/**
+ * @package    Oppa
+ * @subpackage Oppa\Shablon\Logger
+ * @object     Oppa\Orm
+ * @version    v1.0
+ * @author     Kerem Gunes <qeremy@gmail>
+ */
 abstract class Logger
 {
     const ALL   = ALL;
