@@ -113,10 +113,8 @@ final class Connector
         // merge configurations
         $configuration = $configuration + $database;
         if (!isset(
-            $configuration['host'],
-            $configuration['name'],
-            $configuration['username'],
-            $configuration['password']
+            $configuration['host'], $configuration['name'],
+            $configuration['username'], $configuration['password']
         )) { throw new Exception\ArgumentException(
                 'Please specify all needed credentials (host'.
                 ', name, username, password) for connection!');
