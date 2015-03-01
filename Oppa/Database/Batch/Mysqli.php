@@ -114,7 +114,7 @@ final class Mysqli
         // actions, let it be sure resetting the result object
         $this->agent->getResult()->reset();
 
-        // forgot to call self.unlock()?
+        // forgot to call unlock(), hmmm?
         $link->autocommit(true);
     }
 
