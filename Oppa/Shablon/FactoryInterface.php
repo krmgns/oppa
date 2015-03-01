@@ -14,7 +14,6 @@ interface FactoryInterface
      *
      * @param  string     $className
      * @param  array|null $arguments
-     * @return object
      */
     public static function build($className, array $arguments = null);
 }
