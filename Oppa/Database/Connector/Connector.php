@@ -40,9 +40,9 @@ final class Connector
     /**
      * Create a fresh Connector object by given configuration.
      *
-     * Notice: For all methods in this object, "$host" parameter is important, cos it
-     * is used as a key to prevent* to create new connection in excessive way. Thus,
-     * host will be always set, even user does not give it.
+     * Notice: For all methods in this object, "$host" parameter is important, cos
+     * it is used as a key to prevent to create new connections in excessive way.
+     * Thus, host will be always set, even user does not pass/provide it.
      *
      * @param Oppa\Configuration $configuration
      */
