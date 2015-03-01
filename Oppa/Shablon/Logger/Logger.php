@@ -22,7 +22,10 @@
 
 namespace Oppa\Shablon\Logger;
 
-/* defined here first, cos cannot define a class contant sometimes easily in it */
+/**
+ * These level contants allow/disallow logging actions. Defined here
+ * first, cos cannot define a class contant sometimes easily in it.
+ */
 define(__namespace__.'\FAIL',  2);
 define(__namespace__.'\WARN',  4);
 define(__namespace__.'\INFO',  8);
@@ -38,36 +41,103 @@ define(__namespace__.'\ALL',   FAIL | WARN | INFO | DEBUG); // @WTF!
  */
 abstract class Logger
 {
+    /**
+     * Log all events.
+     * @const integer
+     */
     const ALL   = ALL;
+
+    /**
+     * Log only error events.
+     * @const integer
+     */
     const FAIL  = FAIL;
+
+    /**
+     * Log only warning events.
+     * @const integer
+     */
     const WARN  = WARN;
+
+    /**
+     * Log only informal events.
+     * @const integer
+     */
     const INFO  = INFO;
+
+    /**
+     * Log only debugging events.
+     * @const integer
+     */
     const DEBUG = DEBUG;
 
-    // disabled as default
+    /**
+     * Log level, disabled as default.
+     * @var integer
+     */
     protected $level = 0;
 
+    /**
+     * Log directory.
+     * @var string
+     */
     protected $directory;
+
+    /**
+     * Aims some performance, escaping to call "is_dir" function.
+     * @var boolean
+     */
     protected $directoryChecked = false;
 
+    /**
+     * Log file format, e.g 2015-01-01.txt
+     * @var string
+     */
     protected $filenameFormat = 'Y-m-d';
 
+    /**
+     * Set log level.
+     *
+     * @param  integer $level  Must be a valid level like self::ALL
+     * @return void
+     */
     public function setLevel($level) {
         $this->level = $level;
     }
 
+    /**
+     * Get log level.
+     *
+     * @return integer
+     */
     public function getLevel() {
         return $this->level;
     }
 
+    /**
+     * Set log directory.
+     *
+     * @param  string $directory
+     * @return void
+     */
     public function setDirectory($directory) {
         $this->directory = $directory;
     }
 
+    /**
+     * Get log directory.
+     *
+     * @return string
+     */
     public function getDirectory() {
         return $this->directory;
     }
 
+    /**
+     * Check log directory, if not exists create it.
+     *
+     * @return void
+     */
     public function checkDirectory() {
         if (empty($this->directory)) {
             throw new \RuntimeException(
@@ -90,13 +160,31 @@ abstract class Logger
         }
     }
 
+    /**
+     * Set log filename format.
+     *
+     * @param  string $filenameFormat
+     * @return void
+     */
     public function setFilenameFormat($filenameFormat) {
         $this->filenameFormat = $filenameFormat;
     }
 
+    /**
+     * Get log filename format.
+     *
+     * @return string
+     */
     public function getFilenameFormat() {
         return $this->filenameFormat;
     }
 
+    /**
+     * Log action pattern.
+     *
+     * @param  integer $level
+     * @param  string  $message
+     * @return void
+     */
     abstract public function log($level, $message);
 }
