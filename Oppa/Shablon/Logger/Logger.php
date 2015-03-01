@@ -35,7 +35,7 @@ define(__namespace__.'\ALL',   FAIL | WARN | INFO | DEBUG); // @WTF!
 /**
  * @package    Oppa
  * @subpackage Oppa\Shablon\Logger
- * @object     Oppa\Orm
+ * @object     Oppa\Shablon\Logger\Logger
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
