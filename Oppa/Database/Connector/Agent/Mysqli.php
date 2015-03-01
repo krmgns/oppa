@@ -92,6 +92,8 @@ final class Mysqli
 
     /**
      * Unplug itself before saying goodbye to world.
+     *
+     * @return void
      */
     final public function __destruct() {
         $this->disconnect();
