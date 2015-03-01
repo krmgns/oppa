@@ -103,9 +103,15 @@ abstract class Agent
     /**
      * Get logger object.
      *
+     * @throws Oppa\Exception\Database\ErrorException
      * @return Oppa\Logger
      */
     public function getLogger() {
+        if (!$this->logger) {
+            throw new Exception\ErrorException(
+                'Profiler is not found, did you set `query_log` option as true?');
+        }
+
         return $this->logger;
     }
 
@@ -120,6 +126,7 @@ abstract class Agent
             throw new Exception\ErrorException(
                 'Profiler is not found, did you set `profiling` option as true?');
         }
+
         return $this->profiler;
     }
 
