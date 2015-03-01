@@ -12,8 +12,8 @@ interface FactoryInterface
     /**
      * Build action pattern.
      *
-     * @param  string     $className
-     * @param  array|null $arguments
+     * @param string     $className
+     * @param array|null $arguments
      */
     public static function build($className, array $arguments = null);
 }
