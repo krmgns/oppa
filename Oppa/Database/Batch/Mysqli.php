@@ -118,6 +118,11 @@ final class Mysqli
         $link->autocommit(true);
     }
 
+    /**
+     * Cancel transaction and do rollback.
+     *
+     * @return void
+     */
     final public function cancel() {
         $this->reset();
 
