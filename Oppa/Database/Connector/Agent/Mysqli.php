@@ -51,7 +51,8 @@ final class Mysqli
     /**
      * Create a fresh mysql agent using mysqli extensions.
      *
-     * @param array $configuration
+     * @param  array $configuration
+     * @throws \RuntimeException
      */
     final public function __construct(array $configuration) {
         // we need it
@@ -99,6 +100,7 @@ final class Mysqli
     /**
      * Open a connection with given options.
      *
+     * @throws Oppa\Exception\Database\?
      * @return object|resource
      */
     final public function connect() {
@@ -174,7 +176,7 @@ final class Mysqli
      * @return void
      */
     final public function disconnect() {
-        // time to say goodbye
+        // time to say goodbye baby
         if ($this->link instanceof \mysqli) {
             $this->link->close();
             $this->link = null;
@@ -187,44 +189,54 @@ final class Mysqli
      * @return boolean
      */
     final public function isConnected() {
-        return ($this->link instanceof \mysqli &&
-                $this->link->connect_errno === 0);
+        return ($this->link instanceof \mysqli && $this->link->connect_errno === 0);
     }
 
     /**
-     * Yes, "query" of the S(Query)L...
+     * Yes, "Query" of the S(Q)L...
      *
-     * @param  string      $query     Raw SQL query.
-     * @param  array|null  $params    Prapering params.
-     * @param  integer     $limit     Generally used in internal methods.
-     * @param  integer     $fetchType That will overwrite on Result.fetchType.
-     * @return
+     * @param  string     $query     Raw SQL query.
+     * @param  array|null $params    Prapering params.
+     * @param  integer    $limit     Generally used in internal methods.
+     * @param  integer    $fetchType That will overwrite on Result.fetchType.
+     * @throws Oppa\Exception\Database\?
+     * @return Oppa\Database\Query\Result
      */
     final public function query($query, array $params = null, $limit = null, $fetchType = null) {
         // reset result vars
         $this->result->reset();
 
+        // trim query
         $query = trim($query);
         if ($query == '') {
             throw new Exception\QueryException('Query cannot be empty!');
         }
 
+        // prepare if any params
         if (!empty($params)) {
             $query = $this->prepare($query, $params);
         }
 
+        // log query with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf(
             'New query via %s, query[%s]', $_SERVER['REMOTE_ADDR'], $query));
 
+        // add query count, last query
         if ($this->profiler) {
             $this->profiler->setProperty(Profiler::PROP_QUERY_COUNT);
             $this->profiler->setProperty(Profiler::PROP_LAST_QUERY, $query);
         }
 
+        // start last query profiling
         $this->profiler && $this->profiler->start(Profiler::LAST_QUERY);
+
+        // go go go..
         $result = $this->link->query($query);
+
+        // finish last query profiling
         $this->profiler && $this->profiler->stop(Profiler::LAST_QUERY);
 
+        // i always loved to handle errors
         if (!$result) {
             try {
                 throw new Exception\QueryException(sprintf(
@@ -232,39 +244,77 @@ final class Mysqli
                         $query, $this->link->error, $this->link->errno
                 ), $this->link->errno);
             } catch (Exception\QueryException $e) {
-                // log query error
+                // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
+
                 // check error handler
                 $errorHandler = Helper::getArrayValue('query_error_handler', $this->configuration);
+                // if user has error handler, return using it
                 if (is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);
                 }
+
+                // throw it!
                 throw $e;
             }
         }
 
-        $this->result->process($this->link, $result, $limit, $fetchType);
-
-        return $this->result;
+        // send query result to Result object to process and return it
+        return $this->result->process($this->link, $result, $limit, $fetchType);
     }
 
+    /**
+     * Select actions only one row.
+     *
+     * @param  string     $query
+     * @param  array|null $params
+     * @param  integer    $fetchType
+     * @return Oppa\Database\Query\Result
+     */
     final public function get($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, 1, $fetchType)->getData();
     }
 
+    /**
+     * Select actions all rows.
+     *
+     * @param  string     $query
+     * @param  array|null $params
+     * @param  integer    $fetchType
+     * @return Oppa\Database\Query\Result
+     */
     final public function getAll($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, null, $fetchType)->getData();
     }
 
-    final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null) {
+    /**
+     * Select actions all rows.
+     *
+     * @param  string     $table
+     * @param  array      $fields
+     * @param  string     $where
+     * @param  array      $params
+     * @param  integer    $fetchType
+     * @return Oppa\Database\Query\Result
+     */
+    final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null,
+        $fetchType = null
+    ) {
         return $this->query(sprintf('SELECT %s FROM %s %s %s',
                 $this->escapeIdentifier($fields),
                 $this->escapeIdentifier($table),
                 $this->where($where, $params),
                 $this->limit($limit)
-        ))->getData();
+        ), null, null, $fetchType)->getData();
     }
 
+    /**
+     * Insert actions.
+     *
+     * @param  string $table
+     * @param  array  $data
+     * @return integer|null
+     */
     final public function insert($table, array $data) {
         // simply check is not assoc to prepare multi-insert
         if (!isset($data[0])) {
@@ -285,6 +335,16 @@ final class Mysqli
         ))->getId();
     }
 
+    /**
+     * Insert actions.
+     *
+     * @param  string  $table
+     * @param  array   $data
+     * @param  string  $where
+     * @param  array   $params
+     * @param  integer $limit
+     * @return integer
+     */
     final public function update($table, array $data, $where = null, array $params = null, $limit = null) {
         $set = [];
         foreach ($data as $key => $value) {
@@ -301,6 +361,15 @@ final class Mysqli
         ))->getRowsAffected();
     }
 
+    /**
+     * Insert actions.
+     *
+     * @param  string  $table
+     * @param  string  $where
+     * @param  array   $params
+     * @param  integer $limit
+     * @return integer
+     */
     final public function delete($table, $where = null, array $params = null, $limit = null) {
         return $this->query(sprintf(
             'DELETE FROM %s %s %s',
@@ -310,6 +379,14 @@ final class Mysqli
         ))->getRowsAffected();
     }
 
+    /**
+     * Escape given input.
+     *
+     * @param  string $input
+     * @param  string $type
+     * @throws Oppa\Exception\Database\ArgumentException
+     * @return string
+     */
     final public function escape($input, $type = null) {
         // excepting strings, for all formattable types like %d, %f and %F
         if (!is_array($input)) {
@@ -318,6 +395,7 @@ final class Mysqli
             }
         }
 
+        // no escape raws sql inputs like NOW(), ROUND(total) etc.
         if ($input instanceof Sql) {
             return $input->toString();
         }
@@ -341,6 +419,12 @@ final class Mysqli
         return $input;
     }
 
+    /**
+     * Escape identifier like table name, field name.
+     *
+     * @param  string $input
+     * @return string
+     */
     final public function escapeIdentifier($input) {
         if ($input == '*') {
             return $input;
@@ -351,17 +435,32 @@ final class Mysqli
             : join(', ', array_map([$this, 'escapeIdentifier'], $input));
     }
 
+    /**
+     * Prepare "WHERE" statement.
+     *
+     * @param  string     $where
+     * @param  array|null $params
+     * @return string
+     */
     final public function where($where, array $params = null) {
         if (!empty($params)) {
             $where = 'WHERE '. $this->prepare($where, $params);
         }
+
         return $where;
     }
 
+    /**
+     * Prepare "LIMIT" statement.
+     *
+     * @param  integer $limit
+     * @return string
+     */
     final public function limit($limit) {
         if (is_array($limit)) {
             return sprintf('LIMIT %d, %d', $limit[0], $limit[1]);
         }
+
         return $limit ? sprintf('LIMIT %d', $limit) : '';
     }
 }
