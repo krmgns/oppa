@@ -33,14 +33,10 @@ namespace Oppa\Shablon\Database\Query;
 abstract class Result
     implements \IteratorAggregate, \Countable
 {
-    /**
-     * Action pattern.
-     */
+    /** Action pattern. */
     abstract public function free();
 
-    /**
-     * Action pattern.
-     */
+    /** Action pattern. */
     abstract public function reset();
 
     /**
