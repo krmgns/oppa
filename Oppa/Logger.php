@@ -76,6 +76,6 @@ final class Logger
         $message  = sprintf('[%s] %s%s',
             date('D, d M Y H:i:s O'), $messagePrepend, trim($message) ."\n");
 
-        return file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
+        return (bool) file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
     }
 }

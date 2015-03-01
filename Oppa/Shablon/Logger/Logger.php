@@ -23,16 +23,6 @@
 namespace Oppa\Shablon\Logger;
 
 /**
- * These level contants allow/disallow logging actions. Defined here
- * first, cos cannot define a class contant sometimes easily in it.
- */
-define(__namespace__.'\FAIL',  2);
-define(__namespace__.'\WARN',  4);
-define(__namespace__.'\INFO',  8);
-define(__namespace__.'\DEBUG', 16);
-define(__namespace__.'\ALL',   FAIL | WARN | INFO | DEBUG); // @WTF!
-
-/**
  * @package    Oppa
  * @subpackage Oppa\Shablon\Logger
  * @object     Oppa\Shablon\Logger\Logger
@@ -45,31 +35,31 @@ abstract class Logger
      * Log all events.
      * @const integer
      */
-    const ALL = ALL;
+    const ALL = 30; // FAIL | WARN | INFO | DEBUG
 
     /**
      * Log only error events.
      * @const integer
      */
-    const FAIL = FAIL;
+    const FAIL = 2;
 
     /**
      * Log only warning events.
      * @const integer
      */
-    const WARN = WARN;
+    const WARN = 4;
 
     /**
      * Log only informal events.
      * @const integer
      */
-    const INFO = INFO;
+    const INFO = 8;
 
     /**
      * Log only debugging events.
      * @const integer
      */
-    const DEBUG = DEBUG;
+    const DEBUG = 16;
 
     /**
      * Log level, disabled as default.
