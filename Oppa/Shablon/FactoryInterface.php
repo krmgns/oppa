@@ -10,7 +10,7 @@
 interface FactoryInterface
 {
     /**
-     * Build pattern.
+     * Build action pattern.
      *
      * @param  string     $className
      * @param  array|null $arguments
