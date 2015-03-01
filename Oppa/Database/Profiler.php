@@ -5,9 +5,9 @@ use \Oppa\Exception;
 final class Profiler
     extends \Oppa\Shablon\Database\Profiler\Profiler
 {
-    public function __construct() {}
+    // final public function __construct() {}
 
-    public function start($name) {
+    final public function start($name) {
         $this->profiles[$name] = [
             'start' => microtime(true),
             'stop'  => 0,
@@ -15,7 +15,7 @@ final class Profiler
         ];
     }
 
-    public function stop($name) {
+    final public function stop($name) {
         if (isset($this->profiles[$name])) {
             $this->profiles[$name]['stop'] = microtime(true);
             $this->profiles[$name]['total'] = number_format(
@@ -26,7 +26,7 @@ final class Profiler
         throw new Exception\ArgumentException("Could not find a `{$name}` profile name.");
     }
 
-    public function setProperty($name, $value = null) {
+    final public function setProperty($name, $value = null) {
         if ($name === self::PROP_QUERY_COUNT) {
             if (!isset($this->properties[self::PROP_QUERY_COUNT])) {
                 $this->properties[self::PROP_QUERY_COUNT] = 0;
@@ -37,7 +37,7 @@ final class Profiler
         }
     }
 
-    public function getProperty($name) {
+    final public function getProperty($name) {
         if (isset($this->properties[$name])) {
             return $this->properties[$name];
         }
