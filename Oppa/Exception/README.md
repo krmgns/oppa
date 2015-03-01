@@ -1,1 +1,1 @@
-This directory and contents stands here in order to categorize all thrown exceptions. Nothing more..
+This directory and contents stand here in order to categorize all thrown exceptions. Nothing more..
