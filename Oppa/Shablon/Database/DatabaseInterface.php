@@ -32,35 +32,35 @@ namespace Oppa\Shablon\Database;
 interface DatabaseInterface
 {
     /**
-     * Connect action pattern.
+     * Action pattern.
      *
      * @param string $host
      */
     public function connect($host = null);
 
     /**
-     * Disconnect action pattern.
+     * Action pattern.
      *
      * @param string $host
      */
     public function disconnect($host = null);
 
     /**
-     * Is connected action pattern.
+     * Action pattern.
      *
      * @param string $host
      */
     public function isConnected($host = null);
 
     /**
-     * Get connection action pattern.
+     * Action pattern.
      *
      * @param string $host
      */
     public function getConnection($host = null);
 
     /**
-     * Info action pattern.
+     * Action pattern.
      */
     public function info();
 }
