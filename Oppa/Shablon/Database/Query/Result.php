@@ -31,7 +31,7 @@ namespace Oppa\Shablon\Database\Query;
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Result
-    implements \IteratorAggregate, \Countable
+    implements \Countable, \IteratorAggregate
 {
     /** Action pattern. */
     abstract public function free();
