@@ -100,7 +100,7 @@ interface StreamWrapperInterface
     public function delete($table, $where = null, array $params = null, $limit = null);
 
     /** Action pattern. */
-    public function id(); // uuid, guid, serial, sequence, identity, last_insert_id WTF!
+    public function id(); // uuid, guid, serial, sequence, identity, last_insert_id @WTF!
 
     /** Action pattern. */
     public function rowsCount();
