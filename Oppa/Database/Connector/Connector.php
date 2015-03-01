@@ -40,6 +40,10 @@ final class Connector
     /**
      * Create a fresh Connector object by given configuration.
      *
+     * Notice: For all methods in this object, "$host" parameter is an important, cos
+     * it is used as a key to prevent* to create new connection in excessive way. Thus,
+     * host will be always set, even user does not give it.
+     *
      * @param Oppa\Configuration $configuration
      */
     final public function __construct(Configuration $configuration) {
@@ -122,6 +126,7 @@ final class Connector
 
         // use host as a key for connection stack
         $host = $configuration['host'];
+
         // create a new connection if not exists
         if (!isset($this->connections[$host])) {
             $connection = new Connection($type, $host, $configuration);
