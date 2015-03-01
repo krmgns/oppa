@@ -33,7 +33,7 @@ abstract class Batch
 {
     /**
      * Database agent
-     * @var \Oppa\Database\Connector\Agent
+     * @var Oppa\Database\Connector\Agent
      */
     protected $agent;
 
