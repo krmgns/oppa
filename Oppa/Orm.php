@@ -32,7 +32,5 @@ namespace Oppa;
 class Orm
     extends \Oppa\Orm\Orm
 {
-    /**
-     * Used as a shortcut for extending user-defined ORM objects.
-     */
+    /* Used as a shortcut for extending user-defined ORM objects. */
 }
