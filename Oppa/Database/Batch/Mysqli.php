@@ -107,6 +107,7 @@ final class Mysqli
         // keep end time
         $stop = microtime(true);
 
+        // calculate process time just for simple profiling
         $this->totalTime = number_format((float) ($stop - $start), 10);
 
         // even transactions are designed for insert/update/delete/replace
