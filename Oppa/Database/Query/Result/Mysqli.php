@@ -93,5 +93,7 @@ final class Mysqli
         $this->setId($ids);
         $this->setRowsCount($i);
         $this->setRowsAffected($link->affected_rows);
+
+        return $this;
     }
 }
