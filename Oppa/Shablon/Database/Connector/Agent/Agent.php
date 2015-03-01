@@ -28,6 +28,7 @@ use \Oppa\Exception\Database as Exception;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Connector\Agent
  * @object     Oppa\Shablon\Database\Connector\Agent\Agent
+ * @uses       Oppa\Exception\Database
  * @implements Oppa\Shablon\Database\Connector\Agent\ConnectionInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamFilterInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
