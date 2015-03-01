@@ -51,9 +51,9 @@ abstract class Batch
 
     /**
      * Total transaction time.
-     * @var integer
+     * @var float
      */
-    protected $totalTime = 0;
+    protected $totalTime = 0.00;
 
     /**
      * Reset stacks and total transaction time.
@@ -63,7 +63,7 @@ abstract class Batch
     public function reset() {
         $this->queue = [];
         $this->result = [];
-        $this->totalTime = 0;
+        $this->totalTime = 0.00;
     }
 
     /**
@@ -82,6 +82,15 @@ abstract class Batch
      */
     public function getResult() {
         return $this->result;
+    }
+
+    /**
+     * Get total process time.
+     *
+     * @return float
+     */
+    public function getTotalTime() {
+        return $this->totalTime;
     }
 
     /**
