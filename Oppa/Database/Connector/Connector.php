@@ -1,36 +1,86 @@
-<?php namespace Oppa\Database\Connector;
+<?php
+/**
+ * Copyright (c) 2015 Kerem Gunes
+ *    <http://qeremy.com>
+ *
+ * GNU General Public License v3.0
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace Oppa\Database\Connector;
 
 use \Oppa\Helper;
 use \Oppa\Configuration;
 use \Oppa\Exception\Database as Exception;
 
+/**
+ * @package    Oppa
+ * @subpackage Oppa\Database\Connector
+ * @object     Oppa\Database\Connector\Connector
+ * @uses       Oppa\Helper, Oppa\Configuration, Oppa\Exception\Database
+ * @version    v1.0
+ * @author     Kerem Gunes <qeremy@gmail>
+ */
 final class Connector
     extends \Oppa\Shablon\Database\Connector\Connector
 {
+    /**
+     * Create a fresh Connector object by given configuration.
+     *
+     * @param Oppa\Configuration $configuration
+     */
     final public function __construct(Configuration $configuration) {
         $this->configuration = $configuration;
     }
 
+    /**
+     * Do a connection.
+     *
+     * @param  string $host
+     * @throws Oppa\Exception\Database\ArgumentException
+     * @return self
+     */
     final public function connect($host = null) {
+        // connection is already active?
         if (isset($this->connections[$host])) {
             return $this;
         }
 
         $host = trim($host);
+        // set type as single as default
         $type = Connection::TYPE_SINGLE;
 
+        // get configuration as array
         $configuration = $this->configuration->toArray();
-        $database      = Helper::getArrayValue('database', $configuration);
 
+        // get database directives from given configuration
+        $database = Helper::getArrayValue('database', $configuration);
+
+        // is master/slave active?
         if ($this->configuration->get('sharding') === true) {
             $master = Helper::getArrayValue('master', $database);
             $slaves = Helper::getArrayValue('slaves', $database);
             switch ($host) {
+                // act: master as default
                 case '':
                 case Connection::TYPE_MASTER:
                     $type = Connection::TYPE_MASTER;
                     $database = $database + $master;
                     break;
+                //  act: slave
                 case Connection::TYPE_SLAVE:
                     $type = Connection::TYPE_SLAVE;
                     if (!empty($slaves)) {
@@ -39,10 +89,12 @@ final class Connector
                     }
                     break;
                 default:
+                    // given host is master's host?
                     if ($host == Helper::getArrayValue('host', $master)) {
                         $type = Connection::TYPE_MASTER;
                         $database = $database + $master;
                     } else {
+                        // or given host is slaves's host?
                         $type = Connection::TYPE_SLAVE;
                         foreach ($slaves as $slave) {
                             if (isset($slave['host'], $slave['name']) && $slave['host'] == $host) {
@@ -54,9 +106,11 @@ final class Connector
             }
         }
 
+        // remove used parts
         unset($configuration['database']);
         unset($database['master'], $database['slaves']);
 
+        // merge configurations
         $configuration = $configuration + $database;
         if (!isset(
             $configuration['host'],
@@ -68,7 +122,9 @@ final class Connector
                 ', name, username, password) for connection!');
         }
 
+        // use host as a key for connection stack
         $host = $configuration['host'];
+        // create a new connection if not exists
         if (!isset($this->connections[$host])) {
             $connection = new Connection($type, $host, $configuration);
             $connection->open();
@@ -78,14 +134,24 @@ final class Connector
         return $this;
     }
 
+    /**
+     * Undo a connection.
+     *
+     * @param  string $host
+     * @throws Oppa\Exception\Database\ErrorException
+     * @return void
+     */
     final public function disconnect($host = null) {
+        // connection exists?
         if (isset($this->connections[$host])) {
             $this->connections[$host]->close();
             unset($this->connections[$host]);
             return;
         }
 
+        // check by host
         switch (trim($host)) {
+            // remove all connections
             case '':
             case '*':
                 foreach ($this->connections as $i => $connection) {
@@ -93,6 +159,7 @@ final class Connector
                     unset($this->connections[$i]);
                 }
                 break;
+            // remove master connection
             case Connection::TYPE_MASTER:
                 foreach ($this->connections as $i => $connection) {
                     if ($connection->getType() == Connection::TYPE_MASTER) {
@@ -102,6 +169,7 @@ final class Connector
                     }
                 }
                 break;
+            // remove slave connections
             case Connection::TYPE_SLAVE:
                 foreach ($this->connections as $i => $connection) {
                     if ($connection->getType() == Connection::TYPE_SLAVE) {
@@ -119,18 +187,31 @@ final class Connector
         }
     }
 
+    /**
+     * Check a connection.
+     *
+     * @param  string  $host
+     * @throws Oppa\Exception\Database\ErrorException
+     * @return boolean
+     */
     final public function isConnected($host = null) {
+        // connection exists?
+        // e.g: isConnected('localhost')
         if (isset($this->connections[$host])) {
             return $this->connections[$host]->status() === Connection::STATUS_CONNECTED;
         }
 
+        // without master/slave directives
+        // e.g: isConnected()
         if ($this->configuration->get('sharding') !== true) {
             foreach ($this->connections as $connection) {
                 return $connection->status() === Connection::STATUS_CONNECTED;
             }
         }
 
+        // with master/slave directives, check by host
         switch (trim($host)) {
+            // e.g: isConnected(), isConnected('master')
             case '':
             case Connection::TYPE_MASTER:
                 foreach ($this->connections as $connection) {
@@ -138,6 +219,7 @@ final class Connector
                         return $connection->status() === Connection::STATUS_CONNECTED;
                     }
                 }
+            // e.g: isConnected('slave1.mysql.local'), isConnected('slave')
             case Connection::TYPE_SLAVE:
                 foreach ($this->connections as $connection) {
                     if ($connection->getType() == Connection::TYPE_SLAVE) {
@@ -154,23 +236,42 @@ final class Connector
         );
     }
 
+    /**
+     * Put a connection in connection stack using a specific host as a key.
+     *
+     * @param  string $host
+     * @param  Oppa\Database\Connector\Connection $connection
+     * @return void
+     */
     final public function setConnection($host, Connection $connection) {
         $this->connections[$host] = $connection;
     }
 
+    /**
+     * Get a connection.
+     *
+     * @param  string $host
+     * @throws Oppa\Exception\Database\ErrorException
+     * @return Oppa\Database\Connector\Connection
+     */
     final public function getConnection($host = null) {
+        // connection exists?
+        // e.g: getConnection('localhost')
         if (isset($this->connections[$host])) {
             return $this->connections[$host];
         }
 
         $host = trim($host);
+        // with master/slave directives
         if ($this->configuration->get('sharding') === true) {
+            // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
             if ($host == '' || $host == Connection::TYPE_MASTER) {
                 $connection = Helper::getArrayValueRandom(
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_MASTER;
                 }));
                 if (!empty($connection)) return $connection;
+            // e.g: getConnection(), getConnection('slave'), getConnection('slave1.mysql.local')
             } elseif ($host == Connection::TYPE_SLAVE) {
                 $connection = Helper::getArrayValueRandom(
                     array_filter($this->connections, function($connection) {
@@ -179,6 +280,7 @@ final class Connector
                 if (!empty($connection)) return $connection;
             }
         } else {
+            // e.g: getConnection()
             if ($host == '') {
                 $connection = Helper::getArrayValueRandom(
                     array_filter($this->connections, function($connection) {
