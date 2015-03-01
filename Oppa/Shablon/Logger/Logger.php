@@ -136,7 +136,7 @@ abstract class Logger
     /**
      * Check log directory, if not exists create it.
      *
-     * @return void
+     * @return boolean
      */
     public function checkDirectory() {
         if (empty($this->directory)) {
@@ -158,6 +158,8 @@ abstract class Logger
             file_put_contents($this->directory .'/.htaccess',
                 "Order deny,allow\r\nDeny from all");
         }
+
+        return $this->directoryChecked;
     }
 
     /**
@@ -184,7 +186,7 @@ abstract class Logger
      *
      * @param  integer $level
      * @param  string  $message
-     * @return void
+     * @return boolean
      */
     abstract public function log($level, $message);
 }

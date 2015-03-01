@@ -41,7 +41,7 @@ final class Logger
      *
      * @param  integer $level   Only available ALL, FAIL, WARN, INFO, DEBUG
      * @param  string  $message
-     * @return void
+     * @return boolean
      */
     final public function log($level, $message) {
         // no log command
@@ -76,6 +76,6 @@ final class Logger
         $message  = sprintf('[%s] %s%s',
             date('D, d M Y H:i:s O'), $messagePrepend, trim($message) ."\n");
 
-        file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
+        return file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
     }
 }
