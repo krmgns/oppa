@@ -45,25 +45,25 @@ abstract class Logger
      * Log all events.
      * @const integer
      */
-    const ALL   = ALL;
+    const ALL = ALL;
 
     /**
      * Log only error events.
      * @const integer
      */
-    const FAIL  = FAIL;
+    const FAIL = FAIL;
 
     /**
      * Log only warning events.
      * @const integer
      */
-    const WARN  = WARN;
+    const WARN = WARN;
 
     /**
      * Log only informal events.
      * @const integer
      */
-    const INFO  = INFO;
+    const INFO = INFO;
 
     /**
      * Log only debugging events.
