@@ -38,7 +38,7 @@ final class Database
 {
     /**
      * Database info.
-     * @var array|null
+     * @var array
      */
     private $info; // @notimplemented
 
