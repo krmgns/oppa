@@ -182,7 +182,7 @@ abstract class Logger
     }
 
     /**
-     * Log action pattern.
+     * Action pattern.
      *
      * @param integer $level
      * @param string  $message
