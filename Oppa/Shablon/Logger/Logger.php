@@ -184,9 +184,8 @@ abstract class Logger
     /**
      * Log action pattern.
      *
-     * @param  integer $level
-     * @param  string  $message
-     * @return boolean
+     * @param integer $level
+     * @param string  $message
      */
     abstract public function log($level, $message);
 }
