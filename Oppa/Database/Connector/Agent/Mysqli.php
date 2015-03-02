@@ -106,6 +106,11 @@ final class Mysqli
      * @return object|resource
      */
     final public function connect() {
+        // no need to get excited
+        if ($this->isConnected()) {
+            return $this->link;
+        }
+
         // export credentials
         list($host, $name, $username, $password) = [
             $this->configuration['host'], $this->configuration['name'],
