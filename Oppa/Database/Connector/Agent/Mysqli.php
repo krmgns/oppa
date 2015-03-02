@@ -50,7 +50,7 @@ final class Mysqli
      * @throws \RuntimeException
      */
     final public function __construct(array $configuration) {
-        // we need it
+        // we need it like crazy
         if (!extension_loaded('mysqli')) {
             throw new \RuntimeException('Mysqli extension is not loaded.');
         }
