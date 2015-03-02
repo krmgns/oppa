@@ -111,7 +111,7 @@ final class Mysqli
             $this->configuration['host'], $this->configuration['name'],
             $this->configuration['username'], $this->configuration['password'],
         ];
-        // get port/socket options
+        // get port/socket options if provided
         $port = Helper::getArrayValue('port', $this->configuration);
         $socket = Helper::getArrayValue('socket', $this->configuration);
 
@@ -123,14 +123,17 @@ final class Mysqli
             foreach ($this->configuration['connect_options'] as $option => $value) {
                 if (!is_string($option)) {
                     throw new Exception\ArgumentException(
-                        'Please set all connection option constant names as string to track any setting error!');
+                        'Please set all connection option constant names as '.
+                        'string to track any setting error!');
                 }
                 $option = strtoupper($option);
                 if (!defined($option)) {
-                    throw new Exception\ArgumentException("`{$option}` option constant is not defined!");
+                    throw new Exception\ArgumentException(
+                        "`{$option}` option constant is not defined!");
                 }
                 if (!$this->link->options(constant($option), $value)) {
-                    throw new Exception\ErrorException("Setting {$option} option failed!");
+                    throw new Exception\ErrorException(
+                        "Setting `{$option}` option failed!");
                 }
             }
         }
