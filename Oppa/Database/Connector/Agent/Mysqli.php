@@ -143,7 +143,8 @@ final class Mysqli
 
         if (!$this->link->real_connect($host, $username, $password, $name, intval($port), $socket)) {
             throw new Exception\ConnectionException(sprintf(
-                'Connection error! errno[%d] errmsg[%s]', $this->link->connect_errno, $this->link->connect_error));
+                'Connection error! errno[%d] errmsg[%s]',
+                    $this->link->connect_errno, $this->link->connect_error));
         }
 
         // finish connection profiling
