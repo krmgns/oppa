@@ -126,6 +126,7 @@ abstract class Logger
     /**
      * Check log directory, if not exists create it.
      *
+     * @throws \RuntimeException
      * @return boolean
      */
     public function checkDirectory() {
