@@ -67,8 +67,7 @@ interface StreamWrapperInterface
      * @param  integer    $limit
      * @param  integer    $fetchType
      */
-    public function select($table, array $fields, $where = null, array $params = null, $limit = null,
-        $fetchType = null);
+    public function select($table, array $fields, $where = null, array $params = null, $limit = null, $fetchType = null);
 
     /**
      * Action pattern.
