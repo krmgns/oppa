@@ -22,13 +22,10 @@
 
 namespace Oppa\Orm;
 
-use \Oppa\Exception\Orm as Exception;
-
 /**
  * @package    Oppa
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\EntityCollection
- * @uses       Oppa\Exception\Orm
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
@@ -104,7 +101,8 @@ final class EntityCollection
 
     /**
      * Count entity collection (from \Countable).
-     * @return [type] [description]
+     *
+     * @return integer
      */
     final public function count() {
         return count($this->collection);
