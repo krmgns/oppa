@@ -57,7 +57,9 @@ final class Connection
      */
     final public function open() {
         if (!isset($this->agent)) {
+            // attach first
             $this->attachAgent();
+            // and open connection
             $this->agent->connect();
         }
     }
@@ -69,7 +71,9 @@ final class Connection
      */
     final public function close() {
         if (isset($this->agent)) {
+            // close connection first
             $this->agent->disconnect();
+            // and detach agent
             $this->detachAgent();
         }
     }
