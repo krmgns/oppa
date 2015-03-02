@@ -62,13 +62,12 @@ final class Autoload
      */
     final public function register() {
         spl_autoload_register(function($objectName) {
-            if ($objectName[0] != '\\') {
-                $objectName = '\\'. $objectName;
-            }
+            // ensure namespace operator
+            $className = '\\'. ltrim($className, '\\');
 
-            $objectRoot = sprintf('/%s/', __namespace__);
+            $objectRoot = '/Oppa/';
             $objectFile = str_replace('\\', '/', $objectName);
-            // load only self classes/interfaceses
+            // load only Oppa classes/interfaceses
             if (strstr($objectFile, $objectRoot) === false) {
                 return;
             }
