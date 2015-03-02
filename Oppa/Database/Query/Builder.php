@@ -30,9 +30,7 @@ use \Oppa\Exception\Database as Exception;
  * @package    Oppa
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
- * @uses       Oppa\Helper
- *             Oppa\Exception\Database
- *             Oppa\Database\Connector\Connection
+ * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
