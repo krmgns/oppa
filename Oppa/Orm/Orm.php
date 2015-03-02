@@ -171,6 +171,7 @@ class Orm
      * Save entity into target table.s
      *
      * @param  Oppa\Orm\Entity $entity
+     * @throws Oppa\Exception\Orm\ErrorException
      * @return mixed
      *   - oninsert: last insert id
      *   - onupdate: affected rows
@@ -198,6 +199,7 @@ class Orm
      * Remove an entity from target table.
      *
      * @param  mixed $params
+     * @throws Oppa\Exception\Orm\ArgumentException
      * @return integer
      */
     final public function remove($params) {
