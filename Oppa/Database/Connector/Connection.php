@@ -104,7 +104,7 @@ final class Connection
         $agentName =@ strtolower($this->configuration['agent']);
         switch ($agentName) {
             // for now, only mysqli
-            // if i had time, i will extend..
+            // if time permits, i will extend..
             case self::AGENT_MYSQLI:
                 $this->agent = new Agent\Mysqli($this->configuration);
                 $this->agentName = $agentName;
