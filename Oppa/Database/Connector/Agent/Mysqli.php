@@ -276,7 +276,7 @@ final class Mysqli
      * @param  string     $query
      * @param  array|null $params
      * @param  integer    $fetchType
-     * @return Oppa\Database\Query\Result
+     * @return mixed
      */
     final public function get($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, 1, $fetchType)->getData();
@@ -288,7 +288,7 @@ final class Mysqli
      * @param  string     $query
      * @param  array|null $params
      * @param  integer    $fetchType
-     * @return Oppa\Database\Query\Result
+     * @return mixed
      */
     final public function getAll($query, array $params = null, $fetchType = null) {
         return $this->query($query, $params, null, $fetchType)->getData();
@@ -302,7 +302,7 @@ final class Mysqli
      * @param  string     $where
      * @param  array      $params
      * @param  integer    $fetchType
-     * @return Oppa\Database\Query\Result
+     * @return mixed
      */
     final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null,
         $fetchType = null
