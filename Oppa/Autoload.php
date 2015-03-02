@@ -67,7 +67,7 @@ final class Autoload
 
             $objectRoot = '/Oppa/';
             $objectFile = str_replace('\\', '/', $objectName);
-            // load only Oppa classes/interfaceses
+            // load only Oppa classes / interfaceses
             if (strstr($objectFile, $objectRoot) === false) {
                 return;
             }
