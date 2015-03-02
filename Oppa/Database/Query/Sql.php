@@ -29,7 +29,7 @@ namespace Oppa\Database\Query;
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
-class Sql
+final class Sql
 {
     /**
      * Keeps raw SQL statement.
@@ -46,7 +46,7 @@ class Sql
      *
      * @param string $query
      */
-    public function __construct($query) {
+    final public function __construct($query) {
         $this->query = trim($query);
     }
 
@@ -55,7 +55,7 @@ class Sql
      *
      * @return string
      */
-    public function toString() {
+    final public function toString() {
         return $this->query;
     }
 }
