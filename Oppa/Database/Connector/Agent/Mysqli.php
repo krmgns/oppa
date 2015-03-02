@@ -166,7 +166,8 @@ final class Mysqli
 
         // set timezone for connection
         if (isset($this->configuration['timezone'])) {
-            $run = (bool) $this->link->query("SET time_zone='{$this->configuration['timezone']}'");
+            $run = (bool) $this->link->query($this->prepare(
+                "SET time_zone = ?", [$this->configuration['timezone']]));
             if ($run === false) {
                 throw new Exception\QueryException(sprintf(
                     'Query error! errmsg[%s]', $this->link->error));
