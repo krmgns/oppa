@@ -57,7 +57,7 @@ final class Connection
      */
     final public function open() {
         if (!isset($this->agent)) {
-            // attach first
+            // attach agent first
             $this->attachAgent();
             // and open connection
             $this->agent->connect();
