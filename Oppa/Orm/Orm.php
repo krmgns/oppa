@@ -63,6 +63,8 @@ class Orm
 
     /**
      * Create a fresh Orm object.
+     *
+     * @throws Oppa\Exception\Orm\ArgumentException
      */
     public function __construct() {
         // check for valid database object
@@ -242,7 +244,8 @@ class Orm
     /**
      * Set database object.
      *
-     * @param Oppa\Database $database
+     * @param  Oppa\Database $database
+     * @return void
      */
     final public static function setDatabase(Database $database) {
         self::$database = $database;
