@@ -198,6 +198,18 @@ abstract class Result
     }
 
     /**
+     * Reset Result vars.
+     *
+     * @return void
+     */
+    final public function reset() {
+        $this->id = [];
+        $this->rowsCount = 0;
+        $this->rowsAffected = 0;
+        $this->data = [];
+    }
+
+    /**
      * Count data (from \Countable).
      *
      * @return integer
