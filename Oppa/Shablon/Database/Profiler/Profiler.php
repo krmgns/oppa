@@ -38,7 +38,7 @@ abstract class Profiler
      * Profile key for connection.
      * @const integer
      */
-    const CONNECTION  = 1;
+    const CONNECTION = 1;
 
     /**
      * Profile key for transaction.
@@ -50,7 +50,7 @@ abstract class Profiler
      * Profile key for last query.
      * @const integer
      */
-    const LAST_QUERY  = 3;
+    const LAST_QUERY = 3;
 
     /**
      * Property key for query count.
@@ -62,7 +62,7 @@ abstract class Profiler
      * Property key for last query.
      * @const integer
      */
-    const PROP_LAST_QUERY  = 11;
+    const PROP_LAST_QUERY = 11;
 
     /**
      * Profile stack.
