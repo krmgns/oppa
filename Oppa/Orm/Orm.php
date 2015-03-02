@@ -206,7 +206,7 @@ class Orm
         $params = [$params];
         if (empty($params)) {
             throw new Exception\ArgumentException(
-                "You need to pass a parameter to make a query!");
+                'You need to pass a parameter to make a query!');
         }
 
         return self::$database->getConnection()->getAgent()
