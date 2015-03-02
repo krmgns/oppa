@@ -202,7 +202,7 @@ abstract class Result
      *
      * @return integer
      */
-    public function count() {
+    final public function count() {
         return count($this->data);
     }
 
@@ -211,7 +211,7 @@ abstract class Result
      *
      * @return \ArrayIterator
      */
-    public function getIterator() {
+    final public function getIterator() {
         return new \ArrayIterator($this->data);
     }
 }
