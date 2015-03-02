@@ -40,24 +40,27 @@ final class Factory
      * @return object
      */
     final public static function build($className, array $arguments = null) {
-        if ($className[0] != '\\') {
-            $className = '\\'. $className;
-        }
+        // ensure namespace operator
+        $className = '\\'. ltrim($className, '\\');
 
+        // ensure namespace
         if (strpos($className, '\Oppa') !== 0) {
             $className = '\Oppa' . $className;
         }
 
+        // try autoload
         if (!class_exists($className, true)) {
             throw new \RuntimeException(sprintf(
                 '`%s` class does not exists!', $className));
         }
 
+        // some performance escaping reflection class? :P
         switch (count($arguments)) {
             case 0: return new $className();
             case 1: return new $className($arguments[0]);
         }
 
-        return (new \ReflectionClass($className))->newInstanceArgs($arguments);
+        return (new \ReflectionClass($className))
+            ->newInstanceArgs($arguments);
     }
 }
