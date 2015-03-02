@@ -110,7 +110,7 @@ final class Connector
             }
         }
 
-        // remove used parts
+        // remove unused parts
         unset($configuration['database']);
         unset($database['master'], $database['slaves']);
 
@@ -273,13 +273,16 @@ final class Connector
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_MASTER;
                 }));
+
                 if (!empty($connection)) return $connection;
+            }
             // e.g: getConnection(), getConnection('slave'), getConnection('slave1.mysql.local')
-            } elseif ($host == Connection::TYPE_SLAVE) {
+            elseif ($host == Connection::TYPE_SLAVE) {
                 $connection = Helper::getArrayValueRandom(
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_SLAVE;
                 }));
+
                 if (!empty($connection)) return $connection;
             }
         } else {
@@ -289,6 +292,7 @@ final class Connector
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_SINGLE;
                 }));
+
                 if (!empty($connection)) return $connection;
             }
         }
