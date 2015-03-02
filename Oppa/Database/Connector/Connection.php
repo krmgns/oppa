@@ -86,6 +86,7 @@ final class Connection
             return $this->agent->isConnected()
                 ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
         }
+
         return false;
     }
 
