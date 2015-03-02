@@ -43,7 +43,7 @@ final class Factory
         // ensure namespace operator
         $className = '\\'. ltrim($className, '\\');
 
-        // ensure namespace
+        // ensure Oppa namespace
         if (strpos($className, '\Oppa') !== 0) {
             $className = '\Oppa' . $className;
         }
