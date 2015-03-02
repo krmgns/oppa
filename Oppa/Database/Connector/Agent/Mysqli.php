@@ -151,8 +151,8 @@ final class Mysqli
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         // log with info level
-        $this->logger && $this->logger->log(Logger::INFO,
-            sprintf('New connection via %s', $_SERVER['REMOTE_ADDR']));
+        $this->logger && $this->logger->log(Logger::INFO, sprintf(
+            'New connection via %s', $_SERVER['REMOTE_ADDR']));
 
         // set charset for connection
         if (isset($this->configuration['charset'])) {
@@ -247,8 +247,8 @@ final class Mysqli
         if (!$result) {
             try {
                 throw new Exception\QueryException(sprintf(
-                    'Query error: query[%s], errmsg[%s], errno[%s]',
-                        $query, $this->link->error, $this->link->errno
+                    'Query error: query[%s], errno[%s], errmsg[%s]',
+                        $query, $this->link->errno, $this->link->error
                 ), $this->link->errno);
             } catch (Exception\QueryException $e) {
                 // log query error with fail level
