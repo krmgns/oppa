@@ -97,13 +97,25 @@ abstract class Result
     protected $rowsAffected = 0;
 
     /**
+     * Reset Result vars.
+     *
+     * @return void
+     */
+    final public function reset() {
+        $this->id = [];
+        $this->rowsCount = 0;
+        $this->rowsAffected = 0;
+        $this->data = [];
+    }
+
+    /**
      * Set fetch type.
      *
      * @param  integer $fetchType
      * @throws Oppa\Exception\Database\ArgumentException
      * @return void
      */
-    public function setFetchType($fetchType) {
+    final public function setFetchType($fetchType) {
         if (is_integer($fetchType)) {
             if (!in_array($fetchType, [1, 2, 3, 4])) {
                 throw new Exception\ArgumentException(
@@ -125,7 +137,7 @@ abstract class Result
      *
      * @return integer
      */
-    public function getFetchType() {
+    final public function getFetchType() {
         return $this->fetchType;
     }
 
@@ -134,7 +146,7 @@ abstract class Result
      *
      * @return array
      */
-    public function getData() {
+    final public function getData() {
         return $this->data;
     }
 
@@ -144,7 +156,7 @@ abstract class Result
      * @param  integer|array $id
      * @return void
      */
-    public function setId($id) {
+    final public function setId($id) {
         $this->id = (array) $id;
     }
 
@@ -154,7 +166,7 @@ abstract class Result
      * @param  boolean $all Returns an array containing all ids.
      * @return integer|array
      */
-    public function getId($all = false) {
+    final public function getId($all = false) {
         return $all
             ? $this->id       // all insert ids
             : end($this->id); // only last insert id
@@ -166,7 +178,7 @@ abstract class Result
      * @param  integer $count;
      * @return void
      */
-    public function setRowsCount($count) {
+    final public function setRowsCount($count) {
         $this->rowsCount = $count;
     }
 
@@ -175,7 +187,7 @@ abstract class Result
      *
      * @return integer
      */
-    public function getRowsCount() {
+    final public function getRowsCount() {
         return $this->rowsCount;
     }
 
@@ -184,7 +196,7 @@ abstract class Result
      *
      * @param integer $count
      */
-    public function setRowsAffected($count) {
+    final public function setRowsAffected($count) {
         $this->rowsAffected = $count;
     }
 
@@ -193,20 +205,8 @@ abstract class Result
      *
      * @return integer
      */
-    public function getRowsAffected() {
+    final public function getRowsAffected() {
         return $this->rowsAffected;
-    }
-
-    /**
-     * Reset Result vars.
-     *
-     * @return void
-     */
-    final public function reset() {
-        $this->id = [];
-        $this->rowsCount = 0;
-        $this->rowsAffected = 0;
-        $this->data = [];
     }
 
     /**
