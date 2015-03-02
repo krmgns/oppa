@@ -37,13 +37,13 @@ final class Autoload
     private static $instance;
 
     /**
-     * Forbidding initializations without control.
+     * Forbidding idle initializations.
      */
     final private function __construct() {}
     final private function __clone() {}
 
     /**
-     * Create a fresh Autoload obejct or just return if already exits.
+     * Create a fresh Autoload object or just return if already exits.
      *
      * @return self
      */
@@ -58,7 +58,8 @@ final class Autoload
     /**
      * Register SPL Autoload.
      *
-     * @return mixed  Load action results.
+     * @throws \RuntimeException
+     * @return mixed Load action results.
      */
     final public function register() {
         spl_autoload_register(function($objectName) {

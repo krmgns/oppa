@@ -37,6 +37,7 @@ final class Factory
      *
      * @param  string     $className
      * @param  array|null $arguments
+     * @throws \RuntimeException
      * @return object
      */
     final public static function build($className, array $arguments = null) {
