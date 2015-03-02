@@ -58,7 +58,7 @@ final class Mysqli
         // assign configuration
         $this->configuration = $configuration;
 
-        // assign transaction object
+        // assign batch object (for transaction)
         $this->batch = new Batch\Mysqli($this);
 
         // assign result object
