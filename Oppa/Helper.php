@@ -31,7 +31,7 @@ namespace Oppa;
 final class Helper
 {
     /**
-     * Get value from an array by key if exists, return or default value.
+     * Get value from an array by key if exists or return default value.
      *
      * @param  string $key
      * @param  array  $array
