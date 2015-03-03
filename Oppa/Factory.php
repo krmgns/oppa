@@ -41,7 +41,7 @@ final class Factory
      * @return object
      */
     final public static function build($className, array $arguments = null) {
-        // ensure namespace operator
+        // ensure namespace separator
         $className = '\\'. ltrim($className, '\\');
 
         // ensure Oppa namespace

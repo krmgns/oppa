@@ -63,7 +63,7 @@ final class Autoload
      */
     final public function register() {
         spl_autoload_register(function($objectName) {
-            // ensure namespace operator
+            // ensure namespace separator
             $objectName = '\\'. ltrim($objectName, '\\');
 
             $objectRoot = '/Oppa/';
