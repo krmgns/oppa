@@ -42,14 +42,44 @@ final class Entity
     private $data = [];
 
     /**
+     * Binding methods.
+     * @var array
+     */
+    private $methods = [];
+
+    /**
      * Create a fresh Entity object.
      *
-     * @param array $data
+     * @param Oppa\Orm\Orm $orm
+     * @param array        $data
      */
-    final public function __construct(array $data = []) {
+    final public function __construct(array $data = [], array $methods = null) {
+        // set data
         foreach ($data as $key => $value) {
             $this->data[$key] = $value;
         }
+
+        // set binding methods
+        $this->methods = $methods;
+    }
+
+    /**
+     * Call post-defined method for each entity.
+     *
+     * @param  string $method
+     * @param  array  $arguments
+     * @throws Oppa\Exception\Orm\MethodException
+     * @return mixed
+     */
+    final public function __call($method, $arguments) {
+        // check for method
+        $method = strtolower($method);
+        if (isset($this->methods[$method])) {
+            $method = $this->methods[$method]->bindTo($this);
+            return call_user_func_array($method, $arguments);
+        }
+
+        throw new Exception\MethodException('Method does not exists!');
     }
 
     /**

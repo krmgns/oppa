@@ -26,6 +26,7 @@ namespace Oppa\Orm;
  * @package    Oppa
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\EntityCollection
+ * @implements \Countable, \IteratorAggregate
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
@@ -46,8 +47,8 @@ final class EntityCollection
      * @param  array $data
      * @return void
      */
-    final public function add(array $data) {
-        $this->collection[] = new Entity($data);
+    final public function add(array $data, array $methods) {
+        $this->collection[] = new Entity($data, $methods);
     }
 
     /**

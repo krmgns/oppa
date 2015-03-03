@@ -61,6 +61,13 @@ class Orm
     protected $selectFields = ['*'];
 
     /**
+     * Binding methods for each entity.
+     *
+     * @var array
+     */
+    private $bindingMethods = [];
+
+    /**
      * Create a fresh Orm object.
      *
      * @throws Oppa\Exception\Orm\ArgumentException
@@ -93,6 +100,17 @@ class Orm
                 }
             }
         }
+
+        // methods to bind to the entities
+        $className = get_class($this);
+        $reflection = new \ReflectionClass($className);
+        foreach ($reflection->getMethods() as $method) {
+            if ($method->class == $className) {
+                $methodName = strtolower($method->name);
+                $this->bindingMethods[$methodName] =
+                    $reflection->getMethod($methodName)->getClosure($this);
+            }
+        }
     }
 
     /**
@@ -102,7 +120,7 @@ class Orm
      * @return Oppa\Orm\Entity
      */
     final public function entity(array $data = []) {
-        return new Entity($data);
+        return new Entity($data, $this->bindingMethods);
     }
 
     /**
@@ -120,14 +138,12 @@ class Orm
                 "You need to pass a parameter to make a query!");
         }
 
-        // make selection
+        // fetch one
         $result = self::$database->getConnection()->getAgent()
-            ->select($this->getTable(), [$this->getSelectFields()], "{$this->getPrimaryKey()} = ?", $param);
+            ->select($this->getTable(), [$this->getSelectFields()], "{$this->getPrimaryKey()} = ?", $param, 1);
+        $result = isset($result[0]) ? $result[0] : null;
 
-        $entityCollection = new EntityCollection();
-        $entityCollection->add(isset($result[0]) ? (array) $result[0] : []);
-
-        return $entityCollection->first();
+        return new Entity((array) $result, $this->bindingMethods);
     }
 
     /**
@@ -161,7 +177,7 @@ class Orm
 
         $entityCollection = new EntityCollection();
         foreach ($result as $result) {
-            $entityCollection->add((array) $result);
+            $entityCollection->add((array) $result, $this->bindingMethods);
         }
 
         return $entityCollection;

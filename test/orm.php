@@ -24,14 +24,18 @@ $db->connect();
 class Users extends \Oppa\Orm {
     protected $table = 'users';
     protected $primaryKey = 'id';
+
+    public function getPageLink() {
+        return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
+    }
 }
 
 $usersObject = new Users();
-pre($usersObject);
+// pre($usersObject);
 
-// $user = $usersObject->find(111111111);
+$user = $usersObject->find(1);
 // pre($user);
-// pre($user->name);
+pre($user->getPageLink());
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();
