@@ -102,10 +102,12 @@ abstract class Result
      * @return void
      */
     final public function reset() {
+        // reset data
+        $this->data = [];
+        // reset properties
         $this->id = [];
         $this->rowsCount = 0;
         $this->rowsAffected = 0;
-        $this->data = [];
     }
 
     /**
