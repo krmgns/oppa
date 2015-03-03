@@ -94,6 +94,17 @@ final class Autoload
                 return $require;
             }
 
+            // check: trait name is same with filaname?
+            if (strripos($objectName, 'trait') !== false) {
+                if (!trait_exists($objectName, false)) {
+                    throw new \RuntimeException(
+                        "Trait file `{$objectFile}` has been loaded but no " .
+                        "trait found such as `{$objectName}`.");
+                }
+
+                return $require;
+            }
+
             // check: class name is same with filaname?
             if (!class_exists($objectName, false)) {
                 throw new \RuntimeException(
