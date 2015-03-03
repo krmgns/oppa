@@ -118,7 +118,7 @@ abstract class Result
      * @return void
      */
     final public function setFetchType($fetchType) {
-        // fetch type argument could be int, but not recommanded
+        // fetch type could be int, but not recommanded
         if (is_integer($fetchType)) {
             if (!in_array($fetchType, [1, 2, 3, 4])) {
                 throw new Exception\ArgumentException(
@@ -126,7 +126,7 @@ abstract class Result
             }
             $this->fetchType = $fetchType;
         }
-        // or could be string as default like 'object', 'array_assoc', 'array_num'
+        // or could be string as default like 'object', 'array_assoc' etc.
         else {
             $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
             if (!defined($fetchTypeConst)) {
