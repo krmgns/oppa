@@ -30,11 +30,13 @@ use \Oppa\Exception\Orm as Exception;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Orm
  * @uses       Oppa\Database, Oppa\Exception\Orm
+ * @extends    Oppa\Orm\Relation
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 
 class Orm
+    extends Relation
 {
     /**
      * Database object.
@@ -61,6 +63,12 @@ class Orm
     protected $selectFields = ['*'];
 
     /**
+     * Relation map
+     * @var array
+     */
+    protected $relations = [];
+
+    /**
      * Binding methods for each entity.
      *
      * @var array
@@ -85,14 +93,7 @@ class Orm
                 "You need to specify both `table` and `primaryKey` property");
         }
 
-        // prepare once table, primary key and select fields
-        $agent = self::$database->getConnection()->getAgent();
-        if (preg_match('~^[\w]+$~', $this->table)) {
-            $this->table = $agent->escapeIdentifier($this->table);
-        }
-        if (preg_match('~^[\w]+$~', $this->primaryKey)) {
-            $this->primaryKey = $agent->escapeIdentifier($this->primaryKey);
-        }
+        // prepare once select fields
         if (is_array($this->selectFields)) {
             foreach ($this->selectFields as &$field) {
                 if ($field != '*') {
@@ -137,6 +138,8 @@ class Orm
             throw new Exception\ArgumentException(
                 "You need to pass a parameter to make a query!");
         }
+
+        $query = $this->generateJoinQuery();
 
         // fetch one
         $result = self::$database->getConnection()->getAgent()
@@ -199,16 +202,13 @@ class Orm
                 'There is no data ehough on entity for save action!');
         }
 
-        // trim escapes like "`"
-        $primaryKey = substr($this->primaryKey, 1, -1);
-
         $agent = self::$database->getConnection()->getAgent();
         // insert action
-        if (!isset($entity->{$primaryKey})) {
-            return $entity->{$primaryKey} = $agent->insert($this->table, $data);
+        if (!isset($entity->{$this->primaryKey})) {
+            return $entity->{$this->primaryKey} = $agent->insert($this->table, $data);
         }
         // update action
-        return $agent->update($this->table, $data, "`{$primaryKey}` = ?", [$data[$primaryKey]]);
+        return $agent->update($this->table, $data, "`{$this->primaryKey}` = ?", [$data[$this->primaryKey]]);
     }
 
     /**
@@ -234,8 +234,9 @@ class Orm
      *
      * @return string
      */
-    final public function getTable() {
-        return $this->table;
+    final public function getTable($escape = true) {
+        return !$escape ? $this->table
+            : self::$database->getConnection()->getAgent()->escapeIdentifier($this->table);
     }
 
     /**
@@ -243,8 +244,9 @@ class Orm
      *
      * @return string
      */
-    final public function getPrimaryKey() {
-        return $this->primaryKey;
+    final public function getPrimaryKey($escape = true) {
+        return !$escape ? $this->primaryKey
+            : self::$database->getConnection()->getAgent()->escapeIdentifier($this->primaryKey);
     }
 
     /**

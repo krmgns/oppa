@@ -45,8 +45,8 @@ $qb->setTable('users');
 $qb->setTable('users u');
 $qb->select('u.*, us.score, ul.login')
     ->aggregate('sum', 'us.score', 'sum_score')
-    ->joinLeft('users_score us', 'us.user_id=u.id')
-    ->joinLeft('users_login ul', 'ul.user_id=u.id')
+    ->join('users_score us', 'us.user_id=u.id')
+    ->join('users_login ul', 'ul.user_id=u.id')
     ->groupBy('u.id')
     ->orderBy('old')
     ->having('sum_score <= ?', [30])
@@ -55,7 +55,7 @@ $qb->select('u.*, us.score, ul.login')
 
 pre($qb->toString());
 
-pre($qb->get());
+// pre($qb->get());
 // pre($qb->getAll());
 
 // // insert

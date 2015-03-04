@@ -25,17 +25,31 @@ class Users extends \Oppa\Orm {
     protected $table = 'users';
     protected $primaryKey = 'id';
 
-    public function getPageLink() {
-        return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
-    }
+    // public function getPageLink() {
+    //     return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
+    // }
+
+    protected $relations = [
+        'select' => [
+            'join' => [
+                ['table' => 'users_score', 'foreign_key' => 'user_id',
+                    'fields' => ['score'], 'field_prefix' => '', 'group_by' => 'users_score.user_id'],
+                ['table' => 'users_login', 'foreign_key' => 'user_id',
+                    'fields' => ['login'], 'field_prefix' => ''],
+            ]
+            // 'left join' => [
+                // ['table' => 'foo', ...]
+            // ]
+        ]
+    ];
 }
 
 $usersObject = new Users();
 // pre($usersObject);
 
 $user = $usersObject->find(1);
-// pre($user);
-pre($user->getPageLink());
+pre($user);
+// pre($user->getPageLink());
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();
@@ -56,13 +70,13 @@ pre($user->getPageLink());
 // pre($user);
 
 // $user = $usersObject->entity();
-// $user->id = 930;
+// $user->id = 931;
 // $user->name = 'Veli';
 // $user->old = 45;
 // pre($user);
 // prd($usersObject->save($user));
 // pre($user);
 
-// $result = $usersObject->remove(924);
-// $result = $usersObject->remove([924,925,926]);
+// $result = $usersObject->remove(931);
+// $result = $usersObject->remove([931,925,926]);
 // prd($result);
