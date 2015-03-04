@@ -196,6 +196,38 @@ final class Builder
     }
 
     /**
+     * Add "JOIN" statement with "ON" keyword.
+     *
+     * @param  string $table To join.
+     * @return self
+     */
+    final public function join($table, $on, array $params = null) {
+        // Prepare params safely
+        if (!empty($params)) {
+            $on = $this->connection->getAgent()->prepare($on, $params);
+        }
+
+        return $this->push('join', sprintf('JOIN %s ON %s', $table, $on));
+    }
+
+    /**
+     * Add "JOIN" statement with "USING" keyword.
+     *
+     * @param  string     $table  To join.
+     * @param  string     $using
+     * @param  array|null $params
+     * @return self
+     */
+    final public function joinUsing($table, $using, array $params = null) {
+        // Prepare params safely
+        if (!empty($params)) {
+            $using = $this->connection->getAgent()->prepare($using, $params);
+        }
+
+        return $this->push('join', sprintf('JOIN %s USING (%s)', $table, $using));
+    }
+
+    /**
      * Add "LEFT JOIN" statement with "ON" keyword.
      *
      * @param  string $table To join.
@@ -207,7 +239,7 @@ final class Builder
             $on = $this->connection->getAgent()->prepare($on, $params);
         }
 
-        return $this->push('join', sprintf('%s ON %s', $table, $on));
+        return $this->push('join', sprintf('LEFT JOIN %s ON %s', $table, $on));
     }
 
     /**
@@ -224,7 +256,7 @@ final class Builder
             $using = $this->connection->getAgent()->prepare($using, $params);
         }
 
-        return $this->push('join', sprintf('%s USING (%s)', $table, $using));
+        return $this->push('join', sprintf('LEFT JOIN %s USING (%s)', $table, $using));
     }
 
     /**
@@ -447,9 +479,11 @@ final class Builder
                 $this->queryString .= sprintf('SELECT %s%s FROM %s',
                     join(', ', $this->query['select']), $aggregate, $this->table);
 
-                // add left join statement
+                // add join statements
                 if (isset($this->query['join'])) {
-                    $this->queryString .= sprintf(' LEFT JOIN %s', join(' ', $this->query['join']));
+                    foreach ($this->query['join'] as $value) {
+                        $this->queryString .= sprintf(' %s', $value);
+                    }
                 }
 
                 // add where statement

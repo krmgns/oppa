@@ -40,25 +40,28 @@ $qb->setTable('users');
 // ;
 
 // $qb->select()->aggregate('count');
-
-// $qb->select('u.*, up.point')
-//     ->aggregate('sum', 'up.point', 'sum_point')
-//     ->joinLeft('users_point up', 'up.user_id=u.id')
-//     ->groupBy('u.id')
-//     ->orderBy('old')
-//     ->having('sum_point > ?', [30])
-//     ->limit(0,10)
-// ;
-
-// pre($qb->toString());
-
 // pre($qb->get());
+
+$qb->setTable('users u');
+$qb->select('u.*, us.score, ul.login')
+    ->aggregate('sum', 'us.score', 'sum_score')
+    ->joinLeft('users_score us', 'us.user_id=u.id')
+    ->joinLeft('users_login ul', 'ul.user_id=u.id')
+    ->groupBy('u.id')
+    ->orderBy('old')
+    ->having('sum_score <= ?', [30])
+    ->limit(0,10)
+;
+
+pre($qb->toString());
+
+pre($qb->get());
 // pre($qb->getAll());
 
 // // insert
 // $qb->insert(['name' => 'Veli', 'old' => 25]);
-$qb->insert([['name' => 'Veli', 'old' => 25], ['name' => 'Deli', 'old' => 29]]);
-pre($qb->toString());
+// $qb->insert([['name' => 'Veli', 'old' => 25], ['name' => 'Deli', 'old' => 29]]);
+// pre($qb->toString());
 // $result = $qb->execute();
 // pre($result);
 // pre($result->getId());
