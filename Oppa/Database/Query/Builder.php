@@ -435,6 +435,8 @@ final class Builder
                 throw new Exception\ErrorException(
                     'Table is not defined yet! Call before setTable() to set target table.');
             }
+            // reset query
+            $this->queryString = '';
 
             // prapere for "SELECT" statement
             if (isset($this->query['select'])) {
