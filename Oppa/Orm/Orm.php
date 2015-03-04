@@ -208,7 +208,7 @@ class Orm
             return $entity->{$this->primaryKey} = $agent->insert($this->table, $data);
         }
         // update action
-        return $agent->update($this->table, $data, "`{$this->primaryKey}` = ?", [$data[$this->primaryKey]]);
+        return $agent->update($this->table, $data, "{$this->getPrimaryKey()} = ?", [$data[$this->primaryKey]]);
     }
 
     /**
