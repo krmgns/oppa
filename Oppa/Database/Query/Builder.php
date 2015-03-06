@@ -154,7 +154,7 @@ final class Builder
         }
 
         if (is_array($field)) {
-            $field = join(',', $field);
+            $field = join(', ', $field);
         }
 
         return $this->push('select', $field);
