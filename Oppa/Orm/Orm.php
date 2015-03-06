@@ -141,7 +141,7 @@ class Orm
         }
 
         // if (!empty($this->relations)) {
-        //     $query = $this->generateJoinQuery();
+        //     $query = $this->generateSelectQuery();
         // }
 
         // fetch one
