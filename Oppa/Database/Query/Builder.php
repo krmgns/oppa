@@ -154,11 +154,11 @@ final class Builder
             $field = 1;
         }
 
-        if (is_array($field)) {
-            $field = join(', ', $field);
+        if (is_string($field)) {
+            $field = explode(', ', $field);
         }
 
-        return $this->push('select', $field);
+        return $this->push('select', $field, false);
     }
 
     /**
