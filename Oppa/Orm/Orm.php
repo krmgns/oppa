@@ -145,7 +145,7 @@ class Orm
         // fetch one
         $result = self::$database->getConnection()->getAgent()
             ->select($this->getTable(), [$this->getSelectFields()], "{$this->getPrimaryKey()} = ?", $param, 1);
-        $result = isset($result[0]) ? $result[0] : null;
+        $result = isset($result[0]) ? $result[0] : [];
 
         return new Entity((array) $result, $this->bindingMethods);
     }
