@@ -143,7 +143,7 @@ final class Builder
     /**
      * Add select statement.
      *
-     * @param  string $field
+     * @param  mixed $field
      * @return self
      */
     final public function select($field = null) {
