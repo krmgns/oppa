@@ -95,6 +95,7 @@ class Orm
 
         // prepare once select fields
         if (is_array($this->selectFields)) {
+            $agent = self::$database->getConnection()->getAgent();
             foreach ($this->selectFields as &$field) {
                 if ($field != '*') {
                     $field = $agent->escapeIdentifier($field);
