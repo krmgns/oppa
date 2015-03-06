@@ -146,8 +146,9 @@ final class Builder
      * @param  mixed $field
      * @return self
      */
-    final public function select($field = null) {
-        $this->reset();
+    final public function select($field = null, $reset = true) {
+        $reset && $this->reset();
+
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
             $field = 1;
