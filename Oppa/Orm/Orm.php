@@ -140,9 +140,11 @@ class Orm
                 "You need to pass a parameter to make a query!");
         }
 
-        // if (!empty($this->relations)) {
-        //     $query = $this->generateSelectQuery();
-        // }
+        if (!empty($this->relations)) {
+            $query = $this->generateSelectQuery();
+            $query->where("{$this->primaryKey} = ?", $param);
+            pre($query);
+        }
 
         // fetch one
         $result = self::$database->getConnection()->getAgent()

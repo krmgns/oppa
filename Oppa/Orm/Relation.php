@@ -71,19 +71,24 @@ class Relation
                     }
                 }
             }
-            // select
+            // select child table(s) fields too
             $query->select($fields, false);
+        } else {
+            // select parent table fields only
+            $query->select($fields);
         }
 
-        pre($query);
+        return $query;
     }
 
     final private function prepareFields($table, $fields) {
         static $escape;
+        // !!! move escape works into query builder !!!
         !$escape && $escape = function($input) {
-            static $agent;
-            !$agent && $agent = $this->getDatabase()->getConnection()->getAgent();
-            return $agent->escapeIdentifier($input);
+            return $input;
+            // static $agent;
+            // !$agent && $agent = $this->getDatabase()->getConnection()->getAgent();
+            // return $agent->escapeIdentifier($input);
         };
 
         $table = $escape($table);
