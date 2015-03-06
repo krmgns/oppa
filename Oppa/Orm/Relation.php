@@ -36,7 +36,7 @@ class Relation
 {
     final protected function generateSelectQuery() {
         $query = new QueryBuilder($this->getDatabase()->getConnection());
-        $query->setTable($this->getTable());
+        $query->setTable($this->table);
 
         // parent fields
         $fields = $this->prepareFields($this->table, $this->selectFields);
