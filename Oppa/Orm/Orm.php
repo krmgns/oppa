@@ -140,7 +140,9 @@ class Orm
                 "You need to pass a parameter to make a query!");
         }
 
-        $query = $this->generateJoinQuery();
+        // if (!empty($this->relations)) {
+        //     $query = $this->generateJoinQuery();
+        // }
 
         // fetch one
         $result = self::$database->getConnection()->getAgent()

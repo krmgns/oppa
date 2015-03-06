@@ -24,6 +24,7 @@ $db->connect();
 class Users extends \Oppa\Orm {
     protected $table = 'users';
     protected $primaryKey = 'id';
+    protected $selectFields = ['id', 'name'];
 
     // public function getPageLink() {
     //     return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
@@ -32,13 +33,14 @@ class Users extends \Oppa\Orm {
     protected $relations = [
         'select' => [
             'join' => [
-                ['table' => 'users_score', 'foreign_key' => 'user_id',
+                ['table' => 'users_score', 'foreign_key' => 'user_id', 'using' => false,
                     'fields' => ['score'], 'field_prefix' => '', 'group_by' => 'users_score.user_id'],
-                ['table' => 'users_login', 'foreign_key' => 'user_id',
-                    'fields' => ['login'], 'field_prefix' => ''],
-            ]
+                ['table' => 'users_login', 'foreign_key' => 'user_id', 'using' => false,
+                    'fields' => ['login'], 'field_prefix' => 'foo'],
+            ],
             // 'left join' => [
-                // ['table' => 'foo', ...]
+            //     ['table' => 'users_foo', 'foreign_key' => 'user_id', 'using' => true,
+            //         'fields' => ['users_foo.aaa', 'sum(x)', 'count(*)'], 'field_prefix' => ''],
             // ]
         ]
     ];

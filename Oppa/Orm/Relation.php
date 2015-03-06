@@ -34,7 +34,92 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  */
 class Relation
 {
-    final protected function generateJoinQuery() {
-        //
+    final protected function generateSelectQuery() {
+        $agent = $this->getDatabase()->getConnection()->getAgent();
+        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query->setTable($this->getTable());
+
+        // parent fields
+        $fields = $this->prepareFields($this->table, $this->selectFields);
+
+        if (isset($this->relations['select'])) {
+            foreach ($this->relations['select'] as $key => $value) {
+                foreach ($value as $i => $options) {
+                    $key = trim($key);
+                    if ($key == 'join') {
+                        isset($options['using']) && $options['using'] == true
+                            ? $query->joinUsing($options['table'], $options['foreign_key'])
+                            : $query->join($options['table'], sprintf(
+                                '%s.%s = %s.%s',
+                                    $options['table'], $options['foreign_key'],
+                                    $this->table, $this->primaryKey
+                              ));
+                    } elseif ($key == 'left join') {
+                        isset($options['using']) && $options['using'] == true
+                            ? $query->joinLeftUsing($options['table'], $options['foreign_key'])
+                            : $query->joinLeft($options['table'], sprintf(
+                                '%s.%s = %s.%s',
+                                    $options['table'], $options['foreign_key'],
+                                    $this->table, $this->primaryKey
+                              ));
+                    } // else { no supported yet! }
+
+                    $fieldPrefixFormat = isset($options['field_prefix'])
+                        ? "%s AS {$options['field_prefix']}%s" : '';
+                    foreach ($this->prepareFields($options['table'], $options['fields']) as $field) {
+                        // field_prefix??
+                        $fields[] = sprintf($fieldPrefixFormat, $field, $field);
+                    }
+                }
+            }
+            // select
+            $query->select($fields, false);
+        }
+
+        pre($query);
+    }
+
+    final private function prepareFields($table, $fields) {
+        static $escape;
+        !$escape && $escape = function($input) {
+            static $agent;
+            !$agent && $agent = $this->getDatabase()->getConnection()->getAgent();
+            return $agent->escapeIdentifier($input);
+        };
+
+        $table = $escape($table);
+        return array_map(function($field) use($table, $escape) {
+            $field  = trim($field);
+            $hasDot = strpos($field, '.') !== false;
+            $hasPrn = strpos($field, '(') !== false;
+
+            // no function?
+            if (!$hasPrn) {
+                // dots?
+                if ($hasDot) {
+                    return $field = preg_replace_callback('~(.+)\.(.+)~',
+                        function($matches) use($escape) {
+                            return sprintf('%s.%s',
+                                $escape($matches[1]),
+                                $escape($matches[2]));
+                        },
+                    $field);
+                }
+                return sprintf('%s.%s', $table, $escape($field));
+            }
+
+            // handle function
+            return preg_replace_callback('~(\w+)\s*\(\s*(.+?)\s*\)~i',
+                function($matches) use($escape, $table) {
+                    list(, $func, $field) = $matches;
+                    // asterisk?
+                    if ($field != '*') {
+                        $field = $escape($field);
+                    }
+
+                    return sprintf('%s(%s.%s)', $func, $table, $field);
+                },
+            $field);
+        }, $fields);
     }
 }
