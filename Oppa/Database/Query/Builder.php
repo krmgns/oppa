@@ -585,6 +585,20 @@ final class Builder
     }
 
     /**
+     * Add prefix to fields for select, where etc.
+     *
+     * @param string $to
+     * @param string $prefix
+     */
+    final public function addPrefixTo($to, $prefix) {
+        if (isset($this->query[$to])) {
+            $this->query[$to] = array_map(function($field) use($prefix) {
+                return sprintf('%s.%s', trim($prefix), trim($field));
+            }, $this->query[$to]);
+        }
+    }
+
+    /**
      * Push a statement and query into query stack.
      *
      * @param  string  $key
