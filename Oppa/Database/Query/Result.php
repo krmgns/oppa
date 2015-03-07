@@ -147,15 +147,6 @@ abstract class Result
     }
 
     /**
-     * Get result data.
-     *
-     * @return array
-     */
-    final public function getData() {
-        return $this->data;
-    }
-
-    /**
      * Set result id(s).
      *
      * @param  integer|array $id
@@ -230,5 +221,37 @@ abstract class Result
      */
     final public function getIterator() {
         return new \ArrayIterator($this->data);
+    }
+
+    /**
+     * Get result data.
+     *
+     * @return mixed|array|null
+     */
+    final public function getData($i = null) {
+        if ($i !== null) {
+            return isset($this->data[$i])
+                ? $this->data[$i] : null;
+        }
+
+        return $this->data;
+    }
+
+    /**
+     * Get first data item.
+     *
+     * @return mixed
+     */
+    final public function first() {
+        return $this->getData(0);
+    }
+
+    /**
+     * Get last data item.
+     *
+     * @return mixed
+     */
+    final public function last() {
+        return $this->getData(count($this->data) - 1);
     }
 }
