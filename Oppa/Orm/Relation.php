@@ -61,10 +61,15 @@ class Relation
                                     $options['table'], $options['foreign_key'],
                                     $this->table, $this->primaryKey
                               ));
-                    } // else { no supported yet! }
+                    } // else { not supported yet! }
 
-                    $fieldPrefixFormat = isset($options['field_prefix'])
-                        ? "%s AS {$options['field_prefix']}%s" : '';
+                    // prepare select field format
+                    $fieldPrefixFormat = '%s';
+                    if (isset($options['field_prefix']) && trim($options['field_prefix'])) {
+                        $fieldPrefixFormat = '%s AS '. substr(
+                            $options['field_prefix'], strpos($options['field_prefix'], '.'));
+                    }
+
                     foreach ($this->prepareFields($options['table'], $options['fields']) as $field) {
                         // field_prefix??
                         $fields[] = sprintf($fieldPrefixFormat, $field, $field);
