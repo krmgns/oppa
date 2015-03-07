@@ -93,16 +93,6 @@ class Orm
                 "You need to specify both `table` and `primaryKey` property");
         }
 
-        // prepare once select fields
-        if (is_array($this->selectFields)) {
-            $agent = self::$database->getConnection()->getAgent();
-            foreach ($this->selectFields as &$field) {
-                if ($field != '*') {
-                    $field = $agent->escapeIdentifier($field);
-                }
-            }
-        }
-
         // methods to bind to the entities
         $className = get_class($this);
         $reflection = new \ReflectionClass($className);
@@ -239,9 +229,8 @@ class Orm
      *
      * @return string
      */
-    final public function getTable($escape = true) {
-        return !$escape ? $this->table
-            : self::$database->getConnection()->getAgent()->escapeIdentifier($this->table);
+    final public function getTable() {
+        return $this->table;
     }
 
     /**
@@ -249,9 +238,8 @@ class Orm
      *
      * @return string
      */
-    final public function getPrimaryKey($escape = true) {
-        return !$escape ? $this->primaryKey
-            : self::$database->getConnection()->getAgent()->escapeIdentifier($this->primaryKey);
+    final public function getPrimaryKey() {
+        return $this->primaryKey;
     }
 
     /**
@@ -260,9 +248,12 @@ class Orm
      * @return string
      */
     final public function getSelectFields() {
-        return empty($this->selectFields) ? '*' :
-            (is_array($this->selectFields)
-                ? join(',', $this->selectFields) : '*');
+        $fields = '*';
+        if (is_array($this->selectFields)) {
+            $fields = join(', ', is_array($this->selectFields));
+        }
+
+        return $fields;
     }
 
     /**
