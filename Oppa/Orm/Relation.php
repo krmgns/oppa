@@ -34,10 +34,7 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  */
 class Relation
 {
-    final protected function generateSelectQuery() {
-        $query = new QueryBuilder($this->getDatabase()->getConnection());
-        $query->setTable($this->table);
-
+    final protected function generateSelectQuery(QueryBuilder $query) {
         // parent fields
         $fields = $this->prepareFields($this->table, $this->selectFields);
 
