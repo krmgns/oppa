@@ -601,12 +601,11 @@ final class Builder
     /**
      * Push a statement and query into query stack.
      *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @param  boolean $multi
+     * @param  string $key
+     * @param  mixed  $value
      * @return self
      */
-    final protected function push($key, $value, $multi = true) {
+    final protected function push($key, $value) {
         if (!isset($this->query[$key])) {
             $this->query[$key] = [];
         }
