@@ -159,7 +159,7 @@ final class Builder
             $field = explode(',', $field);
         }
 
-        return $this->push('select', array_map('trim', $field), false);
+        return $this->push('select', array_map('trim', $field));
     }
 
     /**
@@ -175,7 +175,7 @@ final class Builder
             $data = [$data];
         }
 
-        return $this->push('insert', $data, false);
+        return $this->push('insert', $data);
     }
 
     /**
@@ -187,7 +187,7 @@ final class Builder
     final public function update(array $data) {
         $this->reset();
 
-        return $this->push('update', $data, false);
+        return $this->push('update', $data);
     }
 
     /**
@@ -198,7 +198,7 @@ final class Builder
     final public function delete() {
         $this->reset();
 
-        return $this->push('delete', true, false);
+        return $this->push('delete', true);
     }
 
     /**
