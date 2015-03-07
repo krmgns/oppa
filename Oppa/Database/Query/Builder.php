@@ -409,7 +409,7 @@ final class Builder
                 ? preg_replace('~[^\w]~', '', $aggr .'_'. $field) : $aggr;
         }
 
-        return $this->push('aggregate', sprintf('%s(%s) %s',
+        return $this->push('select', sprintf('%s(%s) %s',
             $aggr, $field, $fieldAlias
         ));
     }
