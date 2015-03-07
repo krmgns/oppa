@@ -319,6 +319,18 @@ final class Builder
     }
 
     /**
+     * Add "WHERE .. BETWEEN" statement.
+     *
+     * @param  string $field
+     * @param  array  $between
+     * @param  string $op
+     * @return self
+     */
+    final public function whereBetween($field, array $between, $op = self::OP_AND) {
+        return $this->where($field . ' BETWEEN ? AND ?', $between, $op);
+    }
+
+    /**
      * Add "WHERE" statement for "IS NULL" queries.
      *
      * @param  string $field
