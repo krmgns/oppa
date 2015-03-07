@@ -151,7 +151,7 @@ final class Builder
 
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
-            $field = 1;
+            $field = [1];
         }
 
         // could be joined
