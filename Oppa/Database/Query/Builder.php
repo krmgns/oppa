@@ -159,7 +159,7 @@ final class Builder
             $field = explode(',', $field);
         }
 
-        return $this->push('select', $field, false);
+        return $this->push('select', array_map('trim', $field), false);
     }
 
     /**
