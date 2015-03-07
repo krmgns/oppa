@@ -41,10 +41,18 @@ class Relation
         // parent fields
         $fields = $this->prepareFields($this->table, $this->selectFields);
 
+        // use select options
         if (isset($this->relations['select'])) {
             foreach ($this->relations['select'] as $key => $value) {
+                $key = trim($key);
+                // add group by
+                if ($key == 'group by') {
+                    $query->groupBy($value);
+                    continue;
+                }
+
+                // join tables
                 foreach ($value as $i => $options) {
-                    $key = trim($key);
                     if ($key == 'join') {
                         isset($options['using']) && $options['using'] == true
                             ? $query->joinUsing($options['table'], $options['foreign_key'])
@@ -63,16 +71,10 @@ class Relation
                               ));
                     } // else { not supported yet! }
 
-                    // prepare select field format
-                    $fieldPrefixFormat = '%s';
-                    if (isset($options['field_prefix']) && trim($options['field_prefix'])) {
-                        $fieldPrefixFormat = '%s AS '. substr(
-                            $options['field_prefix'], strpos($options['field_prefix'], '.'));
-                    }
-
-                    // prepare select fields
-                    foreach ($this->prepareFields($options['table'], $options['fields']) as $field) {
-                        $fields[] = sprintf($fieldPrefixFormat, $field, $field);
+                    // add child fields
+                    if (isset($options['fields'])) {
+                        $fields = array_merge($fields,
+                            $this->prepareFields($options['table'], $options['fields']));
                     }
                 }
             }
@@ -87,26 +89,31 @@ class Relation
     }
 
     final private function prepareFields($table, $fields) {
+        // check fields
+        if (empty($fields)) {
+            return [];
+        }
+
         return array_map(function($field) use($table) {
             $field  = trim($field);
-            $hasDot = strpos($field, '.') !== false;
-            $hasPrn = strpos($field, '(') !== false;
-
-            // no function?
-            if (!$hasPrn) {
-                // dots?
-                if ($hasDot) {
-                    return preg_replace_callback('~(.+)\.(.+)~', function($matches) {
-                        return sprintf('%s.%s', $matches[1], $matches[2]);
-                    }, $field);
-                }
-                return sprintf('%s.%s', $table, $field);
+            // dotted?
+            if (strstr($field, '.')) {
+                return $field;
             }
 
-            // handle function
-            return preg_replace_callback('~(\w+)\s*\(\s*(.+?)\s*\)~i', function($matches) use($table) {
-                return sprintf('%s(%s.%s)', $matches[1], $table, $matches[2]);
-            }, $field);
+            // function?
+            if (strstr($field, '(')) {
+                return $this->handleFunctions($table, $field);
+            }
+
+            // add dots
+            return sprintf('%s.%s', $table, $field);
         }, $fields);
+    }
+
+    final private function handleFunctions($table, $field) {
+        return preg_replace_callback('~(.+)\((.+?)\)(.*)~i', function($matches) use($table) {
+            return sprintf('%s(%s.%s)%s', $matches[1], $table, $matches[2], $matches[3]);
+        }, trim($field));
     }
 }
