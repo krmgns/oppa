@@ -556,7 +556,7 @@ final class Builder
                         if (isset($this->query['orderBy'])) {
                             $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
                         }
-                        if (isset($this->query['limit'])) {
+                        if (isset($this->query['limit'][0])) {
                             $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
                         }
                     }
@@ -575,7 +575,7 @@ final class Builder
                 if (isset($this->query['orderBy'])) {
                     $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
                 }
-                if (isset($this->query['limit'])) {
+                if (isset($this->query['limit'][0])) {
                     $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
                 }
             }
