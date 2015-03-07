@@ -607,12 +607,10 @@ final class Builder
      * @return self
      */
     final protected function push($key, $value, $multi = true) {
-        if ($multi) {
-            // Set query as sub array
-            $this->query[$key][] = $value;
-        } else {
-            $this->query[$key] = $value;
+        if (!isset($this->query[$key])) {
+            $this->query[$key] = [];
         }
+        $this->query[$key] = array_merge($this->query[$key], (array) $value);
 
         return $this;
     }
