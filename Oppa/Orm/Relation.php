@@ -70,8 +70,8 @@ class Relation
                             $options['field_prefix'], strpos($options['field_prefix'], '.'));
                     }
 
+                    // prepare select fields
                     foreach ($this->prepareFields($options['table'], $options['fields']) as $field) {
-                        // field_prefix??
                         $fields[] = sprintf($fieldPrefixFormat, $field, $field);
                     }
                 }
