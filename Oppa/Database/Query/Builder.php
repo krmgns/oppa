@@ -154,6 +154,7 @@ final class Builder
             $field = 1;
         }
 
+        // could be joined
         if (is_string($field)) {
             $field = explode(',', $field);
         }
