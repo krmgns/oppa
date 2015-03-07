@@ -82,17 +82,7 @@ class Relation
     }
 
     final private function prepareFields($table, $fields) {
-        static $escape;
-        // !!! move escape works into query builder !!!
-        !$escape && $escape = function($input) {
-            return $input;
-            // static $agent;
-            // !$agent && $agent = $this->getDatabase()->getConnection()->getAgent();
-            // return $agent->escapeIdentifier($input);
-        };
-
-        $table = $escape($table);
-        return array_map(function($field) use($table, $escape) {
+        return array_map(function($field) use($table) {
             $field  = trim($field);
             $hasDot = strpos($field, '.') !== false;
             $hasPrn = strpos($field, '(') !== false;
@@ -101,29 +91,17 @@ class Relation
             if (!$hasPrn) {
                 // dots?
                 if ($hasDot) {
-                    return $field = preg_replace_callback('~(.+)\.(.+)~',
-                        function($matches) use($escape) {
-                            return sprintf('%s.%s',
-                                $escape($matches[1]),
-                                $escape($matches[2]));
-                        },
-                    $field);
+                    return preg_replace_callback('~(.+)\.(.+)~', function($matches) {
+                        return sprintf('%s.%s', $matches[1], $matches[2]);
+                    }, $field);
                 }
-                return sprintf('%s.%s', $table, $escape($field));
+                return sprintf('%s.%s', $table, $field);
             }
 
             // handle function
-            return preg_replace_callback('~(\w+)\s*\(\s*(.+?)\s*\)~i',
-                function($matches) use($escape, $table) {
-                    list(, $func, $field) = $matches;
-                    // asterisk?
-                    if ($field != '*') {
-                        $field = $escape($field);
-                    }
-
-                    return sprintf('%s(%s.%s)', $func, $table, $field);
-                },
-            $field);
+            return preg_replace_callback('~(\w+)\s*\(\s*(.+?)\s*\)~i', function($matches) use($table) {
+                return sprintf('%s(%s.%s)', $matches[1], $table, $matches[2]);
+            }, $field);
         }, $fields);
     }
 }
