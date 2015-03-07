@@ -155,7 +155,7 @@ final class Builder
         }
 
         if (is_string($field)) {
-            $field = explode(', ', $field);
+            $field = explode(',', $field);
         }
 
         return $this->push('select', $field, false);
