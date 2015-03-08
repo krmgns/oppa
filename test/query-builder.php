@@ -42,19 +42,18 @@ $qb->setTable('users');
 // $qb->select()->aggregate('count');
 // pre($qb->get());
 
-$qb->setTable('users u');
-$qb->select('u.*, us.score, ul.login')
-    ->aggregate('sum', 'us.score', 'sum_score')
-    ->join('users_score us', 'us.user_id=u.id')
-    ->join('users_login ul', 'ul.user_id=u.id')
-    ->groupBy('u.id')
-    ->orderBy('old')
-    ->having('sum_score <= ?', [30])
-    ->limit(0,10)
-;
+// $qb->setTable('users u');
+// $qb->select('u.*, us.score, ul.login')
+//     ->aggregate('sum', 'us.score', 'sum_score')
+//     ->join('users_score us', 'us.user_id=u.id')
+//     ->join('users_login ul', 'ul.user_id=u.id')
+//     ->groupBy('u.id')
+//     ->orderBy('old')
+//     ->having('sum_score <= ?', [30])
+//     ->limit(0,10)
+// ;
 
-pre($qb->toString());
-
+// pre($qb->toString());
 // pre($qb->get());
 // pre($qb->getAll());
 
@@ -67,10 +66,6 @@ pre($qb->toString());
 // pre($result->getId());
 // pre($result->getId(true));
 
-// // select
-// pre($qb->execute());
-// pre($qb->execute()->getData());
-
 // // // update
 // $qb->update(['old' => 100])->where('id > ?', [30])->limit(1);
 // $qb->update(['old' => 100])->where('id > ?', [30])->orderBy('id DESC')->limit(1);
@@ -81,6 +76,7 @@ pre($qb->toString());
 // $qb->delete()->where('id > ?', [30])->limit(1);
 // $qb->delete()->where('id > ?', [30])->orderBy('id DESC')->limit(1);
 // $qb->delete()->where('id > ?', [30])->orderBy('id', $qb::OP_DESC)->limit(1);
+// $qb->delete()->whereBetween('id', [931,932])->limit(10);
 // pre($qb->toString());
 // pre($qb->execute());
 
