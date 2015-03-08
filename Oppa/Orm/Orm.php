@@ -103,7 +103,7 @@ class Orm
         // set table info for once
         if (empty(self::$info)) {
             $result = self::$database->getConnection()->getAgent()
-                ->getAll("SHOW COLUMNS FROM `{$this->table}`", null, 'array_assoc');
+                ->getAll("SHOW COLUMNS FROM {$this->table}", null, 'array_assoc');
 
             // will be filled more if needed
             foreach ($result as $result) {
