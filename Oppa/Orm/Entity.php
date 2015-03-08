@@ -155,11 +155,23 @@ final class Entity
     }
 
     /**
-     * Save entity data.
+     * Save entity.
      *
      * @return integer
      */
     final public function save() {
         return $this->orm->save($this);
+    }
+
+    /**
+     * Remove entity.
+     *
+     * @return integer|null
+     */
+    final public function remove() {
+        $primaryKey = $this->orm->getPrimaryKey();
+        if (isset($this->{$primaryKey})) {
+            return $this->orm->remove($this->{$primaryKey});
+        }
     }
 }
