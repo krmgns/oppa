@@ -111,30 +111,41 @@ abstract class Result
     }
 
     /**
-     * Set fetch type.
+     * Detect fetch type.
      *
-     * @param  integer $fetchType
+     * @param  mixed $fetchType
      * @throws Oppa\Exception\Database\ArgumentException
      * @return void
      */
-    final public function setFetchType($fetchType) {
+    final public function detectFetchType($fetchType) {
         // fetch type could be int, but not recommanded
         if (is_integer($fetchType)) {
             if (!in_array($fetchType, [1, 2, 3, 4])) {
                 throw new Exception\ArgumentException(
                     "Given `{$fetchType}` fetch type is not implemented!");
             }
-            $this->fetchType = $fetchType;
+
+            return $fetchType;
         }
+
         // or could be string as default like 'object', 'array_assoc' etc.
-        else {
-            $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
-            if (!defined($fetchTypeConst)) {
-                throw new Exception\ArgumentException(
-                    "Given `{$fetchType}` fetch type is not implemented!");
-            }
-            $this->fetchType = constant($fetchTypeConst);
+        $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
+        if (!defined($fetchTypeConst)) {
+            throw new Exception\ArgumentException(
+                "Given `{$fetchType}` fetch type is not implemented!");
         }
+
+        return constant($fetchTypeConst);
+    }
+
+    /**
+     * Set fetch type.
+     *
+     * @param  mixed $fetchType
+     * @return void
+     */
+    final public function setFetchType($fetchType) {
+        $this->fetchType = $this->detectFetchType($fetchType);
     }
 
     /**
