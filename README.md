@@ -28,5 +28,4 @@ $db->connect();
 $agent = $db->getConnection()->getAgent();
 $agent->query("delete from `users` where `id` = ?", [123]);
 print $agent->rowsAffected();
-
 ```
