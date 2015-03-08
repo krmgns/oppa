@@ -30,7 +30,7 @@ $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();
-$agent->query("delete from `users` where `id` = ?", [123]);
+$agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
 prd($agent->rowsAffected());
 ```
 
