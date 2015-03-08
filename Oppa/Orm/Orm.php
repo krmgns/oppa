@@ -281,7 +281,7 @@ class Orm
         if ($result && isset($this->relations['delete'])) {
             foreach ((array) $this->relations['delete'] as $delete) {
                 if (isset($delete['table'], $delete['foreign_key'])) {
-                    $agent->delete($delete['table'], "{$delete['foreign_key']} = ?", $params);
+                    $agent->delete($delete['table'], "{$delete['foreign_key']} IN(?)", $params);
                 }
             }
         }
