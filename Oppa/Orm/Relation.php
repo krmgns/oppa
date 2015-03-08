@@ -34,6 +34,12 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  */
 class Relation
 {
+    /**
+     * Add select for child table(s) fields.
+     *
+     * @param  Oppa\Database\Query\Builder $query
+     * @return Oppa\Database\Query\Builder
+     */
     final protected function addSelect(QueryBuilder $query) {
         // child fields
         $fields = [];
@@ -86,6 +92,13 @@ class Relation
         return $query;
     }
 
+    /**
+     * Prepare field appending table names.
+     *
+     * @param  string $table
+     * @param  array  $fields
+     * @return array
+     */
     final private function prepareFields($table, $fields) {
         // check fields
         if (empty($fields)) {
@@ -101,17 +114,14 @@ class Relation
 
             // function?
             if (strstr($field, '(')) {
-                return $this->handleFunctions($table, $field);
+                return preg_replace_callback('~(.+)\((.+?)\)(.*)~i', function($matches) use($table) {
+                    // append table before field
+                    return sprintf('%s(%s.%s)%s', $matches[1], $table, $matches[2], $matches[3]);
+                }, $field);
             }
 
             // add dots
             return sprintf('%s.%s', $table, $field);
         }, $fields);
-    }
-
-    final private function handleFunctions($table, $field) {
-        return preg_replace_callback('~(.+)\((.+?)\)(.*)~i', function($matches) use($table) {
-            return sprintf('%s(%s.%s)%s', $matches[1], $table, $matches[2], $matches[3]);
-        }, trim($field));
     }
 }

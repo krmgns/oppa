@@ -35,7 +35,7 @@ class Users extends \Oppa\Orm {
         'select' => [
             'left join' => [
                 ['table' => 'users_score', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['score']],
+                    'fields' => ['sum(score) as score']],
                 ['table' => 'users_login', 'foreign_key' => 'user_id', 'using' => false,
                     'fields' => ['date_format(from_unixtime(login), "%Y-%m-%d %H:%i:%s") as login']],
             ],
@@ -55,8 +55,8 @@ class Users extends \Oppa\Orm {
 $usersObject = new Users();
 // pre($usersObject);
 
-// $user = $usersObject->find(1);
-// pre($user);
+$user = $usersObject->find(1);
+pre($user);
 // pre($user->getPageLink());
 // prd($user->isFound());
 
