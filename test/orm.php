@@ -75,7 +75,7 @@ $usersObject = new Users();
 // $user = $usersObject->entity();
 // $user->name = 'Deli';
 // $user->old = rand(100,500);
-// prd($usersObject->save($user));
+// prd($user->save());
 // pre($user);
 
 // update
