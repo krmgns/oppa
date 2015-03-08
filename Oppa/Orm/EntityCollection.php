@@ -44,11 +44,12 @@ final class EntityCollection
     /**
      * Add an entity.
      *
-     * @param  array $data
+     * @param  Oppa\Orm\Orm $orm
+     * @param  array        $data
      * @return void
      */
-    final public function add(array $data, array $methods) {
-        $this->collection[] = new Entity($data, $methods);
+    final public function add(Orm $orm, array $data) {
+        $this->collection[] = new Entity($orm, $data);
     }
 
     /**

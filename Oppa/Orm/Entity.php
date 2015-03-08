@@ -42,10 +42,10 @@ final class Entity
     private $data = [];
 
     /**
-     * Binding methods.
-     * @var array
+     * Owner ORM object
+     * @var Oppa\Orm\Orm
      */
-    private $methods = [];
+    private $orm;
 
     /**
      * Create a fresh Entity object.
@@ -53,14 +53,14 @@ final class Entity
      * @param Oppa\Orm\Orm $orm
      * @param array        $data
      */
-    final public function __construct(array $data = [], array $methods = null) {
+    final public function __construct(Orm $orm = null, array $data = []) {
         // set data
         foreach ($data as $key => $value) {
             $this->data[$key] = $value;
         }
 
-        // set binding methods
-        $this->methods = $methods;
+        // set owner orm
+        $this->orm = $orm;
     }
 
     /**
@@ -74,8 +74,9 @@ final class Entity
     final public function __call($method, $arguments) {
         // check for method
         $method = strtolower($method);
-        if (isset($this->methods[$method])) {
-            $method = $this->methods[$method]->bindTo($this);
+        $methods = $this->orm->getBindingMethods();
+        if (isset($methods[$method])) {
+            $method = $methods[$method]->bindTo($this);
             return call_user_func_array($method, $arguments);
         }
 
