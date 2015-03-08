@@ -14,7 +14,7 @@ use \Oppa\Configuration;
 
 ```php
 $cfg = [
-    'agent' => 'mysqli',
+    'agent'    => 'mysqli',
     'database' => [
         'host'     => 'localhost',  'name'     => 'test',
         'username' => 'test',       'password' => '********',
