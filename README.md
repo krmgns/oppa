@@ -53,4 +53,17 @@ pre($user);
 if ($user->isFound()) {
     pre($user->name);
 }
+
+// update a user that id=1
+$user = $usersObject->entity();
+$user->id   = 1;
+$user->name = 'Veli';
+$user->old  = 55;
+prd($usersObject->save($user));
+pre($user);
+
+// update a user that already exists
+$user = $usersObject->find(1);
+$user->old = 100;
+pre($user->save());
 ```
