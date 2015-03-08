@@ -33,7 +33,7 @@ prd($agent->rowsAffected());
 **Simple ORM**
 
 ```php
-// set connected database
+// set orm database that already connected (like above)
 \Oppa\Orm::setDatabase($db);
 
 class Users extends \Oppa\Orm {
