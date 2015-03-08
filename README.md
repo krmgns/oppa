@@ -10,7 +10,7 @@ use \Oppa\Database;
 use \Oppa\Configuration;
 ```
 
-**Simple Usage**
+**Configuration**
 
 ```php
 $cfg = [
@@ -21,7 +21,11 @@ $cfg = [
         'charset'  => 'utf8',       'timezone' => '+00:00',
     ]
 ];
+```
 
+**Simple Usage**
+
+```php
 $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
