@@ -254,7 +254,7 @@ class Orm
         }
         // update action
         return $agent->update($this->table, $data,
-            "{$this->getPrimaryKey()} = ?", [$data[$this->primaryKey]]);
+            "{$this->primaryKey} = ?", [$data[$this->primaryKey]]);
     }
 
     /**
@@ -272,7 +272,7 @@ class Orm
         }
 
         return self::$database->getConnection()->getAgent()
-            ->delete($this->getTable(), "{$this->getPrimaryKey()} IN(?)", $params);
+            ->delete($this->getTable(), "{$this->primaryKey} IN(?)", $params);
     }
 
     /**
