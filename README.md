@@ -54,16 +54,37 @@ if ($user->isFound()) {
     pre($user->name);
 }
 
-// update a user that id=1
+// insert a user
+$user = $usersObject->entity();
+$user->name = 'Veli';
+$user->old  = 40;
+prd($user->save());
+// or
+$user = $usersObject->save($user);
+// here we see "id" will be filled with last insert id
+pre($user);
+
+// update a user "id=1"
 $user = $usersObject->entity();
 $user->id   = 1;
 $user->name = 'Veli';
 $user->old  = 55;
 prd($usersObject->save($user));
-pre($user);
 
-// update a user that already exists
+// update a user that already exists "id=1"
 $user = $usersObject->find(1);
 $user->old = 100;
-pre($user->save());
+prd($user->save());
+
+// remove a user "id=1"
+$result = $usersObject->remove(1);
+prd($result);
+
+// remove a user that already exists "id=1"
+$user = $usersObject->find(1);
+prd($user->remove());
+
+// remove users "id=1,2,3"
+$result = $usersObject->remove([1,2,3]);
+prd($result);
 ```
