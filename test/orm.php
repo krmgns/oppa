@@ -44,6 +44,10 @@ class Users extends \Oppa\Orm {
             //         'fields' => ['users_foo.aaa', 'sum(x)', 'count(*)', 'xyz']],
             // ],
             'group by' => 'users.id',
+        ],
+        'delete' => [
+            ['table' => 'users_score', 'foreign_key' => 'user_id'],
+            ['table' => 'users_login', 'foreign_key' => 'user_id']
         ]
     ];
 }
@@ -70,8 +74,7 @@ $usersObject = new Users();
 // insert
 // $user = $usersObject->entity();
 // $user->name = 'Deli';
-// $user->old = 35;
-// pre($user);
+// $user->old = rand(100,500);
 // prd($usersObject->save($user));
 // pre($user);
 
@@ -80,7 +83,6 @@ $usersObject = new Users();
 // $user->id = 933;
 // $user->name = 'Veli';
 // $user->old = 55;
-// pre($user);
 // prd($usersObject->save($user));
 // pre($user);
 
@@ -95,6 +97,6 @@ $usersObject = new Users();
 // prd($result);
 
 // remove exists
-// $user = $usersObject->find(930);
+// $user = $usersObject->find(937);
 // pre($user);
 // pre($user->remove());

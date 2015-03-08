@@ -271,8 +271,22 @@ class Orm
                 'You need to pass a parameter to make a query!');
         }
 
-        return self::$database->getConnection()->getAgent()
-            ->delete($this->getTable(), "{$this->primaryKey} IN(?)", $params);
+        // get worker agent
+        $agent = self::$database->getConnection()->getAgent();
+
+        // remove data
+        $result = $agent->delete($this->getTable(), "{$this->primaryKey} IN(?)", $params);
+
+        // remove related child(s) data
+        if ($result && isset($this->relations['delete'])) {
+            foreach ((array) $this->relations['delete'] as $delete) {
+                if (isset($delete['table'], $delete['foreign_key'])) {
+                    $agent->delete($delete['table'], "{$delete['foreign_key']} = ?", $params);
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
