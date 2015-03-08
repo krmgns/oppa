@@ -275,7 +275,7 @@ class Orm
         $agent = self::$database->getConnection()->getAgent();
 
         // remove data
-        $result = $agent->delete($this->getTable(), "{$this->primaryKey} IN(?)", $params);
+        $result = $agent->delete($this->table, "{$this->primaryKey} IN(?)", $params);
 
         // remove related child(s) data
         if ($result && isset($this->relations['delete'])) {
