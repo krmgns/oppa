@@ -57,13 +57,13 @@ $usersObject = new Users();
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();
-$users = $usersObject->findAll([1,2,3]);
+// $users = $usersObject->findAll([1,2,3]);
 // $users = $usersObject->findAll('users.id in(?)', [[1,2,3]]);
 // $users = $usersObject->findAll('users.id in(?,?,?)', [1,2,3]);
 // pre($users);
-foreach ($users as $user) {
-    pre($user->name);
-}
+// foreach ($users as $user) {
+    // pre($user->name);
+// }
 // $users = $usersObject->findAll([111111111,222222222,33333333]);
 // prd($users->isFound());
 
