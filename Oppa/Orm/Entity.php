@@ -153,4 +153,13 @@ final class Entity
     final public function isFound() {
         return !empty($this->data);
     }
+
+    /**
+     * Save entity data.
+     *
+     * @return integer
+     */
+    final public function save() {
+        return $this->orm->save($this);
+    }
 }
