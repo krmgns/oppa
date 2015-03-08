@@ -166,7 +166,7 @@ final class Entity
     /**
      * Remove entity.
      *
-     * @return integer|null
+     * @return integer But null if no entity found.
      */
     final public function remove() {
         $primaryKey = $this->orm->getPrimaryKey();
