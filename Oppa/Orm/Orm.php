@@ -247,7 +247,9 @@ class Orm
         // use only owned fields
         $data = array_intersect_key($data, array_flip(self::$info['$fields']));
 
+        // get worker agent
         $agent = self::$database->getConnection()->getAgent();
+
         // insert action
         if (!isset($entity->{$this->primaryKey})) {
             return $entity->{$this->primaryKey} = $agent->insert($this->table, $data);
