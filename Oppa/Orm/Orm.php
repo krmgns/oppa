@@ -191,10 +191,8 @@ class Orm
         // add parent select fields
         $query->select($this->getSelectFields());
 
-        $hasRelations = isset($this->relations['select']);
-
         // add more statement for select/where
-        if ($hasRelations) {
+        if (isset($this->relations['select'])) {
             $query = $this->addSelect($query);
         }
 
@@ -206,7 +204,7 @@ class Orm
         // fetch all rows by primary key with given params
         // e.g: findAll([1,2,3])
         elseif (!empty($params) && empty($paramsParams)) {
-            !$hasRelations
+            !isset($this->relations['select'])
                 ? $query->where("{$this->primaryKey} IN(?)", [$params])
                 : $query->where("{$this->table}.{$this->primaryKey} IN(?)", [$params]);
         }
