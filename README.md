@@ -1,4 +1,4 @@
-Not ready yet, will be documented properly..
+Not ready yet, will be documented more..<hr>
 
 **Autoloading / Using Libraries**
 
@@ -27,5 +27,30 @@ $db->connect();
 
 $agent = $db->getConnection()->getAgent();
 $agent->query("delete from `users` where `id` = ?", [123]);
-print $agent->rowsAffected();
+prd($agent->rowsAffected());
+```
+
+**Simple ORM**
+
+```php
+// set connected database
+\Oppa\Orm::setDatabase($db);
+
+class Users extends \Oppa\Orm {
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    protected $selectFields = ['id', 'name', 'old'];
+}
+
+// init orm object
+$usersObject = new Users();
+
+// find one that id=1
+$user = $usersObject->find(1);
+pre($user);
+
+// check user found?
+if ($user->isFound()) {
+    pre($user->name);
+}
 ```
