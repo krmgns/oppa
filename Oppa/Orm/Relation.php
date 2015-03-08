@@ -34,12 +34,15 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  */
 class Relation
 {
-    final protected function generateSelectQuery(QueryBuilder $query) {
-        // parent fields
-        $fields = $this->prepareFields($this->table, $this->selectFields);
+    final protected function addSelect(QueryBuilder $query) {
+        // child fields
+        $fields = [];
 
         // use select options
         if (isset($this->relations['select'])) {
+            // add parent table prefix
+            $query->addPrefixTo('select', $this->table);
+
             foreach ($this->relations['select'] as $key => $value) {
                 $key = trim($key);
                 // add group by
@@ -75,12 +78,10 @@ class Relation
                     }
                 }
             }
-            // select child table(s) fields too
-            $query->select($fields, false);
-        } else {
-            // select parent table fields only
-            $query->select($fields);
         }
+
+        // add child fields too
+        $query->select($fields, false);
 
         return $query;
     }

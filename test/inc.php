@@ -1,5 +1,5 @@
 <?php
-header('content-type: text/plain');
+header('content-type: text/plain; chartset=utf-8');
 
 function pre($input, $e = false) {
     if ($input === null) $input = 'NULL';

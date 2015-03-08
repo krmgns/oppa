@@ -24,12 +24,13 @@ namespace Oppa\Orm;
 
 use \Oppa\Database;
 use \Oppa\Exception\Orm as Exception;
+use \Oppa\Database\Query\Builder as QueryBuilder;
 
 /**
  * @package    Oppa
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Orm
- * @uses       Oppa\Database, Oppa\Exception\Orm
+ * @uses       Oppa\Database, Oppa\Exception\Orm, Oppa\Database\Query\Builder
  * @extends    Oppa\Orm\Relation
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
@@ -43,6 +44,12 @@ class Orm
      * @var Oppa\Database
      */
     private static $database;
+
+    /**
+     * Table info
+     * @var array
+     */
+    private static $info = [];
 
     /**
      * Target entity table.
@@ -93,6 +100,18 @@ class Orm
                 "You need to specify both `table` and `primaryKey` property");
         }
 
+        // set table info for once
+        if (empty(self::$info)) {
+            $result = self::$database->getConnection()->getAgent()
+                ->getAll("SHOW COLUMNS FROM `{$this->table}`", null, 'array_assoc');
+
+            foreach ($result as $result) {
+                self::$info[$result['Field']] = [];
+            }
+            // set field names as shorcut
+            self::$info['$fields'] = array_keys(self::$info);
+        }
+
         // methods to bind to the entities
         $className = get_class($this);
         $reflection = new \ReflectionClass($className);
@@ -112,11 +131,11 @@ class Orm
      * @return Oppa\Orm\Entity
      */
     final public function entity(array $data = []) {
-        return new Entity($data, $this->bindingMethods);
+        return new Entity($this, $data);
     }
 
     /**
-     * Find an object in target table an map it in entity collection.
+     * Find an object in target table.
      *
      * @param  mixed         $param
      * @param  callable|null $filter @notimplemented
@@ -130,19 +149,28 @@ class Orm
                 "You need to pass a parameter to make a query!");
         }
 
-        // test
-        if (!empty($this->relations)) {
-            $query = $this->generateSelectQuery();
+        // start query building
+        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query->setTable($this->table);
+
+        // add parent select fields
+        $query->select($this->getSelectFields());
+
+        // add more statement for select/where
+        if (isset($this->relations['select'])) {
+            $query = $this->addSelect($query);
             $query->where("{$this->table}.{$this->primaryKey} = ?", $param);
-            pre($query);
+        } else {
+            $query->where("{$this->primaryKey} = ?", $param);
         }
 
-        // fetch one
-        $result = self::$database->getConnection()->getAgent()
-            ->select($this->getTable(), [$this->getSelectFields()], "{$this->getPrimaryKey()} = ?", $param, 1);
-        $result = isset($result[0]) ? $result[0] : [];
+        // add limit
+        $query->limit(1);
 
-        return new Entity((array) $result, $this->bindingMethods);
+        // get result
+        $result = $query->execute()->first();
+
+        return new Entity($this, (array) $result);
     }
 
     /**
@@ -153,30 +181,48 @@ class Orm
      * @param  callable|null $filter @notimplemented
      * @return Oppa\Orm\EntityCollection
      */
-    final public function findAll($query = null, array $params = null, callable $filter = null) {
+    final public function findAll($params = null, array $paramsParams = null, callable $filter = null) {
+        // start query building
+        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query->setTable($this->table);
+
+        // add parent select fields
+        $query->select($this->getSelectFields());
+
+        $hasRelations = isset($this->relations['select']);
+
+        // add more statement for select/where
+        if ($hasRelations) {
+            $query = $this->addSelect($query);
+        }
+
         // fetch all rows, oh ohh..
         // e.g: findAll()
-        if (empty($query)) {
-            $result = self::$database->getConnection()->getAgent()
-                ->select($this->getTable(), [$this->getSelectFields()]);
+        if (empty($params)) {
+            // nothing to do..
         }
         // fetch all rows by primary key with given params
         // e.g: findAll([1,2,3])
-        elseif (!empty($query) && empty($params)) {
-            $result = self::$database->getConnection()->getAgent()
-                ->select($this->getTable(), [$this->getSelectFields()], "{$this->getPrimaryKey()} IN(?)", [$query]);
+        elseif (!empty($params) && empty($paramsParams)) {
+            !$hasRelations
+                ? $query->where("{$this->primaryKey} IN(?)", [$params])
+                : $query->where("{$this->table}.{$this->primaryKey} IN(?)", [$params]);
         }
-        // fetch all rows with given query and params
+        // fetch all rows with given params and paramsParams
         // e.g: findAll('id IN (?)', [[1,2,3]])
         // e.g: findAll('id IN (?,?,?)', [1,2,3])
-        elseif (!empty($query) && !empty($params)) {
-            $result = self::$database->getConnection()->getAgent()
-                ->select($this->getTable(), [$this->getSelectFields()], $query, $params);
+        elseif (!empty($params) && !empty($paramsParams)) {
+            // now, it is user's responsibility to append table(s) before field(s)
+            $query->where($params, $paramsParams);
         }
 
+        // get results
+        $result = $query->execute();
+
+        // create entity collection
         $entityCollection = new EntityCollection();
         foreach ($result as $result) {
-            $entityCollection->add((array) $result, $this->bindingMethods);
+            $entityCollection->add($this, (array) $result);
         }
 
         return $entityCollection;
@@ -198,13 +244,17 @@ class Orm
                 'There is no data ehough on entity for save action!');
         }
 
+        // use only owned fields
+        $data = array_intersect_key($data, array_flip(self::$info['$fields']));
+
         $agent = self::$database->getConnection()->getAgent();
         // insert action
         if (!isset($entity->{$this->primaryKey})) {
             return $entity->{$this->primaryKey} = $agent->insert($this->table, $data);
         }
         // update action
-        return $agent->update($this->table, $data, "{$this->getPrimaryKey()} = ?", [$data[$this->primaryKey]]);
+        return $agent->update($this->table, $data,
+            "{$this->getPrimaryKey()} = ?", [$data[$this->primaryKey]]);
     }
 
     /**
@@ -251,10 +301,19 @@ class Orm
     final public function getSelectFields() {
         $fields = '*';
         if (is_array($this->selectFields)) {
-            $fields = join(', ', is_array($this->selectFields));
+            $fields = join(', ', $this->selectFields);
         }
 
         return $fields;
+    }
+
+    /**
+     * Get binding methods.
+     *
+     * @return array
+     */
+    final public function getBindingMethods() {
+        return $this->bindingMethods;
     }
 
     /**
