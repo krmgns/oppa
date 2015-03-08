@@ -93,7 +93,7 @@ class Relation
     }
 
     /**
-     * Prepare field appending table names.
+     * Prepare fields appending table names.
      *
      * @param  string $table
      * @param  array  $fields
