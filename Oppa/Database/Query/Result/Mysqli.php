@@ -72,14 +72,16 @@ final class Mysqli
         $i = 0;
         // if result contains result object
         if ($result instanceof \mysqli_result && $result->num_rows) {
+            $this->result = $result;
+
             if ($limit == null) {
                 $limit = PHP_INT_MAX;
             }
-            if ($fetchType == null) {
-                $fetchType = $this->fetchType;
-            }
 
-            $this->result = $result;
+            $fetchType = ($fetchType == null)
+                ? $this->fetchType
+                : $this->detectFetchType($fetchType);
+
             switch ($fetchType) {
                 case self::FETCH_OBJECT:
                     while ($i < $limit && $row = $this->result->fetch_object()) {
