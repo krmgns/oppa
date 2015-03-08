@@ -55,8 +55,8 @@ class Users extends \Oppa\Orm {
 $usersObject = new Users();
 // pre($usersObject);
 
-$user = $usersObject->find(1);
-pre($user);
+// $user = $usersObject->find(1);
+// pre($user);
 // pre($user->getPageLink());
 // prd($user->isFound());
 
