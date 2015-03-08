@@ -46,7 +46,7 @@ class Orm
     private static $database;
 
     /**
-     * Table info
+     * Table info.
      * @var array
      */
     private static $info = [];
@@ -105,9 +105,11 @@ class Orm
             $result = self::$database->getConnection()->getAgent()
                 ->getAll("SHOW COLUMNS FROM `{$this->table}`", null, 'array_assoc');
 
+            // will be filled more if needed
             foreach ($result as $result) {
                 self::$info[$result['Field']] = [];
             }
+
             // set field names as shorcut
             self::$info['$fields'] = array_keys(self::$info);
         }
