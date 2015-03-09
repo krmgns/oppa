@@ -1,0 +1,21 @@
+{
+    "name": "qeremy/oppa",
+    "type": "library",
+    "version": "v1.0",
+    "homepage": "http://github.com/qeremy/oppa",
+    "description": "Oppa: A database abstraction layer for PHP and ORM implementation.",
+    "keywords": ["oppa", "orm", "abstraction layer", "mysql"],
+    "license": "GNU General Public License v3.0",
+    "authors": [{
+        "name": "Kerem Gunes",
+        "email": "qeremy@gmail.com",
+        "homepage": "http://qeremy.com"
+    }],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-mysqli": "*"
+    },
+    "autoload": {
+        "psr-4": {"Oppa\\": "Oppa/"}
+    }
+}
