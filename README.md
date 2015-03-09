@@ -1,6 +1,6 @@
 Oppa, providing an easy interface, aims to simplify database transactions that you tire. Oppa has also an ORM implementation interface that sometimes make the things easier for you.
 
-Oppa secures user inputs sharply, carries results of your queries gently handles errors smoothly, gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
+Oppa secures user inputs sharply, carries results of your queries gently, handles errors smoothly and makes batch transactions/commits carefully for you. Oppa also provides a powerful logging mechanizm to report events that you may wonder about.
 
 You will be enjoying while using it, promise.. :)
 
@@ -10,7 +10,7 @@ Before beginning;
 - Use PHP >= 5.4
 - Handle errors with try/catch blocks
 - You can use `test.sql` in test folder
-- See `test/inc.php` to know `pre` and `prd` functions if you wonder
+- See `test/inc.php` to know `pre` and `prd` functions if you want
 
 **Autoloading / Using Libraries**
 
