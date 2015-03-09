@@ -1,11 +1,26 @@
-Not ready yet, will be documented more..<hr>
+Oppa, providing an easy API support, aims to simplify database transactions that you tire. Oppa has also ORM implementation that sometimes make the things easier for you. Oppa secures user inputs for you, handles errors smoothly and gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
+
+You will enjoy while using it, promise.. :)
+
+Before beginning;
+
+- Set your autoloader properly
+- Use PHP >= 5.4
+- Handle errors with try/catch blocks
+
+---
 
 **Autoloading / Using Libraries**
 
 ```php
+// composer
+{"require": {"qeremy/oppa": "dev-master"}}
+
+// manual
 $autoload = require('path/to/Oppa/Autoload.php');
 $autoload->register();
 
+// and using
 use \Oppa\Database;
 use \Oppa\Configuration;
 ```
