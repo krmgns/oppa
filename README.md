@@ -74,9 +74,22 @@ if ($user->isFound()) {
     print($user->name);
 }
 
+// find all
+$users = $usersObject->findAll();
+// find many that id=1,2,3
+$users = $usersObject->findAll([1,2,3]);
+$users = $usersObject->findAll('id in(?)', [[1,2,3]]);
+$users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
+var_dump($users);
+foreach ($users as $user) {
+    print($user->name ."\n");
+}
+$users = $usersObject->findAll([1111111111,2222222222,3333333333]);
+var_dump($users->isFound()); // false
+
 // insert a user
 $user = $usersObject->entity();
-$user->name = 'Veli';
+$user->name = 'Ali';
 $user->old  = 40;
 var_dump($user->save());
 // or
@@ -87,7 +100,7 @@ var_dump($user);
 // update a user "id=1"
 $user = $usersObject->entity();
 $user->id   = 1;
-$user->name = 'Veli';
+$user->name = 'Ali';
 $user->old  = 55;
 var_dump($usersObject->save($user));
 
