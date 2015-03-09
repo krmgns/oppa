@@ -51,6 +51,29 @@ $agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
 var_dump($agent->rowsAffected());
 ```
 
+**Holly CRUD Stuffs**
+
+```php
+// raw queries
+$result = $agent->query('select * from `users`');
+if ($result->count())
+if ($result->getRowsCount())
+    foreach ($result as $user)
+        print($user->name);
+// or
+if ($agent->rowsCount())
+    foreach ($agent->getResult()->getData() as $user)
+        print($user->name);
+
+// or shorcut methods
+// get all users
+$result = $agent->select('users', ['*']);
+// get all users if old greater than 50
+$result = $agent->select('users', ['*'], 'old > ?', [50]);
+// get one user
+$result = $agent->select('users', ['*'], null, null, 1);
+```
+
 **Simple ORM**
 
 ```php
