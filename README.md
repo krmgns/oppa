@@ -65,13 +65,32 @@ if ($agent->rowsCount())
     foreach ($agent->getResult()->getData() as $user)
         print($user->name);
 
+// fetch one
+$user = $agent->get('select * from `users` where `old` > ?', [50]);
+print ($user->name);
+// fetch all
+$users = $agent->getAll('select * from `users` where `old` > ?', [50]);
+foreach ($users as $user)
+    print ($user->name);
+
 // or shorcut methods
+
 // get all users
 $result = $agent->select('users', ['*']);
 // get all users if old greater than 50
 $result = $agent->select('users', ['*'], 'old > ?', [50]);
 // get one user
 $result = $agent->select('users', ['*'], null, null, 1);
+
+// insert a user
+$result = $agent->insert('user', ['name' => 'Ali', 'old' => 30]);
+var_dump($result); // int: last_insert_id
+// update a user
+$result = $agent->update('user', ['old' => 30], 'id = ?', [123]);
+var_dump($result); // int: affected_rows
+// delete a user
+$result = $agent->delete('user', 'id = ?', [123]);
+var_dump($result); // int: affected_rows
 ```
 
 **Simple ORM**
