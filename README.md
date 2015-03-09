@@ -93,6 +93,34 @@ $result = $agent->delete('user', 'id = ?', [123]);
 var_dump($result); // int: affected_rows
 ```
 
+**Batch Actions (aka Transactions)**
+
+```php
+$batch = $agent->getBatch();
+// set autocommit=0
+$batch->lock();
+try {
+    $batch->queue('insert into `users`(name,old) values(?,?)', ['John', 25]);
+    $batch->queue('insert into `users`(name,old) values(?,?)', ['John', 25]);
+    $batch->queue('insert into `userz`(name,old) values(?,?)', ['John', 25]); // boom!
+    // commit
+    $batch->run();
+} catch (\Exception $e) {
+    print($e->getMessage());
+    // rollback & set autocommit=1
+    $batch->cancel();
+}
+// set autocommit=1
+$batch->unlock();
+
+foreach ($batch->getResult() as $result) {
+    print($result->getId());
+}
+
+// remove query queue and empty result array
+$batch->reset();
+```
+
 **Simple ORM**
 
 ```php
