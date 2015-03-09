@@ -1,6 +1,6 @@
 Oppa, providing an easy interface, aims to simplify database transactions that you tire. Oppa has also an ORM implementation interface that sometimes make the things easier for you.
 
-Oppa secures user inputs for you, carries results of your queries gently handles errors smoothly, gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
+Oppa secures user inputs sharply, carries results of your queries gently handles errors smoothly, gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
 
 You will be enjoying while using it, promise.. :)
 
