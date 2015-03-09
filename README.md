@@ -11,8 +11,6 @@ Before beginning;
 - Handle errors with try/catch blocks
 - See `test/inc.php` to know `pre` and `prd` functions if you wonder.
 
----
-
 **Autoloading / Using Libraries**
 
 ```php
@@ -123,3 +121,7 @@ var_dump($user->remove());
 $result = $usersObject->remove([1,2,3]);
 var_dump($result);
 ```
+
+**Notice**
+
+A detailed wiki comes soon.
