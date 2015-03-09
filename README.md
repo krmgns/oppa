@@ -9,7 +9,8 @@ Before beginning;
 - Set your autoloader properly
 - Use PHP >= 5.4
 - Handle errors with try/catch blocks
-- See `test/inc.php` to know `pre` and `prd` functions if you wonder.
+- You can use `test.sql` in test folder
+- See `test/inc.php` to know `pre` and `prd` functions if you wonder
 
 **Autoloading / Using Libraries**
 
