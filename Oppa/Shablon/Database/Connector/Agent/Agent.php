@@ -227,7 +227,7 @@ abstract class Agent
 
             // available indicator: ?
             // available operators with type definition: %s, %d, %f, %F
-            preg_match_all('~%[sdfF]|\?~', $input, $match);
+            preg_match_all('~\?|%[sdfF]~', $input, $match);
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
