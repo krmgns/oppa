@@ -32,7 +32,7 @@ use \Oppa\Exception\Database as Exception;
  * @implements Oppa\Shablon\Database\Connector\Agent\ConnectionInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamFilterInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Agent
@@ -208,32 +208,41 @@ abstract class Agent
     final public function prepare($input, array $params = null) {
         // any params provided?
         if (!empty($params)) {
+            // available named word limits: :foo, :foo123, :foo_bar
+            preg_match_all('~:([a-zA-Z0-9_]+)~', $input, $match);
+            if (isset($match[1]) && !empty($match[1])) {
+                $keys = $vals = [];
+                foreach ($match[1] as $key) {
+                    if (!isset($params[$key])) {
+                        throw new Exception\ArgumentException('Replacement key not found in params!');
+                    }
+
+                    $keys[] = sprintf('~:%s~', $key);
+                    $vals[] = $this->escape($params[$key]);
+                    // remove used params
+                    unset($params[$key]);
+                }
+                $input = preg_replace($keys, $vals, $input, 1);
+            }
+
             // available indicator: ?
             // available operators with type definition: %s, %d, %f, %F
-            // available named word limits: :foo, :foo123, :foo_bar
-            preg_match_all('~%[sdfF]|\?|:[a-zA-Z0-9_]+~', $input, $match);
-            if (isset($match[0])) {
-                // all operator count and parameter count must be equal for replacement
-                if (count($match[0]) != count($params)) {
-                    throw new Exception\ArgumentException(
-                        "Both modifiers and params count must be same, e.g: prepare('id = ?', [1]) or ".
-                        "prepare('id IN(?,?)', [1,2]). If you have no prepare modifiers, then pass NULL or [] as \$params."
-                    );
-                }
-                $i = 0; // Indexes could be string, e.g: [':id' => 1, ...]
-                foreach ($params as $key => $value) {
-                    $key = $match[0][$i++];
-                    // see escape method to check, it is save enough or not
-                    $value = $this->escape($value, $key);
-                    // replace operator/named param with escaped value
-                    if (false !== ($pos = strpos($input, $key))) {
-                        $input = substr_replace($input, $value, $pos, strlen($key));
+            preg_match_all('~%[sdfF]|\?~', $input, $match);
+            if (isset($match[0]) && !empty($match[0])) {
+                foreach ($params as $i => $param) {
+                    if (!isset($match[0][$i])) {
+                        throw new Exception\ArgumentException('Replacement key not found in params!');
+                    }
+
+                    $key = $match[0][$i];
+                    $val = $this->escape($param, $key);
+                    if (($pos = strpos($input, $key)) !== false) {
+                        $input = substr_replace($input, $val, $pos, strlen($key));
                     }
                 }
             }
         }
 
-        // return sql
         return $input;
     }
 
