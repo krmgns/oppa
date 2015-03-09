@@ -62,6 +62,7 @@ if ($result->getRowsCount())
         print($user->name);
 // or
 if ($agent->rowsCount())
+    foreach ($agent->getResult() as $user)
     foreach ($agent->getResult()->getData() as $user)
         print($user->name);
 
