@@ -231,7 +231,7 @@ abstract class Agent
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
-                        throw new Exception\ArgumentException('Replacement key not found in params!');
+                        throw new Exception\ArgumentException('Replacement key not found in input!');
                     }
 
                     $key = $match[0][$i];
