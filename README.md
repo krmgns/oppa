@@ -1,6 +1,8 @@
-Oppa, providing an easy API support, aims to simplify database transactions that you tire. Oppa has also ORM implementation that sometimes make the things easier for you. Oppa secures user inputs for you, handles errors smoothly and gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
+Oppa, providing an easy API support, aims to simplify database transactions that you tire. Oppa has also ORM implementation that sometimes make the things easier for you.
 
-You will enjoy while using it, promise.. :)
+Oppa secures user inputs for you, carries results of your queries gently handles errors smoothly, gives a powerful logging mechanizm and makes batch transactions/commits carefully for you.
+
+You will be enjoying while using it, promise.. :)
 
 Before beginning;
 
