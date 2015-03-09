@@ -153,7 +153,7 @@ $users = $usersObject->findAll('id in(?)', [[1,2,3]]);
 $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
 var_dump($users);
 foreach ($users as $user) {
-    print($user->name ."\n");
+    print($user->name);
 }
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
 var_dump($users->isFound()); // false
