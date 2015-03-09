@@ -30,7 +30,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Query\Result
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Result
@@ -174,9 +174,14 @@ abstract class Result
      * @return integer|array
      */
     final public function getId($all = false) {
-        return $all
-            ? $this->id       // all insert ids
-            : end($this->id); // only last insert id
+        if (!$all) {
+            // only last insert id
+            $id = end($this->id);
+            return ($id !== false) ? $id : null;
+        }
+
+        // all insert ids
+        return $this->id;
     }
 
     /**
