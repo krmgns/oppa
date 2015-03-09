@@ -30,7 +30,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result\Mysqli
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Database\Query\Result
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
@@ -116,7 +116,7 @@ final class Mysqli
         // dirty ways to detect last insert id for multiple inserts
         // good point! http://stackoverflow.com/a/15664201/362780
         $id  = $link->insert_id;
-        $ids = [$id];
+        $ids = $id ? [$id] : [];
 
         /**
          * // only last id
@@ -132,7 +132,7 @@ final class Mysqli
          * }
          */
 
-        // all ids
+        // all ids (more tricky)
         if ($id && $link->affected_rows > 1) {
             $ids = range($id, ($id + $link->affected_rows) - 1);
         }
