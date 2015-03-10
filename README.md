@@ -14,6 +14,8 @@ Before beginning;
 - You can use `test.sql` in test folder
 - See `test/inc.php` to know `pre` and `prd` functions if you want
 
+You can see wiki pages for more details: https://github.com/qeremy/oppa/wiki
+
 ###Autoloading / Using Libraries###
 
 ```php
