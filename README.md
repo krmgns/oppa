@@ -116,6 +116,7 @@ try {
 // set autocommit=1
 $batch->unlock();
 
+// get insert ids if success
 foreach ($batch->getResult() as $result) {
     print($result->getId());
 }
