@@ -37,7 +37,7 @@ use \Oppa\Exception\Database as Exception;
  * @uses       Oppa\Helper, Oppa\Logger, Oppa\Database\Batch, Oppa\Database\Profiler,
  *             Oppa\Database\Query\Sql, Oppa\Database\Query\Result, Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
@@ -437,9 +437,11 @@ final class Mysqli
             return $input;
         }
 
-        return !is_array($input)
-            ? '`'. trim($input, '` ') .'`'
-            : join(', ', array_map([$this, 'escapeIdentifier'], $input));
+        if (is_array($input)) {
+            return join(', ', array_map([$this, 'escapeIdentifier'], $input));
+        }
+
+        return '`'. trim($input, '` ') .'`';
     }
 
     /**
@@ -460,12 +462,14 @@ final class Mysqli
     /**
      * Prepare "LIMIT" statement.
      *
-     * @param  integer $limit
+     * @param  array|integer $limit
      * @return string
      */
     final public function limit($limit) {
         if (is_array($limit)) {
-            return sprintf('LIMIT %d, %d', $limit[0], $limit[1]);
+            return isset($limit[0], $limit[1])
+                ? sprintf('LIMIT %d, %d', $limit[0], $limit[1])
+                : sprintf('LIMIT %d', $limit[0]);
         }
 
         return $limit ? sprintf('LIMIT %d', $limit) : '';
