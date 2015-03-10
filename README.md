@@ -68,11 +68,11 @@ if ($agent->rowsCount())
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
-print ($user->name);
+print($user->name);
 // fetch all
 $users = $agent->getAll('select * from `users` where `old` > ?', [50]);
 foreach ($users as $user)
-    print ($user->name);
+    print($user->name);
 
 // or shorcut methods
 
