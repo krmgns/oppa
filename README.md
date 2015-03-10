@@ -51,7 +51,7 @@ $agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
 var_dump($agent->rowsAffected());
 ```
 
-**Holly CRUD Stuffs**
+**Holy CRUD Stuffs**
 
 ```php
 // raw queries
