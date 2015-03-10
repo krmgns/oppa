@@ -199,4 +199,4 @@ var_dump($result);
 
 **Notice**
 
-A detailed wiki comes soon.
+See wiki pages for more details: https://github.com/qeremy/oppa/wiki
