@@ -29,7 +29,7 @@ use \Oppa\Database;
 use \Oppa\Configuration;
 ```
 
-**Configuration**
+###Configuration###
 
 ```php
 $cfg = [
@@ -42,7 +42,7 @@ $cfg = [
 ];
 ```
 
-**Simple Usage**
+###Simple Usage###
 
 ```php
 $db = Database\Factory::build(new Configuration($cfg));
@@ -53,7 +53,7 @@ $agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
 var_dump($agent->rowsAffected());
 ```
 
-**Holy CRUD Stuffs**
+###Holy CRUD Stuffs###
 
 ```php
 // raw queries
@@ -96,16 +96,16 @@ $result = $agent->delete('user', 'id = ?', [123]);
 var_dump($result); // int: affected_rows
 ```
 
-**Batch Actions (aka Transactions)**
+###Batch Actions (aka Transactions)###
 
 ```php
 $batch = $agent->getBatch();
 // set autocommit=0
 $batch->lock();
 try {
-    $batch->queue('insert into `users`(name,old) values(?,?)', ['John', 25]);
-    $batch->queue('insert into `users`(name,old) values(?,?)', ['John', 25]);
-    $batch->queue('insert into `userz`(name,old) values(?,?)', ['John', 25]); // boom!
+    $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
+    $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
+    $batch->queue('insert into `userz` values(null,?,?)', ['Eric', 15]); // boom!
     // commit
     $batch->run();
 } catch (\Exception $e) {
@@ -124,7 +124,7 @@ foreach ($batch->getResult() as $result) {
 $batch->reset();
 ```
 
-**Simple ORM**
+###Simple ORM###
 
 ```php
 // set orm database that already connected (like above)
