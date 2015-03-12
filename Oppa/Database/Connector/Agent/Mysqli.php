@@ -228,7 +228,7 @@ final class Mysqli
         $this->logger && $this->logger->log(Logger::INFO, sprintf(
             'New query via %s, query[%s]', $_SERVER['REMOTE_ADDR'], $query));
 
-        // add query count, last query
+        // increase query count, set last query
         if ($this->profiler) {
             $this->profiler->increaseQueryCount();
             $this->profiler->setLastQuery($query);
