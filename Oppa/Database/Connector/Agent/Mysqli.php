@@ -279,7 +279,7 @@ final class Mysqli
      * @return mixed
      */
     final public function get($query, array $params = null, $fetchType = null) {
-        return $this->query($query, $params, 1, $fetchType)->getData();
+        return $this->query($query, $params, 1, $fetchType)->getData(0);
     }
 
     /**
