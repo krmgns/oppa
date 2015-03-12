@@ -29,7 +29,7 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Logger
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Logger\Logger
- * @version v1.0
+ * @version v1.1
  * @author  Kerem Gunes <qeremy@gmail>
  */
 
@@ -70,7 +70,7 @@ final class Logger
         }
 
         // prepare filename
-        $filename = sprintf('%s/%s.txt',
+        $filename = sprintf('%s/%s.log',
             $this->directory, date($this->filenameFormat));
         // prepare message
         $message  = sprintf('[%s] %s%s',
