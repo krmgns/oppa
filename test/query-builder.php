@@ -30,9 +30,9 @@ $qb->setTable('users');
 
 // $qb->select('id,name');
 // $qb->select('id,name')->where('id=?', [1]);
-// $qb->select('id,name')->where('id=?', [1])->whereLike('AND name=?', ['Kerem']);
-// $qb->select('id,name')->whereLike('id=? AND name=?', ['1%', '%Ke_rem%']);
-// $qb->select('id,name')->where('id=?', [1])->whereLike('(id LIKE ? OR name LIKE ?)', ['2%', '%Ke_rem%'], $qb::OP_OR);
+// $qb->select('id,name')->where('id=?', [1])->limit(1);
+// $qb->select('id,name')->whereLike('name LIKE ?', ['%Ker"em%']);
+// $qb->select('id,name')->whereLike('(id LIKE ? OR name LIKE ?)', ['2%', '%Ke_rem%']);
 
 // $qb->select('id,name')
 //     ->where('id=?', [1])
@@ -46,18 +46,22 @@ $qb->setTable('users');
 // $qb->select('u.*, us.score, ul.login')
 //     ->aggregate('sum', 'us.score', 'sum_score')
 //     ->join('users_score us', 'us.user_id=u.id')
-//     ->join('users_login ul', 'ul.user_id=u.id')
+//     ->joinLeft('users_login ul', 'ul.user_id=u.id')
+//     ->where('u.id in(?,?,?)', [1,2,3])
+//     ->whereBetween('u.old', [30,50])
+//     ->whereNotNull('ul.login')
 //     ->groupBy('u.id')
 //     ->orderBy('old')
-//     ->having('sum_score <= ?', [30])
+//     // ->having('sum_score <= ?', [30])
 //     ->limit(0,10)
 // ;
 
 // pre($qb->toString());
 // pre($qb->get());
 // pre($qb->getAll());
+// pre($qb->execute());
 
-// // insert
+// insert
 // $qb->insert(['name' => 'Veli', 'old' => 25]);
 // $qb->insert([['name' => 'Veli', 'old' => 25], ['name' => 'Deli', 'old' => 29]]);
 // pre($qb->toString());
@@ -77,9 +81,10 @@ $qb->setTable('users');
 // $qb->delete()->where('id > ?', [30])->orderBy('id DESC')->limit(1);
 // $qb->delete()->where('id > ?', [30])->orderBy('id', $qb::OP_DESC)->limit(1);
 // $qb->delete()->whereBetween('id', [931,932])->limit(10);
+// $qb->delete()->where('id in(?)', [[931,932]])->limit(10);
 // pre($qb->toString());
 // pre($qb->execute());
 
-pre($qb);
 pre($qb->toString());
+pre($qb);
 // pre($db);
