@@ -91,7 +91,7 @@ abstract class Logger
      * @param  integer $level  Must be a valid level like self::ALL
      * @return void
      */
-    public function setLevel($level) {
+    final public function setLevel($level) {
         $this->level = $level;
     }
 
@@ -100,7 +100,7 @@ abstract class Logger
      *
      * @return integer
      */
-    public function getLevel() {
+    final public function getLevel() {
         return $this->level;
     }
 
@@ -110,7 +110,7 @@ abstract class Logger
      * @param  string $directory
      * @return void
      */
-    public function setDirectory($directory) {
+    final public function setDirectory($directory) {
         $this->directory = $directory;
     }
 
@@ -119,7 +119,7 @@ abstract class Logger
      *
      * @return string
      */
-    public function getDirectory() {
+    final public function getDirectory() {
         return $this->directory;
     }
 
@@ -159,7 +159,7 @@ abstract class Logger
      * @param  string $filenameFormat
      * @return void
      */
-    public function setFilenameFormat($filenameFormat) {
+    final public function setFilenameFormat($filenameFormat) {
         $this->filenameFormat = $filenameFormat;
     }
 
@@ -168,7 +168,7 @@ abstract class Logger
      *
      * @return string
      */
-    public function getFilenameFormat() {
+    final public function getFilenameFormat() {
         return $this->filenameFormat;
     }
 
