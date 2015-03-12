@@ -105,20 +105,6 @@ abstract class Profiler
      * Action pattern.
      *
      * @param string $name
-     */
-    abstract public function start($name);
-
-    /**
-     * Action pattern.
-     *
-     * @param string $name
-     */
-    abstract public function stop($name);
-
-    /**
-     * Action pattern.
-     *
-     * @param string $name
      * @param mixed  $value
      */
     abstract public function setProperty($name, $value = null);
@@ -129,4 +115,18 @@ abstract class Profiler
      * @param string $name
      */
     abstract public function getProperty($name);
+
+    /**
+     * Action pattern.
+     *
+     * @param string $name
+     */
+    abstract public function start($name);
+
+    /**
+     * Action pattern.
+     *
+     * @param string $name
+     */
+    abstract public function stop($name);
 }
