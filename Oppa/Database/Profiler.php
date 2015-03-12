@@ -29,22 +29,20 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database
  * @object     Oppa\Database\Factory
  * @uses       Oppa\Exception\Database
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Profiler
     extends \Oppa\Shablon\Database\Profiler\Profiler
 {
-    // final public function __construct() {}
-
     /**
-     * Start profiling with given name.
+     * Start profiling with given key.
      *
-     * @param  integer $name
+     * @param  integer $key
      * @return void
      */
-    final public function start($name) {
-        $this->profiles[$name] = [
+    final public function start($key) {
+        $this->profiles[$key] = [
             'start' => microtime(true),
             'stop'  => 0,
             'total' => 0
@@ -52,58 +50,21 @@ final class Profiler
     }
 
     /**
-     * Stop profiling with given name.
+     * Stop profiling with given key.
      *
-     * @param  integer $name
+     * @param  integer $key
      * @throws Oppa\Exception\Database\ArgumentException
      * @return void
      */
-    final public function stop($name) {
-        if (!isset($this->profiles[$name])) {
+    final public function stop($key) {
+        if (!isset($this->profiles[$key])) {
             throw new Exception\ArgumentException(
-                "Could not find a `{$name}` profile name!");
+                "Could not find a `{$key}` profile key!");
         }
 
-        $this->profiles[$name]['stop'] = microtime(true);
-        $this->profiles[$name]['total'] = number_format(
-            (float) (
-                $this->profiles[$name]['stop'] - $this->profiles[$name]['start']
-            ), 10);
-    }
-
-    /**
-     * Set property.
-     *
-     * @param  integer $name
-     * @param  mixed   $value
-     * @return void
-     */
-    final public function setProperty($name, $value = null) {
-        // increase query count
-        if ($name === self::PROP_QUERY_COUNT) {
-            if (!isset($this->properties[self::PROP_QUERY_COUNT])) {
-                $this->properties[self::PROP_QUERY_COUNT] = 0;
-            }
-            ++$this->properties[self::PROP_QUERY_COUNT];
-        }
-        // set property
-        else {
-            $this->properties[$name] = $value;
-        }
-    }
-
-    /**
-     * Get property.
-     *
-     * @param  integer $name
-     * @throws Oppa\Exception\ArgumentException
-     * @return mixed
-     */
-    final public function getProperty($name) {
-        if (isset($this->properties[$name])) {
-            return $this->properties[$name];
-        }
-
-        throw new Exception\ArgumentException('Undefined property name given!');
+        $this->profiles[$key]['stop'] = microtime(true);
+        $this->profiles[$key]['total'] = number_format(
+            (float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start'])
+        , 10);
     }
 }

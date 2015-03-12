@@ -37,7 +37,7 @@ use \Oppa\Exception\Database as Exception;
  * @uses       Oppa\Helper, Oppa\Logger, Oppa\Database\Batch, Oppa\Database\Profiler,
  *             Oppa\Database\Query\Sql, Oppa\Database\Query\Result, Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
- * @version    v1.1
+ * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
@@ -230,8 +230,8 @@ final class Mysqli
 
         // add query count, last query
         if ($this->profiler) {
-            $this->profiler->setProperty(Profiler::PROP_QUERY_COUNT);
-            $this->profiler->setProperty(Profiler::PROP_LAST_QUERY, $query);
+            $this->profiler->increaseQueryCount();
+            $this->profiler->setLastQuery($query);
         }
 
         // start last query profiling

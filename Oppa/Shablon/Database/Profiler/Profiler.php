@@ -29,7 +29,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Shablon\Database\Profiler
  * @object     Oppa\Shablon\Database\Profiler\Profiler
  * @uses       Oppa\Exception
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Profiler
@@ -41,28 +41,28 @@ abstract class Profiler
     const CONNECTION = 1;
 
     /**
-     * Profile key for transaction.
-     * @const integer
-     */
-    const TRANSACTION = 2; // @notimplemented
-
-    /**
      * Profile key for last query.
      * @const integer
      */
-    const LAST_QUERY = 3;
+    const LAST_QUERY = 2;
 
     /**
-     * Property key for query count.
+     * Profile key for transaction.
      * @const integer
      */
-    const PROP_QUERY_COUNT = 10;
+    const TRANSACTION = 3; // @notimplemented
 
     /**
-     * Property key for last query.
-     * @const integer
+     * Last query.
+     * @var string
      */
-    const PROP_LAST_QUERY = 11;
+    protected $lastQuery;
+
+    /**
+     * Query count.
+     * @var integer
+     */
+    protected $queryCount = 0;
 
     /**
      * Profile stack.
@@ -71,25 +71,52 @@ abstract class Profiler
     protected $profiles = [];
 
     /**
-     * Property stack.
-     * @var array
+     * Create a Profiler object resetting all stuff.
      */
-    protected $properties = [];
+    public function __construct() {
+        $this->reset();
+    }
 
     /**
-     * Get profile.
+     * Get invisible properties.
      *
      * @param  string $name
      * @throws Oppa\Exception\Database\ArgumentException
      * @return mixed
      */
-    public function getProfile($name) {
-        if (isset($this->profiles[$name])) {
-            return $this->profiles[$name];
+    public function __get($name) {
+        if ($name == 'lastQuery' || $name == 'queryCount') {
+            return $this->{$name};
+        }
+
+        throw new Exception\ArgumentException('Undefined property!');
+    }
+
+    /**
+     * Reset last query, query count and all profiles.
+     *
+     * @return void
+     */
+    final public function reset() {
+        $this->lastQuery  = null;
+        $this->queryCount = 0;
+        $this->profiles   = [];
+    }
+
+    /**
+     * Get profile.
+     *
+     * @param  string $key
+     * @throws Oppa\Exception\Database\ArgumentException
+     * @return mixed
+     */
+    public function getProfile($key) {
+        if (isset($this->profiles[$key])) {
+            return $this->profiles[$key];
         }
 
         throw new Exception\ArgumentException(
-            "Could not find a profile with given `{$name}` name.");
+            "Could not find a profile with given `{$key}` key!");
     }
 
     /**
@@ -102,31 +129,53 @@ abstract class Profiler
     }
 
     /**
-     * Action pattern.
+     * Set last query.
      *
-     * @param string $name
-     * @param mixed  $value
+     * @param  string $query
+     * @return void
      */
-    abstract public function setProperty($name, $value = null);
+    final public function setLastQuery($query) {
+        $this->lastQuery = $query;
+    }
+
+    /**
+     * Get last query.
+     *
+     * @return string|null
+     */
+    final public function getLastQuery() {
+        return $this->lastQuery;
+    }
+
+    /**
+     * Increase query count.
+     *
+     * @return void
+     */
+    final public function increaseQueryCount() {
+        ++$this->queryCount;
+    }
+
+    /**
+     * Get query count.
+     *
+     * @return integer
+     */
+    final public function getQueryCount() {
+        return $this->queryCount;
+    }
 
     /**
      * Action pattern.
      *
-     * @param string $name
+     * @param string $key
      */
-    abstract public function getProperty($name);
+    abstract public function start($key);
 
     /**
      * Action pattern.
      *
-     * @param string $name
+     * @param string $key
      */
-    abstract public function start($name);
-
-    /**
-     * Action pattern.
-     *
-     * @param string $name
-     */
-    abstract public function stop($name);
+    abstract public function stop($key);
 }
