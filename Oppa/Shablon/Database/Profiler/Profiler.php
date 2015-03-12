@@ -22,7 +22,7 @@
 
 namespace Oppa\Shablon\Database\Profiler;
 
-use \Oppa\Exception;
+use \Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
@@ -80,7 +80,7 @@ abstract class Profiler
      * Get profile.
      *
      * @param  string $name
-     * @throws Oppa\Exception\ArgumentException
+     * @throws Oppa\Exception\Database\ArgumentException
      * @return mixed
      */
     public function getProfile($name) {

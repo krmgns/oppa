@@ -22,13 +22,13 @@
 
 namespace Oppa\Database;
 
-use \Oppa\Exception;
+use \Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
  * @subpackage Oppa\Database
  * @object     Oppa\Database\Factory
- * @uses       Oppa\Exception
+ * @uses       Oppa\Exception\Database
  * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
@@ -55,7 +55,7 @@ final class Profiler
      * Stop profiling with given name.
      *
      * @param  integer $name
-     * @throws Oppa\Exception\ArgumentException
+     * @throws Oppa\Exception\Database\ArgumentException
      * @return void
      */
     final public function stop($name) {
