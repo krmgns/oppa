@@ -319,7 +319,7 @@ final class Builder
     }
 
     /**
-     * Add "WHERE .. BETWEEN" statement.
+     * Add "WHERE" statement for "BETWEEN .. AND .." queries.
      *
      * @param  string $field
      * @param  array  $between
@@ -336,8 +336,8 @@ final class Builder
      * @param  string $field
      * @return self
      */
-    final public function whereNull($field) {
-        return $this->push('where', sprintf('%s IS NULL', $field));
+    final public function whereNull($field, $op = self::OP_AND) {
+        return $this->where($field .' NOT NULL', null, $op);
     }
 
     /**
@@ -346,8 +346,8 @@ final class Builder
      * @param  string $field
      * @return self
      */
-    final public function whereNotNull($field) {
-        return $this->push('where', sprintf('%s IS NOT NULL', $field));
+    final public function whereNotNull($field, $op = self::OP_AND) {
+        return $this->where($field .' IS NOT NULL', null, $op);
     }
 
     /**
