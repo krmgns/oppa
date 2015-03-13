@@ -29,7 +29,7 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Relation
  * @uses       Oppa\Database\Query\Builder
- * @version    v1.0
+ * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 class Relation
@@ -50,16 +50,16 @@ class Relation
             $query->addPrefixTo('select', $this->table);
 
             foreach ($this->relations['select'] as $key => $value) {
-                $key = trim($key);
+                $key = strtoupper(trim($key));
                 // add group by
-                if ($key == 'group by') {
+                if ($key == 'GROUP BY') {
                     $query->groupBy($value);
                     continue;
                 }
 
                 // join tables
                 foreach ($value as $i => $options) {
-                    if ($key == 'join') {
+                    if ($key == 'JOIN') {
                         isset($options['using']) && $options['using'] == true
                             ? $query->joinUsing($options['table'], $options['foreign_key'])
                             : $query->join($options['table'], sprintf(
@@ -67,7 +67,7 @@ class Relation
                                     $options['table'], $options['foreign_key'],
                                     $this->table, $this->primaryKey
                               ));
-                    } elseif ($key == 'left join') {
+                    } elseif ($key == 'LEFT JOIN') {
                         isset($options['using']) && $options['using'] == true
                             ? $query->joinLeftUsing($options['table'], $options['foreign_key'])
                             : $query->joinLeft($options['table'], sprintf(
