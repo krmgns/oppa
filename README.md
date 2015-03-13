@@ -183,7 +183,8 @@ var_dump($usersObject->save($user));
 
 // update a user that already exists "id=1"
 $user = $usersObject->find(1);
-$user->old = 100;
+$user->name = 'Ali';
+$user->old  = 100;
 var_dump($user->save());
 
 // remove a user "id=1"
