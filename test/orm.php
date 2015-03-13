@@ -41,7 +41,7 @@ class Users extends \Oppa\Orm {
             ],
             // 'join' => [
             //     ['table' => 'users_foo', 'foreign_key' => 'user_id', 'using' => true,
-            //         'fields' => ['users_foo.aaa', 'sum(x)', 'count(*)', 'xyz']],
+            //         'fields' => ['users_foo.aaa', 'sum(x)', 'count(y)', 'xyz']],
             // ],
             'group by' => 'users.id',
         ],
@@ -55,8 +55,8 @@ class Users extends \Oppa\Orm {
 $usersObject = new Users();
 // pre($usersObject);
 
-// $user = $usersObject->find(1);
-// pre($user);
+$user = $usersObject->find(1);
+pre($user);
 // pre($user->getPageLink());
 // prd($user->isFound());
 
