@@ -27,9 +27,13 @@ class Users extends \Oppa\Orm {
     protected $primaryKey = 'id';
     protected $selectFields = ['id', 'name'];
 
-    // public function getPageLink() {
-    //     return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
-    // }
+    public function getLastLogin() {
+        return strftime('%Y-%m-%d %H:%M:%S', $this->login);
+    }
+
+    public function getPageLink() {
+        return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
+    }
 
     protected $relations = [
         'select' => [
@@ -37,7 +41,7 @@ class Users extends \Oppa\Orm {
                 ['table' => 'users_score', 'foreign_key' => 'user_id', 'using' => false,
                     'fields' => ['sum(score) as score']],
                 ['table' => 'users_login', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['date_format(from_unixtime(login), "%Y-%m-%d %H:%i:%s") as login']],
+                    'fields' => ['login']],
             ],
             // 'join' => [
             //     ['table' => 'users_foo', 'foreign_key' => 'user_id', 'using' => true,
@@ -57,7 +61,8 @@ $usersObject = new Users();
 
 $user = $usersObject->find(1);
 pre($user);
-// pre($user->getPageLink());
+pre($user->getPageLink());
+pre($user->getLastLogin());
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();
