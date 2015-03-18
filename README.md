@@ -63,20 +63,20 @@ $result = $agent->query('select * from `users`');
 if ($result->count())
 if ($result->getRowsCount())
     foreach ($result as $user)
-        print($user->name);
+        print $user->name;
 // or
 if ($agent->rowsCount())
     foreach ($agent->getResult() as $user)
     foreach ($agent->getResult()->getData() as $user)
-        print($user->name);
+        print $user->name;
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
-print($user->name);
+print $user->name;
 // fetch all
 $users = $agent->getAll('select * from `users` where `old` > ?', [50]);
 foreach ($users as $user)
-    print($user->name);
+    print $user->name;
 
 // or shorcut methods
 
@@ -111,7 +111,7 @@ try {
     // commit
     $batch->run();
 } catch (\Exception $e) {
-    print($e->getMessage());
+    print $e->getMessage();
     // rollback & set autocommit=1
     $batch->cancel();
 }
@@ -120,7 +120,7 @@ $batch->unlock();
 
 // get insert ids if success
 foreach ($batch->getResult() as $result) {
-    print($result->getId());
+    print $result->getId();
 }
 
 // remove query queue and empty result array
@@ -148,7 +148,7 @@ var_dump($user);
 
 // check user found?
 if ($user->isFound()) {
-    print($user->name);
+    print $user->name;
 }
 
 // find all
@@ -159,7 +159,7 @@ $users = $usersObject->findAll('id in(?)', [[1,2,3]]);
 $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
 var_dump($users);
 foreach ($users as $user) {
-    print($user->name);
+    print $user->name;
 }
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
 var_dump($users->isFound()); // false
