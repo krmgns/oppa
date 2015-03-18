@@ -200,6 +200,4 @@ $result = $usersObject->remove([1,2,3]);
 var_dump($result);
 ```
 
-**Notice**
-
 See wiki pages for more details: https://github.com/qeremy/oppa/wiki
