@@ -331,6 +331,18 @@ final class Builder
     }
 
     /**
+     * Add "WHERE" statement for "IN(...)" queries.
+     *
+     * @param  string $field
+     * @param  array  $params
+     * @param  string $op
+     * @return self
+     */
+    final public function whereIn($field, array $params, $op = self::OP_AND) {
+        return $this->where($field .' IN(?)', [$params], $op);
+    }
+
+    /**
      * Add "WHERE" statement for "IS NULL" queries.
      *
      * @param  string $field
