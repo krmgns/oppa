@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.1
+ * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -337,7 +337,7 @@ final class Builder
      * @return self
      */
     final public function whereNull($field, $op = self::OP_AND) {
-        return $this->where($field .' NOT NULL', null, $op);
+        return $this->where($field .' IS NULL', null, $op);
     }
 
     /**
