@@ -322,12 +322,12 @@ final class Builder
      * Add "WHERE" statement for "BETWEEN .. AND .." queries.
      *
      * @param  string $field
-     * @param  array  $between
+     * @param  array  $params
      * @param  string $op
      * @return self
      */
-    final public function whereBetween($field, array $between, $op = self::OP_AND) {
-        return $this->where($field . ' BETWEEN ? AND ?', $between, $op);
+    final public function whereBetween($field, array $params, $op = self::OP_AND) {
+        return $this->where($field . ' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
