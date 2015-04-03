@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.2
+ * @version    v1.3
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -340,6 +340,18 @@ final class Builder
      */
     final public function whereIn($field, array $params, $op = self::OP_AND) {
         return $this->where($field .' IN(?)', [$params], $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "NOT IN(...)" queries.
+     *
+     * @param  string $field
+     * @param  array  $params
+     * @param  string $op
+     * @return self
+     */
+    final public function whereNotIn($field, array $params, $op = self::OP_AND) {
+        return $this->where($field .' NOT IN(?)', [$params], $op);
     }
 
     /**
