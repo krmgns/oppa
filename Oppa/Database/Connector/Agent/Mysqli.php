@@ -37,7 +37,7 @@ use \Oppa\Exception\Database as Exception;
  * @uses       Oppa\Helper, Oppa\Logger, Oppa\Database\Batch, Oppa\Database\Profiler,
  *             Oppa\Database\Query\Sql, Oppa\Database\Query\Result, Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
- * @version    v1.2
+ * @version    v1.3
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
@@ -395,10 +395,12 @@ final class Mysqli
      * @return string
      */
     final public function escape($input, $type = null) {
-        // excepting strings, for all formattable types like %d, %f and %F
-        if (!is_array($input)) {
-            if ($type && $type[0] == '%' && $type != '%s') {
+        // escape strings %s and for all formattable types like %d, %f and %F
+        if (!is_array($input) && $type && $type[0] == '%') {
+            if ($type != '%s') {
                 return sprintf($type, $input);
+            } else {
+                return "'". $this->link->real_escape_string($input) ."'";
             }
         }
 
