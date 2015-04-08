@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.3
+ * @version    v1.4
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -114,10 +114,12 @@ final class Builder
      * Set target table for query.
      *
      * @param string $table
-     * @return void
+     * @return self
      */
     final public function setTable($table) {
         $this->table = $table;
+
+        return $this;
     }
 
     /**
