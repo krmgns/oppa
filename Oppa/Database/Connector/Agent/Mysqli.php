@@ -343,7 +343,7 @@ final class Mysqli
     }
 
     /**
-     * Insert actions.
+     * Update actions.
      *
      * @param  string  $table
      * @param  array   $data
@@ -369,7 +369,7 @@ final class Mysqli
     }
 
     /**
-     * Insert actions.
+     * Delete actions.
      *
      * @param  string  $table
      * @param  string  $where
