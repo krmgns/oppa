@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.6
+ * @version    v1.7
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -162,6 +162,16 @@ final class Builder
         }
 
         return $this->push('select', array_map('trim', $field));
+    }
+
+    /**
+     * Add select statement more without resetting previous select fields.
+     *
+     * @param  mixed $field
+     * @return self
+     */
+    final public function selectMore($field) {
+        return $this->select($field, false);
     }
 
     /**
