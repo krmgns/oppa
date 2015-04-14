@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.5
+ * @version    v1.6
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -411,9 +411,13 @@ final class Builder
      */
     final public function orderBy($field, $op = null) {
         // check operator is valid
-        if ($op == self::OP_ASC || $op == self::OP_DESC) {
-            return $this->push('orderBy', $field .' '. $op);
+        if ($op) {
+            $op = strtoupper($op);
+            if ($op == self::OP_ASC || $op == self::OP_DESC) {
+                return $this->push('orderBy', $field .' '. $op);
+            }
         }
+
         return $this->push('orderBy', $field);
     }
 
