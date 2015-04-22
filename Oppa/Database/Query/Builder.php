@@ -331,15 +331,23 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "BETWEEN .. AND .." queries.
+     * Add "WHERE" statement for "IS NULL" queries.
      *
      * @param  string $field
-     * @param  array  $params
-     * @param  string $op
      * @return self
      */
-    final public function whereBetween($field, array $params, $op = self::OP_AND) {
-        return $this->where($field . ' BETWEEN ? AND ?', $params, $op);
+    final public function whereNull($field, $op = self::OP_AND) {
+        return $this->where($field .' IS NULL', null, $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "IS NOT NULL" queries.
+     *
+     * @param  string $field
+     * @return self
+     */
+    final public function whereNotNull($field, $op = self::OP_AND) {
+        return $this->where($field .' IS NOT NULL', null, $op);
     }
 
     /**
@@ -367,23 +375,27 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "IS NULL" queries.
+     * Add "WHERE" statement for "BETWEEN .. AND .." queries.
      *
      * @param  string $field
+     * @param  array  $params
+     * @param  string $op
      * @return self
      */
-    final public function whereNull($field, $op = self::OP_AND) {
-        return $this->where($field .' IS NULL', null, $op);
+    final public function whereBetween($field, array $params, $op = self::OP_AND) {
+        return $this->where($field . ' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
-     * Add "WHERE" statement for "IS NOT NULL" queries.
+     * Add "WHERE" statement for "NOT BETWEEN .. AND .." queries.
      *
      * @param  string $field
+     * @param  array  $params
+     * @param  string $op
      * @return self
      */
-    final public function whereNotNull($field, $op = self::OP_AND) {
-        return $this->where($field .' IS NOT NULL', null, $op);
+    final public function whereNotBetween($field, array $params, $op = self::OP_AND) {
+        return $this->where($field . ' NOT BETWEEN ? AND ?', $params, $op);
     }
 
     /**
