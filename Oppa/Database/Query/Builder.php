@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.8
+ * @version    v1.9
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -280,9 +280,9 @@ final class Builder
     /**
      * Add "WHERE" statement.
      *
-     * @param  string     $query
-     * @param  array|null $params
-     * @param  string     $op
+     * @param  string $query
+     * @param  array  $params
+     * @param  string $op
      * @return self
      */
     final public function where($query, array $params = null, $op = self::OP_AND) {
@@ -300,40 +300,73 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "LIKE" queries.
+     * Add "WHERE" statement for "LIKE .." queries.
      *
-     * @param  string     $query
-     * @param  array|null $params
-     * @param  string     $op
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
      * @return self
      */
-    final public function whereLike($query, array $params = null, $op = self::OP_AND) {
-        if (!empty($params)) {
-            foreach ($params as &$param) {
-                $charFirst = strval($param[0]);
-                $charLast  = substr($param, -1);
-                // both appended
-                if ($charFirst == '%' && $charLast == '%') {
-                    $param = $charFirst . addcslashes(substr($param, 1, -1), '%_') . $charLast;
-                }
-                // left appended
-                elseif ($charFirst == '%') {
-                    $param = $charFirst . addcslashes(substr($param, 1), '%_');
-                }
-                // right appended
-                elseif ($charLast == '%') {
-                    $param = addcslashes(substr($param, 0, -1), '%_') . $charLast;
-                }
-            }
+    final public function whereLike($field, $param, $op = self::OP_AND) {
+        $fChar = strval($param[0]);
+        $lChar = substr(strval($param), -1);
+        // both appended
+        if ($fChar == '%' && $lChar == '%') {
+            $param = $fChar . addcslashes(substr($param, 1, -1), '%_') . $lChar;
         }
+        // left appended
+        elseif ($fChar == '%') {
+            $param = $fChar . addcslashes(substr($param, 1), '%_');
+        }
+        // right appended
+        elseif ($lChar == '%') {
+            $param = addcslashes(substr($param, 0, -1), '%_') . $lChar;
+        } // else no willcards
 
-        return $this->where($query, $params, $op);
+        return $this->where($field .' LIKE ?', [$param], $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE %.." queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeBegin($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, $param. '%', $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE ..%" queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeEnd($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, '%'. $param, $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE %..%" queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeBoth($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, '%'. $param .'%', $op);
     }
 
     /**
      * Add "WHERE" statement for "IS NULL" queries.
      *
      * @param  string $field
+     * @param  string $op
      * @return self
      */
     final public function whereNull($field, $op = self::OP_AND) {
@@ -344,6 +377,7 @@ final class Builder
      * Add "WHERE" statement for "IS NOT NULL" queries.
      *
      * @param  string $field
+     * @param  string $op
      * @return self
      */
     final public function whereNotNull($field, $op = self::OP_AND) {
