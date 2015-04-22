@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.7
+ * @version    v1.8
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -383,7 +383,7 @@ final class Builder
      * @return self
      */
     final public function whereBetween($field, array $params, $op = self::OP_AND) {
-        return $this->where($field . ' BETWEEN ? AND ?', $params, $op);
+        return $this->where($field .' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
@@ -395,7 +395,7 @@ final class Builder
      * @return self
      */
     final public function whereNotBetween($field, array $params, $op = self::OP_AND) {
-        return $this->where($field . ' NOT BETWEEN ? AND ?', $params, $op);
+        return $this->where($field .' NOT BETWEEN ? AND ?', $params, $op);
     }
 
     /**
