@@ -297,11 +297,12 @@ final class Mysqli
     /**
      * Select actions all rows.
      *
-     * @param  string     $table
-     * @param  array      $fields
-     * @param  string     $where
-     * @param  array      $params
-     * @param  integer    $fetchType
+     * @param  string  $table
+     * @param  array   $fields
+     * @param  string  $where
+     * @param  array   $params
+     * @param  mixed   $limit
+     * @param  integer $fetchType
      * @return mixed
      */
     final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null,
@@ -389,7 +390,7 @@ final class Mysqli
     /**
      * Escape given input.
      *
-     * @param  string $input
+     * @param  mixed  $input
      * @param  string $type
      * @throws Oppa\Exception\Database\ArgumentException
      * @return string
