@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.9
+ * @version    v1.10
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -73,13 +73,17 @@ final class Builder
     private $connection;
 
     /**
-     * Create a fresh Query object.
+     * Create a fresh Query Builder object.
      *
      * @param Oppa\Database\Connector\Connection $connection
+     * @param string $table
      */
-    final public function __construct(Connection $connection = null) {
+    final public function __construct(Connection $connection = null, $table = null) {
         if ($connection) {
             $this->setConnection($connection);
+        }
+        if ($table) {
+            $this->setTable($table);
         }
     }
 
