@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.10
+ * @version    v1.11
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -304,69 +304,6 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "LIKE .." queries.
-     *
-     * @param  string $field
-     * @param  mixed  $param
-     * @param  string $op
-     * @return self
-     */
-    final public function whereLike($field, $param, $op = self::OP_AND) {
-        $fChar = strval($param[0]);
-        $lChar = substr(strval($param), -1);
-        // both appended
-        if ($fChar == '%' && $lChar == '%') {
-            $param = $fChar . addcslashes(substr($param, 1, -1), '%_') . $lChar;
-        }
-        // left appended
-        elseif ($fChar == '%') {
-            $param = $fChar . addcslashes(substr($param, 1), '%_');
-        }
-        // right appended
-        elseif ($lChar == '%') {
-            $param = addcslashes(substr($param, 0, -1), '%_') . $lChar;
-        } // else no willcards
-
-        return $this->where($field .' LIKE ?', [$param], $op);
-    }
-
-    /**
-     * Add "WHERE" statement for "LIKE %.." queries.
-     *
-     * @param  string $field
-     * @param  mixed  $param
-     * @param  string $op
-     * @return self
-     */
-    final public function whereLikeBegin($field, $param, $op = self::OP_AND) {
-        return $this->whereLike($field, $param. '%', $op);
-    }
-
-    /**
-     * Add "WHERE" statement for "LIKE ..%" queries.
-     *
-     * @param  string $field
-     * @param  mixed  $param
-     * @param  string $op
-     * @return self
-     */
-    final public function whereLikeEnd($field, $param, $op = self::OP_AND) {
-        return $this->whereLike($field, '%'. $param, $op);
-    }
-
-    /**
-     * Add "WHERE" statement for "LIKE %..%" queries.
-     *
-     * @param  string $field
-     * @param  mixed  $param
-     * @param  string $op
-     * @return self
-     */
-    final public function whereLikeBoth($field, $param, $op = self::OP_AND) {
-        return $this->whereLike($field, '%'. $param .'%', $op);
-    }
-
-    /**
      * Add "WHERE" statement for "IS NULL" queries.
      *
      * @param  string $field
@@ -434,6 +371,81 @@ final class Builder
      */
     final public function whereNotBetween($field, array $params, $op = self::OP_AND) {
         return $this->where($field .' NOT BETWEEN ? AND ?', $params, $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE .." queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLike($field, $param, $op = self::OP_AND) {
+        $fChar = strval($param[0]);
+        $lChar = substr(strval($param), -1);
+        // both appended
+        if ($fChar == '%' && $lChar == '%') {
+            $param = $fChar . addcslashes(substr($param, 1, -1), '%_') . $lChar;
+        }
+        // left appended
+        elseif ($fChar == '%') {
+            $param = $fChar . addcslashes(substr($param, 1), '%_');
+        }
+        // right appended
+        elseif ($lChar == '%') {
+            $param = addcslashes(substr($param, 0, -1), '%_') . $lChar;
+        } // else no willcards
+
+        return $this->where($field .' LIKE ?', [$param], $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE %.." queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeBegin($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, $param. '%', $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE ..%" queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeEnd($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, '%'. $param, $op);
+    }
+
+    /**
+     * Add "WHERE" statement for "LIKE %..%" queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLikeBoth($field, $param, $op = self::OP_AND) {
+        return $this->whereLike($field, '%'. $param .'%', $op);
+    }
+
+    /**
+     * Add "MATCH .. AGAINST" queries.
+     *
+     * @param  string $field
+     * @param  string $param
+     * @param  string $mode
+     * @return string
+     */
+    final public function whereMatchAgainst($field, $param, $mode = 'IN BOOLEAN MODE') {
+        return $this->where('MATCH('. $field .') AGAINST(%s '. $mode .')', [$param]);
     }
 
     /**
