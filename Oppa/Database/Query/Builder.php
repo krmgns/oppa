@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.11
+ * @version    v1.12
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -301,6 +301,37 @@ final class Builder
         }
 
         return $this->push('where', $query);
+    }
+
+    /**
+     * Shortcut for self.whereNotEqual().
+     */
+    final public function whereNot($field, $param, $op = self::OP_AND) {
+        return $this->whereNotEqual($field, $param, $op);
+    }
+
+    /**
+     * Add "WHERE x = .." statement.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereEqual($field, $param, $op = self::OP_AND) {
+        return $this->where($field .' = ?', [$param], $op);
+    }
+
+    /**
+     * Add "WHERE x != .." statement.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereNotEqual($field, $param, $op = self::OP_AND) {
+        return $this->where($field .' != ?', [$param], $op);
     }
 
     /**
