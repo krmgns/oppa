@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.12
+ * @version    v1.13
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -47,6 +47,13 @@ final class Builder
      * @const string
      */
     const OP_ASC = 'ASC', OP_DESC = 'DESC';
+
+    /**
+     * Select type for JSON returns.
+     * @const int
+     */
+    const JSON_ARRAY = 'array',
+          JSON_OBJECT = 'object';
 
     /**
      * Query stack.
@@ -149,11 +156,23 @@ final class Builder
     /**
      * Add select statement.
      *
-     * @param  mixed $field
+     * @param  mixed  $field
+     * @param  bool   $reset
+     * @param  string $alias (for sub-select)
      * @return self
      */
-    final public function select($field = null, $reset = true) {
+    final public function select($field = null, $reset = true, $alias = null) {
         $reset && $this->reset();
+
+        // handle other query object
+        if ($field instanceof $this) {
+            return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $alias));
+        }
+
+        // handle json select
+        if (is_array($field)) {
+            return $this->push('select', join('', $field));
+        }
 
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
@@ -169,13 +188,82 @@ final class Builder
     }
 
     /**
-     * Add select statement more without resetting previous select fields.
-     *
-     * @param  mixed $field
+     * Shortcut for self.select() with no resetting.
+     */
+    final public function selectMore($field, $alias = null) {
+        return $this->select($field, false, $alias);
+    }
+
+    /**
+     * Add select statement but returning JSON format.
+     * @param  mixed  $field
+     * @param  string $fieldAlias
+     * @param  string $type
+     * @param  bool   $reset
+     * @throws Oppa\Exception\Database\ErrorException
      * @return self
      */
-    final public function selectMore($field) {
-        return $this->select($field, false);
+    final public function selectJson($field, $fieldAlias, $type = self::JSON_OBJECT, $reset = true) {
+        if (is_string($field)) {
+            // field1, field2 ..
+            $field = array_map('trim', explode(',', $field));
+        }
+
+        $query = [];
+        // json object
+        if ($type == self::JSON_OBJECT) {
+            foreach ($field as $field) {
+                $key = $field;
+                // handle "a.field foo" or "a.field as foo"
+                $tmp = preg_split('~[\s\.](?:as|)~i', $key, -1, PREG_SPLIT_NO_EMPTY);
+                if (isset($tmp[2])) {
+                    $key = $tmp[2];
+                    $field = substr($field, 0, strpos($field, ' '));
+                } elseif (isset($tmp[1])) {
+                    $key = $tmp[1];
+                }
+                // generate sub-concat escaping quots
+                $query[] = sprintf("'\"%s\":\"', REPLACE(%s, '\"', '\\\\\"'), '\",'", $key, $field);
+            }
+
+            // generate concat
+            $query = sprintf('CONCAT("{", %s, "}") %s', join(', ', $query), $fieldAlias);
+            // yes, ugly but preferable instead of too many concat call or group_concat limit
+            // so it's working! tnx: http://www.thomasfrank.se/mysql_to_json.html
+            $query = str_replace(',\', "}")', '\'"}")', $query);
+
+            return $this->select([$query], $reset);
+        }
+
+        // json array
+        if ($type == self::JSON_ARRAY) {
+            foreach ($field as $field) {
+                $key = $field;
+                // handle "a.field foo" or "a.field as foo"
+                if ($pos = strpos($field, ' ')) {
+                    $key = substr($field, 0, $pos);
+                }
+                // generate sub-concat escaping quots
+                $query[] = sprintf("'\"', REPLACE(%s, '\"', '\\\\\"'), '\",'", $key, $field);
+            }
+
+            // generate concat
+            $query = sprintf('CONCAT("[", %s, "]") %s', join(', ', $query), $fieldAlias);
+            // yes, ugly but preferable instead of too many concat call or group_concat limit
+            // so it's working! tnx: http://www.thomasfrank.se/mysql_to_json.html
+            $query = str_replace(',\', "]")', '\'"]")', $query);
+
+            return $this->select([$query], $reset);
+        }
+
+        throw new Exception\ErrorException('Given JSON type is not implemented.');
+    }
+
+    /**
+     * Shortcut for self.selectJson() with no resetting.
+     */
+    final public function selectMoreJson($field, $fieldAlias, $type = self::JSON_OBJECT) {
+        return $this->selectJson($field, $fieldAlias, $type, false);
     }
 
     /**
