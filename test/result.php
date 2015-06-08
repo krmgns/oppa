@@ -9,7 +9,9 @@ use \Oppa\Configuration;
 
 $cfg = [
     'agent' => 'mysqli',
-    'profiling' => true,
+    // 'profiling' => true,
+    'map_result' => true,
+    'map_result_tiny2bool' => true,
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -25,6 +27,15 @@ $db = Database\Factory::build(new Configuration($cfg));
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();
+
+// $result = $agent->query("show tables");
+// $result = $agent->query("describe users");
+// $result = $agent->query("select * from information_schema.columns where table_schema = 'test'");
+
+$result = $agent->query("select * from users u");
+prd($result->getData());
+pre($result);
+// pre($agent,1);
 
 // $result = $agent->query("select * from `users`");
 // $result = $agent->query("select * from `users`");
@@ -56,5 +67,5 @@ $agent = $db->getConnection()->getAgent();
 // $agent->getAll("select * from `users`");
 // prd($agent->rowsCount());
 
-pre($agent);
+// pre($agent);
 // pre($db);
