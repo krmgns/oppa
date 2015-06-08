@@ -81,6 +81,15 @@ abstract class Agent
     protected $configuration;
 
     /**
+     * Needed to prevent exception thrown.
+     * @param  string $name
+     * @return bool
+     */
+    public function __isset($name) {
+        return isset($this->$name);
+    }
+
+    /**
      * Get link.
      *
      * @return object|resource
