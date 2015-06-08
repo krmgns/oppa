@@ -90,6 +90,9 @@ abstract class Mapper
      * @return mixed
      */
     final public function cast($value, array $properties) {
+        // some speed?
+        $nullable =& $properties['nullable'];
+
         /**
          * 1.000.000 iters
          * regexp-------7.442563
@@ -101,16 +104,21 @@ abstract class Mapper
             case self::TYPE_BIGINT:
             case self::TYPE_SMALLINT:
             case self::TYPE_MEDIUMINT:
-                $value = (int) $value;
+                $value = ($nullable && $value === null)
+                    ? null : (int) $value;
                 break;
             // tiny-it baby.. =)
             case self::TYPE_TINYINT:
-                $value = (int) $value;
-                if ($this->options['tiny2bool']
-                    && $properties['length'] === 1    /* @important */
-                    && ($value === 0 || $value === 1) /* @important */
-                ) {
-                    $value = (bool) $value;
+                if ($nullable && $value === null) {
+                    // pass
+                } else {
+                    $value = (int) $value;
+                    if ($this->options['tiny2bool']
+                        && $properties['length'] === 1    /* @important */
+                        && ($value === 0 || $value === 1) /* @important */
+                    ) {
+                        $value = (bool) $value;
+                    }
                 }
                 break;
             // floats
@@ -118,7 +126,8 @@ abstract class Mapper
             case self::TYPE_DOUBLE:
             case self::TYPE_DECIMAL:
             case self::TYPE_REAL:
-                $value = (float) $value;
+                $value = ($nullable && $value === null)
+                    ? null : (float) $value;
                 break;
         }
 
