@@ -195,7 +195,7 @@ final class Builder
     }
 
     /**
-     * Add select statement but returning JSON format.
+     * Add select statement but returning JSON string.
      * @param  mixed  $field
      * @param  string $fieldAlias
      * @param  string $type

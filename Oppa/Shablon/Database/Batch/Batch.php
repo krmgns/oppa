@@ -32,7 +32,7 @@ namespace Oppa\Shablon\Database\Batch;
 abstract class Batch
 {
     /**
-     * Database agent
+     * Agent object.
      * @var Oppa\Database\Connector\Agent
      */
     protected $agent;

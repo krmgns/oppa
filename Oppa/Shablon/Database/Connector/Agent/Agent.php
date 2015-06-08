@@ -32,7 +32,7 @@ use \Oppa\Exception\Database as Exception;
  * @implements Oppa\Shablon\Database\Connector\Agent\ConnectionInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamFilterInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
- * @version    v1.1
+ * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Agent
@@ -61,6 +61,12 @@ abstract class Agent
      * @var Oppa\Logger
      */
     protected $logger;
+
+    /**
+     * Mapper object.
+     * @var Oppa\Mapper
+     */
+    protected $mapper;
 
     /**
      * Profiler object.
@@ -114,6 +120,21 @@ abstract class Agent
         }
 
         return $this->logger;
+    }
+
+    /**
+     * Get mapper object.
+     *
+     * @throws Oppa\Exception\Database\ErrorException
+     * @return Oppa\Mapper
+     */
+    public function getMapper() {
+        if (!$this->mapper) {
+            throw new Exception\ErrorException(
+                'Mapper is not found, did you set `map_result` option as true?');
+        }
+
+        return $this->mapper;
     }
 
     /**

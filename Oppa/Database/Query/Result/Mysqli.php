@@ -22,6 +22,7 @@
 
 namespace Oppa\Database\Query\Result;
 
+use \Oppa\Database\Connector\Agent;
 use \Oppa\Exception\Database as Exception;
 
 /**
@@ -30,12 +31,20 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result\Mysqli
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Database\Query\Result
- * @version    v1.1
+ * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
     extends \Oppa\Database\Query\Result
 {
+    /**
+     * Create a fresh Mysqli object.
+     *
+     * @param Oppa\Database\Connector\Agent\Mysqli $agent
+     */
+    final public function __construct(Agent\Mysqli $agent) {
+        $this->agent = $agent;
+    }
 
     /**
      * Free resource.
@@ -107,6 +116,12 @@ final class Mysqli
                     $this->free();
                     throw new Exception\ResultException(
                         "Could not implement given `{$fetchType}` fetch type!");
+            }
+
+            // map result data
+            if (($mapper = $this->agent->getMapper())
+                && ($key = $this->result->fetch_field()->orgtable)) {
+                $this->data = $mapper->map($key, $this->data);
             }
         }
 

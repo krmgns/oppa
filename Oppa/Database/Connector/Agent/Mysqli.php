@@ -23,6 +23,7 @@
 namespace Oppa\Database\Connector\Agent;
 
 use \Oppa\Helper;
+use \Oppa\Mapper;
 use \Oppa\Logger;
 use \Oppa\Database\Batch;
 use \Oppa\Database\Profiler;
@@ -37,7 +38,7 @@ use \Oppa\Exception\Database as Exception;
  * @uses       Oppa\Helper, Oppa\Logger, Oppa\Database\Batch, Oppa\Database\Profiler,
  *             Oppa\Database\Query\Sql, Oppa\Database\Query\Result, Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
- * @version    v1.3
+ * @version    v1.4
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
@@ -61,8 +62,18 @@ final class Mysqli
         // assign batch object (for transaction)
         $this->batch = new Batch\Mysqli($this);
 
+        // assign data mapper
+        $mapping = Helper::getArrayValue('map_result', $configuration);
+        if ($mapping === true) {
+            $this->mapper = new Mapper([
+                'tiny2bool' => Helper::getArrayValue('map_result_tiny2bool', $configuration)
+            ]);
+        }
+        // @todo mapping could have in/out directives
+        // elseif (is_array($mapping)) {}
+
         // assign result object
-        $this->result = new Result\Mysqli();
+        $this->result = new Result\Mysqli($this);
         $this->result->setFetchType(
             isset($configuration['fetch_type'])
                 ? $configuration['fetch_type'] : Result::FETCH_OBJECT
@@ -172,6 +183,37 @@ final class Mysqli
                 throw new Exception\QueryException(sprintf(
                     'Query error! errmsg[%s]', $this->link->error));
             }
+        }
+
+        // fill mapper map for once
+        if ($this->mapper) {
+            $result = null;
+            try {
+                // get table columns info
+                $this->query(
+                    'SELECT * FROM information_schema.columns WHERE table_schema = %s', [$name]);
+                if ($this->result->count()) {
+                    $map = [];
+                    foreach ($this->result as $result) {
+                        $length = null;
+                        if (// detect length for integers (actually, used for only tiny2bool action)
+                            substr($result->DATA_TYPE, -3) == 'int' ||
+                            // detect length for strings (actually, not in use for now)
+                            substr($result->DATA_TYPE, -4) == 'char'
+                        ) {
+                            $length =@ sscanf($result->COLUMN_TYPE, "{$result->DATA_TYPE}(%d)%s")[0];
+                        }
+                        // needed only these for now
+                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['type'] = $result->DATA_TYPE;
+                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['length'] = $length;
+                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['nullable'] = ($result->IS_NULLABLE == 'YES');
+                    }
+                    // free result
+                    $this->result->reset();
+                    // set mapper map
+                    $this->mapper->setMap($map);
+                }
+            } catch (Exception\QueryException $e) {}
         }
 
         return $this->link;

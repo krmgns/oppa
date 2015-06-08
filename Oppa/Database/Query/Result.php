@@ -30,7 +30,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Query\Result
- * @version    v1.1
+ * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Result
@@ -59,6 +59,12 @@ abstract class Result
      * @const integer
      */
     const FETCH_ARRAY_BOTH = 4;
+
+    /**
+     * Agent object.
+     * @var Oppa\Database\Connector\Agent
+     */
+    protected $agent;
 
     /**
      * Resource object.
