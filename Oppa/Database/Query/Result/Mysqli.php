@@ -119,7 +119,8 @@ final class Mysqli
             }
 
             // map result data
-            if (($mapper = $this->agent->getMapper())
+            if (isset($this->agent->mapper)
+                && ($mapper = $this->agent->getMapper())
                 && ($key = $this->result->fetch_field()->orgtable)) {
                 $this->data = $mapper->map($key, $this->data);
             }
