@@ -29,7 +29,7 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Mapper
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Mapper\Mapper
- * @version v1.0
+ * @version v1.1
  * @author  Kerem Gunes <qeremy@gmail>
  */
 
@@ -61,9 +61,16 @@ final class Mapper
         // let's do it!
         foreach ($this->map[$key] as $fieldName => $fieldProperties) {
             foreach ($data as &$d) {
+                // keep data type
+                $dType = gettype($d);
                 foreach ($d as $key => $value) {
+                    // match field?
                     if ($key == $fieldName) {
-                        $d->{$key} = $this->cast($value, $fieldProperties);
+                        if ($dType == 'array') {
+                            $d[$key] = $this->cast($value, $fieldProperties);
+                        } elseif ($dType == 'object') {
+                            $d->{$key} = $this->cast($value, $fieldProperties);
+                        }
                     }
                 }
             }
