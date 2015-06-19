@@ -50,7 +50,7 @@ final class Builder
 
     /**
      * Select type for JSON returns.
-     * @const int
+     * @const string
      */
     const JSON_ARRAY = 'array',
           JSON_OBJECT = 'object';
