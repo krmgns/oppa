@@ -32,7 +32,7 @@ use \Oppa\Exception\Database as Exception;
  * @implements Oppa\Shablon\Database\Connector\Agent\ConnectionInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamFilterInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
- * @version    v1.2
+ * @version    v1.3
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Agent
@@ -241,7 +241,7 @@ abstract class Agent
             // available named word limits: :foo, :foo123, :foo_bar
             preg_match_all('~:([a-zA-Z0-9_]+)~', $input, $match);
             if (isset($match[1]) && !empty($match[1])) {
-                $keys = $vals = [];
+                $keys = $vals = $keysUsed = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
                         throw new Exception\ArgumentException('Replacement key not found in params!');
@@ -249,10 +249,12 @@ abstract class Agent
 
                     $keys[] = sprintf('~:%s~', $key);
                     $vals[] = $this->escape($params[$key]);
-                    // remove used params
-                    unset($params[$key]);
+                    $keysUsed[] = $key;
                 }
                 $input = preg_replace($keys, $vals, $input, 1);
+
+                // remove used params
+                foreach ($keysUsed as $key) unset($params[$key]);
             }
 
             // available indicator: ?
