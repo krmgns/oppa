@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.13
+ * @version    v1.14
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -698,6 +698,9 @@ final class Builder
      */
     final public function count() {
         $query = sprintf('SELECT count(*) AS count FROM %s', $this->table);
+        if (isset($this->query['join'])) {
+            $query = sprintf('%s %s', $query, join(' ', $this->query['join']));
+        }
         if (isset($this->query['where'])) {
             $query = sprintf('%s WHERE %s', $query, join(' ', $this->query['where']));
         }
