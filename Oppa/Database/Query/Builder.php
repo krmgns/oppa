@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.14
+ * @version    v1.15
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -176,15 +176,10 @@ final class Builder
 
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
-            $field = [1];
+            $field = ['1'];
         }
 
-        // could be joined
-        if (is_string($field)) {
-            $field = explode(',', $field);
-        }
-
-        return $this->push('select', array_map('trim', $field));
+        return $this->push('select', trim($field, ', '));
     }
 
     /**
@@ -732,6 +727,8 @@ final class Builder
                 $aggregate = isset($this->query['aggregate'])
                     ? ', '. join(', ', $this->query['aggregate'])
                     : '';
+
+                // add select fields
                 $this->queryString .= sprintf('SELECT %s%s FROM %s',
                     join(', ', $this->query['select']), $aggregate, $this->table);
 
