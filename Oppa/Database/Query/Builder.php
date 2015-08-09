@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Builder
  * @uses       Oppa\Helper, Oppa\Exception\Database, Oppa\Database\Connector\Connection
- * @version    v1.15
+ * @version    v1.16
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Builder
@@ -567,12 +567,18 @@ final class Builder
      *
      * @param  string     $query
      * @param  array|null $params
+     * @param  string     $op
      * @return self
      */
-    final public function having($query, array $params = null) {
+    final public function having($query, array $params = null, $op = self::OP_AND) {
         // prepare if params provided
         if (!empty($params)) {
             $query = $this->connection->getAgent()->prepare($query, $params);
+        }
+
+        // add and/or operator
+        if (isset($this->query['having']) && !empty($this->query['having'])) {
+            $query = sprintf('%s %s', $op, $query);
         }
 
         return $this->push('having', $query);
@@ -751,8 +757,7 @@ final class Builder
 
                 // add having statement
                 if (isset($this->query['having'])) {
-                    // use only first element of having for now..
-                    $this->queryString .= sprintf(' HAVING %s', $this->query['having'][0]);
+                    $this->queryString .= sprintf(' HAVING %s', join(' ', $this->query['having']));
                 }
 
                 // add order by statement
