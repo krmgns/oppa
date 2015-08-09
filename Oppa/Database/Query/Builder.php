@@ -318,9 +318,9 @@ final class Builder
     /**
      * Add "JOIN" statement with "USING" keyword.
      *
-     * @param  string     $table  To join.
-     * @param  string     $using
-     * @param  array|null $params
+     * @param  string $table  To join.
+     * @param  string $using
+     * @param  array  $params
      * @return self
      */
     final public function joinUsing($table, $using, array $params = null) {
@@ -350,9 +350,9 @@ final class Builder
     /**
      * Add "LEFT JOIN" statement with "USING" keyword.
      *
-     * @param  string     $table  To join.
-     * @param  string     $using
-     * @param  array|null $params
+     * @param  string $table  To join.
+     * @param  string $using
+     * @param  array  $params
      * @return self
      */
     final public function joinLeftUsing($table, $using, array $params = null) {
@@ -565,9 +565,9 @@ final class Builder
     /**
      * Add "HAVING" statement.
      *
-     * @param  string     $query
-     * @param  array|null $params
-     * @param  string     $op
+     * @param  string $query
+     * @param  array  $params
+     * @param  string $op
      * @return self
      */
     final public function having($query, array $params = null, $op = self::OP_AND) {
