@@ -98,6 +98,46 @@ $result = $agent->delete('user', 'id = ?', [123]);
 var_dump($result); // int: affected_rows
 ```
 
+###Query Builder###
+```php
+// use and init with exists $db
+use \Oppa\Database\Query\Builder as QueryBuilder;
+$qb = new QueryBuilder($db->getConnection());
+// set target table
+$qb->setTable('users');
+
+// build query
+$qb->select('u.*, us.score, ul.login')
+    ->aggregate('sum', 'us.score', 'sum_score')
+    ->join('users_score us', 'us.user_id=u.id')
+    ->joinLeft('users_login ul', 'ul.user_id=u.id')
+    ->where('u.id in(?,?,?)', [1,2,3])
+    ->whereBetween('u.old', [30,50])
+    ->whereNotNull('ul.login')
+    ->groupBy('u.id')
+    ->orderBy('old')
+    ->having('sum_score <= ?', [30])
+    ->limit(0,10)
+;
+```
+Gives the result below.
+```sql
+SELECT
+    u.*
+    , us.score
+    , ul.login
+    , sum(us.score) sum_score
+FROM users u
+JOIN users_score us ON us.user_id=u.id
+LEFT JOIN users_login ul ON ul.user_id=u.id
+WHERE u.id in(1,2,3) AND u.old BETWEEN 30 AND 50 AND ul.login IS NOT NULL
+GROUP BY u.id
+HAVING sum_score <= 30
+ORDER BY old
+LIMIT 0,10
+```
+
+
 ###Batch Actions (aka Transactions)###
 
 ```php
