@@ -56,6 +56,18 @@ final class Builder
           JSON_OBJECT = 'object';
 
     /**
+     * Database connection.
+     * @var Oppa\Database\Connector\Connection
+     */
+    private $connection;
+
+    /**
+     * Target table for query.
+     * @var string
+     */
+    private $table;
+
+    /**
      * Query stack.
      * @var array
      */
@@ -66,18 +78,6 @@ final class Builder
      * @var string
      */
     private $queryString = '';
-
-    /**
-     * Target table for query.
-     * @var string
-     */
-    private $table;
-
-    /**
-     * Database connection.
-     * @var Oppa\Database\Connector\Connection
-     */
-    private $connection;
 
     /**
      * Create a fresh Query Builder object.
