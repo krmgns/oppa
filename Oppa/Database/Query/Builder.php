@@ -124,7 +124,7 @@ final class Builder
     /**
      * Set target table for query.
      *
-     * @param string $table
+     * @param  string $table
      * @return self
      */
     final public function setTable($table) {
@@ -145,11 +145,12 @@ final class Builder
     /**
      * Reset self vars.
      *
-     * @return void
+     * @return self
      */
     final public function reset() {
         $this->query = [];
         $this->queryString = '';
+
         return $this;
     }
 
