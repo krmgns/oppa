@@ -489,6 +489,18 @@ final class Builder
     }
 
     /**
+     * Add "WHERE" statement for "foo < 123" queries.
+     *
+     * @param  string $field
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereLessThan($field, $param, $op = self::OP_AND) {
+        return $this->where($field .' < ?', [$param], $op);
+    }
+
+    /**
      * Add "WHERE" statement for "LIKE .." queries.
      *
      * @param  string $field
