@@ -536,6 +536,10 @@ final class Builder
         return $this->where($field .' >= ?', [$param], $op);
     }
 
+    final public function whereLT() {
+        return call_user_func_array([$this, 'whereLessThan'], func_get_args());
+    }
+
     /**
      * Add "WHERE" statement for "LIKE .." queries.
      *
