@@ -536,6 +536,9 @@ final class Builder
         return $this->where($field .' >= ?', [$param], $op);
     }
 
+    /**
+     * Shortcut methods.
+     */
     final public function whereLT() {
         return call_user_func_array([$this, 'whereLessThan'], func_get_args());
     }
