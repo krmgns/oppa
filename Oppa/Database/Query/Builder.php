@@ -539,6 +539,9 @@ final class Builder
     final public function whereLT() {
         return call_user_func_array([$this, 'whereLessThan'], func_get_args());
     }
+    final public function whereLTE() {
+        return call_user_func_array([$this, 'whereLessThanEqual'], func_get_args());
+    }
 
     /**
      * Add "WHERE" statement for "LIKE .." queries.
