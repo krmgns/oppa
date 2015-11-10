@@ -91,6 +91,14 @@ $qb->setTable('users');
 // $qb->whereLessThanEqual('id', 30, 'OR');
 // $qb->whereGreaterThanEqual('id', 20);
 
+// $qb->whereExists(
+//     (new QueryBuilder($db->getConnection(), 'foo'))
+//         ->select('*')
+//         ->where('y > ?')
+//     , [10]);
+// $qb->whereExists('select * from foo where y > ?', [10]);
+// $qb->whereExists('select * from foo where y < ?', [20], 'OR');
+
 prd($qb->toString());
 pre($qb);
 // pre($db);
