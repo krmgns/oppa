@@ -85,6 +85,12 @@ $qb->setTable('users');
 // pre($qb->toString());
 // pre($qb->execute());
 
-pre($qb->toString());
+// $qb->select('id,name');
+// $qb->whereLessThan('id', 30);
+// $qb->whereGreaterThan('id', 20);
+// $qb->whereLessThanEqual('id', 30, 'OR');
+// $qb->whereGreaterThanEqual('id', 20);
+
+prd($qb->toString());
 pre($qb);
 // pre($db);
