@@ -628,6 +628,27 @@ final class Builder
     }
 
     /**
+     * Add "WHERE" statement for "EXISTS (...)" queries.
+     *
+     * @param  mixed  $query
+     * @param  mixed  $param
+     * @param  string $op
+     * @return self
+     */
+    final public function whereExists($query, array $params = null, $op = self::OP_AND) {
+        // check query if instance of Builder
+        if ($query instanceof Builder) {
+            $query = $query->toString();
+        }
+        // prepare if params provided
+        if (!empty($params)) {
+            $query = $this->connection->getAgent()->prepare($query, $params);
+        }
+
+        return $this->where('EXISTS ('. $query .')', null, $op);
+    }
+
+    /**
      * Add "HAVING" statement.
      *
      * @param  string $query
