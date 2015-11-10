@@ -545,6 +545,9 @@ final class Builder
     final public function whereGT() {
         return call_user_func_array([$this, 'whereGreaterThan'], func_get_args());
     }
+    final public function whereGTE() {
+        return call_user_func_array([$this, 'whereGreaterThanEqual'], func_get_args());
+    }
 
     /**
      * Add "WHERE" statement for "LIKE .." queries.
