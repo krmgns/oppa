@@ -94,10 +94,14 @@ final class Mysqli
         foreach ($this->queue as $query) {
             // that what i see: clone is important in such actions
             $result = clone $this->agent->query($query);
+
             if ($result->getRowsAffected()) {
+                // this is also important for insert actions!
                 $result->setId($link->insert_id);
+
                 $this->result[] = $result;
             }
+
             unset($result);
         }
 
