@@ -115,7 +115,7 @@ final class Connector
         unset($database['master'], $database['slaves']);
 
         // merge configurations
-        $configuration = $configuration + $database;
+        $configuration = $configuration + (array) $database;
         if (!isset(
             $configuration['host'], $configuration['name'],
             $configuration['username'], $configuration['password']
