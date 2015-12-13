@@ -25,7 +25,6 @@ namespace Oppa;
 /**
  * @package Oppa
  * @object  Oppa\Autoload
- * @version v1.0
  * @author  Kerem Gunes <qeremy@gmail>
  */
 final class Autoload
