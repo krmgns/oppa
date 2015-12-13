@@ -29,7 +29,6 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Shablon\Database\Profiler
  * @object     Oppa\Shablon\Database\Profiler\Profiler
  * @uses       Oppa\Exception
- * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Profiler
