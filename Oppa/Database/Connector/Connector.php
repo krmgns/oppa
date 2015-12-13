@@ -147,6 +147,7 @@ final class Connector
         if (isset($this->connections[$host])) {
             $this->connections[$host]->close();
             unset($this->connections[$host]);
+
             return;
         }
 
@@ -199,14 +200,14 @@ final class Connector
         // connection exists?
         // e.g: isConnected('localhost')
         if (isset($this->connections[$host])) {
-            return $this->connections[$host]->status() === Connection::STATUS_CONNECTED;
+            return ($this->connections[$host]->status() === Connection::STATUS_CONNECTED);
         }
 
         // without master/slave directives
         // e.g: isConnected()
         if ($this->configuration->get('sharding') !== true) {
             foreach ($this->connections as $connection) {
-                return $connection->status() === Connection::STATUS_CONNECTED;
+                return ($connection->status() === Connection::STATUS_CONNECTED);
             }
         }
 
@@ -217,14 +218,14 @@ final class Connector
             case Connection::TYPE_MASTER:
                 foreach ($this->connections as $connection) {
                     if ($connection->getType() == Connection::TYPE_MASTER) {
-                        return $connection->status() === Connection::STATUS_CONNECTED;
+                        return ($connection->status() === Connection::STATUS_CONNECTED);
                     }
                 }
             // e.g: isConnected('slave1.mysql.local'), isConnected('slave')
             case Connection::TYPE_SLAVE:
                 foreach ($this->connections as $connection) {
                     if ($connection->getType() == Connection::TYPE_SLAVE) {
-                        return $connection->status() === Connection::STATUS_CONNECTED;
+                        return ($connection->status() === Connection::STATUS_CONNECTED);
                     }
                 }
                 break;
