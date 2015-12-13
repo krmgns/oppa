@@ -31,7 +31,6 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database\Connector
  * @object     Oppa\Database\Connector\Connector
  * @uses       Oppa\Helper, Oppa\Configuration, Oppa\Exception\Database
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Connector
