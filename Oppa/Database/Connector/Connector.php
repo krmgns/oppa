@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace Oppa\Database\Connector;
 
 use \Oppa\Helper;
@@ -30,8 +29,7 @@ use \Oppa\Exception\Database as Exception;
  * @package    Oppa
  * @subpackage Oppa\Database\Connector
  * @object     Oppa\Database\Connector\Connector
- * @uses       Oppa\Helper
- *             Oppa\Configuration
+ * @uses       Oppa\Helper, Oppa\Configuration
  *             Oppa\Exception\Database
  * @author     Kerem Gunes <qeremy@gmail>
  */
