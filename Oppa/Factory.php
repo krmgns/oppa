@@ -26,7 +26,6 @@ namespace Oppa;
  * @package    Oppa
  * @object     Oppa\Factory
  * @implements Oppa\Shablon\FactoryInterface
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Factory
