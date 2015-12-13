@@ -38,7 +38,6 @@ use \Oppa\Exception\Database as Exception;
  * @uses       Oppa\Helper, Oppa\Logger, Oppa\Database\Batch, Oppa\Database\Profiler,
  *             Oppa\Database\Query\Sql, Oppa\Database\Query\Result, Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Connector\Agent\Agent
- * @version    v1.4
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
