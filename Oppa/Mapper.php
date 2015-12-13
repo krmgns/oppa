@@ -29,7 +29,6 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Mapper
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Mapper\Mapper
- * @version v1.1
  * @author  Kerem Gunes <qeremy@gmail>
  */
 
