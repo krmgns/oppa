@@ -30,7 +30,6 @@ use \Oppa\Exception\Orm as Exception;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Entity
  * @uses       Oppa\Helper, Oppa\Exception\Orm
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Entity
