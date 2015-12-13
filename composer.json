@@ -1,7 +1,7 @@
 {
     "name": "qeremy/oppa",
     "type": "library",
-    "version": "v1.0",
+    "version": "v1.24.8",
     "homepage": "http://github.com/qeremy/oppa",
     "description": "Oppa: A database abstraction layer for PHP and ORM implementation.",
     "keywords": ["oppa", "orm", "abstraction layer", "mysql"],
