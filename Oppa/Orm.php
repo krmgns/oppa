@@ -26,7 +26,6 @@ namespace Oppa;
  * @package Oppa
  * @object  Oppa\Orm
  * @extends Oppa\Orm\Orm
- * @version v1.0
  * @author  Kerem Gunes <qeremy@gmail>
  */
 class Orm
