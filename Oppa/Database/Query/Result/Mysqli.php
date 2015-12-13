@@ -31,7 +31,6 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result\Mysqli
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Database\Query\Result
- * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
