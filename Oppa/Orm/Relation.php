@@ -29,7 +29,6 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Relation
  * @uses       Oppa\Database\Query\Builder
- * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 class Relation
