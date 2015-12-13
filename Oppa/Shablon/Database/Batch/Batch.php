@@ -26,7 +26,6 @@ namespace Oppa\Shablon\Database\Batch;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Batch
  * @object     Oppa\Shablon\Database\Batch\Batch
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Batch
