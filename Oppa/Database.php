@@ -28,9 +28,9 @@ use \Oppa\Database\Connector\Connector;
 /**
  * @package    Oppa
  * @object     Oppa\Database
- * @uses       Oppa\Configuration, Oppa\Database\Connector\Connector
+ * @uses       Oppa\Configuration,
+ *             Oppa\Database\Connector\Connector
  * @implements Oppa\Shablon\Database\DatabaseInterface
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Database
