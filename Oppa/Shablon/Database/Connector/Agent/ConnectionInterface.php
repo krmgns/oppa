@@ -26,7 +26,6 @@ namespace Oppa\Shablon\Database\Connector\Agent;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Connector\Agent
  * @object     Oppa\Shablon\Database\Connector\Agent\ConnectionInterface
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 interface ConnectionInterface
