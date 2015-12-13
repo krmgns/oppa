@@ -29,7 +29,6 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Logger
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Logger\Logger
- * @version v1.1
  * @author  Kerem Gunes <qeremy@gmail>
  */
 
