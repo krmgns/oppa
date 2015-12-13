@@ -29,7 +29,6 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database
  * @object     Oppa\Database\Factory
  * @uses       Oppa\Exception\Database
- * @version    v1.1
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Profiler
