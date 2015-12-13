@@ -30,7 +30,6 @@ use \Oppa\Database\Connector\Agent;
  * @object     Oppa\Database\Batch\Mysqli
  * @uses       Oppa\Database\Connector\Agent
  * @extends    Oppa\Shablon\Database\Batch\Batch
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 final class Mysqli
