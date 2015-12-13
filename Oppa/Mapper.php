@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2015 Kerem Gunes
+ * Copyright (c) 2015 Kerem Güneş
  *    <http://qeremy.com>
  *
  * GNU General Public License v3.0
