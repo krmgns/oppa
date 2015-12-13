@@ -32,7 +32,6 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  * @object     Oppa\Orm\Orm
  * @uses       Oppa\Database, Oppa\Exception\Orm, Oppa\Database\Query\Builder
  * @extends    Oppa\Orm\Relation
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 
