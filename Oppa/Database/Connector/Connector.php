@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Connector\Connector
  * @uses       Oppa\Helper, Oppa\Configuration
  *             Oppa\Exception\Database
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Connector
     extends \Oppa\Shablon\Database\Connector\Connector

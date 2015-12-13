@@ -29,7 +29,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Query\Result
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Result
     extends \Oppa\Shablon\Database\Query\Result

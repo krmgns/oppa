@@ -28,7 +28,7 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Logger
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Logger\Logger
- * @author  Kerem Gunes <qeremy@gmail>
+ * @author  Kerem Güneş <qeremy[at]gmail>
  */
 
 final class Logger

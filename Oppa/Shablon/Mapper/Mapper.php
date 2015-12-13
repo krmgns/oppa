@@ -25,7 +25,7 @@ namespace Oppa\Shablon\Mapper;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Mapper
  * @object     Oppa\Shablon\Mapper\Mapper
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Mapper
 {

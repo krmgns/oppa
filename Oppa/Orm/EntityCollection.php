@@ -26,7 +26,7 @@ namespace Oppa\Orm;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\EntityCollection
  * @implements \Countable, \IteratorAggregate
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class EntityCollection
     implements \Countable, \IteratorAggregate

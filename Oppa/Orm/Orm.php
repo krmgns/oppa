@@ -31,7 +31,7 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  * @object     Oppa\Orm\Orm
  * @uses       Oppa\Database, Oppa\Exception\Orm, Oppa\Database\Query\Builder
  * @extends    Oppa\Orm\Relation
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 
 class Orm

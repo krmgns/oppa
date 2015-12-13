@@ -25,7 +25,7 @@ namespace Oppa\Shablon\Database\Connector\Agent;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Connector\Agent
  * @object     Oppa\Shablon\Database\Connector\Agent\ConnectionInterface
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 interface ConnectionInterface
 {

@@ -28,7 +28,7 @@ use \Oppa\Exception as Exception;
  * @object  Oppa\Mapper
  * @uses    Oppa\Exception
  * @extends Oppa\Shablon\Mapper\Mapper
- * @author  Kerem Gunes <qeremy@gmail>
+ * @author  Kerem Güneş <qeremy[at]gmail>
  */
 
 final class Mapper

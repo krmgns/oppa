@@ -31,7 +31,7 @@ use \Oppa\Exception\Database as Exception;
  * @implements Oppa\Shablon\Database\Connector\Agent\ConnectionInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamFilterInterface,
  *             Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Agent
     implements ConnectionInterface, StreamFilterInterface, StreamWrapperInterface

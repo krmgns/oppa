@@ -25,7 +25,7 @@ namespace Oppa\Shablon\Database;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database
  * @object     Oppa\Shablon\Database\DatabaseInterface
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 interface DatabaseInterface
 {

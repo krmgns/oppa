@@ -30,7 +30,7 @@ use \Oppa\Database\Connector\Connector;
  * @uses       Oppa\Configuration,
  *             Oppa\Database\Connector\Connector
  * @implements Oppa\Shablon\Database\DatabaseInterface
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Database
     implements \Oppa\Shablon\Database\DatabaseInterface

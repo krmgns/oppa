@@ -26,7 +26,7 @@ namespace Oppa\Shablon\Database\Query;
  * @subpackage Oppa\Shablon\Database\Query
  * @object     Oppa\Shablon\Database\Query\Result
  * @implements \Countable, \IteratorAggregate
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Result
     implements \Countable, \IteratorAggregate

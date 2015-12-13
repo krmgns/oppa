@@ -28,7 +28,7 @@ use \Oppa\Configuration;
  * @subpackage Oppa\Database
  * @object     Oppa\Database\Factory
  * @uses       Oppa\Configuration
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Factory
 {

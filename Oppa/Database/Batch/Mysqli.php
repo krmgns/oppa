@@ -29,7 +29,7 @@ use \Oppa\Database\Connector\Agent;
  * @object     Oppa\Database\Batch\Mysqli
  * @uses       Oppa\Database\Connector\Agent
  * @extends    Oppa\Shablon\Database\Batch\Batch
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Mysqli
     extends \Oppa\Shablon\Database\Batch\Batch

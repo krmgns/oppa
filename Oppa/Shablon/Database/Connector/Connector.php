@@ -28,7 +28,7 @@ use \Oppa\Database\Connector\Connection;
  * @subpackage Oppa\Shablon\Database\Connector
  * @object     Oppa\Shablon\Database\Connector\Connector
  * @uses       Oppa\Database\Connector\Connection
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Connector
 {

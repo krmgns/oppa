@@ -25,7 +25,7 @@ namespace Oppa\Database\Query;
  * @package    Oppa
  * @subpackage Oppa\Database\Query
  * @object     Oppa\Database\Query\Sql
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Sql
 {

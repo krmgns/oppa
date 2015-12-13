@@ -25,7 +25,7 @@ namespace Oppa;
  * @package Oppa
  * @object  Oppa\Orm
  * @extends Oppa\Orm\Orm
- * @author  Kerem Gunes <qeremy@gmail>
+ * @author  Kerem Güneş <qeremy[at]gmail>
  */
 class Orm
     extends \Oppa\Orm\Orm

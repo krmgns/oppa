@@ -25,7 +25,7 @@ namespace Oppa\Shablon\Database\Connector;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Connector
  * @object     Oppa\Shablon\Database\Connector\Connection
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Connection
 {

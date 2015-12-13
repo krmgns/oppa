@@ -28,7 +28,7 @@ use \Oppa\Exception\Database as Exception;
  * @subpackage Oppa\Database
  * @object     Oppa\Database\Factory
  * @uses       Oppa\Exception\Database
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Profiler
     extends \Oppa\Shablon\Database\Profiler\Profiler

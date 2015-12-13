@@ -29,7 +29,7 @@ use \Oppa\Exception\Orm as Exception;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Entity
  * @uses       Oppa\Helper, Oppa\Exception\Orm
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Entity
 {

@@ -25,7 +25,7 @@ namespace Oppa\Shablon\Logger;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Logger
  * @object     Oppa\Shablon\Logger\Logger
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 abstract class Logger
 {

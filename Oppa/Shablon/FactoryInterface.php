@@ -25,7 +25,7 @@ namespace Oppa\Shablon;
  * @package    Oppa
  * @subpackage Oppa\Shablon
  * @object     Oppa\Shablon\FactoryInterface
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 interface FactoryInterface
 {

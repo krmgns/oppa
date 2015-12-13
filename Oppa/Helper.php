@@ -24,7 +24,7 @@ namespace Oppa;
 /**
  * @package Oppa
  * @object  Oppa\Helper
- * @author  Kerem Gunes <qeremy@gmail>
+ * @author  Kerem Güneş <qeremy[at]gmail>
  */
 final class Helper
 {

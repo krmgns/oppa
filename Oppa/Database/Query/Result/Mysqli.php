@@ -30,7 +30,7 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result\Mysqli
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Database\Query\Result
- * @author     Kerem Gunes <qeremy@gmail>
+ * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Mysqli
     extends \Oppa\Database\Query\Result
