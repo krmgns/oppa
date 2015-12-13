@@ -26,7 +26,6 @@ namespace Oppa\Shablon\Logger;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Logger
  * @object     Oppa\Shablon\Logger\Logger
- * @version    v1.0
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Logger
