@@ -30,7 +30,6 @@ use \Oppa\Exception\Database as Exception;
  * @object     Oppa\Database\Query\Result
  * @uses       Oppa\Exception\Database
  * @extends    Oppa\Shablon\Database\Query\Result
- * @version    v1.2
  * @author     Kerem Gunes <qeremy@gmail>
  */
 abstract class Result
