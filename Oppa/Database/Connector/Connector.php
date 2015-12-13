@@ -29,8 +29,7 @@ use \Oppa\Exception\Database as Exception;
  * @package    Oppa
  * @subpackage Oppa\Database\Connector
  * @object     Oppa\Database\Connector\Connector
- * @uses       Oppa\Helper, Oppa\Configuration
- *             Oppa\Exception\Database
+ * @uses       Oppa\Helper, Oppa\Configuration, Oppa\Exception\Database
  * @author     Kerem Güneş <qeremy[at]gmail>
  */
 final class Connector
