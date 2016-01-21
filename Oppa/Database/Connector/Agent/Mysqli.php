@@ -345,10 +345,14 @@ final class Mysqli
      * @param  integer $fetchType
      * @return mixed
      */
-    final public function select($table, array $fields = ['*'], $where = null, array $params = null, $limit = null,
-        $fetchType = null
-    ) {
-        return $this->query(sprintf('SELECT %s FROM %s %s %s',
+    final public function select($table, $fields = null, $where = null, array $params = null,
+        $limit = null, $fetchType = null) {
+        if (empty($fields)) {
+            $fields = ['*'];
+        }
+
+        return $this->query(sprintf(
+            'SELECT %s FROM %s %s %s',
                 $this->escapeIdentifier($fields),
                 $this->escapeIdentifier($table),
                 $this->where($where, $params),
@@ -393,7 +397,8 @@ final class Mysqli
      * @param  integer $limit
      * @return integer
      */
-    final public function update($table, array $data, $where = null, array $params = null, $limit = null) {
+    final public function update($table, array $data, $where = null, array $params = null,
+        $limit = null) {
         $set = [];
         foreach ($data as $key => $value) {
             $set[] = sprintf('%s = %s',
