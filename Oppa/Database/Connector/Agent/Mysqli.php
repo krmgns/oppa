@@ -337,12 +337,12 @@ final class Mysqli
     /**
      * Select actions all rows.
      *
-     * @param  string  $table
-     * @param  array   $fields
-     * @param  string  $where
-     * @param  array   $params
-     * @param  mixed   $limit
-     * @param  integer $fetchType
+     * @param  string     $table
+     * @param  mixed      $fields
+     * @param  string     $where
+     * @param  array|null $params
+     * @param  integer    $limit
+     * @param  integer    $fetchType
      * @return mixed
      */
     final public function select($table, $fields = null, $where = null, array $params = null,

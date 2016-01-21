@@ -59,13 +59,13 @@ interface StreamWrapperInterface
      * Action pattern.
      *
      * @param  string     $table
-     * @param  array      $fields
+     * @param  mixed      $fields
      * @param  string     $where
      * @param  array|null $params
      * @param  integer    $limit
      * @param  integer    $fetchType
      */
-    public function select($table, array $fields, $where = null, array $params = null, $limit = null, $fetchType = null);
+    public function select($table, $fields = null, $where = null, array $params = null, $limit = null, $fetchType = null);
 
     /**
      * Action pattern.
