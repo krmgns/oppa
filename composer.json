@@ -4,7 +4,7 @@
    "version": "1.24.11",
    "homepage": "http://github.com/k-gun/oppa",
    "description": "Oppa: A database abstraction layer for PHP and ORM implementation.",
-   "keywords": ["mysql" "mysqli", "abstraction layer", "database", "orm"],
+   "keywords": ["mysql", "mysqli", "abstraction layer", "database", "orm"],
    "license": "GNU General Public License v3.0",
    "authors": [{
       "name": "Kerem Güneş",
