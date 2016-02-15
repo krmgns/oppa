@@ -4,8 +4,8 @@ include('inc.php');
 $autoload = require('./../Oppa/Autoload.php');
 $autoload->register();
 
-use \Oppa\Database;
-use \Oppa\Configuration;
+use Oppa\Database;
+use Oppa\Configuration;
 
 // $cfg = [
 //     'agent' => 'mysqli',

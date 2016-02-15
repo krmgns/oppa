@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +29,21 @@ namespace Oppa\Shablon\Database\Query;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Result
-    implements \Countable, \IteratorAggregate
+   implements \Countable, \IteratorAggregate
 {
-    /** Action pattern. */
-    abstract public function free();
+   /** Action pattern. */
+   abstract public function free();
 
-    /** Action pattern. */
-    abstract public function reset();
+   /** Action pattern. */
+   abstract public function reset();
 
-    /**
-     * Action pattern.
-     *
-     * @param object         $link
-     * @param object|boolean $result
-     * @param integer        $limit
-     * @param string         $fetchType
-     */
-    abstract public function process($link, $result, $limit = null, $fetchType = null);
+   /**
+    * Action pattern.
+    *
+    * @param object      $link
+    * @param object|bool $result
+    * @param integer     $limit
+    * @param string      $fetchType
+    */
+   abstract public function process($link, $result, $limit = null, $fetchType = null);
 }

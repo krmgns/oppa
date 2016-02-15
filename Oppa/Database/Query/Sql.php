@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,38 +22,40 @@
 namespace Oppa\Database\Query;
 
 /**
- * @package    Oppa
+ * @package   Oppa
  * @subpackage Oppa\Database\Query
- * @object     Oppa\Database\Query\Sql
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @object    Oppa\Database\Query\Sql
+ * @author    Kerem Güneş <k-gun@mail.com>
  */
 final class Sql
 {
-    /**
-     * Keeps raw SQL statement.
-     * @var string
-     */
-    protected $query;
+   /**
+    * Keeps raw SQL string.
+    * @var string
+    */
+   protected $query;
 
-    /**
-     * Create a fresh Sql object.
-     *
-     * Notice: This object is used for only to prevent escaping
-     * contents like NOW(), COUNT(x) etc. in agent.escape() methods.
-     * Nothing more..
-     *
-     * @param string $query
-     */
-    final public function __construct($query) {
-        $this->query = trim($query);
-    }
+   /**
+    * Object constructor.
+    *
+    * Notice: This object is used for only to prevent escaping
+    * contents like NOW(), COUNT() etc. in agent.escape() methods.
+    * Nothing more..
+    *
+    * @param string $query
+    */
+   final public function __construct($query)
+   {
+      $this->query = trim($query);
+   }
 
-    /**
-     * Get SQL statement.
-     *
-     * @return string
-     */
-    final public function toString() {
-        return $this->query;
-    }
+   /**
+    * Get SQL string.
+    *
+    * @return string
+    */
+   final public function toString()
+   {
+      return $this->query;
+   }
 }

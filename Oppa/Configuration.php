@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,151 +22,163 @@
 namespace Oppa;
 
 /**
- * @package    Oppa
- * @object     Oppa\Configuration
+ * @package   Oppa
+ * @object    Oppa\Configuration
  * @implements \ArrayAccess
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @author    Kerem Güneş <k-gun@mail.com>
  */
 final class Configuration
-    implements \ArrayAccess
+   implements \ArrayAccess
 {
-    /**
-     * Options stack.
-     * @var array
-     */
-    private $options = [];
+   /**
+    * Options stack.
+    * @var array
+    */
+   private $options = [];
 
-    /**
-     * Creates a Configuration object.
-     *
-     * @param array $options
-     */
-    final public function __construct(array $options = []) {
-        if (!empty($options)) {
-            foreach ($options as $key => $value) {
-                $this->options[$key] = $value;
-            }
-        }
-    }
+   /**
+    * Object constructor.
+    *
+    * @param array $options
+    */
+   final public function __construct(array $options = [])
+   {
+      if (!empty($options)) {
+         foreach ($options as $key => $value) {
+            $this->options[$key] = $value;
+         }
+      }
+   }
 
-    /**
-     * Set an option.
-     *
-     * @param  string $key
-     * @param  mixed  $value
-     * @return self
-     */
-    final public function __set($key, $value) {
-        return $this->set($key, $value);
-    }
+   /**
+    * Set an option.
+    *
+    * @param  string $key
+    * @param  mixed  $value
+    * @return self
+    */
+   final public function __set($key, $value)
+   {
+      return $this->set($key, $value);
+   }
 
-    /**
-     * Get an option.
-     *
-     * @param  string $key
-     * @return mixed|null
-     */
-    final public function __get($key) {
-        return $this->get($key);
-    }
-
-
-    /**
-     * Check an option.
-     *
-     * @param  string $key
-     * @return boolean
-     */
-    final public function __isset($key) {
-        return $this->offsetExists($key);
-    }
-
-    /**
-     * Remove an option.
-     *
-     * @param  string $key
-     * @return void
-     */
-    final public function __unset($key) {
-        $this->offsetUnset($key);
-    }
+   /**
+    * Get an option.
+    *
+    * @param  string $key
+    * @return mixed
+    */
+   final public function __get($key)
+   {
+      return $this->get($key);
+   }
 
 
-    /**
-     * Set an option.
-     *
-     * @param  string $key
-     * @param  mixed  $value
-     * @return self
-     */
-    final public function set($key, $value) {
-        $this->options[$key] = $value;
+   /**
+    * Check an option.
+    *
+    * @param  string $key
+    * @return bool
+    */
+   final public function __isset($key)
+   {
+      return $this->offsetExists($key);
+   }
 
-        return $this;
-    }
+   /**
+    * Remove an option.
+    *
+    * @param  string $key
+    * @return void
+    */
+   final public function __unset($key)
+   {
+      $this->offsetUnset($key);
+   }
 
-    /**
-     * Get an option.
-     *
-     * @param  string $key
-     * @param  mixed  $defaultValue
-     * @return mixed|null
-     */
-    final public function get($key, $defaultValue = null) {
-        if ($this->offsetExists($key)) {
-            return $this->options[$key];
-        }
 
-        return $defaultValue;
-    }
+   /**
+    * Set an option.
+    *
+    * @param  string $key
+    * @param  mixed  $value
+    * @return self
+    */
+   final public function set($key, $value)
+   {
+      $this->options[$key] = $value;
 
-    /**
-     * Set an option.
-     *
-     * @param  string $key
-     * @param  mixed  $value
-     * @return self
-     */
-    final public function offsetSet($key, $value) {
-        return $this->set($key, $value);
-    }
+      return $this;
+   }
 
-    /**
-     * Get an option.
-     *
-     * @param  string $key
-     * @return mixed|null
-     */
-    final public function offsetGet($key) {
-        return $this->get($key);
-    }
+   /**
+    * Get an option.
+    *
+    * @param  string $key
+    * @param  mixed  $defaultValue
+    * @return mixed
+    */
+   final public function get($key, $defaultValue = null)
+   {
+      if ($this->offsetExists($key)) {
+         return $this->options[$key];
+      }
 
-    /**
-     * Check an option.
-     *
-     * @param  string $key
-     * @return boolean
-     */
-    final public function offsetExists($key) {
-        return isset($this->options[$key]);
-    }
+      return $defaultValue;
+   }
 
-    /**
-     * Get an option.
-     *
-     * @param  string $key
-     * @return void
-     */
-    final public function offsetUnset($key) {
-        unset($this->options[$key]);
-    }
+   /**
+    * Set an option.
+    *
+    * @param  string $key
+    * @param  mixed  $value
+    * @return self
+    */
+   final public function offsetSet($key, $value)
+   {
+      return $this->set($key, $value);
+   }
 
-    /**
-     * Get all options as array.
-     *
-     * @return array
-     */
-    final public function toArray() {
-        return $this->options;
-    }
+   /**
+    * Get an option.
+    *
+    * @param  string $key
+    * @return mixed
+    */
+   final public function offsetGet($key)
+   {
+      return $this->get($key);
+   }
+
+   /**
+    * Check an option.
+    *
+    * @param  string $key
+    * @return bool
+    */
+   final public function offsetExists($key)
+   {
+      return isset($this->options[$key]);
+   }
+
+   /**
+    * Get an option.
+    *
+    * @param  string $key
+    * @return void
+    */
+   final public function offsetUnset($key)
+   {
+      unset($this->options[$key]);
+   }
+
+   /**
+    * Get all options as array.
+    *
+    * @return array
+    */
+   final public function toArray()
+   {
+      return $this->options;
+   }
 }

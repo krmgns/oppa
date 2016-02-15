@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,36 +29,36 @@ namespace Oppa\Shablon\Database;
  */
 interface DatabaseInterface
 {
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    public function connect($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   public function connect($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    public function disconnect($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   public function disconnect($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    public function isConnected($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   public function isConnected($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    public function getConnection($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   public function getConnection($host = null);
 
-    /**
-     * Action pattern.
-     */
-    public function info();
+   /**
+    * Action pattern.
+    */
+   public function info();
 }

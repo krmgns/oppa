@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 namespace Oppa\Database\Batch;
 
-use \Oppa\Database\Connector\Agent;
+use Oppa\Database\Connector\Agent;
 
 /**
  * @package    Oppa
@@ -32,109 +32,115 @@ use \Oppa\Database\Connector\Agent;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli
-    extends \Oppa\Shablon\Database\Batch\Batch
+   extends \Oppa\Shablon\Database\Batch\Batch
 {
-    /**
-     * Create a fresh Mysqli object.
-     *
-     * @param Oppa\Database\Connector\Agent\Mysqli $agent
-     */
-    final public function __construct(Agent\Mysqli $agent) {
-        $this->agent = $agent;
-    }
+   /**
+    * Object constructor.
+    *
+    * @param Oppa\Database\Connector\Agent\Mysqli $agent
+    */
+   final public function __construct(Agent\Mysqli $agent)
+   {
+      $this->agent = $agent;
+   }
 
-    /**
-     * Lock autocommit.
-     *
-     * @return void
-     */
-    final public function lock() {
-        $this->agent->getLink()->autocommit(false);
-    }
+   /**
+    * Lock autocommit.
+    *
+    * @return void
+    */
+   final public function lock()
+   {
+      $this->agent->getLink()->autocommit(false);
+   }
 
-    /**
-     * Unlock autocommit.
-     *
-     * @return void
-     */
-    final public function unlock() {
-        $this->agent->getLink()->autocommit(true);
-    }
+   /**
+    * Unlock autocommit.
+    *
+    * @return void
+    */
+   final public function unlock()
+   {
+      $this->agent->getLink()->autocommit(true);
+   }
 
-    /**
-     * Add a new query queue.
-     *
-     * @param  string     $query
-     * @param  array|null $params
-     * @return void
-     */
-    final public function queue($query, array $params = null) {
-        $this->queue[] = $this->agent->prepare($query, $params);
-    }
+   /**
+    * Add a new query queue.
+    *
+    * @param  string $query
+    * @param  array  $params
+    * @return void
+    */
+   final public function queue($query, array $params = null)
+   {
+      $this->queue[] = $this->agent->prepare($query, $params);
+   }
 
-    /**
-     * Try to commit all queries.
-     *
-     * @return void
-     */
-    final public function run() {
-        // no need to get excited
-        if (empty($this->queue)) {
-            return;
-        }
+   /**
+    * Try to commit all queries.
+    *
+    * @return void
+    */
+   final public function run()
+   {
+      // no need to get excited
+      if (empty($this->queue)) {
+         return;
+      }
 
-        // get big boss
-        $link = $this->agent->getLink();
+      // get big boss
+      $link = $this->agent->getLink();
 
-        // keep start time
-        $start = microtime(true);
+      // keep start time
+      $start = microtime(true);
 
-        foreach ($this->queue as $query) {
-            // that what i see: clone is important in such actions
-            $result = clone $this->agent->query($query);
+      foreach ($this->queue as $query) {
+         // that what i see: clone is important in such actions
+         $result = clone $this->agent->query($query);
 
-            if ($result->getRowsAffected()) {
-                // this is also important for insert actions!
-                $result->setId($link->insert_id);
+         if ($result->getRowsAffected()) {
+            // this is also important for insert actions!
+            $result->setId($link->insert_id);
 
-                $this->result[] = $result;
-            }
+            $this->result[] = $result;
+         }
 
-            unset($result);
-        }
+         unset($result);
+      }
 
-        // go go go
-        $link->commit();
+      // go go go
+      $link->commit();
 
-        // keep end time
-        $stop = microtime(true);
+      // keep end time
+      $stop = microtime(true);
 
-        // calculate process time just for simple profiling
-        $this->totalTime = number_format((float) ($stop - $start), 10);
+      // calculate process time just for simple profiling
+      $this->totalTime = number_format((float) ($stop - $start), 10);
 
-        // even transactions are designed for insert/update/delete/replace
-        // actions, let it be sure resetting the result object
-        $this->agent->getResult()->reset();
+      // even transactions are designed for insert/update/delete/replace
+      // actions, let it be sure resetting the result object
+      $this->agent->getResult()->reset();
 
-        // forgot to call unlock(), hmmm?
-        $link->autocommit(true);
-    }
+      // forgot to call unlock(), hmmm?
+      $link->autocommit(true);
+   }
 
-    /**
-     * Cancel transaction and do rollback.
-     *
-     * @return void
-     */
-    final public function cancel() {
-        $this->reset();
+   /**
+    * Cancel transaction and do rollback.
+    *
+    * @return void
+    */
+   final public function cancel()
+   {
+      $this->reset();
 
-        // get big boss
-        $link = $this->agent->getLink();
+      // get big boss
+      $link = $this->agent->getLink();
 
-        // mayday mayday
-        $link->rollback();
+      // mayday mayday
+      $link->rollback();
 
-        // free autocommits
-        $link->autocommit(true);
-    }
+      // free autocommits
+      $link->autocommit(true);
+   }
 }

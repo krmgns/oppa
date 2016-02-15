@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
  */
 namespace Oppa\Database\Connector;
 
-use \Oppa\Helper;
-use \Oppa\Exception\Database as Exception;
+use Oppa\Helper;
+use Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
@@ -33,93 +33,99 @@ use \Oppa\Exception\Database as Exception;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Connection
-    extends \Oppa\Shablon\Database\Connector\Connection
+   extends \Oppa\Shablon\Database\Connector\Connection
 {
-    /**
-     * Create a fresh Connection object.
-     *
-     * @param string $type
-     * @param string $host
-     * @param array  $configuration
-     */
-    final public function __construct($type, $host, array $configuration) {
-        $this->type = $type;
-        $this->host = $host;
-        $this->configuration = $configuration;
-    }
+   /**
+    * Object constructor.
+    *
+    * @param string $type
+    * @param string $host
+    * @param array  $configuration
+    */
+   final public function __construct($type, $host, array $configuration)
+   {
+      $this->type = $type;
+      $this->host = $host;
+      $this->configuration = $configuration;
+   }
 
-    /**
-     * Open a connection, attach agent if not exists.
-     *
-     * @return void
-     */
-    final public function open() {
-        if (!isset($this->agent)) {
-            // attach agent first
-            $this->attachAgent();
-            // and open connection
-            $this->agent->connect();
-        }
-    }
+   /**
+    * Open a connection, attach agent if not exists.
+    *
+    * @return void
+    */
+   final public function open()
+   {
+      if (!isset($this->agent)) {
+         // attach agent first
+         $this->attachAgent();
+         // and open connection
+         $this->agent->connect();
+      }
+   }
 
-    /**
-     * Close a connection, detach agent.
-     *
-     * @return void
-     */
-    final public function close() {
-        if (isset($this->agent)) {
-            // close connection first
-            $this->agent->disconnect();
-            // and detach agent
-            $this->detachAgent();
-        }
-    }
+   /**
+    * Close a connection, detach agent.
+    *
+    * @return void
+    */
+   final public function close()
+   {
+      if (isset($this->agent)) {
+         // close connection first
+         $this->agent->disconnect();
+         // and detach agent
+         $this->detachAgent();
+      }
+   }
 
-    /**
-     * Check connection status.
-     *
-     * @return mixed
-     *   - if agent is exists       @return integer
-     *   - if agent does not exists @return boolean (false)
-     */
-    final public function status() {
-        if (isset($this->agent)) {
-            return $this->agent->isConnected()
-                ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
-        }
+   /**
+    * Check connection status.
+    *
+    * @return mixed
+    *   - if agent is exists      @return integer
+    *   - if agent does not exists @return boolean (false)
+    */
+   final public function status()
+   {
+      if (isset($this->agent)) {
+         return $this->agent->isConnected()
+            ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
+      }
 
-        return false;
-    }
+      return false;
+   }
 
-    /**
-     * Attach agent to work with database.
-     *
-     * @throws Oppa\Exception\Database\ValueException
-     * @return void
-     */
-    final protected function attachAgent() {
-        $agentName =@ strtolower($this->configuration['agent']);
-        switch ($agentName) {
-            // for now, only mysqli
-            // if time permits, i will extend..
-            case self::AGENT_MYSQLI:
-                $this->agent = new Agent\Mysqli($this->configuration);
-                $this->agentName = $agentName;
-                break;
-            default:
-                throw new Exception\ValueException(
-                    "Sorry, but `{$agentName}` agent not implemented!");
-        }
-    }
+   /**
+    * Attach agent to work with database.
+    *
+    * @throws Oppa\Exception\Database\ValueException
+    * @return void
+    */
+   final protected function attachAgent()
+   {
+      $agentName =@ strtolower($this->configuration['agent']);
+      switch ($agentName) {
+         // for now, only mysqli
+         // if time permits, i will extend..
+         case self::AGENT_MYSQLI:
+            $this->agent = new Agent\Mysqli($this->configuration);
+            $this->agentName = $agentName;
+            break;
+         default:
+            throw new Exception\ValueException(
+               "Sorry, but `{$agentName}` agent not implemented!");
+      }
+   }
 
-    /**
-     * Detach agent.
-     *
-     * @return void
-     */
-    final protected function detachAgent() {
-        $this->agent = null;
-        $this->agentName = null;
-    }
+   /**
+    * Detach agent.
+    *
+    * @return void
+    */
+   final protected function detachAgent()
+   {
+      $this->agent = null;
+      $this->agentName = null;
+   }
 }

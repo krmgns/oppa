@@ -27,8 +27,8 @@ $autoload = require('path/to/Oppa/Autoload.php');
 $autoload->register();
 
 // and using
-use \Oppa\Database;
-use \Oppa\Configuration;
+use Oppa\Database;
+use Oppa\Configuration;
 ```
 
 ###Configuration###
@@ -101,7 +101,7 @@ var_dump($result); // int: affected_rows
 ###Query Builder###
 ```php
 // use and init with exists $db
-use \Oppa\Database\Query\Builder as QueryBuilder;
+use Oppa\Database\Query\Builder as QueryBuilder;
 $qb = new QueryBuilder($db->getConnection());
 // set target table
 $qb->setTable('users');

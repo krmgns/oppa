@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@ namespace Oppa\Shablon\Database\Connector\Agent;
  */
 interface ConnectionInterface
 {
-    /** Action pattern. */
-    public function connect();
+   /** Action pattern. */
+   public function connect();
 
-    /** Action pattern. */
-    public function disconnect();
+   /** Action pattern. */
+   public function disconnect();
 
-    /** Action pattern. */
-    public function isConnected();
+   /** Action pattern. */
+   public function isConnected();
 
 }

@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,81 +21,86 @@
  */
 namespace Oppa;
 
-use \Oppa\Configuration;
-use \Oppa\Database\Connector\Connector;
+use Oppa\Configuration;
+use Oppa\Database\Connector\Connector;
 
 /**
  * @package    Oppa
  * @object     Oppa\Database
- * @uses       Oppa\Configuration,
- *             Oppa\Database\Connector\Connector
+ * @uses       Oppa\Configuration, Oppa\Database\Connector\Connector
  * @implements Oppa\Shablon\Database\DatabaseInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Database
-    implements \Oppa\Shablon\Database\DatabaseInterface
+   implements \Oppa\Shablon\Database\DatabaseInterface
 {
-    /**
-     * Database info.
-     * @var array
-     */
-    private $info; // @notimplemented
+   /**
+    * Database info. @notimplemented
+    * @var array
+    */
+   private $info;
 
-    /**
-     * Database connector object.
-     * @var Oppa\Database\Connector\Connector
-     */
-    private $connector;
+   /**
+    * Database connector object.
+    * @var Oppa\Database\Connector\Connector
+    */
+   private $connector;
 
-    /**
-     * Create a fresh Database object with given configuration.
-     *
-     * @param Oppa\Configuration $configuration
-     */
-    final public function __construct(Configuration $configuration) {
-        $this->connector = new Connector($configuration);
-    }
+   /**
+    * Object constructor.
+    *
+    * @param Oppa\Configuration $configuration
+    */
+   final public function __construct(Configuration $configuration)
+   {
+      $this->connector = new Connector($configuration);
+   }
 
-    /**
-     * Do a connection via connector.
-     *
-     * @param  string|null $host
-     * @return Oppa\Database\Connector\Connector
-     */
-    final public function connect($host = null) {
-        return $this->connector->connect($host);
-    }
+   /**
+    * Do a connection via connector.
+    *
+    * @param  string $host
+    * @return Oppa\Database\Connector\Connector
+    */
+   final public function connect($host = null)
+   {
+      return $this->connector->connect($host);
+   }
 
-    /**
-     * Undo a connection via connector.
-     *
-     * @param  string|null $host
-     * @return void
-     */
-    final public function disconnect($host = null) {
-        return $this->connector->disconnect($host);
-    }
+   /**
+    * Undo a connection via connector.
+    *
+    * @param  string $host
+    * @return void
+    */
+   final public function disconnect($host = null)
+   {
+      return $this->connector->disconnect($host);
+   }
 
-    /**
-     * Check a connection via connector.
-     *
-     * @param  string|null  $host
-     * @return boolean
-     */
-    final public function isConnected($host = null) {
-        return $this->connector->isConnected($host);
-    }
+   /**
+    * Check a connection via connector.
+    *
+    * @param  string $host
+    * @return bool
+    */
+   final public function isConnected($host = null)
+   {
+      return $this->connector->isConnected($host);
+   }
 
-    /**
-     * Get a connection via connector.
-     *
-     * @param  string|null $host
-     * @return Oppa\Database\Connector\Connection
-     */
-    final public function getConnection($host = null) {
-        return $this->connector->getConnection($host);
-    }
+   /**
+    * Get a connection via connector.
+    *
+    * @param  string $host
+    * @return Oppa\Database\Connector\Connection
+    */
+   final public function getConnection($host = null)
+   {
+      return $this->connector->getConnection($host);
+   }
 
-    // @notimplemented
-    final public function info() {}
+   // @notimplemented
+   final public function info()
+   {}
 }

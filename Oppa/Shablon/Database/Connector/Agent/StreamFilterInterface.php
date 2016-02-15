@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,26 +29,26 @@ namespace Oppa\Shablon\Database\Connector\Agent;
  */
 interface StreamFilterInterface
 {
-    /**
-     * Action pattern.
-     *
-     * @param  string     $input
-     * @param  array|null $params
-     */
-    public function prepare($input, array $params = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $input
+    * @param array  $params
+    */
+   public function prepare($input, array $params = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param  string $input
-     * @param  string $type
-     */
-    public function escape($input, $type = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $input
+    * @param string $type
+    */
+   public function escape($input, $type = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $input
-     */
-    public function escapeIdentifier($input);
+   /**
+    * Action pattern.
+    *
+    * @param string $input
+    */
+   public function escapeIdentifier($input);
 }

@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 namespace Oppa\Shablon\Database\Profiler;
 
-use \Oppa\Exception\Database as Exception;
+use Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
@@ -32,148 +32,158 @@ use \Oppa\Exception\Database as Exception;
  */
 abstract class Profiler
 {
-    /**
-     * Profile key for connection.
-     * @const integer
-     */
-    const CONNECTION = 1;
+   /**
+    * Profile key for connection.
+    * @const int
+    */
+   const CONNECTION = 1;
 
-    /**
-     * Profile key for last query.
-     * @const integer
-     */
-    const LAST_QUERY = 2;
+   /**
+    * Profile key for last query.
+    * @const int
+    */
+   const LAST_QUERY = 2;
 
-    /**
-     * Profile key for transaction.
-     * @const integer
-     */
-    const TRANSACTION = 3; // @notimplemented
+   /**
+    * Profile key for transaction.
+    * @const int
+    */
+   const TRANSACTION = 3; // @notimplemented
 
-    /**
-     * Last query.
-     * @var string
-     */
-    protected $lastQuery;
+   /**
+    * Last query.
+    * @var string
+    */
+   protected $lastQuery;
 
-    /**
-     * Query count.
-     * @var integer
-     */
-    protected $queryCount = 0;
+   /**
+    * Query count.
+    * @var int
+    */
+   protected $queryCount = 0;
 
-    /**
-     * Profile stack.
-     * @var array
-     */
-    protected $profiles = [];
+   /**
+    * Profile stack.
+    * @var array
+    */
+   protected $profiles = [];
 
-    /**
-     * Create a Profiler object resetting all stuff.
-     */
-    public function __construct() {
-        $this->reset();
-    }
+   /**
+    * Object constructor.
+    */
+   public function __construct()
+   {
+      // reset all profiling stuff
+      $this->reset();
+   }
 
-    /**
-     * Get invisible properties.
-     *
-     * @param  string $name
-     * @throws Oppa\Exception\Database\ArgumentException
-     * @return mixed
-     */
-    public function __get($name) {
-        if ($name == 'lastQuery' || $name == 'queryCount') {
-            return $this->{$name};
-        }
+   /**
+    * Get invisible properties.
+    *
+    * @param  string $name
+    * @throws Oppa\Exception\Database\ArgumentException
+    * @return mixed
+    */
+   public function __get($name)
+   {
+      if ($name == 'lastQuery' || $name == 'queryCount') {
+         return $this->{$name};
+      }
 
-        throw new Exception\ArgumentException('Undefined property!');
-    }
+      throw new Exception\ArgumentException('Undefined property!');
+   }
 
-    /**
-     * Reset last query, query count and all profiles.
-     *
-     * @return void
-     */
-    final public function reset() {
-        $this->lastQuery  = null;
-        $this->queryCount = 0;
-        $this->profiles   = [];
-    }
+   /**
+    * Reset last query, query count and all profiles.
+    *
+    * @return void
+    */
+   final public function reset()
+   {
+      $this->lastQuery  = null;
+      $this->queryCount = 0;
+      $this->profiles   = [];
+   }
 
-    /**
-     * Get profile.
-     *
-     * @param  string $key
-     * @throws Oppa\Exception\Database\ArgumentException
-     * @return mixed
-     */
-    public function getProfile($key) {
-        if (isset($this->profiles[$key])) {
-            return $this->profiles[$key];
-        }
+   /**
+    * Get profile.
+    *
+    * @param  string $key
+    * @throws Oppa\Exception\Database\ArgumentException
+    * @return mixed
+    */
+   public function getProfile($key)
+   {
+      if (isset($this->profiles[$key])) {
+         return $this->profiles[$key];
+      }
 
-        throw new Exception\ArgumentException(
-            "Could not find a profile with given `{$key}` key!");
-    }
+      throw new Exception\ArgumentException(
+         "Could not find a profile with given `{$key}` key!");
+   }
 
-    /**
-     * Get all profiles.
-     *
-     * @return array
-     */
-    public function getProfileAll() {
-        return $this->profiles;
-    }
+   /**
+    * Get all profiles.
+    *
+    * @return array
+    */
+   public function getProfileAll()
+   {
+      return $this->profiles;
+   }
 
-    /**
-     * Set last query.
-     *
-     * @param  string $query
-     * @return void
-     */
-    final public function setLastQuery($query) {
-        $this->lastQuery = $query;
-    }
+   /**
+    * Set last query.
+    *
+    * @param  string $query
+    * @return void
+    */
+   final public function setLastQuery($query)
+   {
+      $this->lastQuery = $query;
+   }
 
-    /**
-     * Get last query.
-     *
-     * @return string|null
-     */
-    final public function getLastQuery() {
-        return $this->lastQuery;
-    }
+   /**
+    * Get last query.
+    *
+    * @return string|null
+    */
+   final public function getLastQuery()
+   {
+      return $this->lastQuery;
+   }
 
-    /**
-     * Increase query count.
-     *
-     * @return void
-     */
-    final public function increaseQueryCount() {
-        ++$this->queryCount;
-    }
+   /**
+    * Increase query count.
+    *
+    * @return void
+    */
+   final public function increaseQueryCount()
+   {
+      ++$this->queryCount;
+   }
 
-    /**
-     * Get query count.
-     *
-     * @return integer
-     */
-    final public function getQueryCount() {
-        return $this->queryCount;
-    }
+   /**
+    * Get query count.
+    *
+    * @return int
+    */
+   final public function getQueryCount()
+   {
+      return $this->queryCount;
+   }
 
-    /**
-     * Action pattern.
-     *
-     * @param string $key
-     */
-    abstract public function start($key);
+   /**
+    * Action pattern.
+    *
+    * @param string $key
+    */
+   abstract public function start($key);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $key
-     */
-    abstract public function stop($key);
+   /**
+    * Action pattern.
+    *
+    * @param string $key
+    */
+   abstract public function stop($key);
 }

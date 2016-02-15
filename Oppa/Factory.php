@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,44 +22,47 @@
 namespace Oppa;
 
 /**
- * @package    Oppa
- * @object     Oppa\Factory
+ * @package   Oppa
+ * @object    Oppa\Factory
  * @implements Oppa\Shablon\FactoryInterface
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @author    Kerem Güneş <k-gun@mail.com>
  */
 final class Factory
-    implements \Oppa\Shablon\FactoryInterface
+   implements \Oppa\Shablon\FactoryInterface
 {
-    /**
-     * Build an internal Oppa object.
-     *
-     * @param  string     $className
-     * @param  array|null $arguments
-     * @throws \RuntimeException
-     * @return object
-     */
-    final public static function build($className, array $arguments = null) {
-        // ensure namespace separator
-        $className = '\\'. ltrim($className, '\\');
+   /**
+    * Build an internal Oppa object.
+    *
+    * @param  string $className
+    * @param  array  $arguments
+    * @throws \RuntimeException
+    * @return object
+    */
+   final public static function build($className, array $arguments = null)
+   {
+      // ensure namespace separator
+      $className = '\\'. ltrim($className, '\\');
 
-        // ensure Oppa namespace
-        if (strpos($className, '\Oppa') !== 0) {
-            $className = '\Oppa' . $className;
-        }
+      // ensure Oppa namespace
+      if (strpos($className, '\Oppa') !== 0) {
+         $className = '\Oppa' . $className;
+      }
 
-        // try autoload
-        if (!class_exists($className, true)) {
-            throw new \RuntimeException(sprintf(
-                '`%s` class does not exists!', $className));
-        }
+      // try autoload
+      if (!class_exists($className, true)) {
+         throw new \RuntimeException(sprintf(
+            '`%s` class does not exists!', $className));
+      }
 
-        // some performance escaping reflection class? :P
-        switch (count($arguments)) {
-            case 0: return new $className();
-            case 1: return new $className($arguments[0]);
-        }
+      // some performance escaping reflection class? :P
+      switch (count($arguments)) {
+         case 0:
+            return new $className();
+         case 1:
+            return new $className($arguments[0]);
+      }
 
-        return (new \ReflectionClass($className))
-            ->newInstanceArgs($arguments);
-    }
+      return (new \ReflectionClass($className))
+         ->newInstanceArgs($arguments);
+   }
 }

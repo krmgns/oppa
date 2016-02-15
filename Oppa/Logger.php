@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 namespace Oppa;
 
-use \Oppa\Exception as Exception;
+use Oppa\Exception as Exception;
 
 /**
  * @package Oppa
@@ -32,48 +32,49 @@ use \Oppa\Exception as Exception;
  */
 
 final class Logger
-    extends \Oppa\Shablon\Logger\Logger
+   extends \Oppa\Shablon\Logger\Logger
 {
-    /**
-     * Log given message by level.
-     *
-     * @param  integer $level   Only available ALL, FAIL, WARN, INFO, DEBUG
-     * @param  string  $message
-     * @return boolean
-     */
-    final public function log($level, $message) {
-        // no log command
-        if (!$level || ($level & $this->level) == 0) {
-            return;
-        }
+   /**
+    * Log given message by level.
+    *
+    * @param  int    $level   Only available ALL, FAIL, WARN, INFO, DEBUG.
+    * @param  string  $message
+    * @return bool
+    */
+   final public function log($level, $message)
+   {
+      // no log command
+      if (!$level || ($level & $this->level) == 0) {
+         return;
+      }
 
-        // ensure log directory
-        $this->checkDirectory();
+      // ensure log directory
+      $this->checkDirectory();
 
-        // prepare message prepend
-        $messagePrepend = '';
-        switch ($level) {
-            case self::FAIL:
-                $messagePrepend = '[FAIL] ';
-                break;
-            case self::INFO:
-                $messagePrepend = '[INFO] ';
-                break;
-            case self::WARN:
-                $messagePrepend = '[WARN] ';
-                break;
-            case self::DEBUG:
-                $messagePrepend = '[DEBUG] ';
-                break;
-        }
+      // prepare message prepend
+      $messagePrepend = '';
+      switch ($level) {
+         case self::FAIL:
+            $messagePrepend = '[FAIL] ';
+            break;
+         case self::INFO:
+            $messagePrepend = '[INFO] ';
+            break;
+         case self::WARN:
+            $messagePrepend = '[WARN] ';
+            break;
+         case self::DEBUG:
+            $messagePrepend = '[DEBUG] ';
+            break;
+      }
 
-        // prepare filename
-        $filename = sprintf('%s/%s.log',
-            $this->directory, date($this->filenameFormat));
-        // prepare message
-        $message  = sprintf('[%s] %s%s',
-            date('D, d M Y H:i:s O'), $messagePrepend, trim($message) ."\n");
+      // prepare filename
+      $filename = sprintf('%s/%s.log',
+         $this->directory, date($this->filenameFormat));
+      // prepare message
+      $message  = sprintf('[%s] %s%s',
+         date('D, d M Y H:i:s O'), $messagePrepend, trim($message) ."\n");
 
-        return (bool) file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
-    }
+      return (bool) file_put_contents($filename, $message, LOCK_EX | FILE_APPEND);
+   }
 }

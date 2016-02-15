@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ namespace Oppa\Shablon;
  */
 interface FactoryInterface
 {
-    /**
-     * Action pattern.
-     *
-     * @param string     $className
-     * @param array|null $arguments
-     */
-    public static function build($className, array $arguments = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $className
+    * @param array  $arguments
+    */
+   public static function build($className, array $arguments = null);
 }

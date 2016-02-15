@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 namespace Oppa\Shablon\Database\Connector;
 
-use \Oppa\Database\Connector\Connection;
+use Oppa\Database\Connector\Connection;
 
 /**
  * @package    Oppa
@@ -32,51 +32,51 @@ use \Oppa\Database\Connector\Connection;
  */
 abstract class Connector
 {
-    /**
-     * Connection configuration.
-     * @var Oppa\Configuration
-     */
-    protected $configuration;
+   /**
+    * Connection configuration.
+    * @var Oppa\Configuration
+    */
+   protected $configuration;
 
-    /**
-     * Connections stack.
-     * @var array
-     */
-    protected $connections = [];
+   /**
+    * Connections stack.
+    * @var array
+    */
+   protected $connections = [];
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    abstract public function connect($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   abstract public function connect($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    abstract public function disconnect($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   abstract public function disconnect($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    abstract public function isConnected($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   abstract public function isConnected($host = null);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     * @param Oppa\Database\Connector\Connection $connection
-     */
-    abstract public function setConnection($host, Connection $connection);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    * @param Oppa\Database\Connector\Connection $connection
+    */
+   abstract public function setConnection($host, Connection $connection);
 
-    /**
-     * Action pattern.
-     *
-     * @param string $host
-     */
-    abstract public function getConnection($host = null);
+   /**
+    * Action pattern.
+    *
+    * @param string $host
+    */
+   abstract public function getConnection($host = null);
 }

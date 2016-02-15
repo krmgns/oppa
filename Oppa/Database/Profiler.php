@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 namespace Oppa\Database;
 
-use \Oppa\Exception\Database as Exception;
+use Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
@@ -31,38 +31,40 @@ use \Oppa\Exception\Database as Exception;
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Profiler
-    extends \Oppa\Shablon\Database\Profiler\Profiler
+   extends \Oppa\Shablon\Database\Profiler\Profiler
 {
-    /**
-     * Start profiling with given key.
-     *
-     * @param  integer $key
-     * @return void
-     */
-    final public function start($key) {
-        $this->profiles[$key] = [
-            'start' => microtime(true),
-            'stop'  => 0,
-            'total' => 0
-        ];
-    }
+   /**
+    * Start profiling with given key.
+    *
+    * @param  int $key
+    * @return void
+    */
+   final public function start($key)
+   {
+      $this->profiles[$key] = [
+         'start' => microtime(true),
+         'stop'  => 0,
+         'total' => 0
+      ];
+   }
 
-    /**
-     * Stop profiling with given key.
-     *
-     * @param  integer $key
-     * @throws Oppa\Exception\Database\ArgumentException
-     * @return void
-     */
-    final public function stop($key) {
-        if (!isset($this->profiles[$key])) {
-            throw new Exception\ArgumentException(
-                "Could not find a `{$key}` profile key!");
-        }
+   /**
+    * Stop profiling with given key.
+    *
+    * @param  int $key
+    * @throws Oppa\Exception\Database\ArgumentException
+    * @return void
+    */
+   final public function stop($key)
+   {
+      if (!isset($this->profiles[$key])) {
+         throw new Exception\ArgumentException(
+            "Could not find a `{$key}` profile key!");
+      }
 
-        $this->profiles[$key]['stop'] = microtime(true);
-        $this->profiles[$key]['total'] = number_format(
-            (float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start'])
-        , 10);
-    }
+      $this->profiles[$key]['stop'] = microtime(true);
+      $this->profiles[$key]['total'] = number_format(
+         (float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start'])
+      , 10);
+   }
 }

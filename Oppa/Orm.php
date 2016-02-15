@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ namespace Oppa;
  * @author  Kerem Güneş <k-gun@mail.com>
  */
 class Orm
-    extends \Oppa\Orm\Orm
+   extends \Oppa\Orm\Orm
 {
-    /* Used as a shortcut for extending user-defined ORM objects. */
+   /* Used as a shortcut for extending user-defined ORM objects. */
 }

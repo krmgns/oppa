@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <k-gun@mail.com>
+ *   <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *   <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,24 +21,25 @@
  */
 namespace Oppa\Database;
 
-use \Oppa\Configuration;
+use Oppa\Configuration;
 
 /**
- * @package    Oppa
+ * @package   Oppa
  * @subpackage Oppa\Database
- * @object     Oppa\Database\Factory
- * @uses       Oppa\Configuration
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @object    Oppa\Database\Factory
+ * @uses      Oppa\Configuration
+ * @author    Kerem Güneş <k-gun@mail.com>
  */
 final class Factory
 {
-    /**
-     * Build a fresh Database object.
-     *
-     * @param  Oppa\Configuration $configuration
-     * @return Oppa\Database
-     */
-    final static public function build(Configuration $configuration) {
-        return \Oppa\Factory::build('\Oppa\Database', [$configuration]);
-    }
+   /**
+    * Build a fresh Database object.
+    *
+    * @param  Oppa\Configuration $configuration
+    * @return Oppa\Database
+    */
+   final static public function build(Configuration $configuration)
+   {
+      return \Oppa\Factory::build('\Oppa\Database', [$configuration]);
+   }
 }
