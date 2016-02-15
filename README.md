@@ -14,13 +14,13 @@ Before beginning;
 - You can use `test.sql` in test folder
 - See `test/inc.php` to know `pre` and `prd` functions if you want
 
-You can see wiki pages for more details: https://github.com/qeremy/oppa/wiki
+You can see wiki pages for more details: https://github.com/k-gun/oppa/wiki
 
 ###Autoloading / Using Libraries###
 
 ```php
 // composer
-{"require": {"qeremy/oppa": "dev-master"}}
+{"require": {"k-gun/oppa": "dev-master"}}
 
 // manual
 $autoload = require('path/to/Oppa/Autoload.php');
@@ -240,4 +240,4 @@ $result = $usersObject->remove([1,2,3]);
 var_dump($result);
 ```
 
-See wiki pages for more details: https://github.com/qeremy/oppa/wiki
+See wiki pages for more details: https://github.com/k-gun/oppa/wiki

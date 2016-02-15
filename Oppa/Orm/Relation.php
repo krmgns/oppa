@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <http://qeremy.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
  *    <http://www.gnu.org/licenses/gpl-3.0.txt>
@@ -28,7 +28,7 @@ use \Oppa\Database\Query\Builder as QueryBuilder;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Relation
  * @uses       Oppa\Database\Query\Builder
- * @author     Kerem Güneş <qeremy[at]gmail>
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 class Relation
 {

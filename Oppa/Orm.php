@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <http://qeremy.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
  *    <http://www.gnu.org/licenses/gpl-3.0.txt>
@@ -25,7 +25,7 @@ namespace Oppa;
  * @package Oppa
  * @object  Oppa\Orm
  * @extends Oppa\Orm\Orm
- * @author  Kerem Güneş <qeremy[at]gmail>
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 class Orm
     extends \Oppa\Orm\Orm

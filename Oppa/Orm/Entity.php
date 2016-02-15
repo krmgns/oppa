@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *    <http://qeremy.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
  *    <http://www.gnu.org/licenses/gpl-3.0.txt>
@@ -29,7 +29,7 @@ use \Oppa\Exception\Orm as Exception;
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Entity
  * @uses       Oppa\Helper, Oppa\Exception\Orm
- * @author     Kerem Güneş <qeremy[at]gmail>
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Entity
 {
