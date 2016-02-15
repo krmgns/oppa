@@ -56,7 +56,7 @@ final class Sql
     */
    final public function __toString()
    {
-      return $this->toString();
+      return $this->query;
    }
 
    /**
