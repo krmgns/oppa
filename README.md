@@ -35,12 +35,12 @@ use Oppa\Configuration;
 
 ```php
 $cfg = [
-    'agent'    => 'mysqli',
-    'database' => [
-        'host'     => 'localhost',  'name'     => 'test',
-        'username' => 'test',       'password' => '********',
-        'charset'  => 'utf8',       'timezone' => '+00:00',
-    ]
+   'agent'   => 'mysqli',
+   'database' => [
+      'host'    => 'localhost',  'name'    => 'test',
+      'username' => 'test',      'password' => '********',
+      'charset'  => 'utf8',      'timezone' => '+00:00',
+   ]
 ];
 ```
 
@@ -62,13 +62,13 @@ var_dump($agent->rowsAffected());
 $result = $agent->query('select * from `users`');
 if ($result->count())
 if ($result->getRowsCount())
-    foreach ($result as $user)
-        print $user->name;
+   foreach ($result as $user)
+      print $user->name;
 // or
 if ($agent->rowsCount())
-    foreach ($agent->getResult() as $user)
-    foreach ($agent->getResult()->getData() as $user)
-        print $user->name;
+   foreach ($agent->getResult() as $user)
+   foreach ($agent->getResult()->getData() as $user)
+      print $user->name;
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
@@ -76,7 +76,7 @@ print $user->name;
 // fetch all
 $users = $agent->getAll('select * from `users` where `old` > ?', [50]);
 foreach ($users as $user)
-    print $user->name;
+   print $user->name;
 
 // or shorcut methods
 
@@ -109,25 +109,25 @@ $qb->setTable('users');
 
 // build query
 $qb->select('u.*, us.score, ul.login')
-    ->aggregate('sum', 'us.score', 'sum_score')
-    ->join('users_score us', 'us.user_id=u.id')
-    ->joinLeft('users_login ul', 'ul.user_id=u.id')
-    ->where('u.id in(?,?,?)', [1,2,3])
-    ->whereBetween('u.old', [30,50])
-    ->whereNotNull('ul.login')
-    ->groupBy('u.id')
-    ->orderBy('old')
-    ->having('sum_score <= ?', [30])
-    ->limit(0,10)
+   ->aggregate('sum', 'us.score', 'sum_score')
+   ->join('users_score us', 'us.user_id=u.id')
+   ->joinLeft('users_login ul', 'ul.user_id=u.id')
+   ->where('u.id in(?,?,?)', [1,2,3])
+   ->whereBetween('u.old', [30,50])
+   ->whereNotNull('ul.login')
+   ->groupBy('u.id')
+   ->orderBy('old')
+   ->having('sum_score <= ?', [30])
+   ->limit(0,10)
 ;
 ```
 Gives the result below.
 ```sql
 SELECT
-    u.*
-    , us.score
-    , ul.login
-    , sum(us.score) sum_score
+   u.*
+   , us.score
+   , ul.login
+   , sum(us.score) sum_score
 FROM users u
 JOIN users_score us ON us.user_id=u.id
 LEFT JOIN users_login ul ON ul.user_id=u.id
@@ -146,22 +146,22 @@ $batch = $agent->getBatch();
 // set autocommit=0
 $batch->lock();
 try {
-    $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
-    $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
-    $batch->queue('insert into `userz` values(null,?,?)', ['Eric', 15]); // boom!
-    // commit
-    $batch->run();
+   $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
+   $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
+   $batch->queue('insert into `userz` values(null,?,?)', ['Eric', 15]); // boom!
+   // commit
+   $batch->run();
 } catch (\Exception $e) {
-    print $e->getMessage();
-    // rollback & set autocommit=1
-    $batch->cancel();
+   print $e->getMessage();
+   // rollback & set autocommit=1
+   $batch->cancel();
 }
 // set autocommit=1
 $batch->unlock();
 
 // get insert ids if success
 foreach ($batch->getResult() as $result) {
-    print $result->getId();
+   print $result->getId();
 }
 
 // remove query queue and empty result array
@@ -175,9 +175,9 @@ $batch->reset();
 \Oppa\Orm::setDatabase($db);
 
 class Users extends \Oppa\Orm {
-    protected $table = 'users';
-    protected $primaryKey = 'id';
-    protected $selectFields = ['id', 'name', 'old'];
+   protected $table = 'users';
+   protected $primaryKey = 'id';
+   protected $selectFields = ['id', 'name', 'old'];
 }
 
 // init orm object
@@ -189,7 +189,7 @@ var_dump($user);
 
 // check user found?
 if ($user->isFound()) {
-    print $user->name;
+   print $user->name;
 }
 
 // find all
@@ -200,7 +200,7 @@ $users = $usersObject->findAll('id in(?)', [[1,2,3]]);
 $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
 var_dump($users);
 foreach ($users as $user) {
-    print $user->name;
+   print $user->name;
 }
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
 var_dump($users->isFound()); // false
