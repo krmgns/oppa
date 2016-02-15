@@ -22,11 +22,11 @@
 namespace Oppa\Orm;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Orm
- * @object    Oppa\Orm\EntityCollection
+ * @object     Oppa\Orm\EntityCollection
  * @implements \Countable, \IteratorAggregate
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class EntityCollection
    implements \Countable, \IteratorAggregate

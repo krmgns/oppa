@@ -26,11 +26,11 @@ use Oppa\Configuration;
 use Oppa\Exception\Database as Exception;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Database\Connector
- * @object    Oppa\Database\Connector\Connector
- * @uses      Oppa\Helper, Oppa\Configuration, Oppa\Exception\Database
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Database\Connector\Connector
+ * @uses       Oppa\Helper, Oppa\Configuration, Oppa\Exception\Database
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Connector
    extends \Oppa\Shablon\Database\Connector\Connector

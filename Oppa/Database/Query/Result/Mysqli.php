@@ -25,12 +25,12 @@ use Oppa\Database\Connector\Agent;
 use Oppa\Exception\Database as Exception;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Database\Query\Result
- * @object    Oppa\Database\Query\Result\Mysqli
- * @uses      Oppa\Exception\Database
- * @extends   Oppa\Database\Query\Result
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Database\Query\Result\Mysqli
+ * @uses       Oppa\Exception\Database
+ * @extends    Oppa\Database\Query\Result
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli
    extends \Oppa\Database\Query\Result

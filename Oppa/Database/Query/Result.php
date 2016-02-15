@@ -24,12 +24,12 @@ namespace Oppa\Database\Query;
 use Oppa\Exception\Database as Exception;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Database\Query
- * @object    Oppa\Database\Query\Result
- * @uses      Oppa\Exception\Database
- * @extends   Oppa\Shablon\Database\Query\Result
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Database\Query\Result
+ * @uses       Oppa\Exception\Database
+ * @extends    Oppa\Shablon\Database\Query\Result
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Result
    extends \Oppa\Shablon\Database\Query\Result

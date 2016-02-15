@@ -24,11 +24,11 @@ namespace Oppa\Database;
 use Oppa\Configuration;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Database
- * @object    Oppa\Database\Factory
- * @uses      Oppa\Configuration
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Database\Factory
+ * @uses       Oppa\Configuration
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Factory
 {

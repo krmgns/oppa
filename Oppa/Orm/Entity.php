@@ -25,11 +25,11 @@ use Oppa\Helper;
 use Oppa\Exception\Orm as Exception;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Orm
- * @object    Oppa\Orm\Entity
- * @uses      Oppa\Helper, Oppa\Exception\Orm
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Orm\Entity
+ * @uses       Oppa\Helper, Oppa\Exception\Orm
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Entity
 {

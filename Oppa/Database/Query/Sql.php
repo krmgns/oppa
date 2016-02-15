@@ -22,10 +22,10 @@
 namespace Oppa\Database\Query;
 
 /**
- * @package   Oppa
+ * @package    Oppa
  * @subpackage Oppa\Database\Query
- * @object    Oppa\Database\Query\Sql
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @object     Oppa\Database\Query\Sql
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Sql
 {
@@ -47,6 +47,16 @@ final class Sql
    final public function __construct($query)
    {
       $this->query = trim($query);
+   }
+
+   /**
+    * Get SQL string.
+    *
+    * @return string
+    */
+   final public function __toString()
+   {
+      return $this->toString();
    }
 
    /**

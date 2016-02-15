@@ -22,10 +22,10 @@
 namespace Oppa;
 
 /**
- * @package   Oppa
- * @object    Oppa\Configuration
+ * @package    Oppa
+ * @object     Oppa\Configuration
  * @implements \ArrayAccess
- * @author    Kerem Güneş <k-gun@mail.com>
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Configuration
    implements \ArrayAccess
