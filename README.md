@@ -1,4 +1,4 @@
-##Oppa##
+## Oppa
 
 Oppa, providing an easy interface, aims to simplify database CRUD operations/transactions that you tire. Oppa has also an ORM implementation interface that sometimes make the things easier for you.
 
@@ -16,7 +16,7 @@ Before beginning;
 
 You can see wiki pages for more details: https://github.com/k-gun/oppa/wiki
 
-###Autoloading / Using Libraries###
+### Autoloading / Using Libraries
 
 ```php
 // composer
@@ -31,7 +31,7 @@ use Oppa\Database;
 use Oppa\Configuration;
 ```
 
-###Configuration###
+### Configuration
 
 ```php
 $cfg = [
@@ -44,7 +44,7 @@ $cfg = [
 ];
 ```
 
-###Simple Usage###
+### Simple Usage
 
 ```php
 $db = Database\Factory::build(new Configuration($cfg));
@@ -55,7 +55,7 @@ $agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
 var_dump($agent->rowsAffected());
 ```
 
-###Holy CRUD Stuffs###
+### Holy CRUD Stuffs
 
 ```php
 // raw queries
@@ -98,7 +98,8 @@ $result = $agent->delete('user', 'id = ?', [123]);
 var_dump($result); // int: affected_rows
 ```
 
-###Query Builder###
+### Query Builder
+
 ```php
 // use and init with exists $db
 use Oppa\Database\Query\Builder as QueryBuilder;
@@ -138,7 +139,7 @@ LIMIT 0,10
 ```
 
 
-###Batch Actions (aka Transactions)###
+### Batch Actions (aka Transactions)
 
 ```php
 $batch = $agent->getBatch();
@@ -167,7 +168,7 @@ foreach ($batch->getResult() as $result) {
 $batch->reset();
 ```
 
-###Simple ORM###
+### ORM Stuff
 
 ```php
 // set orm database that already connected (like above)
