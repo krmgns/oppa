@@ -174,9 +174,9 @@ $batch->reset();
 
 ```php
 // set orm database that already connected (like above)
-\Oppa\Orm::setDatabase($db);
+Oppa\Orm::setDatabase($db);
 
-class Users extends \Oppa\Orm {
+class Users extends Oppa\Orm {
    protected $table = 'users';
    protected $primaryKey = 'id';
    protected $selectFields = ['id', 'name', 'old'];
