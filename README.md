@@ -241,4 +241,8 @@ $result = $usersObject->remove([1,2,3]);
 var_dump($result);
 ```
 
+### Name (Oppa)
+
+Actually, I did not know what it means but some after searching its meaining, I found [this](https://www.quora.com/Korean-language-1/What-does-Oppa-mean-in-Oppa-Gangnam-Style) and must say apriciated by naming this open source project with a honorific word that means **older brother**.. :)
+
 See wiki pages for more details: https://github.com/k-gun/oppa/wiki
