@@ -34,6 +34,7 @@ use Oppa\Configuration;
 ### Configuration
 
 ```php
+// simply for single databases, see wiki for more
 $cfg = [
    'agent'   => 'mysqli',
    'database' => [
