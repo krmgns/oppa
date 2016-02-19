@@ -63,6 +63,7 @@ var_dump($agent->rowsAffected());
 $result = $agent->query('select * from `users`');
 if ($result->count())
 if ($result->getRowsCount())
+if ($result->getRowsCount() > 0)
    foreach ($result as $user)
       print $user->name;
 // or
