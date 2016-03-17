@@ -107,11 +107,13 @@ final class Builder
     * Set connection.
     *
     * @param  Oppa\Database\Connector\Connection $connection
-    * @return void
+    * @return self
     */
    final public function setConnection(Connection $connection)
    {
       $this->connection = $connection;
+
+      return $this;
    }
 
    /**
