@@ -1,7 +1,7 @@
 {
    "name": "k-gun/oppa",
    "type": "library",
-   "version": "1.24.12",
+   "version": "1.25.0",
    "homepage": "http://github.com/k-gun/oppa",
    "description": "Oppa: A database abstraction layer for PHP and ORM implementation.",
    "keywords": ["mysql", "mysqli", "abstraction layer", "database", "orm"],

@@ -349,13 +349,12 @@ final class Mysqli
     * @param  mixed  $fields
     * @param  string $where
     * @param  array  $params
-    * @param  int   $limit
-    * @param  int   $fetchType
+    * @param  int    $limit
+    * @param  int    $fetchType
     * @return mixed
     */
    final public function select($table, $fields = null, $where = null, array $params = null
-     ,
-      $limit = null, $fetchType = null) {
+     , $limit = null, $fetchType = null) {
       if (empty($fields)) {
          $fields = ['*'];
       }
@@ -367,6 +366,24 @@ final class Mysqli
             $this->where($where, $params),
             $this->limit($limit)
       ), null, null, $fetchType)->getData();
+   }
+
+   /**
+    * Select actions one row.
+    *
+    * @param  string $table
+    * @param  mixed  $fields
+    * @param  string $where
+    * @param  array  $params
+    * @param  int    $fetchType
+    * @return mixed
+    */
+   final public function selectOne($table, $fields = null, $where = null, array $params = null
+     , $fetchType = null) {
+      $data = $this->select($table, $fields, $where, $params, 1, $fetchType);
+      if (isset($data[0])) {
+         return $data[0];
+      }
    }
 
    /**
