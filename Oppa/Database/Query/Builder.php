@@ -571,6 +571,14 @@ final class Builder
    /**
     * Shortcut methods.
     */
+   final public function whereE()
+   {
+      return call_user_func_array([$this, 'whereEqual'], func_get_args());
+   }
+   final public function whereNE()
+   {
+      return call_user_func_array([$this, 'whereNotEqual'], func_get_args());
+   }
    final public function whereLT()
    {
       return call_user_func_array([$this, 'whereLessThan'], func_get_args());
