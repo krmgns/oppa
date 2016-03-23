@@ -783,6 +783,10 @@ final class Builder
     */
    final public function limit($start, $stop = null)
    {
+      if (!$start) {
+         return $this;
+      }
+
       return ($stop === null)
          ? $this->push('limit', $start)
          : $this->push('limit', $start)->push('limit', $stop);
