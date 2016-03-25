@@ -421,12 +421,10 @@ final class Mysqli
     * @param  array   $data
     * @param  string  $where
     * @param  array   $params
-    * @param  int    $limit
+    * @param  int     $limit
     * @return int
     */
-   final public function update($table, array $data, $where = null, array $params = null
-     ,
-      $limit = null) {
+   final public function update($table, array $data, $where = null, array $params = null, $limit = null) {
       $set = [];
       foreach ($data as $key => $value) {
          $set[] = sprintf('%s = %s',
@@ -448,7 +446,7 @@ final class Mysqli
     * @param  string  $table
     * @param  string  $where
     * @param  array   $params
-    * @param  int    $limit
+    * @param  int     $limit
     * @return int
     */
    final public function delete($table, $where = null, array $params = null, $limit = null)
