@@ -328,7 +328,7 @@ final class Builder
          $on = $this->connection->getAgent()->prepare($on, $params);
       }
 
-      return $this->push('join', sprintf('JOIN %s ON %s', $table, $on));
+      return $this->push('join', sprintf('JOIN %s ON (%s)', $table, $on));
    }
 
    /**
@@ -362,7 +362,7 @@ final class Builder
          $on = $this->connection->getAgent()->prepare($on, $params);
       }
 
-      return $this->push('join', sprintf('LEFT JOIN %s ON %s', $table, $on));
+      return $this->push('join', sprintf('LEFT JOIN %s ON (%s)', $table, $on));
    }
 
    /**
