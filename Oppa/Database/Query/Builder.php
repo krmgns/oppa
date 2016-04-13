@@ -874,7 +874,7 @@ final class Builder
          $query = sprintf('%s %s', $query, join(' ', $this->query['join']));
       }
       if (isset($this->query['where'])) {
-         $query = sprintf('%s WHERE %s', $query, join(' ', $this->query['where']));
+         $query = sprintf('%s WHERE (%s)', $query, join(' ', $this->query['where']));
       }
 
       $result = $this->connection->getAgent()->get($query);
@@ -919,7 +919,7 @@ final class Builder
 
             // add where statement
             if (isset($this->query['where'])) {
-               $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+               $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
             }
 
             // add group by statement
@@ -929,7 +929,7 @@ final class Builder
 
             // add having statement
             if (isset($this->query['having'])) {
-               $this->queryString .= sprintf(' HAVING %s', join(' ', $this->query['having']));
+               $this->queryString .= sprintf(' HAVING (%s)', join(' ', $this->query['having']));
             }
 
             // add order by statement
@@ -975,7 +975,7 @@ final class Builder
 
                   // add criterias
                   if (isset($this->query['where'])) {
-                     $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+                     $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
                   }
                   if (isset($this->query['orderBy'])) {
                      $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
@@ -994,7 +994,7 @@ final class Builder
 
             // add criterias
             if (isset($this->query['where'])) {
-               $this->queryString .= sprintf(' WHERE %s', join(' ', $this->query['where']));
+               $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
             }
             if (isset($this->query['orderBy'])) {
                $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
