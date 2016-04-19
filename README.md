@@ -53,7 +53,7 @@ $db->connect();
 
 $agent = $db->getConnection()->getAgent();
 $agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
-var_dump($agent->rowsAffected());
+print $agent->rowsAffected();
 ```
 
 ### Holy CRUD Stuffs
