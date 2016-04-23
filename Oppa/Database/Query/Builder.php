@@ -821,7 +821,7 @@ final class Builder
    {
       $result = $this->connection->getAgent()->query($this->toString());
       // Render result if callback provided
-      if (is_callable($callback)) {
+      if ($callback) {
          $result = $callback($result);
       }
 
@@ -837,7 +837,7 @@ final class Builder
    final public function get(callable $callback = null)
    {
       $result = $this->connection->getAgent()->get($this->toString());
-      if (is_callable($callback)) {
+      if ($callback) {
          $result = $callback($result);
       }
 
@@ -853,7 +853,7 @@ final class Builder
    final public function getAll(callable $callback = null)
    {
       $result = $this->connection->getAgent()->getAll($this->toString());
-      if (is_callable($callback)) {
+      if ($callback) {
          $result = $callback($result);
       }
 
@@ -867,8 +867,8 @@ final class Builder
     */
    final public function count()
    {
-      $result = $this->connection->getAgent()->get(sprintf(
-         'SELECT count(*) AS count FROM (%s) AS tmp', $this->toString()));
+      $result = $this->connection->getAgent()->get(
+         sprintf('SELECT count(*) AS count FROM (%s) AS tmp', $this->toString()));
 
       return intval($result->count);
    }
