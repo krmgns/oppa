@@ -861,23 +861,16 @@ final class Builder
    }
 
    /**
-    * Count row sets (using where condition if provided).
+    * Count.
     *
     * @return int
     */
    final public function count()
    {
-      $query = sprintf('SELECT count(*) AS count FROM %s', $this->table);
-      if (isset($this->query['join'])) {
-         $query = sprintf('%s %s', $query, join(' ', $this->query['join']));
-      }
-      if (isset($this->query['where'])) {
-         $query = sprintf('%s WHERE (%s)', $query, join(' ', $this->query['where']));
-      }
+      $result = $this->connection->getAgent()->get(sprintf(
+         'SELECT count(*) AS count FROM (%s) AS tmp', $this->toString()));
 
-      $result = $this->connection->getAgent()->get($query);
-
-      return isset($result->count) ? intval($result->count) : 0;
+      return intval($result->count);
    }
 
    /**
