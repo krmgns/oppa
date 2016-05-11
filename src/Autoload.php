@@ -83,31 +83,6 @@ final class Autoload
             }
 
             require($objectFile);
-
-            /**
-             * This stuff stands here for dev only.
-             */
-            if (strripos($objectName, 'interface') !== false) {
-                if (!interface_exists($objectName, false)) {
-                    throw new \RuntimeException(
-                        "Interface file `{$objectFile}` has been loaded but no " .
-                        "interface found such as `{$objectName}`.");
-                }
-                return;
-            }
-            if (strripos($objectName, 'trait') !== false) {
-                if (!trait_exists($objectName, false)) {
-                    throw new \RuntimeException(
-                        "Trait file `{$objectFile}` has been loaded but no " .
-                        "trait found such as `{$objectName}`.");
-                }
-                return;
-            }
-            if (!class_exists($objectName, false)) {
-                throw new \RuntimeException(
-                    "Class file `{$objectFile}` has been loaded but no " .
-                    "class found such as `{$objectName}`.");
-            }
         });
     }
 }
