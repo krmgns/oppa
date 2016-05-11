@@ -37,13 +37,13 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
      * Constructor.
      * @param string $type
      * @param string $host
-     * @param array  $configuration
+     * @param array  $config
      */
-    final public function __construct($type, $host, array $configuration)
+    final public function __construct($type, $host, array $config)
     {
-        $this->type = $type;
-        $this->host = $host;
-        $this->configuration = $configuration;
+        $this->type   = $type;
+        $this->host   = $host;
+        $this->config = $config;
     }
 
     /**
@@ -97,12 +97,12 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
      */
     final protected function attachAgent()
     {
-        $agentName =@ strtolower($this->configuration['agent']);
+        $agentName =@ strtolower($this->config['agent']);
         switch ($agentName) {
             // for now, only mysqli
             // if time permits, i will extend..
             case self::AGENT_MYSQLI:
-                $this->agent = new Agent\Mysqli($this->configuration);
+                $this->agent = new Agent\Mysqli($this->config);
                 $this->agentName = $agentName;
                 break;
             default:

@@ -42,27 +42,27 @@ final class Mysqli
 {
     /**
      * Constructor.
-     * @param  array $configuration
+     * @param  array $config
      * @throws \RuntimeException
      */
-    final public function __construct(array $configuration)
+    final public function __construct(array $config)
     {
         // we need it like crazy
         if (!extension_loaded('mysqli')) {
             throw new \RuntimeException('Mysqli extension is not loaded.');
         }
 
-        // assign configuration
-        $this->configuration = $configuration;
+        // assign config
+        $this->config = $config;
 
         // assign batch object (for transaction)
         $this->batch = new Batch\Mysqli($this);
 
         // assign data mapper
-        $mapping = ($configuration['map_result'] ?? false);
+        $mapping = ($config['map_result'] ?? false);
         if ($mapping === true) {
             $this->mapper = new Mapper([
-                'tiny2bool' => ($configuration['map_result_tiny2bool'] ?? false),
+                'tiny2bool' => ($config['map_result_tiny2bool'] ?? false),
             ]);
         }
         // @todo mapping could have in/out directives
@@ -71,21 +71,21 @@ final class Mysqli
         // assign result object
         $this->result = new Result\Mysqli($this);
         $this->result->setFetchType(
-            isset($configuration['fetch_type'])
-                ? $configuration['fetch_type'] : Result::FETCH_OBJECT
+            isset($config['fetch_type'])
+                ? $config['fetch_type'] : Result::FETCH_OBJECT
         );
 
         // assign logger if config'ed
-        if (isset($configuration['query_log']) && $configuration['query_log'] == true) {
+        if (isset($config['query_log']) && $config['query_log'] == true) {
             $this->logger = new Logger();
-            isset($configuration['query_log_level']) &&
-                $this->logger->setLevel($configuration['query_log_level']);
-            isset($configuration['query_log_directory']) &&
-                $this->logger->setDirectory($configuration['query_log_directory']);
+            isset($config['query_log_level']) &&
+                $this->logger->setLevel($config['query_log_level']);
+            isset($config['query_log_directory']) &&
+                $this->logger->setDirectory($config['query_log_directory']);
         }
 
         // assign profiler if config'ed
-        if (isset($configuration['profiling']) && $configuration['profiling'] == true) {
+        if (isset($config['profiling']) && $config['profiling'] == true) {
             $this->profiler = new Profiler();
         }
     }
@@ -113,19 +113,19 @@ final class Mysqli
 
         // export credentials
         list($host, $name, $username, $password) = [
-            $this->configuration['host'], $this->configuration['name'],
-            $this->configuration['username'], $this->configuration['password'],
+            $this->config['host'], $this->config['name'],
+            $this->config['username'], $this->config['password'],
         ];
         // get port/socket options if provided
-        $port = ($this->configuration['port'] ?? null);
-        $socket = ($this->configuration['socket'] ?? null);
+        $port = ($this->config['port'] ?? null);
+        $socket = ($this->config['socket'] ?? null);
 
         // call big boss
         $this->link = mysqli_init();
 
         // supported constants: http://php.net/mysqli.real_connect
-        if (isset($this->configuration['connect_options'])) {
-            foreach ($this->configuration['connect_options'] as $option => $value) {
+        if (isset($this->config['connect_options'])) {
+            foreach ($this->config['connect_options'] as $option => $value) {
                 if (!is_string($option)) {
                     throw new \Exception(
                         'Please set all connection option constant names as '.
@@ -158,19 +158,19 @@ final class Mysqli
             'New connection via %s', $_SERVER['REMOTE_ADDR']));
 
         // set charset for connection
-        if (isset($this->configuration['charset'])) {
-            $run = (bool) $this->link->set_charset($this->configuration['charset']);
+        if (isset($this->config['charset'])) {
+            $run = (bool) $this->link->set_charset($this->config['charset']);
             if ($run === false) {
                 throw new \Exception(sprintf(
                     'Failed setting charset as `%s`! errno[%d] errmsg[%s]',
-                        $this->configuration['charset'], $this->link->errno, $this->link->error));
+                        $this->config['charset'], $this->link->errno, $this->link->error));
             }
         }
 
         // set timezone for connection
-        if (isset($this->configuration['timezone'])) {
+        if (isset($this->config['timezone'])) {
             $run = (bool) $this->link->query($this->prepare(
-                "SET time_zone = ?", [$this->configuration['timezone']]));
+                "SET time_zone = ?", [$this->config['timezone']]));
             if ($run === false) {
                 throw new \Exception(sprintf('Query error! errmsg[%s]', $this->link->error));
             }
@@ -288,7 +288,7 @@ final class Mysqli
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
                 // check error handler
-                $errorHandler = ($this->configuration['query_error_handler'] ?? '');
+                $errorHandler = ($this->config['query_error_handler'] ?? '');
                 // if user has error handler, return using it
                 if (is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);

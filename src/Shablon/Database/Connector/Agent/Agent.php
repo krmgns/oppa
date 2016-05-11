@@ -73,10 +73,10 @@ abstract class Agent
    protected $profiler;
 
    /**
-    * Configuration.
+    * Config.
     * @var array
     */
-   protected $configuration;
+   protected $config;
 
    /**
     * Needed to prevent exception thrown.
@@ -167,13 +167,13 @@ abstract class Agent
    }
 
    /**
-    * Get configuration.
+    * Get config.
     *
     * @return array
     */
-   public function getConfiguration()
+   public function getConfig()
    {
-      return $this->configuration;
+      return $this->config;
    }
 
    /**

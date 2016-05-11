@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Database\Connector;
 
 use Oppa\Util;
-use Oppa\Configuration;
+use Oppa\Config;
 
 /**
  * @package    Oppa
@@ -39,11 +39,11 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
      * @note  For all methods in this object, "$host" parameter is important, cos
      * it is used as a key to prevent to create new connections in excessive way.
      * Thus, host will be always set, even user does not pass/provide it.
-     * @param Oppa\Configuration $configuration
+     * @param Oppa\Config $config
      */
-    final public function __construct(Configuration $configuration)
+    final public function __construct(Config $config)
     {
-        $this->configuration = $configuration;
+        $this->config = $config;
     }
 
     /**
@@ -62,14 +62,14 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
         // set type as single as default
         $type = Connection::TYPE_SINGLE;
 
-        // get configuration as array
-        $configuration = $this->configuration->toArray();
+        // get config as array
+        $config = $this->config->toArray();
 
-        // get database directives from given configuration
-        $database = ($configuration['database'] ?? []);
+        // get database directives from given config
+        $database = ($config['database'] ?? []);
 
         // is master/slave active?
-        if ($this->configuration->get('sharding') === true) {
+        if ($this->config->get('sharding') === true) {
             $master = ($database['master'] ?? []);
             $slaves = ($database['slaves'] ?? []);
             switch ($host) {
@@ -106,25 +106,25 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
         }
 
         // remove unused parts
-        unset($configuration['database']);
+        unset($config['database']);
         unset($database['master'], $database['slaves']);
 
-        // merge configurations
-        $configuration = $configuration + (array) $database;
+        // merge configs
+        $config = $config + (array) $database;
         if (!isset(
-            $configuration['host'], $configuration['name'],
-            $configuration['username'], $configuration['password']
+            $config['host'], $config['name'],
+            $config['username'], $config['password']
         )) { throw new \Exception(
                 'Please specify all needed credentials (host'.
                 ', name, username, password) for connection!');
         }
 
         // use host as a key for connection stack
-        $host = $configuration['host'];
+        $host = $config['host'];
 
         // create a new connection if not exists
         if (!isset($this->connections[$host])) {
-            $connection = new Connection($type, $host, $configuration);
+            $connection = new Connection($type, $host, $config);
             $connection->open();
             $this->setConnection($host, $connection);
         }
@@ -202,7 +202,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
 
         // without master/slave directives
         // e.g: isConnected()
-        if ($this->configuration->get('sharding') !== true) {
+        if ($this->config->get('sharding') !== true) {
             foreach ($this->connections as $connection) {
                 return ($connection->status() === Connection::STATUS_CONNECTED);
             }
@@ -262,7 +262,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
 
         $host = trim($host);
         // with master/slave directives
-        if ($this->configuration->get('sharding') === true) {
+        if ($this->config->get('sharding') === true) {
             // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
             if ($host == '' || $host == Connection::TYPE_MASTER) {
                 $connection = Util::arrayRand(

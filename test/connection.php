@@ -5,7 +5,7 @@ $autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Configuration;
+use Oppa\Config;
 
 /*** single ***/
 // $cfg = [
@@ -23,7 +23,7 @@ use Oppa\Configuration;
 //     ]
 // ];
 
-// $db = new Database(new Configuration($cfg));
+// $db = new Database(new Config($cfg));
 // $db->connect();
 // pre($db);
 // pre($db->getConnection());
@@ -54,7 +54,7 @@ $cfg = [
     ]
 ];
 
-$db = new Database(new Configuration($cfg));
+$db = new Database(new Config($cfg));
 
 // // for master connection
 $db->connect();

@@ -25,10 +25,10 @@ namespace Oppa;
 
 /**
  * @package Oppa
- * @object  Oppa\Configuration
+ * @object  Oppa\Config
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-final class Configuration implements \ArrayAccess
+final class Config implements \ArrayAccess
 {
     /**
      * Options stack.

@@ -5,7 +5,7 @@ $autoload = require('./../Oppa/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Configuration;
+use Oppa\Config;
 use Oppa\Database\Query\Builder as QueryBuilder;
 
 $cfg = [
@@ -22,7 +22,7 @@ $cfg = [
     ]
 ];
 
-$db = Database\Factory::build(new Configuration($cfg));
+$db = new Database(new Config($cfg));
 $db->connect();
 
 $qb = new QueryBuilder($db->getConnection());

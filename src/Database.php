@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa;
 
-use Oppa\Configuration;
+use Oppa\Config;
 use Oppa\Database\Connector\Connector;
 
 /**
@@ -47,11 +47,11 @@ final class Database
 
    /**
     * Constructor.
-    * @param Oppa\Configuration $configuration
+    * @param Oppa\Config $config
     */
-   final public function __construct(Configuration $configuration)
+   final public function __construct(Config $config)
    {
-      $this->connector = new Connector($configuration);
+      $this->connector = new Connector($config);
    }
 
    /**

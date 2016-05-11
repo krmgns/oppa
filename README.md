@@ -28,10 +28,10 @@ $autoload->register();
 
 // and using
 use Oppa\Database;
-use Oppa\Configuration;
+use Oppa\Config;
 ```
 
-### Configuration
+### Config
 
 ```php
 // simply for single databases, see wiki for more
@@ -48,7 +48,7 @@ $cfg = [
 ### Simple Usage
 
 ```php
-$db = Database\Factory::build(new Configuration($cfg));
+$db = new Database(new Config($cfg));
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();

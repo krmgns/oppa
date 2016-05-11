@@ -4,8 +4,8 @@ include('inc.php');
 $autoload = require('./../Oppa/Autoload.php');
 $autoload->register();
 
-use Oppa\Configuration;
-use Oppa\Database\Factory;
+use Oppa\Database;
+use Oppa\Config;
 
 // set a worker class
 class Db
@@ -29,7 +29,7 @@ class Db
         if (self::$instance == null) {
             self::$instance = new self();
             self::$instance->db =
-                Factory::build(new Configuration(self::$instance->cfg));
+                new Database(new Configuration(self::$instance->cfg));
             self::$instance->db->connect();
         }
         return self::$instance;

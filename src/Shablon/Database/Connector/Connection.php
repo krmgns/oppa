@@ -96,10 +96,10 @@ abstract class Connection
    protected $agentName;
 
    /**
-    * Connection configuration.
+    * Connection config.
     * @var array
     */
-   protected $configuration = [];
+   protected $config = [];
 
    /**
     * Get connection type.

@@ -6,7 +6,7 @@ $autoload->register();
 
 use Oppa\Logger;
 use Oppa\Database;
-use Oppa\Configuration;
+use Oppa\Config;
 
 $cfg = [
     'agent' => 'mysqli',
@@ -26,7 +26,7 @@ $cfg = [
     ]
 ];
 
-$db = Database\Factory::build(new Configuration($cfg));
+$db = new Database(new Config($cfg));
 $db->connect();
 
 // @tmp

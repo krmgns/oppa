@@ -4,8 +4,8 @@ include('inc.php');
 $autoload = require('./../Oppa/Autoload.php');
 $autoload->register();
 
-use Oppa\Configuration;
-use Oppa\Database\Factory;
+use Oppa\Database;
+use Oppa\Config;
 
 static $cfg = [
     'agent'    => 'mysqli',
@@ -19,7 +19,7 @@ static $cfg = [
 function db_init() {
     global $cfg;
     if (!isset($GLOBALS['$db'])) {
-        $db = Factory::build(new Configuration($cfg));
+        $db = new Database(new Config($cfg));
         $db->connect();
         // store db
         $GLOBALS['$db'] = $db;

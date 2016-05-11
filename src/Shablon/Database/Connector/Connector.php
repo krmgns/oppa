@@ -27,16 +27,15 @@ use Oppa\Database\Connector\Connection;
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Connector
  * @object     Oppa\Shablon\Database\Connector\Connector
- * @uses       Oppa\Database\Connector\Connection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Connector
 {
    /**
-    * Connection configuration.
-    * @var Oppa\Configuration
+    * Connection config.
+    * @var Oppa\Config
     */
-   protected $configuration;
+   protected $config;
 
    /**
     * Connections stack.
