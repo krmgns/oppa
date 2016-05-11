@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Oppa\Shablon\Database\Profiler;
 
-use Oppa\Exception\Database as Exception;
-
 /**
  * @package    Oppa
  * @subpackage Oppa\Shablon\Database\Profiler
@@ -82,7 +80,7 @@ abstract class Profiler
      * Get invisible properties.
      * @param  string $name
      * @return any
-     * @throws Oppa\Exception\Database\ArgumentException
+     * @throws \Exception
      */
     public function __get($name)
     {
@@ -90,7 +88,7 @@ abstract class Profiler
             return $this->{$name};
         }
 
-        throw new Exception\ArgumentException('Undefined property!');
+        throw new \Exception('Undefined property!');
     }
 
     /**

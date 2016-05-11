@@ -29,7 +29,6 @@ use Oppa\Database\Batch;
 use Oppa\Database\Profiler;
 use Oppa\Database\Query\Sql;
 use Oppa\Database\Query\Result;
-use Oppa\Exception\Database as Exception;
 
 /**
  * @package    Oppa
@@ -43,13 +42,13 @@ final class Mysqli
     /**
      * Constructor.
      * @param  array $config
-     * @throws \RuntimeException
+     * @throws \Exception
      */
     final public function __construct(array $config)
     {
         // we need it like crazy
         if (!extension_loaded('mysqli')) {
-            throw new \RuntimeException('Mysqli extension is not loaded.');
+            throw new \Exception('Mysqli extension is not loaded.');
         }
 
         // assign config
@@ -239,7 +238,7 @@ final class Mysqli
      * @param  int    $limit     Generally used in internal methods.
      * @param  int    $fetchType That will overwrite on Result.fetchType.
      * @return Oppa\Database\Query\Result
-     * @throws Oppa\Exception\Database\*
+     * @throws \Exception
      */
     final public function query($query, array $params = null, $limit = null, $fetchType = null)
     {
@@ -249,7 +248,7 @@ final class Mysqli
         // trim query
         $query = trim($query);
         if ($query == '') {
-            throw new Exception\QueryException('Query cannot be empty!');
+            throw new \Exception('Query cannot be empty!');
         }
 
         // prepare if any params
@@ -279,18 +278,18 @@ final class Mysqli
         // i always loved to handle errors
         if (!$result) {
             try {
-                throw new Exception\QueryException(sprintf(
+                throw new \Exception(sprintf(
                     'Query error: query[%s], errno[%s], errmsg[%s]',
                         $query, $this->link->errno, $this->link->error
                 ), $this->link->errno);
-            } catch (Exception\QueryException $e) {
+            } catch (\Exception $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
                 // check error handler
-                $errorHandler = ($this->config['query_error_handler'] ?? '');
+                $errorHandler = ($this->config['query_error_handler'] ?? null);
                 // if user has error handler, return using it
-                if (is_callable($errorHandler)) {
+                if ($errorHandler && is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);
                 }
 
@@ -442,7 +441,7 @@ final class Mysqli
      * @param  any    $input
      * @param  string $type
      * @return string
-     * @throws Oppa\Exception\Database\ArgumentException
+     * @throws \Exception
      */
     final public function escape($input, $type = null)
     {
@@ -478,8 +477,7 @@ final class Mysqli
             case 'string':
                 return "'". $this->link->real_escape_string($input) ."'";
             default:
-                throw new Exception\ArgumentException(sprintf(
-                    'Unimplemented type encountered! type: `%s`', gettype($input)));
+                throw new \Exception(sprintf('Unimplemented type encountered! type: `%s`', gettype($input)));
         }
 
         return $input;

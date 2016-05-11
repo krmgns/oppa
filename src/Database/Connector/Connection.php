@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Connector;
 
-use Oppa\Exception\Database as Exception;
-
 /**
  * @package    Oppa
  * @subpackage Oppa\Database\Connector
@@ -93,7 +91,7 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
     /**
      * Attach agent to work with database.
      * @return void
-     * @throws Oppa\Exception\Database\ValueException
+     * @throws \Exception
      */
     final protected function attachAgent()
     {
@@ -106,8 +104,7 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
                 $this->agentName = $agentName;
                 break;
             default:
-                throw new Exception\ValueException(
-                    "Sorry, but `{$agentName}` agent not implemented!");
+                throw new \Exception("Sorry, but `{$agentName}` agent not implemented!");
         }
     }
 
