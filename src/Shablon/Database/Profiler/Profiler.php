@@ -77,21 +77,6 @@ abstract class Profiler
     }
 
     /**
-     * Get invisible properties.
-     * @param  string $name
-     * @return any
-     * @throws \Exception
-     */
-    public function __get($name)
-    {
-        if ($name == 'lastQuery' || $name == 'queryCount') {
-            return $this->{$name};
-        }
-
-        throw new \Exception('Undefined property!');
-    }
-
-    /**
      * Reset last query, query count and all profiles.
      * @return void
      */
@@ -122,7 +107,7 @@ abstract class Profiler
      * Get all profiles.
      * @return array
      */
-    public function getProfileAll()
+    public function getProfiles()
     {
         return $this->profiles;
     }
