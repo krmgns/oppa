@@ -48,7 +48,7 @@ final class Util
      * @param  string $input
      * @return string
      */
-    final public static function upperToSnake($input)
+    final public static function upperToSnake(string $input): string
     {
         return preg_replace_callback('~([A-Z])~', function($m) {
             return '_'. strtolower($m[1]);

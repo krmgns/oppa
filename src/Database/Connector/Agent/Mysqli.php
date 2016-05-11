@@ -36,8 +36,7 @@ use Oppa\Database\Query\Result;
  * @object     Oppa\Database\Connector\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli
-    extends \Oppa\Shablon\Database\Connector\Agent\Agent
+final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
 {
     /**
      * Constructor.
@@ -99,7 +98,7 @@ final class Mysqli
     }
 
     /**
-     * Open a connection with given options.
+     * Connect.
      * @return \mysqli
      * @throws \Exception
      */
@@ -169,7 +168,7 @@ final class Mysqli
         // set timezone for connection
         if (isset($this->config['timezone'])) {
             $run = (bool) $this->link->query($this->prepare(
-                "SET time_zone = ?", [$this->config['timezone']]));
+                "SET `time_zone` = ?", [$this->config['timezone']]));
             if ($run === false) {
                 throw new \Exception(sprintf('Query error! errmsg[%s]', $this->link->error));
             }
@@ -180,8 +179,7 @@ final class Mysqli
             $result = null;
             try {
                 // get table columns info
-                $this->query(
-                    'SELECT * FROM information_schema.columns WHERE table_schema = %s', [$name]);
+                $this->query('SELECT * FROM `information_schema`.`columns` WHERE `table_schema` = %s', [$name]);
                 if ($this->result->count()) {
                     $map = [];
                     foreach ($this->result as $result) {
@@ -210,7 +208,7 @@ final class Mysqli
     }
 
     /**
-     * Close a connection.
+     * Disconnect.
      * @return void
      */
     final public function disconnect()
@@ -233,14 +231,14 @@ final class Mysqli
 
     /**
      * Yes, "Query" of the S(Q)L...
-     * @param  string $query     Raw SQL query.
-     * @param  array  $params    Prapering params.
-     * @param  int    $limit     Generally used in internal methods.
-     * @param  int    $fetchType That will overwrite on Result.fetchType.
+     * @param  string    $query     Raw SQL query.
+     * @param  array     $params    Prepare params.
+     * @param  int|array $limit     Generally used in internal methods.
+     * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Database\Query\Result
      * @throws \Exception
      */
-    final public function query($query, array $params = null, $limit = null, $fetchType = null)
+    final public function query(string $query, array $params = null, $limit = null, $fetchType = null)
     {
         // reset result vars
         $this->result->reset();
@@ -257,8 +255,7 @@ final class Mysqli
         }
 
         // log query with info level
-        $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New query via %s, query[%s]', $_SERVER['REMOTE_ADDR'], $query));
+        $this->logger && $this->logger->log(Logger::INFO, sprintf('New query: [%s]', $query));
 
         // increase query count, set last query
         if ($this->profiler) {
@@ -303,40 +300,41 @@ final class Mysqli
     }
 
     /**
-     * Select actions only one row.
+     * Get.
      * @param  string $query
      * @param  array  $params
      * @param  int    $fetchType
-     * @return any
+     * @return object|array|null
      */
-    final public function get($query, array $params = null, $fetchType = null)
+    final public function get(string $query, array $params = null, int $fetchType = null)
     {
         return $this->query($query, $params, 1, $fetchType)->getData(0);
     }
 
     /**
-     * Select actions all rows.
-     * @param  string $query
-     * @param  array  $params
-     * @param  int    $fetchType
-     * @return any
+     * Get all.
+     * @param string $query
+     * @param array  $params
+     * @param int    $fetchType
+     * @return array
      */
-    final public function getAll($query, array $params = null, $fetchType = null)
+    final public function getAll(string $query, array $params = null, int $fetchType = null): array
     {
         return $this->query($query, $params, null, $fetchType)->getData();
     }
 
     /**
-     * Select actions all rows.
-     * @param  string $table
-     * @param  any    $fields
-     * @param  string $where
-     * @param  array  $params
-     * @param  int    $limit
-     * @param  int    $fetchType
+     * Select.
+     * @param  string       $table
+     * @param  string|array $fields
+     * @param  string       $where
+     * @param  array        $params
+     * @param  int|array    $limit
+     * @param  int          $fetchType
      * @return any
      */
-    final public function select($table, $fields = null, $where = null, array $params = null , $limit = null, $fetchType = null)
+    final public function select(string $table, $fields = null, string $where = null,
+        array $params = null, $limit = null, int $fetchType = null)
     {
         if (empty($fields)) {
             $fields = '*';
@@ -352,26 +350,27 @@ final class Mysqli
     }
 
     /**
-     * Select actions one row.
-     * @param  string $table
-     * @param  any    $fields
-     * @param  string $where
-     * @param  array  $params
-     * @param  int    $fetchType
+     * Select one.
+     * @param  string       $table
+     * @param  string|array $fields
+     * @param  string       $where
+     * @param  array        $params
+     * @param  int          $fetchType
      * @return any
      */
-    final public function selectOne($table, $fields = null, $where = null, array $params = null, $fetchType = null)
+    final public function selectOne(string $table, $fields = null, string $where = null,
+        array $params = null, int $fetchType = null)
     {
         $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
     }
 
     /**
-     * Insert actions.
+     * Insert.
      * @param  string $table
      * @param  array  $data
      * @return int|null
      */
-    final public function insert($table, array $data)
+    final public function insert(string $table, array $data)
     {
         // simply check is not assoc to prepare multi-insert
         if (!isset($data[0])) {
@@ -393,15 +392,16 @@ final class Mysqli
     }
 
     /**
-     * Update actions.
-     * @param  string $table
-     * @param  array  $data
-     * @param  string $where
-     * @param  array  $params
-     * @param  int    $limit
+     * Update.
+     * @param  string    $table
+     * @param  array     $data
+     * @param  string    $where
+     * @param  array     $params
+     * @param  int|array $limit
      * @return int
      */
-    final public function update($table, array $data, $where = null, array $params = null, $limit = null): int
+    final public function update(string $table, array $data, string $where = null,
+        array $params = null, $limit = null): int
     {
         $set = [];
         foreach ($data as $key => $value) {
@@ -419,14 +419,15 @@ final class Mysqli
     }
 
     /**
-     * Delete actions.
-     * @param  string $table
-     * @param  string $where
-     * @param  array  $params
-     * @param  int    $limit
+     * Delete.
+     * @param  string    $table
+     * @param  string    $where
+     * @param  array     $params
+     * @param  int|array $limit
      * @return int
      */
-    final public function delete($table, $where = null, array $params = null, $limit = null): int
+    final public function delete(string $table, string $where = null,
+        array $params = null, $limit = null): int
     {
         return $this->query(sprintf(
             'DELETE FROM %s %s %s',
@@ -437,13 +438,13 @@ final class Mysqli
     }
 
     /**
-     * Escape given input.
+     * Escape.
      * @param  any    $input
      * @param  string $type
      * @return string
      * @throws \Exception
      */
-    final public function escape($input, $type = null)
+    final public function escape($input, string $type = null)
     {
         // escape strings %s and for all formattable types like %d, %f and %F
         if (!is_array($input) && $type && $type[0] == '%') {
@@ -484,8 +485,8 @@ final class Mysqli
     }
 
     /**
-     * Escape identifier like table name, field name.
-     * @param  string $input
+     * Escape identifier.
+     * @param  string|array $input
      * @return string
      */
     final public function escapeIdentifier($input)
@@ -498,7 +499,7 @@ final class Mysqli
             return join(', ', array_map([$this, 'escapeIdentifier'], $input));
         }
 
-        return '`'. trim($input, '` ') .'`';
+        return '`'. trim($input, ' `') .'`';
     }
 
     /**
@@ -507,7 +508,7 @@ final class Mysqli
      * @param  array  $params
      * @return string
      */
-    final public function where($where, array $params = null)
+    final public function where(string $where, array $params = null)
     {
         if (!empty($params)) {
             $where = 'WHERE '. $this->prepare($where, $params);
@@ -529,6 +530,6 @@ final class Mysqli
                 : sprintf('LIMIT %d', $limit[0]);
         }
 
-        return $limit ? sprintf('LIMIT %d', $limit) : '';
+        return $limit ? 'LIMIT '. $limit : '';
     }
 }

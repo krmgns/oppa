@@ -31,10 +31,10 @@ final class Profiler extends \Oppa\Shablon\Database\Profiler\Profiler
 {
     /**
      * Start profiling with given key.
-     * @param  int $key
+     * @param  string $key
      * @return void
      */
-    final public function start($key)
+    final public function start(string $key)
     {
         $this->profiles[$key] = [
             'start' => microtime(true),
@@ -45,11 +45,11 @@ final class Profiler extends \Oppa\Shablon\Database\Profiler\Profiler
 
     /**
      * Stop profiling with given key.
-     * @param  int $key
+     * @param  string $key
      * @throws \Exception
      * @return void
      */
-    final public function stop($key)
+    final public function stop(string $key)
     {
         if (!isset($this->profiles[$key])) {
             throw new \Exception("Could not find a `{$key}` profile key!");

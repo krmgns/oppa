@@ -35,25 +35,25 @@ abstract class Profiler
      * Profile key for connection.
      * @const int
      */
-    const CONNECTION = 1;
+    const CONNECTION = 'connection';
 
     /**
      * Profile key for last query.
      * @const int
      */
-    const LAST_QUERY = 2;
+    const LAST_QUERY = 'last_query';
 
     /**
      * Profile key for transaction.
      * @const int
      */
-    const TRANSACTION = 3; // @notimplemented
+    const TRANSACTION = 'transaction'; // @notimplemented
 
     /**
      * Last query.
      * @var string
      */
-    protected $lastQuery;
+    protected $lastQuery = '';
 
     /**
      * Query count.
@@ -62,7 +62,7 @@ abstract class Profiler
     protected $queryCount = 0;
 
     /**
-     * Profile stack.
+     * Profiles.
      * @var array
      */
     protected $profiles = [];
@@ -72,7 +72,6 @@ abstract class Profiler
      */
     public function __construct()
     {
-        // reset all profiling stuff
         $this->reset();
     }
 
@@ -82,32 +81,31 @@ abstract class Profiler
      */
     final public function reset()
     {
-        $this->lastQuery  = null;
+        $this->lastQuery  = '';
         $this->queryCount = 0;
-        $this->profiles    = [];
+        $this->profiles   = [];
     }
 
     /**
      * Get profile.
      * @param  string $key
      * @return any
-     * @throws Oppa\Exception\Database\ArgumentException
+     * @throws \Exception
      */
-    public function getProfile($key)
+    public function getProfile(string $key)
     {
         if (isset($this->profiles[$key])) {
             return $this->profiles[$key];
         }
 
-        throw new Exception\ArgumentException(
-            "Could not find a profile with given `{$key}` key!");
+        throw new \Exception("Could not find a profile with given `{$key}` key!");
     }
 
     /**
      * Get all profiles.
      * @return array
      */
-    public function getProfiles()
+    public function getProfiles(): array
     {
         return $this->profiles;
     }
@@ -117,16 +115,16 @@ abstract class Profiler
      * @param  string $query
      * @return void
      */
-    final public function setLastQuery($query)
+    final public function setLastQuery(string $query)
     {
         $this->lastQuery = $query;
     }
 
     /**
      * Get last query.
-     * @return string|null
+     * @return string
      */
-    final public function getLastQuery()
+    final public function getLastQuery(): string
     {
         return $this->lastQuery;
     }
@@ -144,7 +142,7 @@ abstract class Profiler
      * Get query count.
      * @return int
      */
-    final public function getQueryCount()
+    final public function getQueryCount(): int
     {
         return $this->queryCount;
     }
@@ -153,11 +151,11 @@ abstract class Profiler
      * Action pattern.
      * @param string $key
      */
-    abstract public function start($key);
+    abstract public function start(string $key);
 
     /**
      * Action pattern.
      * @param string $key
      */
-    abstract public function stop($key);
+    abstract public function stop(string $key);
 }

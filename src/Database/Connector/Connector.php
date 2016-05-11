@@ -52,7 +52,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
      * @return self
      * @throws \Exception
      */
-    final public function connect(string $host = null)
+    final public function connect(string $host = null): self
     {
         // connection is already active?
         if (isset($this->connections[$host])) {
@@ -192,7 +192,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
      * @return bool
      * @throws \Exception
      */
-    final public function isConnected(string $host = null)
+    final public function isConnected(string $host = null): bool
     {
         // connection exists?
         // e.g: isConnected('localhost')

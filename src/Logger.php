@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa;
 
 /**
@@ -72,7 +74,7 @@ final class Logger
     protected $directory;
 
     /**
-     * Aims some performance, escaping to call "is_dir" function.
+     * Aims some performance, escaping to call is_dir, mkdir functions.
      * @var bool
      */
     protected static $directoryChecked = false;
@@ -151,7 +153,7 @@ final class Logger
      * @param  string $message
      * @return bool|null
      */
-    final public function log($level, $message)
+    final public function log(int $level, string $message)
     {
         // no log command
         if (!$level || ($level & $this->level) == 0) {
@@ -179,8 +181,7 @@ final class Logger
         }
 
         // prepare message & message file
-        $message = sprintf('[%s] %s >> %s', $levelText, date('D, d M Y H:i:s O'),
-            trim((string) $message) ."\n");
+        $message = sprintf('[%s] %s >> %s', $levelText, date('D, d M Y H:i:s O'), trim($message) ."\n");
         $messageFile = sprintf('%s/%s.log', $this->directory, date('Y-m-d'));
 
         return error_log($message, 3, $messageFile);

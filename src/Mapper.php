@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa;
 
 /**
@@ -143,8 +145,6 @@ final class Mapper
 
     /**
      * Simply type-cast by data type.
-     * @todo   Add more types if you decide extend it, i.e: utc dates to local
-     * dates (but with cfg option that indicates local timezone).
      * @param  any   $value
      * @param  array $properties
      * @return any

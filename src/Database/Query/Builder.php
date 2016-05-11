@@ -805,7 +805,7 @@ final class Builder
             // reset query
             $this->queryString = '';
 
-            // prapere for "SELECT" statement
+            // prepare for "SELECT" statement
             if (isset($this->query['select'])) {
                 // add aggregate statements
                 $aggregate = isset($this->query['aggregate'])
@@ -850,7 +850,7 @@ final class Builder
                         : sprintf(' LIMIT %d,%d', $this->query['limit'][0], $this->query['limit'][1]);
                 }
             }
-            // prapere for "INSERT" statement
+            // prepare for "INSERT" statement
             elseif (isset($this->query['insert'])) {
                 $agent = $this->connection->getAgent();
                 if ($data = ($this->query['insert'] ?? null)) {
@@ -864,7 +864,7 @@ final class Builder
                         "INSERT INTO {$this->table} ({$keys}) VALUES %s", join(', ', $values));
                 }
             }
-            // prapere for "UPDATE" statement
+            // prepare for "UPDATE" statement
             elseif (isset($this->query['update'])) {
                 $agent = $this->connection->getAgent();
                 if ($data = ($this->query['update'] ?? null)) {
@@ -892,7 +892,7 @@ final class Builder
                     }
                 }
             }
-            // prapere for "DELETE" statement
+            // prepare for "DELETE" statement
             elseif (isset($this->query['delete'])) {
                 $agent = $this->connection->getAgent();
 

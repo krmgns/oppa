@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *   <k-gun@mail.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *   <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,68 +33,68 @@ use Oppa\Database\Connector\Connector;
  */
 final class Database
 {
-   /**
-    * Database info. @notimplemented
-    * @var array
-    */
-   private $info;
+    /**
+     * Database info. @notimplemented
+     * @var array
+     */
+    private $info;
 
-   /**
-    * Database connector object.
-    * @var Oppa\Database\Connector\Connector
-    */
-   private $connector;
+    /**
+     * Database connector object.
+     * @var Oppa\Database\Connector\Connector
+     */
+    private $connector;
 
-   /**
-    * Constructor.
-    * @param Oppa\Config $config
-    */
-   final public function __construct(Config $config)
-   {
-      $this->connector = new Connector($config);
-   }
+    /**
+     * Constructor.
+     * @param Oppa\Config $config
+     */
+    final public function __construct(Config $config)
+    {
+        $this->connector = new Connector($config);
+    }
 
-   /**
-    * Do a connection via connector.
-    * @param  string $host
-    * @return Oppa\Database\Connector\Connector
-    */
-   final public function connect($host = null)
-   {
-      return $this->connector->connect($host);
-   }
+    /**
+     * Do a connection via connector.
+     * @param  string $host
+     * @return Oppa\Database\Connector\Connector
+     */
+    final public function connect(string $host = null)
+    {
+        return $this->connector->connect($host);
+    }
 
-   /**
-    * Undo a connection via connector.
-    * @param  string $host
-    * @return Oppa\Database\Connector\Connector
-    */
-   final public function disconnect($host = null)
-   {
-      return $this->connector->disconnect($host);
-   }
+    /**
+     * Undo a connection via connector.
+     * @param  string $host
+     * @return Oppa\Database\Connector\Connector
+     */
+    final public function disconnect(string $host = null)
+    {
+        return $this->connector->disconnect($host);
+    }
 
-   /**
-    * Check a connection via connector.
-    * @param  string $host
-    * @return bool
-    */
-   final public function isConnected($host = null)
-   {
-      return $this->connector->isConnected($host);
-   }
+    /**
+     * Check a connection via connector.
+     * @param  string $host
+     * @return bool
+     */
+    final public function isConnected(string $host = null)
+    {
+        return $this->connector->isConnected($host);
+    }
 
-   /**
-    * Get a connection via connector.
-    * @param  string $host
-    * @return Oppa\Database\Connector\Connection
-    */
-   final public function getConnection($host = null)
-   {
-      return $this->connector->getConnection($host);
-   }
+    /**
+     * Get a connection via connector.
+     * @param  string $host
+     * @return Oppa\Database\Connector\Connection
+     */
+    final public function getConnection(string $host = null)
+    {
+        return $this->connector->getConnection($host);
+    }
 
-   // @notimplemented
-   final public function info()
-   {}
+    // @notimplemented
+    final public function info()
+    {}
 }

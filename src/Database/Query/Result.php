@@ -168,7 +168,7 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     /**
      * Get id(s).
      * @param  bool $all Returns an array containing all ids.
-     * @return int|array
+     * @return int|array|null
      */
     final public function getId(bool $all = false)
     {
@@ -182,8 +182,8 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     }
 
     /**
-     * Set rows count for select actions.
-     * @param  int $count;
+     * Set rows count.
+     * @param  int $count
      * @return void
      */
     final public function setRowsCount(int $count)
@@ -192,16 +192,16 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     }
 
     /**
-     * Get rows count for select actions.
+     * Get rows count.
      * @return int
      */
-    final public function getRowsCount()
+    final public function getRowsCount(): int
     {
         return $this->rowsCount;
     }
 
     /**
-     * Set rows count that affected for update/delete etc actions.
+     * Set rows affected.
      * @param int $count
      */
     final public function setRowsAffected(int $count)
@@ -210,10 +210,10 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     }
 
     /**
-     * Get rows count that affected for update/delete etc actions.
+     * Get rows count affected.
      * @return int
      */
-    final public function getRowsAffected()
+    final public function getRowsAffected(): int
     {
         return $this->rowsAffected;
     }

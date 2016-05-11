@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa\Shablon\Database\Connector\Agent;
 
 /**
@@ -27,11 +29,10 @@ namespace Oppa\Shablon\Database\Connector\Agent;
  * @object     Oppa\Shablon\Database\Connector\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-abstract class Agent
-    implements ConnectionInterface, StreamFilterInterface, StreamWrapperInterface
+abstract class Agent implements ConnectionInterface, StreamFilterInterface, StreamWrapperInterface
 {
     /**
-     * Connection resource, e.g \mysqli.
+     * Link.
      * @var object|resource
      */
     protected $link;
@@ -165,7 +166,7 @@ abstract class Agent
      * Auto detect agent class name.
      * @return string
      */
-    final public function getName()
+    final public function getName(): string
     {
         $className = get_called_class();
 
@@ -186,7 +187,7 @@ abstract class Agent
      * Get row count for select actions.
      * @return int
      */
-    final public function rowsCount()
+    final public function rowsCount(): int
     {
         return $this->result->getRowsCount();
     }
@@ -195,7 +196,7 @@ abstract class Agent
      * Get row count for update/delete also select actions.
      * @return int
      */
-    final public function rowsAffected()
+    final public function rowsAffected(): int
     {
         return $this->result->getRowsAffected();
     }
@@ -208,7 +209,7 @@ abstract class Agent
      * Need to completely query provided.
      * - mysqli_prepare('select * from users where id = ?')
      * Also, hated this;
-     * - $stmt->prapere()    then
+     * - $stmt->prepare()    then
      * - $stmt->bindparam()  then
      * - $stmt->execute()    then
      * - $stmt->bindresult() then
@@ -225,7 +226,7 @@ abstract class Agent
      * @return string
      * @throws \Exception
      */
-    final public function prepare($input, array $params = null)
+    final public function prepare(string $input, array $params = null): string
     {
         // any params provided?
         if (!empty($params)) {
@@ -270,15 +271,17 @@ abstract class Agent
     }
 
     /**
-     * Action pattern.
+     * Where.
      * @param  string $where
      * @param  array  $params
+     * @return string
      */
-    abstract public function where($where, array $params = null);
+    abstract public function where(string $where, array $params = null): string;
 
     /**
-     * Action pattern.
-     * @param int $limit
+     * Limit.
+     * @param  array|int $limit
+     * @return string
      */
-    abstract public function limit($limit);
+    abstract public function limit($limit): string;
 }
