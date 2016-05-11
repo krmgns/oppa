@@ -36,18 +36,18 @@ interface StreamFilterInterface
      * @param string $input
      * @param array  $params
      */
-    public function prepare(string $input, array $params = null);
+    public function prepare(string $input, array $params = null): string;
 
     /**
      * Escape.
      * @param any    $input
      * @param string $type
      */
-    public function escape($input, string $type = null);
+    public function escape($input, string $type = null): string;
 
     /**
      * Escape identifier.
      * @param string|array $input
      */
-    public function escapeIdentifier($input);
+    public function escapeIdentifier($input): string;
 }

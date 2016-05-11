@@ -444,7 +444,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
      * @return string
      * @throws \Exception
      */
-    final public function escape($input, string $type = null)
+    final public function escape($input, string $type = null): string
     {
         // escape strings %s and for all formattable types like %d, %f and %F
         if (!is_array($input) && $type && $type[0] == '%') {
@@ -489,7 +489,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
      * @param  string|array $input
      * @return string
      */
-    final public function escapeIdentifier($input)
+    final public function escapeIdentifier($input): string
     {
         if ($input == '*') {
             return $input;
@@ -508,7 +508,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
      * @param  array  $params
      * @return string
      */
-    final public function where(string $where, array $params = null)
+    final public function where(string $where, array $params = null): string
     {
         if (!empty($params)) {
             $where = 'WHERE '. $this->prepare($where, $params);
@@ -522,7 +522,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
      * @param  array|int $limit
      * @return string
      */
-    final public function limit($limit)
+    final public function limit($limit): string
     {
         if (is_array($limit)) {
             return isset($limit[0], $limit[1])
