@@ -1,20 +1,19 @@
 {
-   "name": "k-gun/oppa",
-   "type": "library",
-   "version": "1.26.4",
-   "homepage": "http://github.com/k-gun/oppa",
-   "description": "Oppa: A database abstraction layer for PHP and ORM implementation.",
-   "keywords": ["mysql", "mysqli", "abstraction layer", "database", "orm"],
-   "license": "GNU General Public License v3.0",
-   "authors": [{
-      "name": "Kerem Güneş",
-      "email": "k-gun@mail.com"
-   }],
-   "require": {
-      "php": ">=5.4.0",
-      "ext-mysqli": "*"
-   },
-   "autoload": {
-      "psr-4": {"Oppa\\": "Oppa/"}
-   }
+    "name": "k-gun/oppa",
+    "type": "library",
+    "version": "2.0.0",
+    "homepage": "http://github.com/k-gun/oppa",
+    "description": "Oppa: Database abstraction, query building and ORM implementation with PHP.",
+    "keywords": ["mysql", "mysqli", "abstraction layer", "database", "orm"],
+    "license": "GNU General Public License v3.0",
+    "authors": [
+        {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
+    ],
+    "require": {
+        "php": "^7.0",
+        "ext-mysqli": "*"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
 }

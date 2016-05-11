@@ -1,6 +1,0 @@
-- add transaction support - OK
-- add relations
-- add identifier escaping to query builder
-- add pg_*
-- add filter option for get() and getall() methods (used to filter result sets, see \closure=null)
-- add filter() method to filter object's entity
