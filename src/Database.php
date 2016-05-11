@@ -31,7 +31,7 @@ use Oppa\Database\Connector\Connector;
  * @object  Oppa\Database
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-final class Database implements \Oppa\Shablon\Database\DatabaseInterface
+final class Database
 {
    /**
     * Database info. @notimplemented

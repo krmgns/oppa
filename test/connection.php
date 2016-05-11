@@ -23,7 +23,7 @@ use Oppa\Configuration;
 //     ]
 // ];
 
-// $db = Database\Factory::build(new Configuration($cfg));
+// $db = new Database(new Configuration($cfg));
 // $db->connect();
 // pre($db);
 // pre($db->getConnection());
@@ -54,7 +54,7 @@ $cfg = [
     ]
 ];
 
-$db = Database\Factory::build(new Configuration($cfg));
+$db = new Database(new Configuration($cfg));
 
 // // for master connection
 $db->connect();
