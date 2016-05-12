@@ -36,10 +36,10 @@ use Oppa\Query\Result\ResultInterface;
 abstract class Agent implements AgentInterface
 {
     /**
-     * Link.
+     * Resource.
      * @var object|resource
      */
-    protected $link;
+    protected $resource;
 
     /**
      * Transaction.
@@ -88,13 +88,12 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get link.
-     *
+     * Get resource.
      * @return object|resource
      */
-    public function getLink()
+    public function getResource()
     {
-        return $this->link;
+        return $this->resource;
     }
 
     /**

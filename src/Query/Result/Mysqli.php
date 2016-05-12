@@ -58,17 +58,17 @@ final class Mysqli extends Result
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete", etc then process affected result.
-     * @param  \mysqli        $link
+     * @param  \mysqli        $resource
      * @param  \mysqli_result $result
      * @param  int            $limit
      * @param  int            $fetchType
      * @return self
      * @throws \InvalidArgumentException
      */
-    final public function process($link, $result, int $limit = null, int $fetchType = null): ResultInterface
+    final public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         // check link
-        if (!$link instanceof \mysqli) {
+        if (!$resource instanceof \mysqli) {
             throw new \InvalidArgumentException('Process link must be instanceof mysqli!');
         }
 
@@ -124,32 +124,32 @@ final class Mysqli extends Result
 
         // dirty ways to detect last insert id for multiple inserts
         // good point! http://stackoverflow.com/a/15664201/362780
-        $id  = $link->insert_id;
+        $id  = $resource->insert_id;
         $ids = $id ? [$id] : [];
 
         /**
          * // only last id
-         * if ($id && $link->affected_rows > 1) {
-         *     $id = ($id + $link->affected_rows) - 1;
+         * if ($id && $resource->affected_rows > 1) {
+         *     $id = ($id + $resource->affected_rows) - 1;
          * }
          *
          * // all ids
-         * if ($id && $link->affected_rows > 1) {
-         *     for ($i = 0; $i < $link->affected_rows - 1; $i++) {
+         * if ($id && $resource->affected_rows > 1) {
+         *     for ($i = 0; $i < $resource->affected_rows - 1; $i++) {
          *         $ids[] = $id + 1;
          *     }
          * }
          */
 
         // all ids (more tricky)
-        if ($id && $link->affected_rows > 1) {
-            $ids = range($id, ($id + $link->affected_rows) - 1);
+        if ($id && $resource->affected_rows > 1) {
+            $ids = range($id, ($id + $resource->affected_rows) - 1);
         }
 
         // set properties
         $this->setId($ids);
         $this->setRowsCount($i);
-        $this->setRowsAffected($link->affected_rows);
+        $this->setRowsAffected($resource->affected_rows);
 
         return $this;
     }

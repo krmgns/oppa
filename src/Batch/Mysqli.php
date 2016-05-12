@@ -48,7 +48,7 @@ final class Mysqli extends Batch
      */
     final public function lock(): bool
     {
-        return $this->agent->getLink()->autocommit(false);
+        return $this->agent->getResource()->autocommit(false);
     }
 
     /**
@@ -57,7 +57,7 @@ final class Mysqli extends Batch
      */
     final public function unlock(): bool
     {
-        return $this->agent->getLink()->autocommit(true);
+        return $this->agent->getResource()->autocommit(true);
     }
 
     /**
@@ -85,7 +85,7 @@ final class Mysqli extends Batch
         }
 
         // get big boss
-        $link = $this->agent->getLink();
+        $resource = $this->agent->getResource();
 
         $start = microtime(true);
 
@@ -95,7 +95,7 @@ final class Mysqli extends Batch
 
             if ($result->getRowsAffected() > 0) {
                 // this is also important for insert actions!
-                $result->setId($link->insert_id);
+                $result->setId($resource->insert_id);
 
                 $this->result[] = $result;
             }
@@ -104,7 +104,7 @@ final class Mysqli extends Batch
         }
 
         // go go go
-        $link->commit();
+        $resource->commit();
 
         $end = microtime(true);
 
@@ -116,7 +116,7 @@ final class Mysqli extends Batch
         $this->agent->getResult()->reset();
 
         // forgot to call unlock(), hmmm?
-        $link->autocommit(true);
+        $resource->autocommit(true);
     }
 
     /**
@@ -126,13 +126,13 @@ final class Mysqli extends Batch
     final public function cancel()
     {
         // get big boss
-        $link = $this->agent->getLink();
+        $resource = $this->agent->getResource();
 
         // mayday mayday
-        $link->rollback();
+        $resource->rollback();
 
         // free autocommits
-        $link->autocommit(true);
+        $resource->autocommit(true);
 
         $this->reset();
     }

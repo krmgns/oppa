@@ -106,7 +106,7 @@ final class Mysqli extends Agent
     {
         // no need to get excited
         if ($this->isConnected()) {
-            return $this->link;
+            return $this->resource;
         }
 
         // export credentials
@@ -119,7 +119,7 @@ final class Mysqli extends Agent
         $socket = (string) $this->config['socket'];
 
         // call big boss
-        $this->link = mysqli_init();
+        $this->resource = mysqli_init();
 
         // supported constants: http://php.net/mysqli.real_connect
         if (isset($this->config['connect_options'])) {
@@ -133,7 +133,7 @@ final class Mysqli extends Agent
                 if (!defined($option)) {
                     throw new \InvalidArgumentException("'{$option}' option constant is not defined!");
                 }
-                if (!$this->link->options(constant($option), $value)) {
+                if (!$this->resource->options(constant($option), $value)) {
                     throw new \ErrorException("Setting '{$option}' option failed!");
                 }
             }
@@ -142,10 +142,10 @@ final class Mysqli extends Agent
         // start connection profiling
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        if (!$this->link->real_connect($host, $username, $password, $name, $port, $socket)) {
+        if (!$this->resource->real_connect($host, $username, $password, $name, $port, $socket)) {
             throw new \ErrorException(sprintf(
                 'Connection error! errno[%d] errmsg[%s]',
-                    $this->link->connect_errno, $this->link->connect_error));
+                    $this->resource->connect_errno, $this->resource->connect_error));
         }
 
         // finish connection profiling
@@ -157,20 +157,20 @@ final class Mysqli extends Agent
 
         // set charset for connection
         if (isset($this->config['charset'])) {
-            $run = (bool) $this->link->set_charset($this->config['charset']);
+            $run = (bool) $this->resource->set_charset($this->config['charset']);
             if ($run === false) {
                 throw new \ErrorException(sprintf(
                     'Failed setting charset as `%s`! errno[%d] errmsg[%s]',
-                        $this->config['charset'], $this->link->errno, $this->link->error));
+                        $this->config['charset'], $this->resource->errno, $this->resource->error));
             }
         }
 
         // set timezone for connection
         if (isset($this->config['timezone'])) {
-            $run = (bool) $this->link->query($this->prepare(
+            $run = (bool) $this->resource->query($this->prepare(
                 "SET `time_zone` = ?", [$this->config['timezone']]));
             if ($run === false) {
-                throw new \ErrorException(sprintf('Query error! errmsg[%s]', $this->link->error));
+                throw new \ErrorException(sprintf('Query error! errmsg[%s]', $this->resource->error));
             }
         }
 
@@ -203,7 +203,7 @@ final class Mysqli extends Agent
             } catch (\Throwable $e) {}
         }
 
-        return $this->link;
+        return $this->resource;
     }
 
     /**
@@ -212,9 +212,9 @@ final class Mysqli extends Agent
      */
     final public function disconnect()
     {
-        if ($this->link) {
-            $this->link->close();
-            $this->link = null;
+        if ($this->resource) {
+            $this->resource->close();
+            $this->resource = null;
         }
     }
 
@@ -224,7 +224,7 @@ final class Mysqli extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->link && $this->link->connect_errno === 0);
+        return ($this->resource && $this->resource->connect_errno === 0);
     }
 
     /**
@@ -266,7 +266,7 @@ final class Mysqli extends Agent
         $this->profiler && $this->profiler->start(Profiler::QUERY);
 
         // go go go..
-        $result = $this->link->query($query);
+        $result = $this->resource->query($query);
 
         // finish last query profiling
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
@@ -274,8 +274,8 @@ final class Mysqli extends Agent
         if ($result === false) {
             try {
                 throw new \ErrorException(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
-                    $query, $this->link->errno, $this->link->error
-                ), $this->link->errno);
+                    $query, $this->resource->errno, $this->resource->error
+                ), $this->resource->errno);
             } catch (\ErrorException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -293,7 +293,7 @@ final class Mysqli extends Agent
         }
 
         // send query result to Result object to process and return it
-        return $this->result->process($this->link, $result, $limit, $fetchType);
+        return $this->result->process($this->resource, $result, $limit, $fetchType);
     }
 
     /**
@@ -460,7 +460,7 @@ final class Mysqli extends Agent
             if ($type != '%s') {
                 return sprintf($type, $input);
             } else {
-                return "'". $this->link->real_escape_string($input) ."'";
+                return "'". $this->resource->real_escape_string($input) ."'";
             }
         }
 
@@ -485,7 +485,7 @@ final class Mysqli extends Agent
                 return join(', ', array_map([$this, 'escape'], $input));
             // i trust you baby..
             case 'string':
-                return "'". $this->link->real_escape_string($input) ."'";
+                return "'". $this->resource->real_escape_string($input) ."'";
             default:
                 throw new \InvalidArgumentException(sprintf(
                     "Unimplemented '{$inputType}' type encountered!"));
