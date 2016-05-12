@@ -6,7 +6,6 @@ $autoload->register();
 
 use Oppa\Logger;
 use Oppa\Database;
-use Oppa\Config;
 
 $cfg = [
     'agent' => 'mysqli',
