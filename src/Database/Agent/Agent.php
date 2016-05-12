@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Agent;
 
+use Oppa\Config;
 use Oppa\Database\Batch\BatchInterface;
 use Oppa\Database\Query\Result\ResultInterface;
 
@@ -72,7 +73,7 @@ abstract class Agent implements AgentInterface
 
     /**
      * Config.
-     * @var array
+     * @var Oppa\Config
      */
     protected $config;
 
@@ -158,9 +159,9 @@ abstract class Agent implements AgentInterface
 
     /**
      * Get config.
-     * @return array
+     * @return Oppa\Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
