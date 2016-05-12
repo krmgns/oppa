@@ -34,16 +34,22 @@ use Oppa\Database\Connector\Connector;
 final class Database
 {
     /**
-     * Database info. @notimplemented
+     * Database info. @wait
      * @var array
      */
     private $info;
 
     /**
-     * Database connector object.
+     * Connector.
      * @var Oppa\Database\Connector\Connector
      */
     private $connector;
+
+    /**
+     * Connector methods.
+     * @var array
+     */
+    private $connectorMethods = [];
 
     /**
      * Constructor.
@@ -52,49 +58,45 @@ final class Database
     final public function __construct(Config $config)
     {
         $this->connector = new Connector($config);
+        // provide some speed instead using method_exists() each __call() exec
+        $this->connectorMethods = array_fill_keys(get_class_methods($this->connector), true);
     }
 
     /**
-     * Do a connection via connector.
-     * @param  string $host
-     * @return Oppa\Database\Connector\Connector
+     * Call magic (forwards all non-exists methods to Connector).
+     * @param  string $method
+     * @param  array  $methodArgs
+     * @return any
      */
-    final public function connect(string $host = null)
+    final public function __call(string $method, array $methodArgs = [])
     {
-        return $this->connector->connect($host);
+        if (isset($this->connectorMethods[$method])) {
+            return call_user_func_array([$this->connector, $method], $methodArgs);
+        }
+
+        throw new \Exception(sprintf("No method such '%s()' on '%s' or '%s' objects!",
+            $method, Database::class, Connector::class));
     }
 
-    /**
-     * Undo a connection via connector.
-     * @param  string $host
-     * @return Oppa\Database\Connector\Connector
-     */
-    final public function disconnect(string $host = null)
-    {
-        return $this->connector->disconnect($host);
-    }
-
-    /**
-     * Check a connection via connector.
-     * @param  string $host
-     * @return bool
-     */
-    final public function isConnected(string $host = null)
-    {
-        return $this->connector->isConnected($host);
-    }
-
-    /**
-     * Get a connection via connector.
-     * @param  string $host
-     * @return Oppa\Database\Connector\Connection
-     */
-    final public function getConnection(string $host = null)
-    {
-        return $this->connector->getConnection($host);
-    }
-
-    // @notimplemented
-    final public function info()
+    // @wait
+    final public function getInfo()
     {}
+
+    /**
+     * Get connector.
+     * @return Oppa\Database\Connector\ConnectorInterface
+     */
+    final public function getConnector(): ConnectorInterface
+    {
+        return $this->connector;
+    }
+
+    /**
+     * Get connector methods.
+     * @return array
+     */
+    final public function getConnectorMethods(): array
+    {
+        return $this->connectorMethods;
+    }
 }
