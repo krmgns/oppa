@@ -180,9 +180,9 @@ interface AgentInterface
      * Where.
      * @param  string $where
      * @param  array  $params
-     * @return string
+     * @return string|null
      */
-    public function where(string $where, array $params = null): string;
+    public function where(string $where = null, array $params = null);
 
     /**
      * Limit.

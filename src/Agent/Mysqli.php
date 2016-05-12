@@ -517,9 +517,9 @@ final class Mysqli extends Agent
      * Prepare "WHERE" statement.
      * @param  string $where
      * @param  array  $params
-     * @return string
+     * @return string|null
      */
-    final public function where(string $where, array $params = null): string
+    final public function where(string $where = null, array $params = null)
     {
         if (!empty($params)) {
             $where = 'WHERE '. $this->prepare($where, $params);
