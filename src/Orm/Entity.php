@@ -48,9 +48,9 @@ final class Entity
     /**
      * Constructor.
      * @param Oppa\Orm\Orm $orm
-     * @param array          $data
+     * @param array        $data
      */
-    final public function __construct(Orm $orm = null, array $data = [])
+    final public function __construct(Orm $orm, array $data = [])
     {
         // set data
         foreach ($data as $key => $value) {
@@ -68,11 +68,11 @@ final class Entity
      * @return any
      * @throws \Exception
      */
-    final public function __call($method, $arguments)
+    final public function __call(string $method, array $arguments)
     {
         // check for method
         $method = strtolower($method);
-        $methods = $this->orm->getBoundMethods();
+        $methods = $this->orm->getBindMethods();
         if (isset($methods[$method])) {
             $method = $methods[$method]->bindTo($this);
             return call_user_func_array($method, $arguments);
@@ -87,7 +87,7 @@ final class Entity
      * @param  any    $value
      * @return void
      */
-    final public function __set($key, $value)
+    final public function __set(string $key, $value)
     {
         $this->data[$key] = $value;
     }
@@ -98,7 +98,7 @@ final class Entity
      * @return any
      * @throws \Exception
      */
-    final public function __get($key)
+    final public function __get(string $key)
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
@@ -118,7 +118,7 @@ final class Entity
      * @param  string $key
      * @return bool
      */
-    final public function __isset($key)
+    final public function __isset(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
@@ -128,7 +128,7 @@ final class Entity
      * @param  string $key
      * @return void
      */
-    final public function __unset($key)
+    final public function __unset(string $key)
     {
         unset($this->data[$key]);
     }
@@ -137,7 +137,7 @@ final class Entity
      * Get all data stack.
      * @return array
      */
-    final public function toArray()
+    final public function toArray(): array
     {
         return $this->data;
     }
@@ -146,14 +146,14 @@ final class Entity
      * Check data stack is empty or not.
      * @return bool
      */
-    final public function isFound()
+    final public function isFound(): bool
     {
         return !empty($this->data);
     }
 
     /**
      * Save entity.
-     * @return int
+     * @return any
      */
     final public function save()
     {
@@ -162,7 +162,8 @@ final class Entity
 
     /**
      * Remove entity.
-     * @return int But null if no entity found.
+     * @return int
+     * @return void
      */
     final public function remove(): int
     {

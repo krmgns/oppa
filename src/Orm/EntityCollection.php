@@ -41,11 +41,13 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Add an entity.
      * @param  Oppa\Orm\Orm $orm
      * @param  array        $data
-     * @return void
+     * @return self
      */
-    final public function add(Orm $orm, array $data)
+    final public function add(Orm $orm, array $data = []): self
     {
         $this->collection[] = new Entity($orm, $data);
+
+        return $this;
     }
 
     /**

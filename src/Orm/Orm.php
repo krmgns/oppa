@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Orm;
 
 use Oppa\Database;
+use Oppa\Database\Query\Result\Result;
 use Oppa\Database\Query\Builder as QueryBuilder;
 
 /**
@@ -60,9 +61,9 @@ class Orm extends Relation
 
     /**
      * Select fields that will mapped in entity.
-     * @var array
+     * @var string|array
      */
-    protected $selectFields = ['*'];
+    protected $selectFields = '*';
 
     /**
      * Relation map
@@ -74,7 +75,7 @@ class Orm extends Relation
      * Bound methods for each entity.
      * @var array
      */
-    private $boundMethods = [];
+    private $bindMethods = [];
 
     /**
      * Constructor.
@@ -84,22 +85,22 @@ class Orm extends Relation
     {
         // check for valid database object
         if (!self::$database instanceof Database) {
-            throw new \Exception("You need to specify a valid database object");
+            throw new \Exception("You need to specify a valid database object!");
         }
 
         // check for table, primary key
         if (!isset($this->table, $this->primaryKey)) {
-            throw new \Exception("You need to specify both `table` and `primaryKey` property");
+            throw new \Exception("You need to specify both 'table' and 'primaryKey' properties!");
         }
 
         // set table info for once
         if (empty(self::$info)) {
-            $result = self::$database->getConnection()->getAgent()
-                ->getAll("SHOW COLUMNS FROM {$this->table}", null, 'array_assoc');
+            $results = self::$database->getConnection()->getAgent()
+                ->getAll("SHOW COLUMNS FROM {$this->table}");
 
             // will be filled more if needed
-            foreach ($result as $result) {
-                self::$info[$result['Field']] = [];
+            foreach ($results as $result) {
+                self::$info[$result->Field] = [];
             }
 
             // set field names as shorcut
@@ -112,8 +113,7 @@ class Orm extends Relation
         foreach ($reflection->getMethods() as $method) {
             if ($method->class == $className) {
                 $methodName = strtolower($method->name);
-                $this->boundMethods[$methodName] =
-                    $reflection->getMethod($methodName)->getClosure($this);
+                $this->bindMethods[$methodName] = $reflection->getMethod($methodName)->getClosure($this);
             }
         }
     }
@@ -167,8 +167,8 @@ class Orm extends Relation
 
     /**
      * Find objects in target table an map it in entity collection.
-     * @param  any $params
-     * @param  any $param
+     * @param  any   $params
+     * @param  array $paramsParams
      * @return Oppa\Orm\EntityCollection
      */
     final public function findAll($params = null, array $paramsParams = null): EntityCollection
@@ -303,7 +303,6 @@ class Orm extends Relation
      */
     final public function getSelectFields(): string
     {
-        $fields = '*';
         if (is_array($this->selectFields)) {
             $fields = join(', ', $this->selectFields);
         }
@@ -312,12 +311,12 @@ class Orm extends Relation
     }
 
     /**
-     * Get bound methods.
+     * Get bind (user) methods.
      * @return array
      */
-    final public function getBoundMethods(): array
+    final public function getBindMethods(): array
     {
-        return $this->boundMethods;
+        return $this->bindMethods;
     }
 
     /**
