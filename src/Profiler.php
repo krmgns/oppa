@@ -129,7 +129,7 @@ final class Profiler
                 break;
             case self::QUERY:
                 if (isset($this->profiles[self::QUERY][$this->queryCount])) {
-                    $this->profiles[self::QUERY][$this->queryCount] = [
+                    $this->profiles[self::QUERY][$this->queryCount] += [
                         'start' => microtime(true), 'stop' => 0, 'total' => 0,
                     ];
                 }
