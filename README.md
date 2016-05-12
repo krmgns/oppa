@@ -9,10 +9,9 @@ You will be enjoying while using it, promise.. :)
 Before beginning;
 
 - Set your autoloader properly
-- Use PHP >= 5.4
-- Handle errors with try/catch blocks
+- Use PHP >= 7.0
+- Use try/catch blocks
 - You can use `test.sql` in test folder
-- See `test/inc.php` to know `pre` and `prd` functions if you want
 
 You can see wiki pages for more details: https://github.com/k-gun/oppa/wiki
 
@@ -20,15 +19,11 @@ You can see wiki pages for more details: https://github.com/k-gun/oppa/wiki
 
 ```php
 // composer
-{"require": {"k-gun/oppa": "dev-master"}}
+{"require": {"k-gun/oppa": "~2.0"}}
 
 // manual
-$autoload = require('path/to/Oppa/Autoload.php');
+$autoload = require('<path_to_oppa>/src/Autoload.php');
 $autoload->register();
-
-// and using
-use Oppa\Database;
-use Oppa\Config;
 ```
 
 ### Config
@@ -48,7 +43,7 @@ $cfg = [
 ### Simple Usage
 
 ```php
-$db = new Database($cfg);
+$db = new Oppa\Database($cfg);
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();
@@ -91,26 +86,27 @@ $result = $agent->select('users', ['*'], null, null, 1);
 
 // insert a user
 $result = $agent->insert('user', ['name' => 'Ali', 'old' => 30]);
-var_dump($result); // int: last_insert_id
+dump $result; // int: last_insert_id
 // update a user
 $result = $agent->update('user', ['old' => 30], 'id = ?', [123]);
-var_dump($result); // int: affected_rows
+dump $result; // int: affected_rows
 // delete a user
 $result = $agent->delete('user', 'id = ?', [123]);
-var_dump($result); // int: affected_rows
+dump $result; // int: affected_rows
 ```
 
 ### Query Builder
 
 ```php
 // use and init with exists $db
-use Oppa\Query\Builder as QueryBuilder;
-$qb = new QueryBuilder($db->getConnection());
+use Oppa\Query\Builder as Query;
+
+$query = new Query($db->getConnection());
 // set target table
-$qb->setTable('users');
+$query->setTable('users');
 
 // build query
-$qb->select('u.*, us.score, ul.login')
+$query->select('u.*, us.score, ul.login')
    ->aggregate('sum', 'us.score', 'sum_score')
    ->join('users_score us', 'us.user_id=u.id')
    ->joinLeft('users_login ul', 'ul.user_id=u.id')
@@ -187,7 +183,7 @@ $usersObject = new Users();
 
 // find one that id=1
 $user = $usersObject->find(1);
-var_dump($user);
+dump $user;
 
 // check user found?
 if ($user->isFound()) {
@@ -200,47 +196,48 @@ $users = $usersObject->findAll();
 $users = $usersObject->findAll([1,2,3]);
 $users = $usersObject->findAll('id in(?)', [[1,2,3]]);
 $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
-var_dump($users);
+dump $users;
 foreach ($users as $user) {
    print $user->name;
 }
+
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
-var_dump($users->isFound()); // false
+dump $users->isFound(); // false
 
 // insert a user
 $user = $usersObject->entity();
 $user->name = 'Ali';
 $user->old  = 40;
-var_dump($user->save());
+dump $user->save();
 // or
 $user = $usersObject->save($user);
 // here we see "id" will be filled with last insert id
-var_dump($user);
+dump $user;
 
 // update a user "id=1"
 $user = $usersObject->entity();
 $user->id   = 1;
 $user->name = 'Ali';
 $user->old  = 55;
-var_dump($usersObject->save($user));
+dump $usersObject->save($user);
 
 // update a user that already exists "id=1"
 $user = $usersObject->find(1);
 $user->name = 'Ali';
 $user->old  = 100;
-var_dump($user->save());
+dump $user->save();
 
 // remove a user "id=1"
 $result = $usersObject->remove(1);
-var_dump($result);
+dump $result;
 
 // remove a user that already exists "id=1"
 $user = $usersObject->find(1);
-var_dump($user->remove());
+dump $user->remove();
 
 // remove users "id=1,2,3"
 $result = $usersObject->remove([1,2,3]);
-var_dump($result);
+dump $result;
 ```
 
 ### Name (Oppa)
