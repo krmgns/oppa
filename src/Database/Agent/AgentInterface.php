@@ -21,12 +21,12 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Connector\Agent;
+namespace Oppa\Database\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Connector\Agent
- * @object     Oppa\Database\Connector\Agent\AgentInterface
+ * @subpackage Oppa\Database\Agent
+ * @object     Oppa\Database\Agent\AgentInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 interface AgentInterface

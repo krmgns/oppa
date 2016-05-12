@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Batch;
 
-use Oppa\Database\Connector\Agent;
+use Oppa\Database\Agent;
 
 /**
  * @package    Oppa
@@ -35,7 +35,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
 {
     /**
      * Constructor.
-     * @param Oppa\Database\Connector\Agent\Mysqli $agent
+     * @param Oppa\Database\Agent\Mysqli $agent
      */
     final public function __construct(Agent\Mysqli $agent)
     {

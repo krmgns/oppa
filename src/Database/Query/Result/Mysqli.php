@@ -19,9 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa\Database\Query\Result;
 
-use Oppa\Database\Connector\Agent;
+use Oppa\Database\Agent\Mysqli;
 
 /**
  * @package    Oppa
@@ -29,21 +31,19 @@ use Oppa\Database\Connector\Agent;
  * @object     Oppa\Database\Query\Result\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends \Oppa\Database\Query\Result
+final class Mysqli extends Result
 {
     /**
      * Constructor.
-     *
-     * @param Oppa\Database\Connector\Agent\Mysqli $agent
+     * @param Oppa\Database\Agent\Mysqli $agent
      */
-    final public function __construct(Agent\Mysqli $agent)
+    final public function __construct(Mysqli $agent)
     {
         $this->agent = $agent;
     }
 
     /**
-     * Free resource.
-     *
+     * Free.
      * @return void
      */
     final public function free()
@@ -55,19 +55,17 @@ final class Mysqli extends \Oppa\Database\Query\Result
     }
 
     /**
-     * Process result.
-     *
+     * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete", etc then process affected result.
-     *
-     * @param  \mysqli $link
-     * @param  \mysqli $result
-     * @param  int     $limit
-     * @param  int     $fetchType
+     * @param  \mysqli        $link
+     * @param  \mysqli_result $result
+     * @param  int            $limit
+     * @param  int            $fetchType
      * @return self
      * @throws \Exception
      */
-    final public function process($link, $result, int $limit = null, int $fetchType = null)
+    final public function process($link, $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         // check link
         if (!$link instanceof \mysqli) {

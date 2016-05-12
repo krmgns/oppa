@@ -21,7 +21,7 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Connector\Agent;
+namespace Oppa\Database\Agent;
 
 use Oppa\Config;
 use Oppa\Mapper;
@@ -33,8 +33,8 @@ use Oppa\Database\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Connector\Agent
- * @object     Oppa\Database\Connector\Agent\Mysqli
+ * @subpackage Oppa\Database\Agent
+ * @object     Oppa\Database\Agent\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli extends Agent

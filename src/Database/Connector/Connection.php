@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Database\Connector;
 
 use Oppa\Config;
+use Oppa\Database\Agent;
 
 /**
  * @package    Oppa
@@ -69,7 +70,7 @@ final class Connection
 
     /**
      * Agent.
-     * @var Oppa\Database\Connector\Agent\AgentInterface
+     * @var Oppa\Database\Agent\AgentInterface
      */
     protected $agent;
 
@@ -118,7 +119,7 @@ final class Connection
 
     /**
      * Get agent.
-     * @return Oppa\Database\Connector\Agent\AgentInterface|null
+     * @return Oppa\Database\Agent\AgentInterface|null
      */
     final public function getAgent()
     {

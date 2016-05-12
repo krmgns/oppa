@@ -19,15 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Oppa\Database\Query;
+declare(strict_types=1);
+
+namespace Oppa\Database\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Query
- * @object     Oppa\Database\Query\Result
+ * @subpackage Oppa\Database\Query\Result
+ * @object     Oppa\Database\Query\Result\Result
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-abstract class Result extends \Oppa\Shablon\Database\Query\Result
+abstract class Result implements ResultInterface
 {
     /**
      * Fetch results as object.
@@ -55,7 +57,7 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
 
     /**
      * Agent object.
-     * @var Oppa\Database\Connector\Agent
+     * @var Oppa\Database\Agent\AgentInterface
      */
     protected $agent;
 
@@ -96,7 +98,7 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     protected $rowsAffected = 0;
 
     /**
-     * Reset Result vars.
+     * Reset.
      * @return void
      */
     final public function reset()
@@ -210,30 +212,12 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     }
 
     /**
-     * Get rows count affected.
+     * Get rows affected.
      * @return int
      */
     final public function getRowsAffected(): int
     {
         return $this->rowsAffected;
-    }
-
-    /**
-     * Count data (from \Countable).
-     * @return int
-     */
-    final public function count(): int
-    {
-        return count($this->data);
-    }
-
-    /**
-     * Generate iterator (from \IteratorAggregate)
-     * @return \ArrayIterator
-     */
-    final public function getIterator(): \ArrayIterator
-    {
-        return new \ArrayIterator($this->data);
     }
 
     /**
@@ -267,5 +251,23 @@ abstract class Result extends \Oppa\Shablon\Database\Query\Result
     final public function last()
     {
         return $this->getData(count($this->data) - 1);
+    }
+
+    /**
+     * Count.
+     * @return int
+     */
+    final public function count(): int
+    {
+        return count($this->data);
+    }
+
+    /**
+     * Get iterator.
+     * @return \ArrayIterator
+     */
+    final public function getIterator(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->data);
     }
 }

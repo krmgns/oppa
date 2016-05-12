@@ -21,12 +21,12 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Connector\Agent;
+namespace Oppa\Database\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Connector\Agent
- * @object     Oppa\Database\Connector\Agent\Agent
+ * @subpackage Oppa\Database\Agent
+ * @object     Oppa\Database\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Agent implements AgentInterface

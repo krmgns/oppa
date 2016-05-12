@@ -19,29 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Oppa\Shablon\Database\Query;
+declare(strict_types=1);
+
+namespace Oppa\Database\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Shablon\Database\Query
- * @object     Oppa\Shablon\Database\Query\Result
+ * @subpackage Oppa\Database\Query\Result
+ * @object     Oppa\Database\Query\Result\ResultInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-abstract class Result implements \Countable, \IteratorAggregate
+interface ResultInterface extends \Countable, \IteratorAggregate
 {
-    /** Action pattern. */
-    abstract public function free();
-
-    /** Action pattern. */
-    abstract public function reset();
+    /**
+     * Free.
+     * @return void
+     */
+    public function free();
 
     /**
-     * Action pattern.
-     *
-     * @param object      $link
-     * @param object|bool $result
-     * @param int         $limit
-     * @param string      $fetchType
+     * Reset.
+     * @return void
      */
-    abstract public function process($link, $result, int $limit = null, int $fetchType = null);
+    public function reset();
+
+    /**
+     * Process.
+     * @param object|resource $link
+     * @param object|resource $result
+     * @param int             $limit
+     * @param string          $fetchType
+     */
+    public function process($link, $result, int $limit = null, int $fetchType = null): ResultInterface;
 }
