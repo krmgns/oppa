@@ -101,14 +101,14 @@ abstract class Result implements ResultInterface
      * Detect fetch type.
      * @param  int|string $fetchType
      * @return int
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function detectFetchType($fetchType): int
     {
         // fetch type could be int, but not recommanded
         if (is_integer($fetchType)) {
             if (!in_array($fetchType, [1, 2, 3, 4])) {
-                throw new \Exception("Given `{$fetchType}` fetch type is not implemented!");
+                throw new \InvalidArgumentException("Given '{$fetchType}' fetch type is not implemented!");
             }
 
             return $fetchType;
@@ -117,7 +117,7 @@ abstract class Result implements ResultInterface
         // or could be string as default like 'object', 'array_assoc' etc.
         $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
         if (!defined($fetchTypeConst)) {
-            throw new \Exception("Given `{$fetchType}` fetch type is not implemented!");
+            throw new \InvalidArgumentException("Given '{$fetchType}' fetch type is not implemented!");
         }
 
         return constant($fetchTypeConst);
