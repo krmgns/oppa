@@ -155,8 +155,9 @@ interface AgentInterface
 
     /**
      * Prepare.
-     * @param string $input
-     * @param array  $params
+     * @param  string $input
+     * @param  array  $params
+     * @return string
      */
     public function prepare(string $input, array $params = null): string;
 
@@ -170,7 +171,8 @@ interface AgentInterface
 
     /**
      * Escape identifier.
-     * @param string|array $input
+     * @param  string|array $input
+     * @return string
      */
     public function escapeIdentifier($input): string;
 
