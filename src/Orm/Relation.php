@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *   <k-gun@mail.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *   <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,109 +19,108 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa\Orm;
 
-use Oppa\Database\Query\Builder as QueryBuilder;
+use Oppa\Database\Query\Builder as Query;
 
 /**
  * @package    Oppa
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\Relation
- * @uses       Oppa\Database\Query\Builder
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 class Relation
 {
-   /**
-    * Add select for child table(s) fields.
-    *
-    * @param  Oppa\Database\Query\Builder $query
-    * @return Oppa\Database\Query\Builder
-    */
-   final protected function addSelect(QueryBuilder $query)
-   {
-      // child fields
-      $fields = [];
+    /**
+     * Add select for child table(s) fields.
+     * @param  Oppa\Database\Query\Builder $query
+     * @return Oppa\Database\Query\Builder
+     */
+    final protected function addSelect(Query $query): Query
+    {
+        // child fields
+        $fields = [];
 
-      // use select options
-      if (isset($this->relations['select'])) {
-         // add parent table prefix
-         $query->addPrefixTo('select', $this->table);
+        // use select options
+        if (isset($this->relations['select'])) {
+            // add parent table prefix
+            $query->addPrefixTo('select', $this->table);
 
-         foreach ($this->relations['select'] as $key => $value) {
-            $key = strtoupper(trim($key));
-            // add group by
-            if ($key == 'GROUP BY') {
-               $query->groupBy($value);
-               continue;
+            foreach ($this->relations['select'] as $key => $value) {
+                $key = strtoupper(trim($key));
+                // add group by
+                if ($key == 'GROUP BY') {
+                    $query->groupBy($value);
+                    continue;
+                }
+
+                // join tables
+                foreach ($value as $i => $options) {
+                    if ($key == 'JOIN') {
+                        isset($options['using']) && $options['using'] == true
+                            ? $query->joinUsing($options['table'], $options['foreign_key'])
+                            : $query->join($options['table'], sprintf(
+                                '%s.%s = %s.%s',
+                                    $options['table'], $options['foreign_key'],
+                                    $this->table, $this->primaryKey
+                              ));
+                    } elseif ($key == 'LEFT JOIN') {
+                        isset($options['using']) && $options['using'] == true
+                            ? $query->joinLeftUsing($options['table'], $options['foreign_key'])
+                            : $query->joinLeft($options['table'], sprintf(
+                                '%s.%s = %s.%s',
+                                    $options['table'], $options['foreign_key'],
+                                    $this->table, $this->primaryKey
+                              ));
+                    } // else { not supported yet! }
+
+                    // add child fields
+                    if (isset($options['fields'])) {
+                        $fields = array_merge($fields,
+                            $this->prepareFields($options['table'], $options['fields']));
+                    }
+                }
+            }
+        }
+
+        // add child fields too
+        $query->select($fields, false);
+
+        return $query;
+    }
+
+    /**
+     * Prepare fields appending table names.
+     * @param  string $table
+     * @param  array  $fields
+     * @return array
+     */
+    final private function prepareFields($table, $fields)
+    {
+        // check fields
+        if (empty($fields)) {
+            return [];
+        }
+
+        return array_map(function($field) use($table) {
+            $field  = trim($field);
+            // dotted?
+            if (strstr($field, '.')) {
+                return $field;
             }
 
-            // join tables
-            foreach ($value as $i => $options) {
-               if ($key == 'JOIN') {
-                  isset($options['using']) && $options['using'] == true
-                     ? $query->joinUsing($options['table'], $options['foreign_key'])
-                     : $query->join($options['table'], sprintf(
-                        '%s.%s = %s.%s',
-                           $options['table'], $options['foreign_key'],
-                           $this->table, $this->primaryKey
-                       ));
-               } elseif ($key == 'LEFT JOIN') {
-                  isset($options['using']) && $options['using'] == true
-                     ? $query->joinLeftUsing($options['table'], $options['foreign_key'])
-                     : $query->joinLeft($options['table'], sprintf(
-                        '%s.%s = %s.%s',
-                           $options['table'], $options['foreign_key'],
-                           $this->table, $this->primaryKey
-                       ));
-               } // else { not supported yet! }
-
-               // add child fields
-               if (isset($options['fields'])) {
-                  $fields = array_merge($fields,
-                     $this->prepareFields($options['table'], $options['fields']));
-               }
+            // function?
+            if (strstr($field, '(')) {
+                return preg_replace_callback('~(.+)\((.+?)\)(.*)~i', function($matches) use($table) {
+                    // append table before field
+                    return sprintf('%s(%s.%s)%s', $matches[1], $table, $matches[2], $matches[3]);
+                }, $field);
             }
-         }
-      }
 
-      // add child fields too
-      $query->select($fields, false);
-
-      return $query;
-   }
-
-   /**
-    * Prepare fields appending table names.
-    *
-    * @param  string $table
-    * @param  array  $fields
-    * @return array
-    */
-   final private function prepareFields($table, $fields)
-   {
-      // check fields
-      if (empty($fields)) {
-         return [];
-      }
-
-      return array_map(function($field) use($table) {
-         $field  = trim($field);
-         // dotted?
-         if (strstr($field, '.')) {
-            return $field;
-         }
-
-         // function?
-         if (strstr($field, '(')) {
-            return preg_replace_callback('~(.+)\((.+?)\)(.*)~i', function($matches) use($table) {
-               // append table before field
-               return sprintf('%s(%s.%s)%s', $matches[1], $table, $matches[2], $matches[3]);
-            }, $field);
-         }
-
-         // add dots
-         return sprintf('%s.%s', $table, $field);
-      }, $fields);
-   }
+            // add dots
+            return sprintf('%s.%s', $table, $field);
+        }, $fields);
+    }
 }
