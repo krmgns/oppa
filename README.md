@@ -48,7 +48,7 @@ $cfg = [
 ### Simple Usage
 
 ```php
-$db = new Database(new Config($cfg));
+$db = new Database($cfg);
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();

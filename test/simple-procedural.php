@@ -1,7 +1,7 @@
 <?php
 include('inc.php');
 
-$autoload = require('./../Oppa/Autoload.php');
+$autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
@@ -19,7 +19,7 @@ static $cfg = [
 function db_init() {
     global $cfg;
     if (!isset($GLOBALS['$db'])) {
-        $db = new Database(new Config($cfg));
+        $db = new Database($cfg);
         $db->connect();
         // store db
         $GLOBALS['$db'] = $db;

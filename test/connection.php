@@ -24,7 +24,7 @@ $cfg = [
     ]
 ];
 
-$db = new Database(new Config($cfg));
+$db = new Database($cfg);
 $db->connect();
 // pre($db);
 pre($db->getConnection()->getAgent()->query("select * from users"));
@@ -56,7 +56,7 @@ pre($db->getConnection()->getAgent()->query("select * from users"));
 //     ]
 // ];
 
-// $db = new Database(new Config($cfg));
+// $db = new Database($cfg);
 
 // // for master connection
 // $db->connect();

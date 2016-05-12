@@ -1,7 +1,7 @@
 <?php
 include('inc.php');
 
-$autoload = require('./../Oppa/Autoload.php');
+$autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Logger;

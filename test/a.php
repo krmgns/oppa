@@ -1,7 +1,7 @@
 <?php
 include('inc.php');
 
-$autoload = require('./../Oppa/Autoload.php');
+$autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
@@ -16,7 +16,7 @@ $cfg = [
     ]
 ];
 
-$db = new Database(new Config($cfg));
+$db = new Database($cfg);
 $agent = $db->connect()->getConnection()->getAgent();
 
 $s = $agent->prepare('sid = :sid, pid = :pid, a = ?, tid = :tid, b = %d', [
