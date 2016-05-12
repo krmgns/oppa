@@ -20,6 +20,9 @@ $cfg = [
         'username'   => 'test',
         'password'   => '********',
         'profile'   => true,
+        'query_log'=>true,
+        'query_log_level' => Oppa\Logger::ALL,
+        'query_log_directory' => __dir__.'/../.logs',
         // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
     ]
 ];

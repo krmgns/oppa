@@ -21,15 +21,15 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Connector;
+namespace Oppa\Database\Link;
 
 use Oppa\Config;
 use Oppa\Database\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Connector
- * @object     Oppa\Database\Connector\Connection
+ * @subpackage Oppa\Database\Link
+ * @object     Oppa\Database\Link\Connection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Connection
@@ -174,8 +174,8 @@ final class Connection
 
     /**
      * Check status.
-     * @return int    If agent is exists.
-     * @return false  If agent does not exists.
+     * @return int    If agent exists.
+     * @return false  If agent not exists.
      */
     final public function status()
     {

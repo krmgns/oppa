@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Query;
 
-use Oppa\Database\Connector\Connection;
+use Oppa\Database\Link\Connection;
 
 /**
  * @package    Oppa
@@ -53,7 +53,7 @@ final class Builder
 
     /**
      * Database connection.
-     * @var Oppa\Database\Connector\Connection
+     * @var Oppa\Database\Link\Connection
      */
     private $connection;
 
@@ -77,7 +77,7 @@ final class Builder
 
     /**
      * Constructor.
-     * @param Oppa\Database\Connector\Connection $connection
+     * @param Oppa\Database\Link\Connection $connection
      * @param string $table
      */
     final public function __construct(Connection $connection = null, string $table = null)
@@ -101,7 +101,7 @@ final class Builder
 
     /**
      * Set connection.
-     * @param  Oppa\Database\Connector\Connection $connection
+     * @param  Oppa\Database\Link\Connection $connection
      * @return self
      */
     final public function setConnection(Connection $connection): self
@@ -113,7 +113,7 @@ final class Builder
 
     /**
      * Get connection.
-     * @return Oppa\Database\Connector\Connection
+     * @return Oppa\Database\Link\Connection
      */
     final public function getConnection(): Connection
     {
