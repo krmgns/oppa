@@ -118,8 +118,7 @@ final class Connector
         }
 
         // remove unused parts
-        unset($config['database']);
-        unset($database['master'], $database['slaves']);
+        unset($config['database'], $database['master'], $database['slaves']);
 
         // merge configs
         $config = $config + (array) $database;
