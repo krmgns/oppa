@@ -13,7 +13,7 @@ $cfg = [
     // 'profiling' => true,
     'query_log' => true,
     'query_log_level' => Logger::FAIL,
-    'query_log_directory' => __dir__.'/../.logs/db',
+    'query_log_directory' => __dir__.'/../.logs',
     'query_log_filename_format' => 'Y-m-d',
     'database' => [
         'fetch_type' => 'object',
@@ -37,15 +37,15 @@ $batch = $db->getConnection()->getAgent()->getBatch();
 $batch->lock();
 try {
     $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
-    $batch->queue('insert into userssssss (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into userssssss (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // commit
     $batch->run();
 } catch (\Throwable $e) {
@@ -57,7 +57,7 @@ try {
 $batch->unlock();
 
 foreach ($batch->getResult() as $result) {
-    print $result->getId() .',';
+    print $result->getId() ."\n";
 }
 
 // $batch->reset();
