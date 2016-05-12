@@ -212,8 +212,7 @@ final class Mysqli extends Agent
      */
     final public function disconnect()
     {
-        // time to say goodbye baby
-        if ($this->link instanceof \mysqli) {
+        if ($this->link) {
             $this->link->close();
             $this->link = null;
         }
@@ -225,7 +224,7 @@ final class Mysqli extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->link instanceof \mysqli && $this->link->connect_errno === 0);
+        return ($this->link && $this->link->connect_errno === 0);
     }
 
     /**
