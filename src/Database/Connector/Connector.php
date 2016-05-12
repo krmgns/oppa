@@ -32,8 +32,20 @@ use Oppa\Config;
  * @object     Oppa\Database\Connector\Connector
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Connector extends \Oppa\Shablon\Database\Connector\Connector
+final class Connector
 {
+    /**
+     * Config.
+     * @var Oppa\Config
+     */
+    protected $config;
+
+    /**
+     * Stack.
+     * @var array
+     */
+    protected $connections = [];
+
     /**
      * Constructor.
      * @note  For all methods in this object, "$host" parameter is important, cos
@@ -47,8 +59,8 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
     }
 
     /**
-     * Create a connection.
-     * @param  string $host
+     * Connect.
+     * @param  string|null $host
      * @return self
      * @throws \Exception
      */
@@ -111,12 +123,11 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
 
         // merge configs
         $config = $config + (array) $database;
-        if (!isset(
-            $config['host'], $config['name'],
-            $config['username'], $config['password']
-        )) { throw new \Exception(
+        if (!isset($config['host'], $config['name'], $config['username'], $config['password'])) {
+            throw new \Exception(
                 'Please specify all needed credentials (host'.
-                ', name, username, password) for connection!');
+                ', name, username, password) for connection!'
+            );
         }
 
         // use host as a key for connection stack
@@ -124,7 +135,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
 
         // create a new connection if not exists
         if (!isset($this->connections[$host])) {
-            $connection = new Connection($type, $host, $config);
+            $connection = new Connection($type, $host, new Config($config));
             $connection->open();
             $this->setConnection($host, $connection);
         }
@@ -133,10 +144,9 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
     }
 
     /**
-     * Cancel a connection.
-     * @param  string $host
+     * Disconnect.
+     * @param  string|null $host
      * @return void
-     * @throws \Exception
      */
     final public function disconnect(string $host = null)
     {
@@ -144,53 +154,44 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
         if (isset($this->connections[$host])) {
             $this->connections[$host]->close();
             unset($this->connections[$host]);
-
-            return;
-        }
-
-        // check by host
-        switch (trim($host)) {
-            // remove all connections
-            case '':
-            case '*':
-                foreach ($this->connections as $i => $connection) {
-                    $connection->close();
-                    unset($this->connections[$i]);
-                }
-                break;
-            // remove master connection
-            case Connection::TYPE_MASTER:
-                foreach ($this->connections as $i => $connection) {
-                    if ($connection->getType() == Connection::TYPE_MASTER) {
-                        $connection->close();
-                        unset($this->connections[$i]);
-                        break;
-                    }
-                }
-                break;
-            // remove slave connections
-            case Connection::TYPE_SLAVE:
-                foreach ($this->connections as $i => $connection) {
-                    if ($connection->getType() == Connection::TYPE_SLAVE) {
+        } else {
+            // check by host
+            switch (trim((string) $host)) {
+                // remove all connections
+                case '':
+                case '*':
+                    foreach ($this->connections as $i => $connection) {
                         $connection->close();
                         unset($this->connections[$i]);
                     }
-                }
-                break;
-            default:
-                throw new \Exception(
-                    empty($host)
-                        ? "Could not find any connection to disconnect."
-                        : "Could not find any connection to disconnect with given `{$host}` host."
-                );
+                    break;
+                // remove master connection
+                case Connection::TYPE_MASTER:
+                    foreach ($this->connections as $i => $connection) {
+                        if ($connection->getType() == Connection::TYPE_MASTER) {
+                            $connection->close();
+                            unset($this->connections[$i]);
+                            break;
+                        }
+                    }
+                    break;
+                // remove slave connections
+                case Connection::TYPE_SLAVE:
+                    foreach ($this->connections as $i => $connection) {
+                        if ($connection->getType() == Connection::TYPE_SLAVE) {
+                            $connection->close();
+                            unset($this->connections[$i]);
+                        }
+                    }
+                    break;
+            }
         }
     }
 
     /**
-     * Check a connection.
-     * @param  string $host
+     * Check connection.
+     * @param  string|null $host
      * @return bool
-     * @throws \Exception
      */
     final public function isConnected(string $host = null): bool
     {
@@ -202,14 +203,14 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
 
         // without master/slave directives
         // e.g: isConnected()
-        if ($this->config->get('sharding') !== true) {
+        if (true !== $this->config->get('sharding')) {
             foreach ($this->connections as $connection) {
                 return ($connection->status() === Connection::STATUS_CONNECTED);
             }
         }
 
         // with master/slave directives, check by host
-        switch (trim($host)) {
+        switch (trim((string) $host)) {
             // e.g: isConnected(), isConnected('master')
             case '':
             case Connection::TYPE_MASTER:
@@ -225,19 +226,14 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
                         return ($connection->status() === Connection::STATUS_CONNECTED);
                     }
                 }
-                break;
         }
 
-        throw new \Exception(
-            empty($host)
-                ? "Could not find any connection to check."
-                : "Could not find any connection to check with given `{$host}` host."
-        );
+        return false;
     }
 
     /**
-     * Put a connection in connection stack using a specific host as a key.
-     * @param  string $host
+     * Set connection.
+     * @param  string                             $host
      * @param  Oppa\Database\Connector\Connection $connection
      * @return void
      */
@@ -247,9 +243,9 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
     }
 
     /**
-     * Get a connection.
-     * @param  string $host
-     * @return Oppa\Database\Connector\Connection
+     * Get connection.
+     * @param  string|null $host
+     * @return Oppa\Database\Connector\Connection|null
      * @throws \Exception
      */
     final public function getConnection(string $host = null)
@@ -260,7 +256,7 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
             return $this->connections[$host];
         }
 
-        $host = trim($host);
+        $host = trim((string) $host);
         // with master/slave directives
         if ($this->config->get('sharding') === true) {
             // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
@@ -292,11 +288,23 @@ final class Connector extends \Oppa\Shablon\Database\Connector\Connector
                 if (!empty($connection)) return $connection;
             }
         }
+    }
 
-        throw new \Exception(
-            empty($host)
-                ? "Could not find any connection to return."
-                : "Could not find any connection to return with given `{$host}` host."
-        );
+    /**
+     * Get config.
+     * @return Oppa\Config
+     */
+    final public function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    /**
+     * Get connections.
+     * @return array
+     */
+    final public function getConnections(): array
+    {
+        return $this->connections;
     }
 }

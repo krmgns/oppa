@@ -23,21 +23,75 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Connector;
 
+use Oppa\Config;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Database\Connector
  * @object     Oppa\Database\Connector\Connection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Connection extends \Oppa\Shablon\Database\Connector\Connection
+final class Connection
 {
+    /**
+     * Database agent (aka worker, adapter etc.) names.
+     * @const string
+     */
+    const AGENT_PDO             = 'pdo',
+          AGENT_MYSQLI          = 'mysqli';
+
+    /**
+     * Connection statuses.
+     * @const int
+     */
+    const STATUS_CONNECTED      = 1,
+          STATUS_DISCONNECTED   = 0;
+
+    /**
+     * Connection types.
+     * @const string
+     */
+    const TYPE_SINGLE           = 'single',
+          TYPE_MASTER           = 'master',
+          TYPE_SLAVE            = 'slave';
+
+    /**
+     * Type.
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * Host.
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * Agent.
+     * @var Oppa\Database\Connector\Agent\AgentInterface
+     */
+    protected $agent;
+
+    /**
+     * Agent name.
+     * @var string
+     */
+    protected $agentName;
+
+    /**
+     * Config.
+     * @var Oppa\Config
+     */
+    protected $config;
+
     /**
      * Constructor.
      * @param string $type
      * @param string $host
      * @param array  $config
      */
-    final public function __construct($type, $host, array $config)
+    final public function __construct(string $type, string $host, Config $config)
     {
         $this->type   = $type;
         $this->host   = $host;
@@ -45,12 +99,57 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
     }
 
     /**
-     * Open a connection, attach agent if not exists.
+     * Get type.
+     * @return string
+     */
+    final public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Get host.
+     * @return string
+     */
+    final public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * Get agent.
+     * @return Oppa\Database\Connector\Agent\AgentInterface|null
+     */
+    final public function getAgent()
+    {
+        return $this->agent;
+    }
+
+    /**
+     * Get agent name.
+     * @return string|null
+     */
+    final public function getAgentName()
+    {
+        return $this->agentName;
+    }
+
+    /**
+     * Get config.
+     * @return Oppa\Config
+     */
+    final public function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    /**
+     * Open.
      * @return void
      */
     final public function open()
     {
-        if (!isset($this->agent)) {
+        if ($this->agent == null) {
             // attach agent first
             $this->attachAgent();
             // and open connection
@@ -59,12 +158,12 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
     }
 
     /**
-     * Close a connection, detach agent.
+     * Close.
      * @return void
      */
     final public function close()
     {
-        if (isset($this->agent)) {
+        if ($this->agent != null) {
             // close connection first
             $this->agent->disconnect();
             // and detach agent
@@ -73,10 +172,9 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
     }
 
     /**
-     * Check connection status.
-     * @return any
-     *    - if agent is exists       @return int
-     *    - if agent does not exists @return bool (false)
+     * Check status.
+     * @return int    If agent is exists.
+     * @return false  If agent does not exists.
      */
     final public function status()
     {
@@ -89,13 +187,13 @@ final class Connection extends \Oppa\Shablon\Database\Connector\Connection
     }
 
     /**
-     * Attach agent to work with database.
+     * Attach agent.
      * @return void
      * @throws \Exception
      */
     final protected function attachAgent()
     {
-        $agentName =@ strtolower($this->config['agent']);
+        $agentName = strtolower((string) $this->config['agent']);
         switch ($agentName) {
             // for now, only mysqli
             // if time permits, i will extend..
