@@ -271,7 +271,7 @@ final class Mysqli extends Agent
 
         if ($result === false) {
             try {
-                throw new \Exception(sprintf('Query error: query[%s], errno[%s], errmsg[%s]',
+                throw new \Exception(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
                     $query, $this->link->errno, $this->link->error
                 ), $this->link->errno);
             } catch (\Exception $e) {
