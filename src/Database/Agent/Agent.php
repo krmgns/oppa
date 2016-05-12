@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Database\Agent;
 
 use Oppa\Database\Batch\BatchInterface;
-use Oppa\Database\Result\ResultInterface;
+use Oppa\Database\Query\Result\ResultInterface;
 
 /**
  * @package    Oppa
@@ -109,7 +109,7 @@ abstract class Agent implements AgentInterface
      * Get result.
      * @return Oppa\Database\Query\Result\ResultInterface
      */
-    public function getResult()
+    public function getResult(): ResultInterface
     {
         return $this->result;
     }
