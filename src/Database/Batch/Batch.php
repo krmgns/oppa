@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Batch;
 
+use Oppa\Database\Agent\AgentInterface;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Database\Batch
