@@ -37,7 +37,7 @@ final class Sql
 
     /**
      * Constructor.
-     * @note  This object is used for only to prevent escaping contents like
+     * This object is used for only to prevent escaping contents like
      * NOW(), COUNT() etc. in agent.escape() methods. Nothing more..
      * @param string $query
      */
