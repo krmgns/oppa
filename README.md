@@ -23,7 +23,7 @@ You can see wiki pages for more details: https://github.com/k-gun/oppa/wiki
 {"require": {"k-gun/oppa": "~2.0"}}
 
 // manual
-$autoload = require('<path_to_oppa>/src/Autoload.php');
+$autoload = require('<path to oppa>/src/Autoload.php');
 $autoload->register();
 ```
 
