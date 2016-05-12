@@ -278,11 +278,12 @@ final class Mysqli extends Agent
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
-                // check error handler
+                // check user error handler
                 $errorHandler = $this->config['query_error_handler'];
-                // if user has error handler, return using it
                 if ($errorHandler && is_callable($errorHandler)) {
-                    return $errorHandler($e, $query, $params);
+                    $errorHandler($e, $query, $params);
+
+                    return $this->result;
                 }
 
                 throw $e;
