@@ -81,7 +81,9 @@ final class Mysqli extends Result
                 $limit = PHP_INT_MAX; // wtf?
             }
 
-            $fetchType = $fetchType ?? $this->fetchType;
+            $fetchType = ($fetchType == null)
+                ? $this->fetchType : $this->detectFetchType($fetchType);
+
             switch ($fetchType) {
                 case self::FETCH_OBJECT:
                     while ($i < $limit && $row = $this->result->fetch_object()) {
