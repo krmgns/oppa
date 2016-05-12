@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', -1);
+ini_set('display_errors', 'on');
+
 header('content-type: text/plain; chartset=utf-8');
 
 function pre($input, $e = false) {

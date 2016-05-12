@@ -8,25 +8,25 @@ use Oppa\Database;
 use Oppa\Config;
 
 /*** single ***/
-// $cfg = [
-//     'agent' => 'mysqli',
-//     'database' => [
-//         'fetch_type' => 'object',
-//         'charset'    => 'utf8',
-//         'timezone'   => '+00:00',
-//         'port'       => 3306,
-//         'host'       => 'localhost',
-//         'name'       => 'test',
-//         'username'   => 'test',
-//         'password'   => '********',
-//         // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
-//     ]
-// ];
+$cfg = [
+    'agent' => 'mysqli',
+    'database' => [
+        'fetch_type' => 'object',
+        'charset'    => 'utf8',
+        'timezone'   => '+00:00',
+        'port'       => 3306,
+        'host'       => 'localhost',
+        'name'       => 'test',
+        'username'   => 'test',
+        'password'   => '********',
+        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
+    ]
+];
 
-// $db = new Database(new Config($cfg));
-// $db->connect();
+$db = new Database(new Config($cfg));
+$db->connect();
 // pre($db);
-// pre($db->getConnection());
+pre($db->getConnections());
 // pre($db->getConnection('localhost'));
 
 // // $db->disconnect();
@@ -34,37 +34,37 @@ use Oppa\Config;
 // pre($db->getConnection('localhost')); // err!
 
 /*** sharding ***/
-$cfg = [
-    'agent' => 'mysqli',
-    'sharding' => true,
-    'database' => [
-        'fetch_type' => 'object',
-        'charset'    => 'utf8',
-        'timezone'   => '+00:00',
-        'port'       => 3306,
-        'username'   => 'test',
-        'password'   => '********',
-        'master'     => ['host' => 'master.mysql.local', 'name' => 'test', 'port' => 3307],
-        'slaves'     => [
-            ['host' => 'slave1.mysql.local', 'name' => 'test'],
-            ['host' => 'slave2.mysql.local', 'name' => 'test'],
-            ['host' => 'slave3.mysql.local', 'name' => 'test'],
-        ],
-        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
-    ]
-];
+// $cfg = [
+//     'agent' => 'mysqli',
+//     'sharding' => true,
+//     'database' => [
+//         'fetch_type' => 'object',
+//         'charset'    => 'utf8',
+//         'timezone'   => '+00:00',
+//         'port'       => 3306,
+//         'username'   => 'test',
+//         'password'   => '********',
+//         'master'     => ['host' => 'master.mysql.local', 'name' => 'test', 'port' => 3307],
+//         'slaves'     => [
+//             ['host' => 'slave1.mysql.local', 'name' => 'test'],
+//             ['host' => 'slave2.mysql.local', 'name' => 'test'],
+//             ['host' => 'slave3.mysql.local', 'name' => 'test'],
+//         ],
+//         // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
+//     ]
+// ];
 
-$db = new Database(new Config($cfg));
+// $db = new Database(new Config($cfg));
 
 // // for master connection
-$db->connect();
-$db->connect('master');
-$db->connect('master.mysql.local');
+// $db->connect();
+// $db->connect('master');
+// $db->connect('master.mysql.local');
 
 // // for slaves connection
 // // - if empty, then connects to master
 // // - so must be indicated as "slaves" or "slave.host.*"
-$db->connect('slave'); // random
+// $db->connect('slave'); // random
 // $db->connect('slave1.mysql.local');
 // $db->connect('slave2.mysql.local');
 // $db->connect('slave3.mysql.local');
@@ -75,7 +75,7 @@ $db->connect('slave'); // random
 // $db->disconnect('master');
 // $db->disconnect('slave');
 // $db->disconnect('*');
-pre($db);
+// pre($db);
 
 // pre($db->getConnection());
 // pre($db->getConnection('master'));
