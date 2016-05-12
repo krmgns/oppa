@@ -164,8 +164,9 @@ interface AgentInterface
      * Escape.
      * @param any    $input
      * @param string $type
+     * @return any
      */
-    public function escape($input, string $type = null): string;
+    public function escape($input, string $type = null);
 
     /**
      * Escape identifier.

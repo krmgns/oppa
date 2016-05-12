@@ -451,10 +451,10 @@ final class Mysqli extends Agent
      * Escape.
      * @param  any    $input
      * @param  string $type
-     * @return string
+     * @return any
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function escape($input, string $type = null): string
+    final public function escape($input, string $type = null)
     {
         // escape strings %s and for all formattable types like %d, %f and %F
         if (!is_array($input) && $type && $type[0] == '%') {
