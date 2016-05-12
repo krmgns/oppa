@@ -63,13 +63,13 @@ final class Mysqli extends Result
      * @param  int            $limit
      * @param  int            $fetchType
      * @return self
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function process($link, $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         // check link
         if (!$link instanceof \mysqli) {
-            throw new \Exception('Process link must be instanceof mysqli!');
+            throw new \InvalidArgumentException('Process link must be instanceof mysqli!');
         }
 
         $i = 0;
@@ -81,10 +81,7 @@ final class Mysqli extends Result
                 $limit = PHP_INT_MAX; // wtf?
             }
 
-            $fetchType = ($fetchType == null)
-                ? $this->fetchType
-                : $this->detectFetchType($fetchType);
-
+            $fetchType = $fetchType ?? $this->fetchType;
             switch ($fetchType) {
                 case self::FETCH_OBJECT:
                     while ($i < $limit && $row = $this->result->fetch_object()) {
@@ -108,7 +105,8 @@ final class Mysqli extends Result
                     break;
                 default:
                     $this->free();
-                    throw new \Exception("Could not implement given `{$fetchType}` fetch type!");
+                    throw new \InvalidArgumentException(
+                        "Could not implement given '{$fetchType}' fetch type!");
             }
 
             // map result data

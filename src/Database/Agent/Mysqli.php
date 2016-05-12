@@ -42,13 +42,13 @@ final class Mysqli extends Agent
     /**
      * Constructor.
      * @param  Oppa\Config $config
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     final public function __construct(Config $config)
     {
         // we need it like crazy..
         if (!extension_loaded('mysqli')) {
-            throw new \Exception('Mysqli extension is not loaded.');
+            throw new \RuntimeException('Mysqli extension is not loaded.');
         }
 
         // assign config
@@ -99,7 +99,7 @@ final class Mysqli extends Agent
     /**
      * Connect.
      * @return \mysqli
-     * @throws \Exception
+     * @throws \InvalidArgumentException, \ErrorException
      */
     final public function connect(): \mysqli
     {
@@ -124,16 +124,16 @@ final class Mysqli extends Agent
         if (isset($this->config['connect_options'])) {
             foreach ($this->config['connect_options'] as $option => $value) {
                 if (!is_string($option)) {
-                    throw new \Exception(
+                    throw new \InvalidArgumentException(
                         'Please set all connection option constant names as '.
                         'string to track any setting error!');
                 }
                 $option = strtoupper($option);
                 if (!defined($option)) {
-                    throw new \Exception("`{$option}` option constant is not defined!");
+                    throw new \InvalidArgumentException("'{$option}' option constant is not defined!");
                 }
                 if (!$this->link->options(constant($option), $value)) {
-                    throw new \Exception("Setting `{$option}` option failed!");
+                    throw new \ErrorException("Setting '{$option}' option failed!");
                 }
             }
         }
@@ -142,7 +142,7 @@ final class Mysqli extends Agent
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
         if (!$this->link->real_connect($host, $username, $password, $name, $port, $socket)) {
-            throw new \Exception(sprintf(
+            throw new \ErrorException(sprintf(
                 'Connection error! errno[%d] errmsg[%s]',
                     $this->link->connect_errno, $this->link->connect_error));
         }
@@ -158,7 +158,7 @@ final class Mysqli extends Agent
         if (isset($this->config['charset'])) {
             $run = (bool) $this->link->set_charset($this->config['charset']);
             if ($run === false) {
-                throw new \Exception(sprintf(
+                throw new \ErrorException(sprintf(
                     'Failed setting charset as `%s`! errno[%d] errmsg[%s]',
                         $this->config['charset'], $this->link->errno, $this->link->error));
             }
@@ -169,7 +169,7 @@ final class Mysqli extends Agent
             $run = (bool) $this->link->query($this->prepare(
                 "SET `time_zone` = ?", [$this->config['timezone']]));
             if ($run === false) {
-                throw new \Exception(sprintf('Query error! errmsg[%s]', $this->link->error));
+                throw new \ErrorException(sprintf('Query error! errmsg[%s]', $this->link->error));
             }
         }
 
@@ -233,7 +233,7 @@ final class Mysqli extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Database\Query\ResultInterface
-     * @throws \Exception
+     * @throws \InvalidArgumentException, \ErrorException
      */
     final public function query(string $query, array $params = null,
         $limit = null, $fetchType = null): Result\ResultInterface
@@ -244,7 +244,7 @@ final class Mysqli extends Agent
         // trim query
         $query = trim($query);
         if ($query == '') {
-            throw new \Exception('Query cannot be empty!');
+            throw new \InvalidArgumentException('Query cannot be empty!');
         }
 
         // prepare if any params
@@ -271,10 +271,10 @@ final class Mysqli extends Agent
 
         if ($result === false) {
             try {
-                throw new \Exception(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
+                throw new \ErrorException(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
                     $query, $this->link->errno, $this->link->error
                 ), $this->link->errno);
-            } catch (\Exception $e) {
+            } catch (\ErrorException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
@@ -449,7 +449,7 @@ final class Mysqli extends Agent
      * @param  any    $input
      * @param  string $type
      * @return string
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function escape($input, string $type = null): string
     {
@@ -467,7 +467,7 @@ final class Mysqli extends Agent
             return $input->toString();
         }
 
-        switch (gettype($input)) {
+        switch ($inputType = gettype($input)) {
             case 'NULL':
                 return 'NULL';
             case 'integer':
@@ -485,7 +485,8 @@ final class Mysqli extends Agent
             case 'string':
                 return "'". $this->link->real_escape_string($input) ."'";
             default:
-                throw new \Exception(sprintf('Unimplemented type encountered! type: `%s`', gettype($input)));
+                throw new \InvalidArgumentException(sprintf(
+                    "Unimplemented '{$inputType}' type encountered!"));
         }
 
         return $input;

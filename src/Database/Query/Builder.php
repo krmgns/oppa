@@ -159,6 +159,7 @@ final class Builder
      * @param  bool   $reset
      * @param  string $alias (for sub-select)
      * @return self
+     * @throws \InvalidArgumentException
      */
     final public function select($field = null, bool $reset = true, string $alias = null): self
     {
@@ -167,7 +168,7 @@ final class Builder
         // handle other query object
         if ($field instanceof $this) {
             if (empty($alias)) {
-                throw new \Exception('Alias is required!');
+                throw new \InvalidArgumentException('Alias is required!');
             }
             return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $alias));
         }
@@ -200,7 +201,7 @@ final class Builder
      * @param  string $type
      * @param  bool   $reset
      * @return self
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
     {
@@ -256,7 +257,7 @@ final class Builder
             return $this->select([$query], $reset);
         }
 
-        throw new \Exception('Given JSON type is not implemented.');
+        throw new \InvalidArgumentException('Given JSON type is not implemented.');
     }
 
     /**
@@ -700,7 +701,7 @@ final class Builder
      * @param  string $field
      * @param  string $op
      * @return self
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function orderBy(string $field, string $op = null): self
     {
@@ -711,7 +712,7 @@ final class Builder
 
         $op = strtoupper($op);
         if ($op != self::OP_ASC && $op != self::OP_DESC) {
-            throw new \Exception('Only available ops: ASC, DESC');
+            throw new \InvalidArgumentException('Only available ops: ASC, DESC');
         }
 
         return $this->push('orderBy', $field .' '. $op);
@@ -793,14 +794,15 @@ final class Builder
     /**
      * Stringify query stack.
      * @return string
-     * @throws \Exception
+     * @throws \LogicException
      */
     final public function toString(): string
     {
         // if any query
         if (!empty($this->query)) {
             if (empty($this->table)) {
-                throw new \Exception('Table is not defined yet! Call before setTable() to set target table.');
+                throw new \LogicException(
+                    "Table is not defined yet! Call 'setTable()' to set target table first.");
             }
             // reset query
             $this->queryString = '';

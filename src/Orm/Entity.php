@@ -66,7 +66,7 @@ final class Entity
      * @param  string $method
      * @param  array  $arguments
      * @return any
-     * @throws \Exception
+     * @throws \BadMethodCallException
      */
     final public function __call(string $method, array $arguments)
     {
@@ -78,7 +78,7 @@ final class Entity
             return call_user_func_array($method, $arguments);
         }
 
-        throw new \Exception('Method does not exists!');
+        throw new \BadMethodCallException('Method does not exists!');
     }
 
     /**
@@ -96,7 +96,7 @@ final class Entity
      * Get a data property.
      * @param  string $key
      * @return any
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function __get(string $key)
     {
@@ -110,7 +110,7 @@ final class Entity
             return $this->data[$keyCC];
         }
 
-        throw new \Exception("Given `{$key}` key is not found in this entity!");
+        throw new \InvalidArgumentException("Given '{$key}' key is not found in this entity!");
     }
 
     /**

@@ -126,8 +126,8 @@ final class Logger
     {
         if (empty($this->directory)) {
             throw new \Exception(
-                'Log directory is not defined in given configuration! '.
-                'Define it using `query_log_directory` key to activate logging.');
+                "Log directory is not defined in given configuration! ".
+                "Define it using 'query_log_directory' key to activate logging.");
         }
 
         self::$directoryChecked = self::$directoryChecked ?: is_dir($this->directory);

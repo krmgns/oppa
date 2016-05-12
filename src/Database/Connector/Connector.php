@@ -245,7 +245,6 @@ final class Connector
      * Get connection.
      * @param  string|null $host
      * @return Oppa\Database\Connector\Connection|null
-     * @throws \Exception
      */
     final public function getConnection(string $host = null)
     {

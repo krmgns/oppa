@@ -228,7 +228,7 @@ abstract class Agent implements AgentInterface
      * @param  string $input  Raw SQL complete/not complete.
      * @param  array  $params Binding params.
      * @return string
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function prepare(string $input, array $params = null): string
     {
@@ -240,7 +240,7 @@ abstract class Agent implements AgentInterface
                 $keys = $vals = $keysUsed = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
-                        throw new \Exception('Replacement key not found in params!');
+                        throw new \InvalidArgumentException('Replacement key not found in params!');
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
@@ -259,7 +259,7 @@ abstract class Agent implements AgentInterface
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
-                        throw new \Exception('Replacement key not found in input!');
+                        throw new \InvalidArgumentException('Replacement key not found in input!');
                     }
 
                     $key = $match[0][$i];

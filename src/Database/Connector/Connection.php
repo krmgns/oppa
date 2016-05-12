@@ -190,7 +190,7 @@ final class Connection
     /**
      * Attach agent.
      * @return void
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     final protected function attachAgent()
     {
@@ -203,7 +203,7 @@ final class Connection
                 $this->agentName = $agentName;
                 break;
             default:
-                throw new \Exception("Sorry, but `{$agentName}` agent not implemented!");
+                throw new \RuntimeException("Sorry, but '{$agentName}' agent not implemented!");
         }
     }
 

@@ -63,7 +63,7 @@ final class Profiler
      * Get profile.
      * @param  string $key
      * @return array
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function getProfile(string $key): array
     {
@@ -71,7 +71,7 @@ final class Profiler
             return $this->profiles[$key];
         }
 
-        throw new \Exception("Could not find a profile with given `{$key}` key!");
+        throw new \InvalidArgumentException("Could not find a profile with given '{$key}' key!");
     }
 
     /**
@@ -133,7 +133,7 @@ final class Profiler
                 }
                 break;
             default:
-                throw new \Exception("Unimplemented key '{$key}' given!");
+                throw new \InvalidArgumentException("Unimplemented key '{$key}' given!");
         }
     }
 
@@ -141,12 +141,12 @@ final class Profiler
      * Stop.
      * @param  string $key
      * @return void
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     final public function stop(string $key)
     {
         if (!isset($this->profiles[$key])) {
-            throw new \Exception("Could not find a '{$key}' profile key!");
+            throw new \InvalidArgumentException("Could not find a '{$key}' profile key!");
         }
 
         switch ($key) {

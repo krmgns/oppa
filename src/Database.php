@@ -66,6 +66,7 @@ final class Database
      * @param  string $method
      * @param  array  $methodArgs
      * @return any
+     * @throws \BadMethodCallException
      */
     final public function __call(string $method, array $methodArgs = [])
     {
@@ -73,8 +74,9 @@ final class Database
             return call_user_func_array([$this->connector, $method], $methodArgs);
         }
 
-        throw new \Exception(sprintf("No method such '%s()' on '%s' or '%s' objects!",
-            $method, Database::class, Connector::class));
+        throw new \BadMethodCallException(sprintf(
+            "No method such '%s()' on '%s' or '%s' objects!",
+                $method, Database::class, Connector::class));
     }
 
     // @wait
