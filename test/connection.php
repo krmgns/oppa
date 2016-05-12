@@ -26,7 +26,7 @@ $cfg = [
 $db = new Database(new Config($cfg));
 $db->connect();
 // pre($db);
-// pre($db->getConnections());
+pre($db->getConnection()->getAgent()->getResult());
 // pre($db->getConnection('localhost'));
 
 // // $db->disconnect();

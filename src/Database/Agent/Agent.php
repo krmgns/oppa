@@ -23,6 +23,9 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Agent;
 
+use Oppa\Database\Batch\BatchInterface;
+use Oppa\Database\Result\ResultInterface;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Database\Agent
@@ -97,7 +100,7 @@ abstract class Agent implements AgentInterface
      * Get transaction.
      * @return Oppa\Database\Batch\BatchInterface
      */
-    public function getBatch()
+    public function getBatch(): BatchInterface
     {
         return $this->batch;
     }

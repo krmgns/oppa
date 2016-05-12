@@ -31,7 +31,7 @@ use Oppa\Database\Agent;
  * @object     Oppa\Database\Batch\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
+final class Mysqli extends Batch
 {
     /**
      * Constructor.
@@ -43,36 +43,38 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
     }
 
     /**
-     * Lock autocommit.
+     * Lock.
      * @return void
      */
-    final public function lock()
+    final public function lock(): bool
     {
-        $this->agent->getLink()->autocommit(false);
+        return $this->agent->getLink()->autocommit(false);
     }
 
     /**
-     * Unlock autocommit.
+     * Unlock.
      * @return void
      */
-    final public function unlock()
+    final public function unlock(): bool
     {
-        $this->agent->getLink()->autocommit(true);
+        return $this->agent->getLink()->autocommit(true);
     }
 
     /**
-     * Add a new query queue.
+     * Queue.
      * @param  string $query
      * @param  array  $params
-     * @return void
+     * @return Oppa\Database\Batch\BatchInterface
      */
-    final public function queue($query, array $params = null)
+    final public function queue(string $query, array $params = null): BatchInterface
     {
         $this->queue[] = $this->agent->prepare($query, $params);
+
+        return $this;
     }
 
     /**
-     * Try to commit all queries.
+     * Run.
      * @return void
      */
     final public function run()
@@ -85,14 +87,13 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
         // get big boss
         $link = $this->agent->getLink();
 
-        // keep start time
         $start = microtime(true);
 
         foreach ($this->queue as $query) {
             // that what i see: clone is important in such actions
             $result = clone $this->agent->query($query);
 
-            if ($result->getRowsAffected()) {
+            if ($result->getRowsAffected() > 0) {
                 // this is also important for insert actions!
                 $result->setId($link->insert_id);
 
@@ -105,11 +106,10 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
         // go go go
         $link->commit();
 
-        // keep end time
-        $stop = microtime(true);
+        $end = microtime(true);
 
         // calculate process time just for simple profiling
-        $this->totalTime = number_format((float) ($stop - $start), 10);
+        $this->totalTime = (float) number_format((float) ($end - $start), 10);
 
         // even transactions are designed for insert/update/delete/replace
         // actions, let it be sure resetting the result object
@@ -120,13 +120,11 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
     }
 
     /**
-     * Cancel transaction and do rollback.
+     * Cancel.
      * @return void
      */
     final public function cancel()
     {
-        $this->reset();
-
         // get big boss
         $link = $this->agent->getLink();
 
@@ -135,5 +133,7 @@ final class Mysqli extends \Oppa\Shablon\Database\Batch\Batch
 
         // free autocommits
         $link->autocommit(true);
+
+        $this->reset();
     }
 }
