@@ -54,4 +54,25 @@ final class Util
             return '_'. strtolower($m[1]);
         }, $input);
     }
+
+    /**
+     * Get IP.
+     * @return string
+     */
+    final public static function getIp(): string
+    {
+        $ip = 'unknown';
+        if (null != ($ip = ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))) {
+            if (false !== strpos($ip, ',')) {
+                $ip = trim((string) end(explode(',', $ip)));
+            }
+        }
+        // all ok
+        elseif (null != ($ip = ($_SERVER['HTTP_CLIENT_IP'] ?? ''))) {}
+        elseif (null != ($ip = ($_SERVER['HTTP_X_REAL_IP'] ?? ''))) {}
+        elseif (null != ($ip = ($_SERVER['REMOTE_ADDR_REAL'] ?? ''))) {}
+        elseif (null != ($ip = ($_SERVER['REMOTE_ADDR'] ?? ''))) {}
+
+        return $ip;
+    }
 }

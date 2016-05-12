@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Agent;
 
+use Oppa\Util;
 use Oppa\Config;
 use Oppa\Mapper;
 use Oppa\Logger;
@@ -152,7 +153,7 @@ final class Mysqli extends Agent
 
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New connection via %s', $_SERVER['REMOTE_ADDR']));
+            'New connection via %s addr.', Util::getIp()));
 
         // set charset for connection
         if (isset($this->config['charset'])) {
@@ -253,7 +254,8 @@ final class Mysqli extends Agent
         }
 
         // log query with info level
-        $this->logger && $this->logger->log(Logger::INFO, sprintf('New query: [%s]', $query));
+        $this->logger && $this->logger->log(Logger::INFO, sprintf(
+            'New query [%s] via %s addr.', $query, Util::getIp()));
 
         // increase query count, set last query
         if ($this->profiler) {
