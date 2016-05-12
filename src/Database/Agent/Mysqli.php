@@ -234,10 +234,11 @@ final class Mysqli extends Agent
      * @param  array     $params    Prepare params.
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
-     * @return Oppa\Database\Query\Result
+     * @return Oppa\Database\Query\ResultInterface
      * @throws \Exception
      */
-    final public function query(string $query, array $params = null, $limit = null, $fetchType = null)
+    final public function query(string $query, array $params = null,
+        $limit = null, $fetchType = null): Result\ResultInterface
     {
         // reset result vars
         $this->result->reset();
