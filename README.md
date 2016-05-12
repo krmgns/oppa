@@ -60,21 +60,24 @@ $result = $agent->query('select * from `users`');
 if ($result->count())
 if ($result->getRowsCount())
 if ($result->getRowsCount() > 0)
-   foreach ($result as $user)
+   foreach ($result as $user) {
       print $user->name;
+   }
 // or
 if ($agent->rowsCount())
-   foreach ($agent->getResult() as $user)
-   foreach ($agent->getResult()->getData() as $user)
+   foreach ($agent->getResult() as $user) {
+   // or foreach ($agent->getResult()->getData() as $user) {
       print $user->name;
+   }
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
 print $user->name;
 // fetch all
 $users = $agent->getAll('select * from `users` where `old` > ?', [50]);
-foreach ($users as $user)
+foreach ($users as $user) {
    print $user->name;
+}
 
 // or shorcut methods
 
@@ -200,6 +203,7 @@ $users = $usersObject->findAll([1,2,3]);
 $users = $usersObject->findAll('id in(?)', [[1,2,3]]);
 $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
 dump $users;
+
 foreach ($users as $user) {
    print $user->name;
 }
