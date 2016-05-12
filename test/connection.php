@@ -19,6 +19,7 @@ $cfg = [
         'name'       => 'test',
         'username'   => 'test',
         'password'   => '********',
+        'profiling'  => true,
         // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
     ]
 ];
@@ -26,7 +27,7 @@ $cfg = [
 $db = new Database(new Config($cfg));
 $db->connect();
 // pre($db);
-pre($db->getConnection()->getAgent()->getConfig());
+pre($db->getConnection()->getAgent()->getProfiler());
 // pre($db->getConnection('localhost'));
 
 // // $db->disconnect();

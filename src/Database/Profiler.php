@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa\Database;
 
 /**
@@ -27,10 +29,115 @@ namespace Oppa\Database;
  * @object     Oppa\Database\Profiler
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Profiler extends \Oppa\Shablon\Database\Profiler\Profiler
+final class Profiler
 {
     /**
-     * Start profiling with given key.
+     * Profile key for connection.
+     * @const int
+     */
+    const CONNECTION = 'connection';
+
+    /**
+     * Profile key for last query.
+     * @const int
+     */
+    const LAST_QUERY = 'last_query';
+
+    /**
+     * Profile key for transaction.
+     * @const int
+     */
+    const TRANSACTION = 'transaction'; // @notimplemented
+
+    /**
+     * Last query.
+     * @var string
+     */
+    protected $lastQuery;
+
+    /**
+     * Query count.
+     * @var int
+     */
+    protected $queryCount = 0;
+
+    /**
+     * Profiles.
+     * @var array
+     */
+    protected $profiles = [];
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->reset();
+    }
+
+    /**
+     * Set last query.
+     * @param  string $query
+     * @return void
+     */
+    final public function setLastQuery(string $query)
+    {
+        $this->lastQuery = $query;
+    }
+
+    /**
+     * Get last query.
+     * @return string|null
+     */
+    final public function getLastQuery()
+    {
+        return $this->lastQuery;
+    }
+
+    /**
+     * Increase query count.
+     * @return void
+     */
+    final public function increaseQueryCount()
+    {
+        ++$this->queryCount;
+    }
+
+    /**
+     * Get query count.
+     * @return int
+     */
+    final public function getQueryCount(): int
+    {
+        return $this->queryCount;
+    }
+
+    /**
+     * Get profile.
+     * @param  string $key
+     * @return array
+     * @throws \Exception
+     */
+    public function getProfile(string $key): array
+    {
+        if (isset($this->profiles[$key])) {
+            return $this->profiles[$key];
+        }
+
+        throw new \Exception("Could not find a profile with given `{$key}` key!");
+    }
+
+    /**
+     * Get profiles.
+     * @return array
+     */
+    public function getProfiles(): array
+    {
+        return $this->profiles;
+    }
+
+    /**
+     * Start.
      * @param  string $key
      * @return void
      */
@@ -39,25 +146,35 @@ final class Profiler extends \Oppa\Shablon\Database\Profiler\Profiler
         $this->profiles[$key] = [
             'start' => microtime(true),
             'stop'  => 0,
-            'total' => 0
+            'total' => 0,
         ];
     }
 
     /**
-     * Stop profiling with given key.
+     * Stop.
      * @param  string $key
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
     final public function stop(string $key)
     {
         if (!isset($this->profiles[$key])) {
-            throw new \Exception("Could not find a `{$key}` profile key!");
+            throw new \Exception("Could not find a '{$key}' profile key!");
         }
 
         $this->profiles[$key]['stop'] = microtime(true);
         $this->profiles[$key]['total'] = number_format(
-            ((float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start']))
-        , 10);
+            ((float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start'])), 10);
+    }
+
+    /**
+     * Reset.
+     * @return void
+     */
+    final public function reset()
+    {
+        $this->lastQuery = null;
+        $this->queryCount = 0;
+        $this->profiles = [];
     }
 }
