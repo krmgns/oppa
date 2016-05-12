@@ -71,7 +71,7 @@ final class Mysqli extends Agent
         $this->result = new Result\Mysqli($this);
         $this->result->setFetchType(
             isset($this->config['fetch_type'])
-                ? $this->config['fetch_type'] : Result::FETCH_OBJECT
+                ? $this->config['fetch_type'] : Result\Result::FETCH_OBJECT
         );
 
         // assign logger if config'ed
