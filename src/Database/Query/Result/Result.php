@@ -32,28 +32,13 @@ namespace Oppa\Database\Query\Result;
 abstract class Result implements ResultInterface
 {
     /**
-     * Fetch results as object.
+     * Fetch types.
      * @const int
      */
-    const FETCH_OBJECT = 1; // @default
-
-    /**
-     * Fetch results as associative array.
-     * @const int
-     */
-    const FETCH_ARRAY_ASSOC = 2;
-
-    /**
-     * Fetch results as numarated array.
-     * @const int
-     */
-    const FETCH_ARRAY_NUM = 3;
-
-    /**
-     * Fetch results as both associative/numarated array.
-     * @const int
-     */
-    const FETCH_ARRAY_BOTH = 4;
+    const FETCH_OBJECT      = 1, // @default
+          FETCH_ARRAY_ASSOC = 2,
+          FETCH_ARRAY_NUM   = 3,
+          FETCH_ARRAY_BOTH  = 4;
 
     /**
      * Agent object.
@@ -63,7 +48,7 @@ abstract class Result implements ResultInterface
 
     /**
      * Resource object.
-     * @var object/resource
+     * @var object|resource
      */
     protected $result;
 
