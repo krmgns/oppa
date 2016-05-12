@@ -21,13 +21,12 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database;
+namespace Oppa;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Database
- * @object     Oppa\Database\Profiler
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Profiler
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Profiler
 {

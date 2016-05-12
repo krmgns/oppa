@@ -67,7 +67,7 @@ abstract class Agent implements AgentInterface
 
     /**
      * Profiler.
-     * @var Oppa\Database\Profiler
+     * @var Oppa\Profiler
      */
     protected $profiler;
 
@@ -145,7 +145,7 @@ abstract class Agent implements AgentInterface
 
     /**
      * Get profiler.
-     * @return Oppa\Database\Profiler
+     * @return Oppa\Profiler
      * @throws \Exception
      */
     public function getProfiler()

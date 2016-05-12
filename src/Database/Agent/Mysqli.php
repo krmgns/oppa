@@ -25,10 +25,10 @@ namespace Oppa\Database\Agent;
 
 use Oppa\Util;
 use Oppa\Config;
-use Oppa\Mapper;
 use Oppa\Logger;
+use Oppa\Mapper;
+use Oppa\Profiler;
 use Oppa\Database\Batch;
-use Oppa\Database\Profiler;
 use Oppa\Database\Query\Sql;
 use Oppa\Database\Query\Result;
 
