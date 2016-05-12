@@ -175,7 +175,6 @@ final class Mysqli extends Agent
 
         // fill mapper map for once
         if ($this->mapper) {
-            $result = null;
             try {
                 // get table columns info
                 $this->query('SELECT * FROM `information_schema`.`columns` WHERE `table_schema` = %s', [$name]);
