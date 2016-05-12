@@ -5,7 +5,6 @@ $autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Config;
 
 static $cfg = [
     'agent'    => 'mysqli',

@@ -9,7 +9,7 @@ use Oppa\Config;
 
 $cfg = [
     'agent' => 'mysqli',
-    'profiling' => true,
+    'profile' => true,
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -26,7 +26,7 @@ $db->connect();
 
 $agent = $db->getConnection()->getAgent();
 $agent->query("delete from `users` where `id` > ?", [30000]);
-$agent->query("delete from `users` where `id` > ?", [30000]);
+$agent->query("delete from `users` where `id` > ?", [40000]);
 
 pre($agent->getProfiler());
 // pre($db);
@@ -34,9 +34,7 @@ pre($agent->getProfiler());
 $profiler = $agent->getProfiler();
 // $profiler->reset();
 
-pre($profiler->lastQuery);
-pre($profiler->queryCount);
 pre($profiler->getLastQuery());
-pre($profiler->getQueryCount());
-pre($profiler->getProfile($profiler::CONNECTION));
-pre($profiler->getProfile($profiler::LAST_QUERY));
+// pre($profiler->getQueryCount());
+// pre($profiler->getProfile($profiler::CONNECTION));
+// pre($profiler->getProfile($profiler::QUERY));

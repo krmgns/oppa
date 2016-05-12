@@ -5,15 +5,12 @@ $autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Config;
 
 // set a worker class
 class Db
 {
     private static $instance;
-
-    private $db;
-    private $cfg = [
+    private static $cfg = [
         'agent'    => 'mysqli',
         'database' => [
             'host'     => 'localhost',  'name'     => 'test',
@@ -21,6 +18,7 @@ class Db
             'charset'  => 'utf8',       'timezone' => '+00:00',
         ]
     ];
+    private $db;
 
     private function __clone() {}
     private function __construct() {}
@@ -29,7 +27,7 @@ class Db
         if (self::$instance == null) {
             self::$instance = new self();
             self::$instance->db =
-                new Database(new Configuration(self::$instance->cfg));
+                new Database(self::$cfg);
             self::$instance->db->connect();
         }
         return self::$instance;

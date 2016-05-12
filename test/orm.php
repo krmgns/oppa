@@ -5,7 +5,7 @@ $autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Config;
+use Oppa\Orm\Orm;
 
 $cfg = [
     'agent' => 'mysqli',
@@ -20,9 +20,9 @@ $db = new Database($cfg);
 $db->connect();
 // pre($db);
 
-\Oppa\Orm::setDatabase($db);
+Orm::setDatabase($db);
 
-class Users extends \Oppa\Orm {
+class Users extends Orm {
     protected $table = 'users';
     protected $primaryKey = 'id';
     protected $selectFields = ['id', 'name'];
@@ -38,10 +38,10 @@ class Users extends \Oppa\Orm {
     protected $relations = [
         'select' => [
             'left join' => [
-                ['table' => 'users_score', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['sum(score) as score']],
-                ['table' => 'users_login', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['login']],
+                ['table' => 'users_score us', 'foreign_key' => 'user_id', 'using' => false,
+                    'fields' => ['sum(us.score) as score']],
+                ['table' => 'users_login ul', 'foreign_key' => 'user_id', 'using' => false,
+                    'fields' => ['ul.login']],
             ],
             // 'join' => [
             //     ['table' => 'users_foo', 'foreign_key' => 'user_id', 'using' => true,
