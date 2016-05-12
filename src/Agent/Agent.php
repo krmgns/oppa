@@ -26,6 +26,7 @@ namespace Oppa\Agent;
 use Oppa\Config;
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
+use Oppa\Exception\{Error, InvalidKeyException};
 
 /**
  * @package    Oppa
@@ -117,12 +118,12 @@ abstract class Agent implements AgentInterface
     /**
      * Get logger.
      * @return Oppa\Logger
-     * @throws \Exception
+     * @throws Oppa\Error
      */
     public function getLogger()
     {
         if (!$this->logger) {
-            throw new \Exception('Profiler is not found, did you set `query_log` option as true?');
+            throw new Error("Profiler is not found, did you set 'query_log' option as 'true'?");
         }
 
         return $this->logger;
@@ -131,12 +132,12 @@ abstract class Agent implements AgentInterface
     /**
      * Get mapper.
      * @return Oppa\Mapper
-     * @throws \Exception
+     * @throws Oppa\Error
      */
     public function getMapper()
     {
         if (!$this->mapper) {
-            throw new \Exception('Mapper is not found, did you set `map_result` option as true?');
+            throw new Error("Mapper is not found, did you set 'map_result' option as 'true'?");
         }
 
         return $this->mapper;
@@ -145,12 +146,12 @@ abstract class Agent implements AgentInterface
     /**
      * Get profiler.
      * @return Oppa\Profiler
-     * @throws \Exception
+     * @throws Oppa\Error
      */
     public function getProfiler()
     {
         if (!$this->profiler) {
-            throw new \Exception('Profiler is not found, did you set `profiling` option as true?');
+            throw new Error("Profiler is not found, did you set 'profiling' option as 'true'?");
         }
 
         return $this->profiler;
@@ -227,7 +228,7 @@ abstract class Agent implements AgentInterface
      * @param  string $input  Raw SQL complete/not complete.
      * @param  array  $params Binding params.
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidKeyException
      */
     final public function prepare(string $input, array $params = null): string
     {
@@ -239,7 +240,7 @@ abstract class Agent implements AgentInterface
                 $keys = $values = $keysUsed = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
-                        throw new \InvalidArgumentException("Replacement '{$key}' key not found in params!");
+                        throw new InvalidKeyException("Replacement '{$key}' key not found in params!");
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
@@ -258,7 +259,7 @@ abstract class Agent implements AgentInterface
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
-                        throw new \InvalidArgumentException("Replacement '{$i}' key not found in input!");
+                        throw new InvalidKeyException("Replacement '{$i}' key not found in input!");
                     }
 
                     $key = $match[0][$i];

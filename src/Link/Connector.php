@@ -25,6 +25,7 @@ namespace Oppa\Link;
 
 use Oppa\Util;
 use Oppa\Config;
+use Oppa\Exception\InvalidConfigException;
 
 /**
  * @package    Oppa
@@ -62,7 +63,7 @@ final class Connector
      * Connect.
      * @param  string|null $host
      * @return self
-     * @throws \Exception
+     * @throws Oppa\InvalidConfigException
      */
     final public function connect(string $host = null): self
     {
@@ -123,9 +124,9 @@ final class Connector
         // merge configs
         $config = $config + (array) $database;
         if (!isset($config['host'], $config['name'], $config['username'], $config['password'])) {
-            throw new \Exception(
+            throw new InvalidConfigException(
                 'Please specify all needed credentials (host'.
-                ', name, username, password) for connection!'
+                ', name, username, password) for a connection!'
             );
         }
 

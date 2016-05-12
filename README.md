@@ -153,7 +153,7 @@ try {
    $batch->queue('insert into `userz` values(null,?,?)', ['Eric', 15]); // boom!
    // commit
    $batch->run();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
    print $e->getMessage();
    // rollback & set autocommit=1
    $batch->cancel();

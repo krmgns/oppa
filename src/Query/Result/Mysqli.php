@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Query\Result;
 
 use Oppa\Agent\Mysqli;
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package    Oppa
@@ -63,13 +64,13 @@ final class Mysqli extends Result
      * @param  int            $limit
      * @param  int            $fetchType
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidValueException
      */
     final public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         // check link
         if (!$resource instanceof \mysqli) {
-            throw new \InvalidArgumentException('Process link must be instanceof mysqli!');
+            throw new InvalidValueException('Process link must be instanceof mysqli!');
         }
 
         $i = 0;
@@ -107,7 +108,7 @@ final class Mysqli extends Result
                     break;
                 default:
                     $this->free();
-                    throw new \InvalidArgumentException(
+                    throw new InvalidValueException(
                         "Could not implement given '{$fetchType}' fetch type!");
             }
 

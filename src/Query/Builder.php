@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Query;
 
 use Oppa\Link\Connection;
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package    Oppa
@@ -159,7 +160,7 @@ final class Builder
      * @param  bool   $reset
      * @param  string $alias (for sub-select)
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidValueException
      */
     final public function select($field = null, bool $reset = true, string $alias = null): self
     {
@@ -168,7 +169,7 @@ final class Builder
         // handle other query object
         if ($field instanceof $this) {
             if (empty($alias)) {
-                throw new \InvalidArgumentException('Alias is required!');
+                throw new InvalidValueException('Alias is required!');
             }
             return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $alias));
         }
@@ -201,7 +202,7 @@ final class Builder
      * @param  string $type
      * @param  bool   $reset
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidValueException
      */
     final public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
     {
@@ -257,7 +258,7 @@ final class Builder
             return $this->select([$query], $reset);
         }
 
-        throw new \InvalidArgumentException('Given JSON type is not implemented.');
+        throw new InvalidValueException('Given JSON type is not implemented.');
     }
 
     /**
@@ -701,7 +702,7 @@ final class Builder
      * @param  string $field
      * @param  string $op
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidValueException
      */
     final public function orderBy(string $field, string $op = null): self
     {
@@ -712,7 +713,7 @@ final class Builder
 
         $op = strtoupper($op);
         if ($op != self::OP_ASC && $op != self::OP_DESC) {
-            throw new \InvalidArgumentException('Only available ops: ASC, DESC');
+            throw new InvalidValueException('Only available ops: ASC, DESC');
         }
 
         return $this->push('orderBy', $field .' '. $op);

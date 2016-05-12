@@ -48,7 +48,7 @@ try {
     $batch->queue('insert into userssssss (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // commit
     $batch->run();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     print $e->getMessage();
     // rollback & set autocommit=1
     $batch->cancel();

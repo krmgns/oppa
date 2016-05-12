@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa;
 
+use Oppa\Exception\InvalidConfigException;
+
 /**
  * @package Oppa
  * @object  Oppa\Logger
@@ -120,12 +122,12 @@ final class Logger
     /**
      * Check log directory, if not exists create it.
      * @return bool
-     * @throws \Exception
+     * @throws Oppa\InvalidConfigException
      */
     public function checkDirectory(): bool
     {
         if (empty($this->directory)) {
-            throw new \Exception(
+            throw new InvalidConfigException(
                 "Log directory is not defined in given configuration! ".
                 "Define it using 'query_log_directory' key to activate logging.");
         }

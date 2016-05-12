@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Orm;
 
 use Oppa\Util;
+use Oppa\Exception\InvalidKeyException;
 
 /**
  * @package    Oppa
@@ -96,7 +97,7 @@ final class Entity
      * Get a data property.
      * @param  string $key
      * @return any
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidKeyException
      */
     final public function __get(string $key)
     {
@@ -110,7 +111,7 @@ final class Entity
             return $this->data[$keyCC];
         }
 
-        throw new \InvalidArgumentException("Given '{$key}' key is not found in this entity!");
+        throw new InvalidKeyException("Given '{$key}' key is not found in this entity!");
     }
 
     /**

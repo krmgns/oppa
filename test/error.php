@@ -20,7 +20,7 @@ use Oppa\Config;
 // $db = Database($cfg);
 // try {
 //     $agent = $db->connect()->getConnection()->getAgent()->query('select * from nonexists');
-// } catch (\Exception $e) {
+// } catch (\Throwable $e) {
 //     print $e->getMessage();
 // }
 

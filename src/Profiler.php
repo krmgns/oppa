@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa;
 
+use Oppa\Exception\InvalidKeyException;
+
 /**
  * @package Oppa
  * @object  Oppa\Profiler
@@ -62,7 +64,7 @@ final class Profiler
      * Get profile.
      * @param  string $key
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidKeyException
      */
     public function getProfile(string $key): array
     {
@@ -70,7 +72,7 @@ final class Profiler
             return $this->profiles[$key];
         }
 
-        throw new \InvalidArgumentException("Could not find a profile with given '{$key}' key!");
+        throw new InvalidKeyException("Could not find a profile with given '{$key}' key!");
     }
 
     /**
@@ -114,6 +116,7 @@ final class Profiler
      * Start.
      * @param  string $key
      * @return void
+     * @throws Oppa\InvalidKeyException
      */
     final public function start(string $key)
     {
@@ -132,7 +135,7 @@ final class Profiler
                 }
                 break;
             default:
-                throw new \InvalidArgumentException("Unimplemented key '{$key}' given!");
+                throw new InvalidKeyException("Unimplemented key '{$key}' given!");
         }
     }
 
@@ -140,12 +143,12 @@ final class Profiler
      * Stop.
      * @param  string $key
      * @return void
-     * @throws \InvalidArgumentException
+     * @throws Oppa\InvalidKeyException
      */
     final public function stop(string $key)
     {
         if (!isset($this->profiles[$key])) {
-            throw new \InvalidArgumentException("Could not find a '{$key}' profile key!");
+            throw new InvalidKeyException("Could not find a '{$key}' profile key!");
         }
 
         switch ($key) {

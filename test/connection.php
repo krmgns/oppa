@@ -30,7 +30,7 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 // pre($db);
-pre($db->getConnection()->getAgent()->query("select * from userss"));
+pre($db->getConnection()->getAgent()->query("select * from users"));
 // pre($db->getConnection());
 // pre($db->getConnection('localhost'));
 

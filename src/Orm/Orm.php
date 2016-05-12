@@ -26,6 +26,7 @@ namespace Oppa\Orm;
 use Oppa\Database;
 use Oppa\Query\Result\Result;
 use Oppa\Query\Builder as QueryBuilder;
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package    Oppa
@@ -79,18 +80,18 @@ class Orm extends Relation
 
     /**
      * Constructor.
-     * @throws \Exception
+     * @throws Oppa\InvalidValueException
      */
     public function __construct()
     {
         // check for valid database object
         if (!self::$database instanceof Database) {
-            throw new \Exception("You need to specify a valid database object!");
+            throw new InvalidValueException("You need to specify a valid database object!");
         }
 
         // check for table, primary key
         if (!isset($this->table, $this->primaryKey)) {
-            throw new \Exception("You need to specify both 'table' and 'primaryKey' properties!");
+            throw new InvalidValueException("You need to specify both 'table' and 'primaryKey' properties!");
         }
 
         // set table info for once
@@ -132,13 +133,13 @@ class Orm extends Relation
      * Find an object in target table.
      * @param  any $param
      * @return Oppa\Orm\Entity
-     * @throws \Exception
+     * @throws Oppa\InvalidValueException
      */
     final public function find($param): Entity
     {
         $param = [$param];
         if (empty($param)) {
-            throw new \Exception("You need to pass a parameter to make a query!");
+            throw new InvalidValueException("You need to pass a parameter to make a query!");
         }
 
         // start query building
@@ -220,16 +221,15 @@ class Orm extends Relation
     /**
      * Save entity into target table.
      * @param  Oppa\Orm\Entity $entity
-     * @return any
-     *    - oninsert: last insert id
-     *    - onupdate: affected rows
-     * @throws \Exception
+     * @return any On insert: last insert id.
+     * @return int On update: affected rows.
+     * @throws Oppa\InvalidValueException
      */
     final public function save(Entity $entity)
     {
         $data = $entity->toArray();
         if (empty($data)) {
-            throw new \Exception('There is no data ehough on entity for save action!');
+            throw new InvalidValueException('There is no data ehough on entity for save action!');
         }
 
         // use only owned fields
@@ -252,13 +252,13 @@ class Orm extends Relation
      * Remove an entity from target table.
      * @param  any $params
      * @return int
-     * @throws \Exception
+     * @throws Oppa\InvalidValueException
      */
     final public function remove($params): int
     {
         $params = [$params];
         if (empty($params)) {
-            throw new \Exception('You need to pass a parameter to make a query!');
+            throw new InvalidValueException('You need to pass a parameter to make a query!');
         }
 
         // get worker agent
