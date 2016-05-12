@@ -103,20 +103,22 @@ use Oppa\Query\Builder as Query;
 
 $query = new Query($db->getConnection());
 // set target table
-$query->setTable('users');
+$query->setTable('users u');
 
 // build query
-$query->select('u.*, us.score, ul.login')
-   ->aggregate('sum', 'us.score', 'sum_score')
-   ->join('users_score us', 'us.user_id=u.id')
-   ->joinLeft('users_login ul', 'ul.user_id=u.id')
-   ->where('u.id in(?,?,?)', [1,2,3])
-   ->whereBetween('u.old', [30,50])
-   ->whereNotNull('ul.login')
-   ->groupBy('u.id')
-   ->orderBy('old')
-   ->having('sum_score <= ?', [30])
-   ->limit(0,10)
+$query->select('u.*')
+    ->aggregate('sum', 'us.score', 'sum_score')
+    ->join('users_score us', 'us.user_id=u.id')
+        ->selectMore('us.score')
+    ->joinLeft('users_login ul', 'ul.user_id=u.id')
+        ->selectMore('ul.login')
+    ->whereIn('u.id', [1,2,3])
+    ->whereBetween('u.old', [30,50])
+    ->whereNotNull('ul.login')
+    ->groupBy('u.id')
+    ->orderBy('u.old')
+    ->having('sum_score <= ?', [30])
+    ->limit(0,10)
 ;
 ```
 Gives the result below.
