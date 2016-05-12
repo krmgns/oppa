@@ -21,16 +21,16 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Agent;
+namespace Oppa\Agent;
 
 use Oppa\Config;
-use Oppa\Database\Batch\BatchInterface;
-use Oppa\Database\Query\Result\ResultInterface;
+use Oppa\Batch\BatchInterface;
+use Oppa\Query\Result\ResultInterface;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Agent
- * @object     Oppa\Database\Agent\Agent
+ * @subpackage Oppa\Agent
+ * @object     Oppa\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Agent implements AgentInterface
@@ -43,13 +43,13 @@ abstract class Agent implements AgentInterface
 
     /**
      * Transaction.
-     * @var Oppa\Database\Batch\BatchInterface
+     * @var Oppa\Batch\BatchInterface
      */
     protected $batch;
 
     /**
      * Result.
-     * @var Oppa\Database\Query\Result\ResultInterface
+     * @var Oppa\Query\Result\ResultInterface
      */
     protected $result;
 
@@ -99,7 +99,7 @@ abstract class Agent implements AgentInterface
 
     /**
      * Get transaction.
-     * @return Oppa\Database\Batch\BatchInterface
+     * @return Oppa\Batch\BatchInterface
      */
     public function getBatch(): BatchInterface
     {
@@ -108,7 +108,7 @@ abstract class Agent implements AgentInterface
 
     /**
      * Get result.
-     * @return Oppa\Database\Query\Result\ResultInterface
+     * @return Oppa\Query\Result\ResultInterface
      */
     public function getResult(): ResultInterface
     {

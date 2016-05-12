@@ -104,7 +104,7 @@ var_dump($result); // int: affected_rows
 
 ```php
 // use and init with exists $db
-use Oppa\Database\Query\Builder as QueryBuilder;
+use Oppa\Query\Builder as QueryBuilder;
 $qb = new QueryBuilder($db->getConnection());
 // set target table
 $qb->setTable('users');

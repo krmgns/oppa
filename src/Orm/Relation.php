@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Orm;
 
-use Oppa\Database\Query\Builder as Query;
+use Oppa\Query\Builder as Query;
 
 /**
  * @package    Oppa
@@ -35,8 +35,8 @@ class Relation
 {
     /**
      * Add select for child table(s) fields.
-     * @param  Oppa\Database\Query\Builder $query
-     * @return Oppa\Database\Query\Builder
+     * @param  Oppa\Query\Builder $query
+     * @return Oppa\Query\Builder
      */
     final protected function addSelect(Query $query): Query
     {

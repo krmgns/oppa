@@ -6,7 +6,7 @@ $autoload->register();
 
 use Oppa\Database;
 use Oppa\Config;
-use Oppa\Database\Query\Builder as QueryBuilder;
+use Oppa\Query\Builder as QueryBuilder;
 
 $cfg = [
     'agent' => 'mysqli',

@@ -21,21 +21,21 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Query\Result;
+namespace Oppa\Query\Result;
 
-use Oppa\Database\Agent\Mysqli;
+use Oppa\Agent\Mysqli;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Query\Result
- * @object     Oppa\Database\Query\Result\Mysqli
+ * @subpackage Oppa\Query\Result
+ * @object     Oppa\Query\Result\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli extends Result
 {
     /**
      * Constructor.
-     * @param Oppa\Database\Agent\Mysqli $agent
+     * @param Oppa\Agent\Mysqli $agent
      */
     final public function __construct(Mysqli $agent)
     {

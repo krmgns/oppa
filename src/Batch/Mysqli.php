@@ -21,21 +21,21 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Batch;
+namespace Oppa\Batch;
 
-use Oppa\Database\Agent;
+use Oppa\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Batch
- * @object     Oppa\Database\Batch\Mysqli
+ * @subpackage Oppa\Batch
+ * @object     Oppa\Batch\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli extends Batch
 {
     /**
      * Constructor.
-     * @param Oppa\Database\Agent\Mysqli $agent
+     * @param Oppa\Agent\Mysqli $agent
      */
     final public function __construct(Agent\Mysqli $agent)
     {
@@ -64,7 +64,7 @@ final class Mysqli extends Batch
      * Queue.
      * @param  string $query
      * @param  array  $params
-     * @return Oppa\Database\Batch\BatchInterface
+     * @return Oppa\Batch\BatchInterface
      */
     final public function queue(string $query, array $params = null): BatchInterface
     {

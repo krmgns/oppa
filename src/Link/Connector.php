@@ -21,15 +21,15 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Link;
+namespace Oppa\Link;
 
 use Oppa\Util;
 use Oppa\Config;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Link
- * @object     Oppa\Database\Link\Connector
+ * @subpackage Oppa\Link
+ * @object     Oppa\Link\Connector
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Connector
@@ -233,7 +233,7 @@ final class Connector
     /**
      * Set connection.
      * @param  string                           $host
-     * @param  Oppa\Database\Link\Connection $connection
+     * @param  Oppa\Link\Connection $connection
      * @return void
      */
     final public function setConnection(string $host, Connection $connection)
@@ -244,7 +244,7 @@ final class Connector
     /**
      * Get connection.
      * @param  string|null $host
-     * @return Oppa\Database\Link\Connection|null
+     * @return Oppa\Link\Connection|null
      */
     final public function getConnection(string $host = null)
     {

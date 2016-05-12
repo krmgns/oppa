@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa;
 
-use Oppa\Database\Link\Connector;
+use Oppa\Link\Connector;
 
 /**
  * @package Oppa
@@ -40,7 +40,7 @@ final class Database
 
     /**
      * Connector.
-     * @var Oppa\Database\Link\Connector
+     * @var Oppa\Link\Connector
      */
     private $connector;
 
@@ -85,7 +85,7 @@ final class Database
 
     /**
      * Get connector.
-     * @return Oppa\Database\Link\ConnectorInterface
+     * @return Oppa\Link\ConnectorInterface
      */
     final public function getConnector(): ConnectorInterface
     {

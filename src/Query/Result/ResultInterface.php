@@ -21,12 +21,12 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Query\Result;
+namespace Oppa\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Query\Result
- * @object     Oppa\Database\Query\Result\ResultInterface
+ * @subpackage Oppa\Query\Result
+ * @object     Oppa\Query\Result\ResultInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 interface ResultInterface extends \Countable, \IteratorAggregate

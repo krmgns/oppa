@@ -21,21 +21,21 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Batch;
+namespace Oppa\Batch;
 
-use Oppa\Database\Agent\AgentInterface;
+use Oppa\Agent\AgentInterface;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Batch
- * @object     Oppa\Database\Batch\Batch
+ * @subpackage Oppa\Batch
+ * @object     Oppa\Batch\Batch
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Batch implements BatchInterface
 {
     /**
      * Agent.
-     * @var Oppa\Database\Agent\AgentInterface
+     * @var Oppa\Agent\AgentInterface
      */
     protected $agent;
 
@@ -59,7 +59,7 @@ abstract class Batch implements BatchInterface
 
     /**
      * Get agent.
-     * @return Oppa\Database\Agent\AgentInterface
+     * @return Oppa\Agent\AgentInterface
      */
     final public function getAgent(): AgentInterface
     {

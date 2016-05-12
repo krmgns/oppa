@@ -21,15 +21,15 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Link;
+namespace Oppa\Link;
 
 use Oppa\Config;
-use Oppa\Database\Agent;
+use Oppa\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Link
- * @object     Oppa\Database\Link\Connection
+ * @subpackage Oppa\Link
+ * @object     Oppa\Link\Connection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Connection
@@ -70,7 +70,7 @@ final class Connection
 
     /**
      * Agent.
-     * @var Oppa\Database\Agent\AgentInterface
+     * @var Oppa\Agent\AgentInterface
      */
     protected $agent;
 
@@ -119,7 +119,7 @@ final class Connection
 
     /**
      * Get agent.
-     * @return Oppa\Database\Agent\AgentInterface|null
+     * @return Oppa\Agent\AgentInterface|null
      */
     final public function getAgent()
     {

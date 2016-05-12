@@ -21,45 +21,48 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Batch;
+namespace Oppa\Query;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Batch
- * @object     Oppa\Database\Batch\BatchInterface
+ * @subpackage Oppa\Query
+ * @object     Oppa\Query\Sql
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-interface BatchInterface
+final class Sql
 {
     /**
-     * Lock.
-     * @return bool
+     * Keeps raw SQL string.
+     * @var string
      */
-    public function lock(): bool;
+    protected $query;
 
     /**
-     * Unlock.
-     * @return bool
+     * Constructor.
+     * This object is used for only to prevent escaping contents like
+     * NOW(), COUNT() etc. in agent.escape() methods. Nothing more..
+     * @param string $query
      */
-    public function unlock(): bool;
+    final public function __construct(string $query)
+    {
+        $this->query = trim($query);
+    }
 
     /**
-     * Queue.
-     * @param  string $query
-     * @param  array  $params
-     * @return Oppa\Database\Batch\BatchInterface
+     * String magic.
+     * @return string
      */
-    public function queue(string $query, array $params = null): BatchInterface;
+    final public function __toString(): string
+    {
+        return $this->query;
+    }
 
     /**
-     * Run.
-     * @return void
+     * Get SQL string.
+     * @return string
      */
-    public function run();
-
-    /**
-     * Cancel.
-     * @return void
-     */
-    public function cancel();
+    final public function toString(): string
+    {
+        return $this->query;
+    }
 }

@@ -19,48 +19,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Oppa\Database\Query;
+declare(strict_types=1);
+
+namespace Oppa\Batch;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Query
- * @object     Oppa\Database\Query\Sql
+ * @subpackage Oppa\Batch
+ * @object     Oppa\Batch\BatchInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Sql
+interface BatchInterface
 {
     /**
-     * Keeps raw SQL string.
-     * @var string
+     * Lock.
+     * @return bool
      */
-    protected $query;
+    public function lock(): bool;
 
     /**
-     * Constructor.
-     * This object is used for only to prevent escaping contents like
-     * NOW(), COUNT() etc. in agent.escape() methods. Nothing more..
-     * @param string $query
+     * Unlock.
+     * @return bool
      */
-    final public function __construct(string $query)
-    {
-        $this->query = trim($query);
-    }
+    public function unlock(): bool;
 
     /**
-     * String magic.
-     * @return string
+     * Queue.
+     * @param  string $query
+     * @param  array  $params
+     * @return Oppa\Batch\BatchInterface
      */
-    final public function __toString(): string
-    {
-        return $this->toString();
-    }
+    public function queue(string $query, array $params = null): BatchInterface;
 
     /**
-     * Get SQL string.
-     * @return string
+     * Run.
+     * @return void
      */
-    final public function toString(): string
-    {
-        return $this->query;
-    }
+    public function run();
+
+    /**
+     * Cancel.
+     * @return void
+     */
+    public function cancel();
 }

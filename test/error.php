@@ -17,7 +17,7 @@ use Oppa\Config;
 //     ],
 // ];
 
-// $db = Database\Factory::build(new Configuration($cfg));
+// $db = Database($cfg);
 // try {
 //     $agent = $db->connect()->getConnection()->getAgent()->query('select * from nonexists');
 // } catch (\Exception $e) {

@@ -24,8 +24,8 @@ declare(strict_types=1);
 namespace Oppa\Orm;
 
 use Oppa\Database;
-use Oppa\Database\Query\Result\Result;
-use Oppa\Database\Query\Builder as QueryBuilder;
+use Oppa\Query\Result\Result;
+use Oppa\Query\Builder as QueryBuilder;
 
 /**
  * @package    Oppa

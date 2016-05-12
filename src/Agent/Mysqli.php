@@ -21,21 +21,21 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Agent;
+namespace Oppa\Agent;
 
 use Oppa\Util;
 use Oppa\Config;
 use Oppa\Logger;
 use Oppa\Mapper;
 use Oppa\Profiler;
-use Oppa\Database\Batch;
-use Oppa\Database\Query\Sql;
-use Oppa\Database\Query\Result;
+use Oppa\Batch;
+use Oppa\Query\Sql;
+use Oppa\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Agent
- * @object     Oppa\Database\Agent\Mysqli
+ * @subpackage Oppa\Agent
+ * @object     Oppa\Agent\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Mysqli extends Agent
@@ -233,7 +233,7 @@ final class Mysqli extends Agent
      * @param  array     $params    Prepare params.
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
-     * @return Oppa\Database\Query\ResultInterface
+     * @return Oppa\Query\ResultInterface
      * @throws \InvalidArgumentException, \ErrorException
      */
     final public function query(string $query, array $params = null,

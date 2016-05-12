@@ -21,12 +21,12 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Database\Query\Result;
+namespace Oppa\Query\Result;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Database\Query\Result
- * @object     Oppa\Database\Query\Result\Result
+ * @subpackage Oppa\Query\Result
+ * @object     Oppa\Query\Result\Result
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 abstract class Result implements ResultInterface
@@ -41,43 +41,43 @@ abstract class Result implements ResultInterface
           FETCH_ARRAY_BOTH  = 4;
 
     /**
-     * Agent object.
-     * @var Oppa\Database\Agent\AgentInterface
+     * Agent.
+     * @var Oppa\Agent\AgentInterface
      */
     protected $agent;
 
     /**
-     * Resource object.
+     * Resource.
      * @var object|resource
      */
     protected $result;
 
     /**
-     * Result fetch type.
+     * Fetch type.
      * @var int
      */
     protected $fetchType;
 
     /**
-     * Result data stack.
+     * Data.
      * @var array
      */
     protected $data = [];
 
     /**
-     * Last inserted ID's.
+     * Id(s).
      * @var array
      */
     protected $id = [];
 
     /**
-     * Rows count that affected last select action.
+     * Rows count.
      * @var int
      */
     protected $rowsCount = 0;
 
     /**
-     * Rows count that affected last update/delete etc action.
+     * Rows affected.
      * @var int
      */
     protected $rowsAffected = 0;
