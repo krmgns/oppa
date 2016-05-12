@@ -269,19 +269,4 @@ abstract class Agent implements AgentInterface
 
         return $input;
     }
-
-    /**
-     * Where.
-     * @param  string $where
-     * @param  array  $params
-     * @return string
-     */
-    abstract public function where(string $where, array $params = null): string;
-
-    /**
-     * Limit.
-     * @param  array|int $limit
-     * @return string
-     */
-    abstract public function limit($limit): string;
 }

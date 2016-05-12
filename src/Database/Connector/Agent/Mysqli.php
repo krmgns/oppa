@@ -437,6 +437,18 @@ final class Mysqli extends Agent
     }
 
     /**
+     * Count.
+     * @param  string $query
+     * @return int
+     */
+    final public function count(string $query): int
+    {
+        $result = $this->get("SELECT count(*) AS count FROM ({$query}) AS tmp");
+
+        return intval($result->count);
+    }
+
+    /**
      * Escape.
      * @param  any    $input
      * @param  string $type

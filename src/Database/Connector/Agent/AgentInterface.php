@@ -129,6 +129,13 @@ interface AgentInterface
         array $params = null, $limit = null);
 
     /**
+     * Count.
+     * @param  string $query
+     * @return int
+     */
+    public function count(string $query): int;
+
+    /**
      * Id.
      * @return any
      */
@@ -165,4 +172,19 @@ interface AgentInterface
      * @param string|array $input
      */
     public function escapeIdentifier($input): string;
+
+    /**
+     * Where.
+     * @param  string $where
+     * @param  array  $params
+     * @return string
+     */
+    public function where(string $where, array $params = null): string;
+
+    /**
+     * Limit.
+     * @param  array|int $limit
+     * @return string
+     */
+    public function limit($limit): string;
 }
