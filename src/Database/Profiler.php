@@ -32,34 +32,12 @@ namespace Oppa\Database;
 final class Profiler
 {
     /**
-     * Profile key for connection.
-     * @const int
+     * Profile keys.
+     * @const string
      */
-    const CONNECTION = 'connection';
-
-    /**
-     * Profile key for last query.
-     * @const int
-     */
-    const LAST_QUERY = 'last_query';
-
-    /**
-     * Profile key for transaction.
-     * @const int
-     */
-    const TRANSACTION = 'transaction'; // @notimplemented
-
-    /**
-     * Last query.
-     * @var string
-     */
-    protected $lastQuery;
-
-    /**
-     * Query count.
-     * @var int
-     */
-    protected $queryCount = 0;
+    const CONNECTION  = 'connection',
+          QUERY       = 'query',
+          TRANSACTION = 'transaction'; // @notimplemented
 
     /**
      * Profiles.
@@ -68,48 +46,17 @@ final class Profiler
     protected $profiles = [];
 
     /**
+     * Query count.
+     * @var int
+     */
+    protected $queryCount = 0;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->reset();
-    }
-
-    /**
-     * Set last query.
-     * @param  string $query
-     * @return void
-     */
-    final public function setLastQuery(string $query)
-    {
-        $this->lastQuery = $query;
-    }
-
-    /**
-     * Get last query.
-     * @return string|null
-     */
-    final public function getLastQuery()
-    {
-        return $this->lastQuery;
-    }
-
-    /**
-     * Increase query count.
-     * @return void
-     */
-    final public function increaseQueryCount()
-    {
-        ++$this->queryCount;
-    }
-
-    /**
-     * Get query count.
-     * @return int
-     */
-    final public function getQueryCount(): int
-    {
-        return $this->queryCount;
     }
 
     /**
@@ -137,17 +84,57 @@ final class Profiler
     }
 
     /**
+     * Add query.
+     * @param  string $query
+     * @return void
+     */
+    final public function addQuery(string $query)
+    {
+        $this->profiles[self::QUERY][++$this->queryCount]['string'] = $query;
+    }
+
+    /**
+     * Get last query.
+     * @return string|null
+     */
+    final public function getLastQuery()
+    {
+        return $this->profiles[self::QUERY][$this->queryCount]['string'] ?? null;
+    }
+
+    /**
+     * Get query count.
+     * @return int
+     */
+    final public function getQueryCount(): int
+    {
+        return $this->queryCount;
+    }
+
+    /**
      * Start.
      * @param  string $key
      * @return void
      */
     final public function start(string $key)
     {
-        $this->profiles[$key] = [
-            'start' => microtime(true),
-            'stop'  => 0,
-            'total' => 0,
-        ];
+        switch ($key) {
+            case self::CONNECTION:
+            case self::TRANSACTION:
+                $this->profiles[$key] = [
+                    'start' => microtime(true), 'stop' => 0, 'total' => 0,
+                ];
+                break;
+            case self::QUERY:
+                if (isset($this->profiles[self::QUERY][$this->queryCount])) {
+                    $this->profiles[self::QUERY][$this->queryCount] = [
+                        'start' => microtime(true), 'stop' => 0, 'total' => 0,
+                    ];
+                }
+                break;
+            default:
+                throw new \Exception("Unimplemented key '{$key}' given!");
+        }
     }
 
     /**
@@ -162,9 +149,22 @@ final class Profiler
             throw new \Exception("Could not find a '{$key}' profile key!");
         }
 
-        $this->profiles[$key]['stop'] = microtime(true);
-        $this->profiles[$key]['total'] = number_format(
-            ((float) ($this->profiles[$key]['stop'] - $this->profiles[$key]['start'])), 10);
+        switch ($key) {
+            case self::CONNECTION:
+            case self::TRANSACTION:
+                $this->profiles[$key]['stop'] = microtime(true);
+                $this->profiles[$key]['total'] = (float) number_format(
+                    $this->profiles[$key]['stop'] - $this->profiles[$key]['start'], 10);
+                break;
+            case self::QUERY:
+                if (isset($this->profiles[self::QUERY][$this->queryCount])) {
+                    $this->profiles[self::QUERY][$this->queryCount]['stop'] = microtime(true);
+                    $this->profiles[self::QUERY][$this->queryCount]['total'] = (float) number_format(
+                        $this->profiles[self::QUERY][$this->queryCount]['stop'] -
+                        $this->profiles[self::QUERY][$this->queryCount]['start'], 10);
+                }
+                break;
+        }
     }
 
     /**
@@ -173,8 +173,6 @@ final class Profiler
      */
     final public function reset()
     {
-        $this->lastQuery = null;
-        $this->queryCount = 0;
         $this->profiles = [];
     }
 }

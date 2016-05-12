@@ -82,7 +82,7 @@ final class Mysqli extends Agent
         }
 
         // assign profiler if config'ed
-        if ($this->config['profiling'] == true) {
+        if ($this->config['profile'] == true) {
             $this->profiler = new Profiler();
         }
     }
@@ -258,25 +258,22 @@ final class Mysqli extends Agent
 
         // increase query count, set last query
         if ($this->profiler) {
-            $this->profiler->increaseQueryCount();
-            $this->profiler->setLastQuery($query);
+            $this->profiler->addQuery($query);
         }
 
         // start last query profiling
-        $this->profiler && $this->profiler->start(Profiler::LAST_QUERY);
+        $this->profiler && $this->profiler->start(Profiler::QUERY);
 
         // go go go..
         $result = $this->link->query($query);
 
         // finish last query profiling
-        $this->profiler && $this->profiler->stop(Profiler::LAST_QUERY);
+        $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
-        // i always loved to handle errors
-        if (!$result) {
+        if ($result === false) {
             try {
-                throw new \Exception(sprintf(
-                    'Query error: query[%s], errno[%s], errmsg[%s]',
-                        $query, $this->link->errno, $this->link->error
+                throw new \Exception(sprintf('Query error: query[%s], errno[%s], errmsg[%s]',
+                    $query, $this->link->errno, $this->link->error
                 ), $this->link->errno);
             } catch (\Exception $e) {
                 // log query error with fail level
@@ -289,7 +286,6 @@ final class Mysqli extends Agent
                     return $errorHandler($e, $query, $params);
                 }
 
-                // throw it!
                 throw $e;
             }
         }
