@@ -237,17 +237,17 @@ abstract class Agent implements AgentInterface
             // available named word limits: :foo, :foo123, :foo_bar
             preg_match_all('~:([a-zA-Z0-9_]+)~', $input, $match);
             if (isset($match[1]) && !empty($match[1])) {
-                $keys = $vals = $keysUsed = [];
+                $keys = $values = $keysUsed = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
-                        throw new \InvalidArgumentException('Replacement key not found in params!');
+                        throw new \InvalidArgumentException("Replacement '{$key}' key not found in params!");
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
-                    $vals[] = $this->escape($params[$key]);
+                    $values[] = $this->escape($params[$key]);
                     $keysUsed[] = $key;
                 }
-                $input = preg_replace($keys, $vals, $input, 1);
+                $input = preg_replace($keys, $values, $input, 1);
 
                 // remove used params
                 foreach ($keysUsed as $key) unset($params[$key]);
@@ -259,13 +259,13 @@ abstract class Agent implements AgentInterface
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
-                        throw new \InvalidArgumentException('Replacement key not found in input!');
+                        throw new \InvalidArgumentException("Replacement '{$i}' key not found in input!");
                     }
 
                     $key = $match[0][$i];
-                    $val = $this->escape($param, $key);
-                    if (($pos = strpos($input, $key)) !== false) {
-                        $input = substr_replace($input, $val, $pos, strlen($key));
+                    $value = $this->escape($param, $key);
+                    if (false !== ($pos = strpos($input, $key))) {
+                        $input = substr_replace($input, $value, $pos, strlen($key));
                     }
                 }
             }
