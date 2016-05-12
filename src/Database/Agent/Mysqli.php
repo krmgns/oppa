@@ -187,7 +187,7 @@ final class Mysqli extends Agent
                             // detect length for strings (actually, not in use for now)
                             substr($result->DATA_TYPE, -4) == 'char'
                         ) {
-                            $length =@ sscanf($result->COLUMN_TYPE, "{$result->DATA_TYPE}(%d)%s")[0];
+                            $length = sscanf($result->COLUMN_TYPE, "{$result->DATA_TYPE}(%d)%s")[0] ?? null;
                         }
                         // needed only these for now
                         $map[$result->TABLE_NAME][$result->COLUMN_NAME]['type'] = $result->DATA_TYPE;
