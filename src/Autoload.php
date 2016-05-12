@@ -68,7 +68,6 @@ final class Autoload
                 $objectName = '\\'. $objectName;
             }
 
-            pre($objectName);
             // only Oppa stuff
             if (1 !== strpos($objectName, __namespace__)) {
                 return;
