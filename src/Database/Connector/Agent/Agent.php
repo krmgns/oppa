@@ -21,15 +21,15 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Shablon\Database\Connector\Agent;
+namespace Oppa\Database\Connector\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Shablon\Database\Connector\Agent
- * @object     Oppa\Shablon\Database\Connector\Agent\Agent
+ * @subpackage Oppa\Database\Connector\Agent
+ * @object     Oppa\Database\Connector\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-abstract class Agent implements ConnectionInterface, StreamFilterInterface, StreamWrapperInterface
+abstract class Agent implements AgentInterface
 {
     /**
      * Link.

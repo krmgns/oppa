@@ -21,16 +21,34 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Shablon\Database\Connector\Agent;
+namespace Oppa\Database\Connector\Agent;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Shablon\Database\Connector\Agent
- * @object     Oppa\Shablon\Database\Connector\Agent\StreamWrapperInterface
+ * @subpackage Oppa\Database\Connector\Agent
+ * @object     Oppa\Database\Connector\Agent\AgentInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-interface StreamWrapperInterface
+interface AgentInterface
 {
+    /**
+     * Connect.
+     * @return object|resource
+     */
+    public function connect();
+
+    /**
+     * Disconnect.
+     * @return void
+     */
+    public function disconnect();
+
+    /**
+     * Check connection.
+     * @return bool
+     */
+    public function isConnected(): bool;
+
     /**
      * Query.
      * @param string $query
@@ -127,4 +145,24 @@ interface StreamWrapperInterface
      * @return int
      */
     public function rowsAffected();
+
+    /**
+     * Prepare.
+     * @param string $input
+     * @param array  $params
+     */
+    public function prepare(string $input, array $params = null): string;
+
+    /**
+     * Escape.
+     * @param any    $input
+     * @param string $type
+     */
+    public function escape($input, string $type = null): string;
+
+    /**
+     * Escape identifier.
+     * @param string|array $input
+     */
+    public function escapeIdentifier($input): string;
 }

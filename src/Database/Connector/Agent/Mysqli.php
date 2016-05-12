@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Database\Connector\Agent;
 
+use Oppa\Config;
 use Oppa\Mapper;
 use Oppa\Logger;
 use Oppa\Database\Batch;
@@ -33,19 +34,19 @@ use Oppa\Database\Query\Result;
 /**
  * @package    Oppa
  * @subpackage Oppa\Database\Connector\Agent
- * @object     Oppa\Database\Connector\Agent\Agent
+ * @object     Oppa\Database\Connector\Agent\Mysqli
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
+final class Mysqli extends Agent
 {
     /**
      * Constructor.
-     * @param  array $config
+     * @param  Oppa\Config $config
      * @throws \Exception
      */
-    final public function __construct(array $config)
+    final public function __construct(Config $config)
     {
-        // we need it like crazy
+        // we need it like crazy..
         if (!extension_loaded('mysqli')) {
             throw new \Exception('Mysqli extension is not loaded.');
         }
@@ -57,33 +58,31 @@ final class Mysqli extends \Oppa\Shablon\Database\Connector\Agent\Agent
         $this->batch = new Batch\Mysqli($this);
 
         // assign data mapper
-        $mapping = ($config['map_result'] ?? false);
+        $mapping = $this->config['map_result'];
         if ($mapping === true) {
             $this->mapper = new Mapper([
-                'tiny2bool' => ($config['map_result_tiny2bool'] ?? false),
+                'tiny2bool' => (bool) $this->config['map_result_tiny2bool'],
             ]);
         }
-        // @todo mapping could have in/out directives
-        // elseif (is_array($mapping)) {}
 
         // assign result object
         $this->result = new Result\Mysqli($this);
         $this->result->setFetchType(
-            isset($config['fetch_type'])
-                ? $config['fetch_type'] : Result::FETCH_OBJECT
+            isset($this->config['fetch_type'])
+                ? $this->config['fetch_type'] : Result::FETCH_OBJECT
         );
 
         // assign logger if config'ed
-        if (isset($config['query_log']) && $config['query_log'] == true) {
+        if ($this->config['query_log'] == true) {
             $this->logger = new Logger();
-            isset($config['query_log_level']) &&
-                $this->logger->setLevel($config['query_log_level']);
-            isset($config['query_log_directory']) &&
-                $this->logger->setDirectory($config['query_log_directory']);
+            isset($this->config['query_log_level']) &&
+                $this->logger->setLevel($this->config['query_log_level']);
+            isset($this->config['query_log_directory']) &&
+                $this->logger->setDirectory($this->config['query_log_directory']);
         }
 
         // assign profiler if config'ed
-        if (isset($config['profiling']) && $config['profiling'] == true) {
+        if ($this->config['profiling'] == true) {
             $this->profiler = new Profiler();
         }
     }
