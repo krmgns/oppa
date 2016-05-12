@@ -31,6 +31,7 @@ use Oppa\Profiler;
 use Oppa\Batch;
 use Oppa\Query\Sql;
 use Oppa\Query\Result;
+use Oppa\Exception\QueryException;
 
 /**
  * @package    Oppa
@@ -273,10 +274,10 @@ final class Mysqli extends Agent
 
         if ($result === false) {
             try {
-                throw new \ErrorException(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
+                throw new QueryException(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
                     $query, $this->resource->errno, $this->resource->error
                 ), $this->resource->errno);
-            } catch (\ErrorException $e) {
+            } catch (QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
