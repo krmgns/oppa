@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace Oppa;
 
-use Oppa\Config;
 use Oppa\Database\Connector\Connector;
 
 /**
@@ -53,11 +52,11 @@ final class Database
 
     /**
      * Constructor.
-     * @param Oppa\Config $config
+     * @param array $config
      */
-    final public function __construct(Config $config)
+    final public function __construct(array $config)
     {
-        $this->connector = new Connector($config);
+        $this->connector = new Connector(new Config($config));
         // provide some speed instead using method_exists() each __call() exec
         $this->connectorMethods = array_fill_keys(get_class_methods($this->connector), true);
     }
