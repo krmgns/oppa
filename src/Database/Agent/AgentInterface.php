@@ -115,7 +115,7 @@ interface AgentInterface
      * @return int
      */
     public function update(string $table, array $data, string $where = null,
-        array $params = null, $limit = null);
+        array $params = null, $limit = null): int;
 
     /**
      * Delete.
@@ -126,7 +126,7 @@ interface AgentInterface
      * @return int
      */
     public function delete(string $table, string $where = null,
-        array $params = null, $limit = null);
+        array $params = null, $limit = null): int;
 
     /**
      * Count.
