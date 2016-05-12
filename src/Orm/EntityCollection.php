@@ -1,10 +1,10 @@
 <?php
 /**
  * Copyright (c) 2015 Kerem Güneş
- *   <k-gun@mail.com>
+ *    <k-gun@mail.com>
  *
  * GNU General Public License v3.0
- *   <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,107 +19,97 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+declare(strict_types=1);
+
 namespace Oppa\Orm;
 
 /**
  * @package    Oppa
  * @subpackage Oppa\Orm
  * @object     Oppa\Orm\EntityCollection
- * @implements \Countable, \IteratorAggregate
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class EntityCollection
-   implements \Countable, \IteratorAggregate
+final class EntityCollection implements \Countable, \IteratorAggregate
 {
-   /**
-    * Entity collection stack.
-    * @var array
-    */
-   private $collection = [];
+    /**
+     * Entity collection stack.
+     * @var array
+     */
+    private $collection = [];
 
-   /**
-    * Add an entity.
-    *
-    * @param  Oppa\Orm\Orm $orm
-    * @param  array      $data
-    * @return void
-    */
-   final public function add(Orm $orm, array $data)
-   {
-      $this->collection[] = new Entity($orm, $data);
-   }
+    /**
+     * Add an entity.
+     * @param  Oppa\Orm\Orm $orm
+     * @param  array        $data
+     * @return void
+     */
+    final public function add(Orm $orm, array $data)
+    {
+        $this->collection[] = new Entity($orm, $data);
+    }
 
-   /**
-    * Remove an entity.
-    *
-    * @param  int $i
-    * @return void
-    */
-   final public function remove($i)
-   {
-      unset($this->collection[$i]);
-   }
+    /**
+     * Remove an entity.
+     * @param  int $i
+     * @return void
+     */
+    final public function remove($i)
+    {
+        unset($this->collection[$i]);
+    }
 
-   /**
-    * Get an entity item.
-    *
-    * @param  int $i
-    * @return Oppa\Orm\Entity
-    */
-   final public function item($i)
-   {
-      if (isset($this->collection[$i])) {
-         return $this->collection[$i];
-      }
-   }
+    /**
+     * Get an entity item.
+     * @param  int $i
+     * @return Oppa\Orm\Entity|null
+     */
+    final public function item($i)
+    {
+        return $this->collection[$i] ?? null;
+    }
 
-   /**
-    * Get first entity item.
-    *
-    * @return Oppa\Orm\Entity
-    */
-   final public function first()
-   {
-      return $this->item(0);
-   }
+    /**
+     * Get first entity item.
+     * @return Oppa\Orm\Entity|null
+     */
+    final public function first()
+    {
+        return $this->item(0);
+    }
 
-   /**
-    * Get last entity item.
-    *
-    * @return Oppa\Orm\Entity
-    */
-   final public function last()
-   {
-      return $this->item(count($this->collection) - 1);
-   }
+    /**
+     * Get last entity item.
+     * @return Oppa\Orm\Entity|null
+     */
+    final public function last()
+    {
+        return $this->item(count($this->collection) - 1);
+    }
 
-   /**
-    * Check entity collection is empty.
-    *
-    * @return bool
-    */
-   final public function isFound()
-   {
-      return !empty($this->collection);
-   }
+    /**
+     * Check entity collection is empty.
+     * @return bool
+     */
+    final public function isFound(): bool
+    {
+        return !empty($this->collection);
+    }
 
-   /**
-    * Count entity collection (from \Countable).
-    *
-    * @return int
-    */
-   final public function count()
-   {
-      return count($this->collection);
-   }
+    /**
+     * Count.
+     * @return int
+     */
+    final public function count(): int
+    {
+        return count($this->collection);
+    }
 
-   /**
-    * Generate iterator for iteration actions (from \IteratorAggregate)
-    *
-    * @return \ArrayIterator
-    */
-   final public function getIterator()
-   {
-      return new \ArrayIterator($this->collection);
-   }
+    /**
+     * Get iterator.
+     * @return \ArrayIterator
+     */
+    final public function getIterator(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->collection);
+    }
 }
