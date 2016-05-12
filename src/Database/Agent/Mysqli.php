@@ -114,8 +114,8 @@ final class Mysqli extends Agent
             $this->config['username'], $this->config['password'],
         ];
         // get port/socket options if provided
-        $port = ($this->config['port'] ?? null);
-        $socket = ($this->config['socket'] ?? null);
+        $port = (int) $this->config['port'];
+        $socket = (string) $this->config['socket'];
 
         // call big boss
         $this->link = mysqli_init();
@@ -141,7 +141,7 @@ final class Mysqli extends Agent
         // start connection profiling
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        if (!$this->link->real_connect($host, $username, $password, $name, (int) $port, (string) $socket)) {
+        if (!$this->link->real_connect($host, $username, $password, $name, $port, $socket)) {
             throw new \Exception(sprintf(
                 'Connection error! errno[%d] errmsg[%s]',
                     $this->link->connect_errno, $this->link->connect_error));
@@ -280,7 +280,7 @@ final class Mysqli extends Agent
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
                 // check error handler
-                $errorHandler = ($this->config['query_error_handler'] ?? null);
+                $errorHandler = $this->config['query_error_handler'];
                 // if user has error handler, return using it
                 if ($errorHandler && is_callable($errorHandler)) {
                     return $errorHandler($e, $query, $params);
