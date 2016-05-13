@@ -12,7 +12,7 @@ Before beginning;
 - Use PHP >= 7.0
 - Use try/catch blocks
 - You can use `test.sql` in test folder
-- Wiki updated for 2.0.0
+- Wiki updated for v2
 
 You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
