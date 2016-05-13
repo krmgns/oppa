@@ -21,7 +21,7 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Orm;
+namespace Oppa\ActiveRecord;
 
 use Oppa\Database;
 use Oppa\Query\Result\Result;
@@ -30,41 +30,35 @@ use Oppa\Exception\InvalidValueException;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Orm
- * @object     Oppa\Orm\Orm
+ * @subpackage Oppa\ActiveRecord
+ * @object     Oppa\ActiveRecord\ActiveRecord
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-class Orm extends Relation
+abstract class ActiveRecord
 {
     /**
-     * Database object.
-     * @var Oppa\Database
-     */
-    private static $database;
-
-    /**
-     * Table info.
+     * Info.
      * @var array
      */
     private static $info = [];
 
     /**
-     * Target entity table.
+     * Database.
+     * @var Oppa\Database
+     */
+    private $db;
+
+    /**
+     * Table.
      * @var string
      */
     protected $table;
 
     /**
-     * Target entity table primary key.
+     * Table primary.
      * @var string
      */
-    protected $primaryKey;
-
-    /**
-     * Relation map.
-     * @var array
-     */
-    protected $relations = [];
+    protected $tablePrimary;
 
     /**
      * Bind methods for entity.
@@ -76,25 +70,23 @@ class Orm extends Relation
      * Constructor.
      * @throws Oppa\InvalidValueException
      */
-    public function __construct()
+    public function __construct(Database $db)
     {
-        // check for valid database object
-        if (!self::$database instanceof Database) {
-            throw new InvalidValueException("You need to specify a valid database object!");
-        }
+        $this->db = $db;
+        $this->db->connect();
 
         // check for table, primary key
-        if (!isset($this->table, $this->primaryKey)) {
-            throw new InvalidValueException("You need to specify both 'table' and 'primaryKey' properties!");
+        if (!isset($this->table, $this->tablePrimary)) {
+            throw new InvalidValueException(
+                "You need to specify both 'table' and 'tablePrimary' properties!");
         }
 
         // set table info for once
         if (empty(self::$info)) {
-            $results = self::$database->getConnection()->getAgent()
+            $result = $this->db->getConnection()->getAgent()
                 ->getAll("SHOW COLUMNS FROM {$this->table}");
 
-            // will be filled more if needed
-            foreach ($results as $result) {
+            foreach ($result as $result) {
                 self::$info[$result->Field] = [];
             }
 
@@ -118,9 +110,9 @@ class Orm extends Relation
     }
 
     /**
-     * Create a fresh Entity object.
+     * Entity.
      * @param  array $data
-     * @return Oppa\Orm\Entity
+     * @return Oppa\ActiveRecord\Entity
      */
     final public function entity(array $data = []): Entity
     {
@@ -128,9 +120,9 @@ class Orm extends Relation
     }
 
     /**
-     * Find an object in target table.
+     * Find.
      * @param  any $param
-     * @return Oppa\Orm\Entity
+     * @return Oppa\ActiveRecord\Entity
      * @throws Oppa\InvalidValueException
      */
     final public function find($param): Entity
@@ -147,13 +139,12 @@ class Orm extends Relation
         // add parent select fields
         $query->select("{$this->table}.*");
 
-        // add more statement for select/where
-        if (isset($this->relations['select'])) {
-            $query = $this->addSelect($query);
+        if (method_exists($this, 'onFind')) {
+            $query = $this->onFind($query);
         }
-        $query->where("{$this->table}.{$this->primaryKey} = ?", $param);
 
-        // add limit
+        $query->where("{$this->table}.{$this->tablePrimary} = ?", $param);
+
         $query->limit(1);
 
         // get result
@@ -163,12 +154,13 @@ class Orm extends Relation
     }
 
     /**
-     * Find objects in target table an map it in entity collection.
-     * @param  any   $params
-     * @param  array $paramsParams
-     * @return Oppa\Orm\EntityCollection
+     * Find all.
+     * @param  any       $params
+     * @param  array     $paramsParams
+     * @param  array|int $limit
+     * @return Oppa\ActiveRecord\EntityCollection
      */
-    final public function findAll($params = null, array $paramsParams = null): EntityCollection
+    final public function findAll($params = null, array $paramsParams = null, $limit = null): EntityCollection
     {
         // start query building
         $query = new QueryBuilder($this->getDatabase()->getConnection());
@@ -177,9 +169,8 @@ class Orm extends Relation
         // add parent select fields
         $query->select("{$this->table}.*");
 
-        // add more statement for select/where
-        if (isset($this->relations['select'])) {
-            $query = $this->addSelect($query);
+        if (method_exists($this, 'onFind')) {
+            $query = $this->onFind($query);
         }
 
         // fetch all rows, oh ohh..
@@ -190,9 +181,7 @@ class Orm extends Relation
         // fetch all rows by primary key with given params
         // e.g: findAll([1,2,3])
         elseif (!empty($params) && empty($paramsParams)) {
-            !isset($this->relations['select'])
-                ? $query->where("{$this->primaryKey} IN(?)", [$params])
-                : $query->where("{$this->table}.{$this->primaryKey} IN(?)", [$params]);
+            $query->where("{$this->table}.{$this->tablePrimary} IN(?)", [$params]);
         }
         // fetch all rows with given params and paramsParams
         // e.g: findAll('id IN (?)', [[1,2,3]])
@@ -200,6 +189,11 @@ class Orm extends Relation
         elseif (!empty($params) && !empty($paramsParams)) {
             // now, it is user's responsibility to append table(s) before field(s)
             $query->where($params, $paramsParams);
+        }
+
+        @list($limitStart, $limitStop) = (array) $limit;
+        if ($limitStart !== null) {
+            $query->limit((int) $limitStart, $limitStop);
         }
 
         // get results
@@ -215,8 +209,8 @@ class Orm extends Relation
     }
 
     /**
-     * Save entity into target table.
-     * @param  Oppa\Orm\Entity $entity
+     * Save.
+     * @param  Oppa\ActiveRecord\Entity $entity
      * @return any On insert: last insert id.
      * @return int On update: affected rows.
      * @throws Oppa\InvalidValueException
@@ -232,25 +226,31 @@ class Orm extends Relation
         $data = array_intersect_key($data, array_flip(self::$info['@fields']));
 
         // get worker agent
-        $agent = self::$database->getConnection()->getAgent();
+        $agent = $this->db->getConnection()->getAgent();
 
         // insert action
-        if (!isset($entity->{$this->primaryKey})) {
-            return ($entity->{$this->primaryKey} = $agent->insert($this->table, $data));
+        if (!isset($entity->{$this->tablePrimary})) {
+            $return = ($entity->{$this->tablePrimary} = $agent->insert($this->table, $data));
+        } else {
+            // update action
+            $return = $agent->update($this->table, $data,
+                "{$this->tablePrimary} = ?", [$data[$this->tablePrimary]]);
         }
 
-        // update action
-        return $agent->update($this->table, $data,
-            "{$this->primaryKey} = ?", [$data[$this->primaryKey]]);
+        if (method_exists($this, 'onSave')) {
+            $this->onSave();
+        }
+
+        return $return;
     }
 
     /**
-     * Remove an entity from target table.
+     * Delete.
      * @param  any $params
      * @return int
      * @throws Oppa\InvalidValueException
      */
-    final public function remove($params): int
+    final public function delete($params): int
     {
         $params = [$params];
         if (empty($params)) {
@@ -258,25 +258,20 @@ class Orm extends Relation
         }
 
         // get worker agent
-        $agent = self::$database->getConnection()->getAgent();
+        $agent = $this->db->getConnection()->getAgent();
 
-        // remove data
-        $result = $agent->delete($this->table, "{$this->primaryKey} IN(?)", $params);
+        // delete data
+        $return = $agent->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
-        // remove related child(s) data
-        if ($result && isset($this->relations['delete'])) {
-            foreach ((array) $this->relations['delete'] as $delete) {
-                if (isset($delete['table'], $delete['foreign_key'])) {
-                    $agent->delete($delete['table'], "{$delete['foreign_key']} IN(?)", $params);
-                }
-            }
+        if (method_exists($this, 'onDelete')) {
+            $this->onDelete();
         }
 
-        return $result;
+        return $return;
     }
 
     /**
-     * Get entity table.
+     * Get table.
      * @return string
      */
     final public function getTable(): string
@@ -285,16 +280,16 @@ class Orm extends Relation
     }
 
     /**
-     * Get entity table's primary key.
+     * Get table primary.
      * @return string
      */
-    final public function getPrimaryKey(): string
+    final public function getTablePrimary(): string
     {
-        return $this->primaryKey;
+        return $this->tablePrimary;
     }
 
     /**
-     * Get bind (user) methods.
+     * Get bind methods.
      * @return array
      */
     final public function getBindMethods(): array
@@ -303,21 +298,21 @@ class Orm extends Relation
     }
 
     /**
-     * Set database object.
-     * @param  Oppa\Database $database
+     * Set database.
+     * @param  Oppa\Database $db
      * @return void
      */
-    final public static function setDatabase(Database $database)
+    final public function setDatabase(Database $db)
     {
-        self::$database = $database;
+        $this->db = $db;
     }
 
     /**
-     * Get database object.
+     * Get database.
      * @return Oppa\Database
      */
-    final public static function getDatabase(): Database
+    final public function getDatabase(): Database
     {
-        return self::$database;
+        return $this->db;
     }
 }

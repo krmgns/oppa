@@ -1,6 +1,6 @@
 ## Oppa
 
-Providing an easy interface, aims to simplify database CRUD operations/transactions that you tire. Oppa has also an ORM implementation interface that sometimes make the things easier for you.
+Providing an easy interface, aims to simplify database CRUD operations/transactions that you tire. Oppa has also an Active Record implementation interface that sometimes make the things easier for you.
 
 Secures user inputs sharply, carries results of your queries gently, handles errors smoothly, makes batch transactions/commits carefully and profiles your all query processes optionally for you. Oppa also provides a powerful logging mechanizm to report events that you may wonder about.
 
@@ -20,7 +20,7 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ```php
 // composer
-{"require": {"k-gun/oppa": "~2.0"}}
+{"require": {"k-gun/oppa": "~2.1"}}
 
 // manual
 $autoload = require('<path to oppa>/src/Autoload.php');
@@ -172,19 +172,19 @@ foreach ($batch->getResult() as $result) {
 $batch->reset();
 ```
 
-### ORM Stuff
+### Active Record
 
 ```php
-// set orm database that already connected (like above)
-Oppa\Orm::setDatabase($db);
-
-class Users extends Oppa\Orm {
+class Users extends Oppa\ActiveRecord {
    protected $table = 'users';
-   protected $primaryKey = 'id';
-   protected $selectFields = ['id', 'name', 'old'];
+   protected $tablePrimary = 'id';
+
+   public function __construct() {
+      parent::__construct($db);
+   }
 }
 
-// init orm object
+// init active record object
 $usersObject = new Users();
 
 // find one that id=1
@@ -209,7 +209,7 @@ foreach ($users as $user) {
 }
 
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
-dump $users->isFound(); // false
+dump $users->isEmpty(); // true
 
 // insert a user
 $user = $usersObject->entity();

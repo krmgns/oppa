@@ -5,64 +5,46 @@ $autoload = require(__dir__.'/../src/Autoload.php');
 $autoload->register();
 
 use Oppa\Database;
-use Oppa\Orm\Orm;
+use Oppa\ActiveRecord\ActiveRecord;
 
-$cfg = [
-    'agent' => 'mysqli',
-    'profiling' => true,
-    'database' => [
-        'host' => 'localhost', 'name' => 'test',
-        'username' => 'test',  'password' => '********',
-    ]
-];
+function db() {
+    return new Database([
+        'agent' => 'mysqli',
+        'profiling' => true,
+        'database' => [
+            'host' => 'localhost', 'name' => 'test',
+            'username' => 'test',  'password' => '********',
+        ]
+    ]);
+}
 
-$db = new Database($cfg);
-$db->connect();
-// pre($db);
-
-Orm::setDatabase($db);
-
-class Users extends Orm {
+class Users extends ActiveRecord {
     protected $table = 'users';
-    protected $primaryKey = 'id';
-    protected $selectFields = ['id', 'name'];
+    protected $tablePrimary = 'id';
 
-    public function getLastLogin() {
-        return strftime('%Y-%m-%d %H:%M:%S', $this->login);
+    public function __construct() {
+        parent::__construct(db());
+    }
+
+    public function onFind($query) {
+        return $query
+            ->select('users.*')
+            ->joinLeft('users_score', 'users_score.user_id = users.id')
+            ->selectMore('sum(users_score.score) score')
+            ->groupBy('users.id');
     }
 
     public function getPageLink() {
         return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
     }
-
-    protected $relations = [
-        'select' => [
-            'left join' => [
-                ['table' => 'users_score us', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['sum(us.score) as score']],
-                ['table' => 'users_login ul', 'foreign_key' => 'user_id', 'using' => false,
-                    'fields' => ['ul.login']],
-            ],
-            // 'join' => [
-            //     ['table' => 'users_foo', 'foreign_key' => 'user_id', 'using' => true,
-            //         'fields' => ['users_foo.aaa', 'sum(x)', 'count(y)', 'xyz']],
-            // ],
-            'group by' => 'users.id',
-        ],
-        'delete' => [
-            ['table' => 'users_score', 'foreign_key' => 'user_id'],
-            ['table' => 'users_login', 'foreign_key' => 'user_id']
-        ]
-    ];
 }
 
 $usersObject = new Users();
-// pre($usersObject);
+// pre($usersObject,1);
 
 $user = $usersObject->find(1);
-pre($user);
+// pre($user);
 pre($user->getPageLink());
-pre($user->getLastLogin());
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();

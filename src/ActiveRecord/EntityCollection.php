@@ -21,49 +21,49 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Orm;
+namespace Oppa\ActiveRecord;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Orm
- * @object     Oppa\Orm\EntityCollection
+ * @subpackage Oppa\ActiveRecord
+ * @object     Oppa\ActiveRecord\EntityCollection
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class EntityCollection implements \Countable, \IteratorAggregate
 {
     /**
-     * Entity collection stack.
+     * Collection.
      * @var array
      */
     private $collection = [];
 
     /**
-     * Add an entity.
-     * @param  Oppa\Orm\Orm $orm
-     * @param  array        $data
+     * Add.
+     * @param  Oppa\ActiveRecord\ActiveRecord $ar
+     * @param  array                          $data
      * @return self
      */
-    final public function add(Orm $orm, array $data = []): self
+    final public function add(ActiveRecord $ar, array $data = []): self
     {
-        $this->collection[] = new Entity($orm, $data);
+        $this->collection[] = new Entity($ar, $data);
 
         return $this;
     }
 
     /**
-     * Remove an entity.
+     * Remove.
      * @param  int $i
      * @return void
      */
-    final public function remove($i)
+    final public function remove(int $i)
     {
         unset($this->collection[$i]);
     }
 
     /**
-     * Get an entity item.
+     * Get.
      * @param  int $i
-     * @return Oppa\Orm\Entity|null
+     * @return Oppa\ActiveRecord\Entity|null
      */
     final public function item($i)
     {
@@ -71,8 +71,8 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Get first entity item.
-     * @return Oppa\Orm\Entity|null
+     * First.
+     * @return Oppa\ActiveRecord\Entity|null
      */
     final public function first()
     {
@@ -80,8 +80,8 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Get last entity item.
-     * @return Oppa\Orm\Entity|null
+     * Last.
+     * @return Oppa\ActiveRecord\Entity|null
      */
     final public function last()
     {
@@ -89,12 +89,12 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Check entity collection is empty.
+     * Is empty.
      * @return bool
      */
-    final public function isFound(): bool
+    final public function isEmpty(): bool
     {
-        return !empty($this->collection);
+        return empty($this->collection);
     }
 
     /**

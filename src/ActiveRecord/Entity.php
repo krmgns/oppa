@@ -21,49 +21,49 @@
  */
 declare(strict_types=1);
 
-namespace Oppa\Orm;
+namespace Oppa\ActiveRecord;
 
 use Oppa\Util;
 use Oppa\Exception\InvalidKeyException;
 
 /**
  * @package    Oppa
- * @subpackage Oppa\Orm
- * @object     Oppa\Orm\Entity
+ * @subpackage Oppa\ActiveRecord
+ * @object     Oppa\ActiveRecord\Entity
  * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Entity
 {
     /**
-     * Data stack.
+     * Data.
      * @var array
      */
     private $data = [];
 
     /**
-     * Owner ORM object
-     * @var Oppa\Orm\Orm
+     * ActiveRecord.
+     * @var Oppa\ActiveRecord\ActiveRecord
      */
-    private $orm;
+    private $ar;
 
     /**
      * Constructor.
-     * @param Oppa\Orm\Orm $orm
-     * @param array        $data
+     * @param Oppa\ActiveRecord\ActiveRecord $ar
+     * @param array                          $data
      */
-    final public function __construct(Orm $orm, array $data = [])
+    final public function __construct(ActiveRecord $ar, array $data = [])
     {
         // set data
         foreach ($data as $key => $value) {
             $this->data[$key] = $value;
         }
 
-        // set owner orm
-        $this->orm = $orm;
+        // set owner active record
+        $this->ar = $ar;
     }
 
     /**
-     * Call post-defined method for each entity.
+     * Call.
      * @param  string $method
      * @param  array  $arguments
      * @return any
@@ -73,7 +73,7 @@ final class Entity
     {
         // check for method
         $method = strtolower($method);
-        $methods = $this->orm->getBindMethods();
+        $methods = $this->ar->getBindMethods();
         if (isset($methods[$method])) {
             $method = $methods[$method]->bindTo($this);
             return call_user_func_array($method, $arguments);
@@ -83,7 +83,7 @@ final class Entity
     }
 
     /**
-     * Set a data property.
+     * Set.
      * @param  string $key
      * @param  any    $value
      * @return void
@@ -94,7 +94,7 @@ final class Entity
     }
 
     /**
-     * Get a data property.
+     * Get.
      * @param  string $key
      * @return any
      * @throws Oppa\InvalidKeyException
@@ -115,7 +115,7 @@ final class Entity
     }
 
     /**
-     * Check a data property.
+     * Isset.
      * @param  string $key
      * @return bool
      */
@@ -125,7 +125,7 @@ final class Entity
     }
 
     /**
-     * Remove a data property.
+     * Unset.
      * @param  string $key
      * @return void
      */
@@ -135,7 +135,7 @@ final class Entity
     }
 
     /**
-     * Get all data stack.
+     * To array.
      * @return array
      */
     final public function toArray(): array
@@ -144,7 +144,7 @@ final class Entity
     }
 
     /**
-     * Check data stack is empty or not.
+     * Is found.
      * @return bool
      */
     final public function isFound(): bool
@@ -153,24 +153,23 @@ final class Entity
     }
 
     /**
-     * Save entity.
+     * Save.
      * @return any
      */
     final public function save()
     {
-        return $this->orm->save($this);
+        return $this->ar->save($this);
     }
 
     /**
-     * Remove entity.
-     * @return int
-     * @return void
+     * Delete.
+     * @return int|null
      */
-    final public function remove(): int
+    final public function delete()
     {
-        $primaryKey = $this->orm->getPrimaryKey();
-        if (isset($this->{$primaryKey})) {
-            return $this->orm->remove($this->{$primaryKey});
+        $tablePrimary = $this->ar->getTablePrimary();
+        if ($this->__isset($tablePrimary)) {
+            return $this->ar->delete($this->__get($tablePrimary));
         }
     }
 }
