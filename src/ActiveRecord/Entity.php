@@ -135,6 +135,20 @@ final class Entity
     }
 
     /**
+     * From array.
+     * @param  bool $reset
+     * @return void
+     */
+    final public function fromArray(array $data, bool $reset = false)
+    {
+        if ($reset) $this->data = [];
+
+        foreach ($data as $key => $value) {
+            $this->data[$key] = $value;
+        }
+    }
+
+    /**
      * To array.
      * @return array
      */
