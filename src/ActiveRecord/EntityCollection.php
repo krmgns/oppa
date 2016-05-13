@@ -114,4 +114,13 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     {
         return new \ArrayIterator($this->collection);
     }
+
+    /**
+     * Get collection.
+     * @return array
+     */
+    final public function getCollection(): array
+    {
+        return $this->collection;
+    }
 }
