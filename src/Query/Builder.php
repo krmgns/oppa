@@ -317,7 +317,7 @@ final class Builder
      */
     final public function join(string $table, string $on, array $params = null): self
     {
-        // Prepare params safely
+        // prepare params safely
         if (!empty($params)) {
             $on = $this->connection->getAgent()->prepare($on, $params);
         }
@@ -334,7 +334,7 @@ final class Builder
      */
     final public function joinUsing(string $table, string $using, array $params = null): self
     {
-        // Prepare params safely
+        // prepare params safely
         if (!empty($params)) {
             $using = $this->connection->getAgent()->prepare($using, $params);
         }
@@ -351,7 +351,7 @@ final class Builder
      */
     final public function joinLeft(string $table, string $on, array $params = null): self
     {
-        // Prepare params safely
+        // prepare params safely
         if (!empty($params)) {
             $on = $this->connection->getAgent()->prepare($on, $params);
         }
@@ -368,7 +368,7 @@ final class Builder
      */
     final public function joinLeftUsing(string $table, string $using, array $params = null): self
     {
-        // Prepare params safely
+        // prepare params safely
         if (!empty($params)) {
             $using = $this->connection->getAgent()->prepare($using, $params);
         }
