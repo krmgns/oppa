@@ -219,6 +219,7 @@ final class Connector
                         return ($connection->status() === Connection::STATUS_CONNECTED);
                     }
                 }
+                break;
             // e.g: isConnected('slave1.mysql.local'), isConnected('slave')
             case Connection::TYPE_SLAVE:
                 foreach ($this->connections as $connection) {
@@ -226,6 +227,7 @@ final class Connector
                         return ($connection->status() === Connection::STATUS_CONNECTED);
                     }
                 }
+                break;
         }
 
         return false;
@@ -233,7 +235,7 @@ final class Connector
 
     /**
      * Set connection.
-     * @param  string                           $host
+     * @param  string               $host
      * @param  Oppa\Link\Connection $connection
      * @return void
      */
@@ -260,31 +262,25 @@ final class Connector
         if (true === $this->config->get('sharding')) {
             // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
             if ($host == '' || $host == Connection::TYPE_MASTER) {
-                $connection = Util::arrayRand(
+                return Util::arrayRand(
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_MASTER;
                 }));
-
-                if (!empty($connection)) return $connection;
             }
             // e.g: getConnection(), getConnection('slave'), getConnection('slave1.mysql.local')
             elseif ($host == Connection::TYPE_SLAVE) {
-                $connection = Util::arrayRand(
+                return Util::arrayRand(
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_SLAVE;
                 }));
-
-                if (!empty($connection)) return $connection;
             }
         } else {
             // e.g: getConnection()
             if ($host == '') {
-                $connection = Util::arrayRand(
+                return Util::arrayRand(
                     array_filter($this->connections, function($connection) {
                         return $connection->getType() == Connection::TYPE_SINGLE;
                 }));
-
-                if (!empty($connection)) return $connection;
             }
         }
     }
