@@ -136,7 +136,8 @@ final class Entity
 
     /**
      * From array.
-     * @param  bool $reset
+     * @param  array $data
+     * @param  bool  $reset
      * @return void
      */
     final public function fromArray(array $data, bool $reset = false)
