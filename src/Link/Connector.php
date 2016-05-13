@@ -82,7 +82,7 @@ final class Connector
         $database = ($config['database'] ?? []);
 
         // is master/slave active?
-        if ($this->config->get('sharding') === true) {
+        if (true === $this->config->get('sharding')) {
             $master = ($database['master'] ?? []);
             $slaves = ($database['slaves'] ?? []);
             switch ($host) {
@@ -257,7 +257,7 @@ final class Connector
 
         $host = trim((string) $host);
         // with master/slave directives
-        if ($this->config->get('sharding') === true) {
+        if (true === $this->config->get('sharding')) {
             // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
             if ($host == '' || $host == Connection::TYPE_MASTER) {
                 $connection = Util::arrayRand(
