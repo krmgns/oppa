@@ -68,6 +68,7 @@ abstract class ActiveRecord
 
     /**
      * Constructor.
+     * @param  Oppa\Database $db
      * @throws Oppa\InvalidValueException
      */
     public function __construct(Database $db)
