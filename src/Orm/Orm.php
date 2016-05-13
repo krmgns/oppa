@@ -61,19 +61,13 @@ class Orm extends Relation
     protected $primaryKey;
 
     /**
-     * Select fields that will mapped in entity.
-     * @var string|array
-     */
-    protected $selectFields = '*';
-
-    /**
-     * Relation map
+     * Relation map.
      * @var array
      */
     protected $relations = [];
 
     /**
-     * Bound methods for each entity.
+     * Bind methods for entity.
      * @var array
      */
     private $bindMethods = [];
@@ -105,7 +99,7 @@ class Orm extends Relation
             }
 
             // set field names as shorcut
-            self::$info['$fields'] = array_keys(self::$info);
+            self::$info['@fields'] = array_keys(self::$info);
         }
 
         // methods to bind to the entities
@@ -114,6 +108,10 @@ class Orm extends Relation
         foreach ($reflection->getMethods() as $method) {
             if ($method->class == $className) {
                 $methodName = strtolower($method->name);
+                $methodPrefix = substr($methodName, 0, 2);
+                if ($methodPrefix == '__' || $methodPrefix == 'on') {
+                    continue;
+                }
                 $this->bindMethods[$methodName] = $reflection->getMethod($methodName)->getClosure($this);
             }
         }
@@ -147,15 +145,13 @@ class Orm extends Relation
         $query->setTable($this->table);
 
         // add parent select fields
-        $query->select($this->getSelectFields());
+        $query->select("{$this->table}.*");
 
         // add more statement for select/where
         if (isset($this->relations['select'])) {
             $query = $this->addSelect($query);
-            $query->where("{$this->table}.{$this->primaryKey} = ?", $param);
-        } else {
-            $query->where("{$this->primaryKey} = ?", $param);
         }
+        $query->where("{$this->table}.{$this->primaryKey} = ?", $param);
 
         // add limit
         $query->limit(1);
@@ -179,7 +175,7 @@ class Orm extends Relation
         $query->setTable($this->table);
 
         // add parent select fields
-        $query->select($this->getSelectFields());
+        $query->select("{$this->table}.*");
 
         // add more statement for select/where
         if (isset($this->relations['select'])) {
@@ -233,7 +229,7 @@ class Orm extends Relation
         }
 
         // use only owned fields
-        $data = array_intersect_key($data, array_flip(self::$info['$fields']));
+        $data = array_intersect_key($data, array_flip(self::$info['@fields']));
 
         // get worker agent
         $agent = self::$database->getConnection()->getAgent();
@@ -295,19 +291,6 @@ class Orm extends Relation
     final public function getPrimaryKey(): string
     {
         return $this->primaryKey;
-    }
-
-    /**
-     * Get entity table's select fields.
-     * @return string
-     */
-    final public function getSelectFields(): string
-    {
-        if (is_array($this->selectFields)) {
-            $fields = join(', ', $this->selectFields);
-        }
-
-        return $fields;
     }
 
     /**
