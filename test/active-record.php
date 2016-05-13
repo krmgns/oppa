@@ -43,8 +43,8 @@ $usersObject = new Users();
 // pre($usersObject,1);
 
 $user = $usersObject->find(1);
-// pre($user);
-pre($user->getPageLink());
+pre($user);
+// pre($user->getPageLink());
 // prd($user->isFound());
 
 // $users = $usersObject->findAll();
