@@ -73,14 +73,14 @@ abstract class ActiveRecord
      */
     public function __construct(Database $db)
     {
-        $this->db = $db;
-        $this->db->connect();
-
         // check for table, primary key
         if (!isset($this->table, $this->tablePrimary)) {
             throw new InvalidValueException(
                 "You need to specify both 'table' and 'tablePrimary' properties!");
         }
+
+        $this->db = $db;
+        $this->db->connect();
 
         // set table info for once
         if (empty(self::$info)) {
