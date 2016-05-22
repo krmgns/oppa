@@ -42,22 +42,22 @@ $qb->setTable('users');
 // $qb->select()->aggregate('count');
 // pre($qb->get());
 
-// $qb->setTable('users u');
-// $qb->select('u.*, us.score, ul.login')
-//     ->aggregate('sum', 'us.score', 'sum_score')
-//     ->join('users_score us', 'us.user_id=u.id')
-//     ->joinLeft('users_login ul', 'ul.user_id=u.id')
-//     ->where('u.id in(?,?,?)', [1,2,3])
-//     ->whereBetween('u.old', [30,50])
-//     ->whereNotNull('ul.login')
-//     ->groupBy('u.id')
-//     ->orderBy('old')
-//     // ->having('sum_score <= ?', [30])
-//     ->limit(0,10)
-// ;
+$qb->setTable('users u');
+$qb->select('u.*, us.score, ul.login')
+    ->aggregate('sum', 'us.score', 'sum_score')
+    ->join('users_score us', 'us.user_id = u.id')
+    ->joinLeft('users_login ul', 'ul.user_id = u.id')
+    ->whereIn('u.id', [1,2,3])
+    ->whereBetween('u.old', [30,50])
+    ->whereNotNull('ul.login')
+    ->groupBy('u.id')
+    ->orderBy('old')
+    ->having('sum_score <= ?', [30])
+    ->limit(0,10)
+;
 
-// pre($qb->toString());
-// pre($qb->get());
+pre($qb->toString());
+pre($qb->get());
 // pre($qb->getAll());
 // pre($qb->execute());
 
