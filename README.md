@@ -81,11 +81,11 @@ foreach ($users as $user) {
 // or shorcut methods
 
 // get all users
-$result = $agent->select('users', ['*']);
+$result = $agent->select('users', '*');
 // get all users if old greater than 50
-$result = $agent->select('users', ['*'], 'old > ?', [50]);
+$result = $agent->select('users', '*', 'old > ?', [50]);
 // get one user
-$result = $agent->select('users', ['*'], null, null, 1);
+$result = $agent->select('users', '*', null, null, 1);
 
 // insert a user
 $result = $agent->insert('user', ['name' => 'Ali', 'old' => 30]);
