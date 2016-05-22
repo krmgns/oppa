@@ -58,17 +58,16 @@ print $agent->rowsAffected();
 // raw queries
 $result = $agent->query('select * from `users`');
 if ($result->count())
-if ($result->getRowsCount())
-if ($result->getRowsCount() > 0)
-   foreach ($result as $user) {
+// or if ($result->getRowsCount())
+// or if ($result->getRowsCount() > 0)
+   foreach ($result as $user)
       print $user->name;
-   }
+
 // or
 if ($agent->rowsCount())
-   foreach ($agent->getResult() as $user) {
-   // or foreach ($agent->getResult()->getData() as $user) {
+   foreach ($agent->getResult() as $user)
+   // or foreach ($agent->getResult()->getData() as $user)
       print $user->name;
-   }
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
