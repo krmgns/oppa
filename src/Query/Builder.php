@@ -734,23 +734,23 @@ final class Builder
     }
 
     /**
-     * Add a aggregate statement like "COUNT(*)" etc.
-     * @param  string      $aggr
+     * Add a aggregate statement like "SUM()" etc.
+     * @param  string      $func
      * @param  string      $field
      * @param  string|null $as
      * @return self
      */
-    final public function aggregate(string $aggr, string $field = '*', string $as = null): self
+    final public function aggregate(string $func, string $field = '*', string $as = null): self
     {
         // if alias not provided
         if (empty($as)) {
             $as = ($field && $field != '*')
                 // aggregate('count', 'id') count_id
                 // aggregate('count', 'u.id') count_uid
-                ? preg_replace('~[^\w]~', '', $aggr .'_'. $field) : $aggr;
+                ? preg_replace('~[^\w]~', '', $func .'_'. $field) : $func;
         }
 
-        return $this->push('select', sprintf('%s(%s) AS %s', $aggr, $field, $as));
+        return $this->push('select', sprintf('%s(%s) AS %s', $func, $field, $as));
     }
 
     /**
@@ -915,21 +915,6 @@ final class Builder
         }
 
         return trim($this->queryString);
-    }
-
-    /**
-     * Add prefix to fields for select, where etc.
-     * @param  string $to
-     * @param  string $prefix
-     * @return void
-     */
-    final public function addPrefixTo(string $to, string $prefix)
-    {
-        if (isset($this->query[$to])) {
-            $this->query[$to] = array_map(function($field) use($prefix) {
-                return sprintf('%s.%s', trim($prefix), trim($field));
-            }, $this->query[$to]);
-        }
     }
 
     /**
