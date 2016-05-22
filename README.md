@@ -133,8 +133,8 @@ SELECT
    , ul.login
    , sum(us.score) sum_score
 FROM users u
-JOIN users_score us ON us.user_id=u.id
-LEFT JOIN users_login ul ON ul.user_id=u.id
+JOIN users_score us ON (us.user_id=u.id)
+LEFT JOIN users_login ul ON (ul.user_id=u.id)
 WHERE (u.id IN(1,2,3) AND u.old BETWEEN 30 AND 50 AND ul.login IS NOT NULL)
 GROUP BY u.id
 HAVING (sum_score <= 30)
