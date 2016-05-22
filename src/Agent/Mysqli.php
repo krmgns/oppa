@@ -359,7 +359,7 @@ final class Mysqli extends Agent
     final public function selectOne(string $table, $fields = null, string $where = null,
         array $params = null, int $fetchType = null)
     {
-        $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
+        return $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
     }
 
     /**
