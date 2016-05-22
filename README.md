@@ -131,7 +131,7 @@ SELECT
    u.*
    , us.score
    , ul.login
-   , sum(us.score) sum_score
+   , sum(us.score) AS sum_score
 FROM users u
 JOIN users_score us ON (us.user_id=u.id)
 LEFT JOIN users_login ul ON (ul.user_id=u.id)
