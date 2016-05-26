@@ -61,21 +61,21 @@ if ($result->count())
 // or if ($result->getRowsCount())
 // or if ($result->getRowsCount() > 0)
    foreach ($result as $user)
-      print $user->name;
+      dump $user->name;
 
 // or
 if ($agent->rowsCount())
    foreach ($agent->getResult() as $user)
    // or foreach ($agent->getResult()->getData() as $user)
-      print $user->name;
+      dump $user->name;
 
 // fetch one
 $user = $agent->get('select * from `users` where `old` > ?', [50]);
-print $user->name;
+dump $user->name;
 // fetch all
 $users = $agent->getAll('select * from `users` where `old` > ?', [50]);
 foreach ($users as $user) {
-   print $user->name;
+   dump $user->name;
 }
 
 // or shorcut methods
