@@ -157,7 +157,7 @@ try {
    // commit
    $batch->run();
 } catch (\Throwable $e) {
-   print $e->getMessage();
+   dump $e->getMessage();
    // rollback & set autocommit=1
    $batch->cancel();
 }
@@ -166,7 +166,7 @@ $batch->unlock();
 
 // get insert ids if success
 foreach ($batch->getResult() as $result) {
-   print $result->getId();
+   dump $result->getId();
 }
 
 // remove query queue and empty result array
