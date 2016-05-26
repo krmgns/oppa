@@ -49,7 +49,7 @@ $db->connect();
 
 $agent = $db->getConnection()->getAgent();
 $agent->query('select * from `users` where `id` = ?', [1]);
-print $agent->rowsAffected();
+dump $agent->rowsAffected();
 ```
 
 ### Holy CRUD Stuffs
