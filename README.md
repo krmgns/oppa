@@ -194,7 +194,7 @@ dump $user;
 
 // check user found?
 if ($user->isFound()) {
-   print $user->name;
+   dump $user->name;
 }
 
 // find all
@@ -206,7 +206,7 @@ $users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
 dump $users;
 
 foreach ($users as $user) {
-   print $user->name;
+   dump $user->name;
 }
 
 $users = $usersObject->findAll([1111111111,2222222222,3333333333]);
