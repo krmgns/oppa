@@ -48,7 +48,7 @@ $db = new Oppa\Database($cfg);
 $db->connect();
 
 $agent = $db->getConnection()->getAgent();
-$agent->query('update `users` set `old` = ? where `id` = ?', [30, 1]);
+$agent->query('select * from `users` where `id` = ?', [1]);
 print $agent->rowsAffected();
 ```
 
