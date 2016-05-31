@@ -286,6 +286,7 @@ final class Mysqli extends Agent
                 if ($errorHandler && is_callable($errorHandler)) {
                     $errorHandler($e, $query, $params);
 
+                    // no throw
                     return $this->result;
                 }
 
