@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
-use Oppa\Agent\Mysqli;
+use Oppa\Agent;
 use Oppa\Exception\InvalidValueException;
 
 /**
@@ -38,7 +38,7 @@ final class Mysqli extends Result
      * Constructor.
      * @param Oppa\Agent\Mysqli $agent
      */
-    final public function __construct(Mysqli $agent)
+    final public function __construct(Agent\Mysqli $agent)
     {
         $this->agent = $agent;
     }
