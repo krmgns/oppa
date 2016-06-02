@@ -64,9 +64,9 @@ final class Mysqli extends Batch
      * Queue.
      * @param  string $query
      * @param  array  $params
-     * @return Oppa\Batch\BatchInterface
+     * @return self
      */
-    final public function queue(string $query, array $params = null): BatchInterface
+    final public function queue(string $query, array $params = null): self
     {
         $this->queue[] = $this->agent->prepare($query, $params);
 
@@ -75,16 +75,16 @@ final class Mysqli extends Batch
 
     /**
      * Run.
-     * @return void
+     * @return self
      */
-    final public function run()
+    final public function run(): self
     {
         // no need to get excited
         if (empty($this->queue)) {
-            return;
+            return $this;
         }
 
-        // get big boss
+        // get the big boss
         $resource = $this->agent->getResource();
 
         $start = microtime(true);
@@ -117,6 +117,8 @@ final class Mysqli extends Batch
 
         // forgot to call unlock(), hmmm?
         $resource->autocommit(true);
+
+        return $this;
     }
 
     /**
