@@ -66,7 +66,7 @@ final class Mysqli extends Batch
      * @param  array  $params
      * @return self
      */
-    final public function queue(string $query, array $params = null): self
+    final public function queue(string $query, array $params = null): BatchInterface
     {
         $this->queue[] = $this->agent->prepare($query, $params);
 
