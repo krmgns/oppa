@@ -272,6 +272,24 @@ abstract class ActiveRecord
     }
 
     /**
+     * Count.
+     * @param  string $params
+     * @param  array  $paramsParams
+     * @return int
+     */
+    final public function count(string $params = null, array $paramsParams = null): int
+    {
+        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query->setTable($this->table);
+
+        if (!empty($params) && !empty($paramsParams)) {
+            $query->where($params, $paramsParams);
+        }
+
+        return $query->count();
+    }
+
+    /**
      * Get table.
      * @return string
      */
