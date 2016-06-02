@@ -246,12 +246,12 @@ abstract class ActiveRecord
     }
 
     /**
-     * Delete.
+     * Remove.
      * @param  any $params
      * @return int
      * @throws Oppa\InvalidValueException
      */
-    final public function delete($params): int
+    final public function remove($params): int
     {
         $params = [$params];
         if (empty($params)) {
@@ -261,7 +261,7 @@ abstract class ActiveRecord
         // get worker agent
         $agent = $this->db->getConnection()->getAgent();
 
-        // delete data
+        // remove data
         $return = $agent->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
         if (method_exists($this, 'onDelete')) {

@@ -177,14 +177,14 @@ final class Entity
     }
 
     /**
-     * Delete.
+     * Remove.
      * @return int|null
      */
-    final public function delete()
+    final public function remove()
     {
         $tablePrimary = $this->ar->getTablePrimary();
         if ($this->__isset($tablePrimary)) {
-            return $this->ar->delete($this->__get($tablePrimary));
+            return $this->ar->remove($this->__get($tablePrimary));
         }
     }
 }
