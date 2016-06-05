@@ -20,7 +20,7 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ```php
 // composer
-{"require": {"k-gun/oppa": "~2.1"}}
+{"require": {"k-gun/oppa": "~2.2"}}
 
 // manual
 $autoload = require('<path to oppa>/src/Autoload.php');
