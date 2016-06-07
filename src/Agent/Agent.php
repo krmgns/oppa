@@ -151,7 +151,7 @@ abstract class Agent implements AgentInterface
     public function getProfiler()
     {
         if (!$this->profiler) {
-            throw new Error("Profiler is not found, did you set 'profiling' option as 'true'?");
+            throw new Error("Profiler is not found, did you set 'profile' option as 'true'?");
         }
 
         return $this->profiler;
