@@ -123,7 +123,7 @@ abstract class Agent implements AgentInterface
     public function getLogger()
     {
         if (!$this->logger) {
-            throw new Error("Profiler is not found, did you set 'query_log' option as 'true'?");
+            throw new Error("Logger is not found, did you set 'query_log' option as 'true'?");
         }
 
         return $this->logger;
