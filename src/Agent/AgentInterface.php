@@ -44,15 +44,15 @@ interface AgentInterface
     public function disconnect();
 
     /**
-     * Check connection.
+     * Is connected.
      * @return bool
      */
     public function isConnected(): bool;
 
     /**
      * Query.
-     * @param string $query
-     * @param array  $params
+     * @param  string $query
+     * @param  array  $params
      */
     public function query(string $query, array $params = null);
 
