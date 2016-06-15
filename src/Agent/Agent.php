@@ -92,7 +92,7 @@ abstract class Agent implements AgentInterface
      * Get resource.
      * @return object|resource
      */
-    public function getResource()
+    final public function getResource()
     {
         return $this->resource;
     }
@@ -101,7 +101,7 @@ abstract class Agent implements AgentInterface
      * Get transaction.
      * @return Oppa\Batch\BatchInterface
      */
-    public function getBatch(): BatchInterface
+    final public function getBatch(): BatchInterface
     {
         return $this->batch;
     }
@@ -110,7 +110,7 @@ abstract class Agent implements AgentInterface
      * Get result.
      * @return Oppa\Query\Result\ResultInterface
      */
-    public function getResult(): ResultInterface
+    final public function getResult(): ResultInterface
     {
         return $this->result;
     }
@@ -120,7 +120,7 @@ abstract class Agent implements AgentInterface
      * @return Oppa\Logger
      * @throws Oppa\Error
      */
-    public function getLogger()
+    final public function getLogger()
     {
         if (!$this->logger) {
             throw new Error("Logger is not found, did you set 'query_log' option as 'true'?");
@@ -134,7 +134,7 @@ abstract class Agent implements AgentInterface
      * @return Oppa\Mapper
      * @throws Oppa\Error
      */
-    public function getMapper()
+    final public function getMapper()
     {
         if (!$this->mapper) {
             throw new Error("Mapper is not found, did you set 'map_result' option as 'true'?");
@@ -148,7 +148,7 @@ abstract class Agent implements AgentInterface
      * @return Oppa\Profiler
      * @throws Oppa\Error
      */
-    public function getProfiler()
+    final public function getProfiler()
     {
         if (!$this->profiler) {
             throw new Error("Profiler is not found, did you set 'profile' option as 'true'?");
@@ -161,7 +161,7 @@ abstract class Agent implements AgentInterface
      * Get config.
      * @return Oppa\Config
      */
-    public function getConfig(): Config
+    final public function getConfig(): Config
     {
         return $this->config;
     }
