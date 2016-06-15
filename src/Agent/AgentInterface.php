@@ -148,13 +148,13 @@ interface AgentInterface
      * Rows count.
      * @return int
      */
-    public function rowsCount();
+    public function rowsCount(): int;
 
     /**
      * Rows affected.
      * @return int
      */
-    public function rowsAffected();
+    public function rowsAffected(): int;
 
     /**
      * Prepare.
