@@ -43,7 +43,7 @@ abstract class Agent implements AgentInterface
     protected $resource;
 
     /**
-     * Transaction.
+     * Batch.
      * @var Oppa\Batch\BatchInterface
      */
     protected $batch;
@@ -79,7 +79,7 @@ abstract class Agent implements AgentInterface
     protected $config;
 
     /**
-     * Needed to prevent exception thrown.
+     * Isset (needed to prevent exception thrown).
      * @param  string $name
      * @return bool
      */
@@ -98,7 +98,7 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get transaction.
+     * Get batch.
      * @return Oppa\Batch\BatchInterface
      */
     final public function getBatch(): BatchInterface
@@ -167,7 +167,7 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Auto detect agent class name.
+     * Get name.
      * @return string
      */
     final public function getName(): string
@@ -178,9 +178,9 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get last insert id.
+     * Id.
      * @param  bool $all For bulk insert actions.
-     * @return any  If all returns array, if not int or null.
+     * @return any       If all returns array, if not int or null.
      */
     final public function id($all = false)
     {
@@ -188,7 +188,7 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get row count for select actions.
+     * Rows count.
      * @return int
      */
     final public function rowsCount(): int
@@ -197,7 +197,7 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get row count for update/delete also select actions.
+     * Rows affected.
      * @return int
      */
     final public function rowsAffected(): int
@@ -225,6 +225,7 @@ abstract class Agent implements AgentInterface
      * - $users = $agent->query('select * from users where id = ?', [1])
      * That's it!..
      *
+     * Prepare.
      * @param  string $input  Raw SQL complete/not complete.
      * @param  array  $params Binding params.
      * @return string
