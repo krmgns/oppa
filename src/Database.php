@@ -85,9 +85,9 @@ final class Database
 
     /**
      * Get connector.
-     * @return Oppa\Link\ConnectorInterface
+     * @return Oppa\Link\Connector
      */
-    final public function getConnector(): ConnectorInterface
+    final public function getConnector(): Connector
     {
         return $this->connector;
     }
