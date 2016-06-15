@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
+use Oppa\Query\ResultInterface;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Agent
@@ -53,8 +55,9 @@ interface AgentInterface
      * Query.
      * @param  string $query
      * @param  array  $params
+     * @return Oppa\Query\ResultInterface
      */
-    public function query(string $query, array $params = null);
+    public function query(string $query, array $params = null): ResultInterface;
 
     /**
      * Get.
