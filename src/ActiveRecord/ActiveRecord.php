@@ -226,7 +226,6 @@ abstract class ActiveRecord
         // use only owned fields
         $data = array_intersect_key($data, array_flip(self::$info['@fields']));
 
-        // get worker agent
         $agent = $this->db->getLink()->getAgent();
 
         $return = null;
@@ -262,10 +261,8 @@ abstract class ActiveRecord
             throw new InvalidValueException('You need to pass a parameter to make a query!');
         }
 
-        // get worker agent
         $agent = $this->db->getLink()->getAgent();
 
-        // remove data
         $return = $agent->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
         if (method_exists($this, 'onDelete')) {
