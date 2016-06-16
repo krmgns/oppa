@@ -261,9 +261,8 @@ abstract class ActiveRecord
             throw new InvalidValueException('You need to pass a parameter to make a query!');
         }
 
-        $agent = $this->db->getLink()->getAgent();
-
-        $return = $agent->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
+        $return = $this->db->getLink()->getAgent()
+            ->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
         if (method_exists($this, 'onDelete')) {
             $this->onDelete();
