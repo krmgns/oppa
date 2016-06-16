@@ -97,7 +97,7 @@ final class Mysqli extends Batch
                 // this is also important for insert actions!
                 $result->setId($resource->insert_id);
 
-                $this->result[] = $result;
+                $this->results[] = $result;
             }
 
             unset($result);

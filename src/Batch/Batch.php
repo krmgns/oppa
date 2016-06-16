@@ -46,10 +46,10 @@ abstract class Batch implements BatchInterface
     protected $queue = [];
 
     /**
-     * Query result.
+     * Query results.
      * @var array
      */
-    protected $result = [];
+    protected $results = [];
 
     /**
      * Total transaction time.
@@ -77,11 +77,21 @@ abstract class Batch implements BatchInterface
 
     /**
      * Get result.
+     * @param  int $i
+     * @return Oppa\Query\Result\Result|null
+     */
+    final public function getResult(int $i)
+    {
+        return $this->results[$i] ?? null;
+    }
+
+    /**
+     * Get results.
      * @return array
      */
-    final public function getResult(): array
+    final public function getResults(): array
     {
-        return $this->result;
+        return $this->results;
     }
 
     /**
@@ -100,7 +110,7 @@ abstract class Batch implements BatchInterface
     final public function reset()
     {
         $this->queue = [];
-        $this->result = [];
+        $this->results = [];
         $this->totalTime = 0.00;
     }
 }
