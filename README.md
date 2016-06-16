@@ -146,7 +146,7 @@ LIMIT 0,10
 ```
 
 
-### Batch Actions (aka Transactions)
+### Batch Actions (also Transactions)
 
 ```php
 $batch = $agent->getBatch();
