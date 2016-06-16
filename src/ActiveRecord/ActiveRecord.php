@@ -102,6 +102,7 @@ abstract class ActiveRecord
             if ($method->class == $className) {
                 $methodName = strtolower($method->name);
                 $methodPrefix = substr($methodName, 0, 2);
+                // skip magics and on* methods
                 if ($methodPrefix == '__' || $methodPrefix == 'on') {
                     continue;
                 }
