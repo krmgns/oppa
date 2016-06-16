@@ -193,7 +193,6 @@ abstract class ActiveRecord
 
         $result = $query->execute();
 
-        // create entity collection
         $entityCollection = new EntityCollection();
         foreach ($result as $result) {
             $entityCollection->add($this, (array) $result);
