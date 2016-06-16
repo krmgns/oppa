@@ -197,8 +197,7 @@ final class Link
     {
         $agentName = strtolower((string) $this->config['agent']);
         switch ($agentName) {
-            // for now, only mysqli
-            // if time permits, i will extend..
+            // for now, only mysqli and if time permits i will add more..
             case self::AGENT_MYSQLI:
                 $this->agent = new Agent\Mysqli($this->config);
                 $this->agentName = $agentName;
