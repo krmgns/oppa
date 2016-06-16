@@ -84,7 +84,7 @@ abstract class ActiveRecord
 
         // set table info for once
         if (empty(self::$info)) {
-            $result = $this->db->getConnection()->getAgent()
+            $result = $this->db->getLink()->getAgent()
                 ->getAll("SHOW COLUMNS FROM {$this->table}");
 
             foreach ($result as $result) {
@@ -134,7 +134,7 @@ abstract class ActiveRecord
         }
 
         // start query building
-        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query = new QueryBuilder($this->getDatabase()->getLink());
         $query->setTable($this->table);
 
         // add parent select fields
@@ -164,7 +164,7 @@ abstract class ActiveRecord
     final public function findAll($params = null, array $paramsParams = null, $limit = null): EntityCollection
     {
         // start query building
-        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query = new QueryBuilder($this->getDatabase()->getLink());
         $query->setTable($this->table);
 
         // add parent select fields
@@ -227,7 +227,7 @@ abstract class ActiveRecord
         $data = array_intersect_key($data, array_flip(self::$info['@fields']));
 
         // get worker agent
-        $agent = $this->db->getConnection()->getAgent();
+        $agent = $this->db->getLink()->getAgent();
 
         // insert action
         if (!isset($entity->{$this->tablePrimary})) {
@@ -259,7 +259,7 @@ abstract class ActiveRecord
         }
 
         // get worker agent
-        $agent = $this->db->getConnection()->getAgent();
+        $agent = $this->db->getLink()->getAgent();
 
         // remove data
         $return = $agent->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
@@ -279,7 +279,7 @@ abstract class ActiveRecord
      */
     final public function count(string $params = null, array $paramsParams = null): int
     {
-        $query = new QueryBuilder($this->getDatabase()->getConnection());
+        $query = new QueryBuilder($this->getDatabase()->getLink());
         $query->setTable($this->table);
 
         if (!empty($params) && !empty($paramsParams)) {
