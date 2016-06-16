@@ -45,8 +45,8 @@ interface BatchInterface
 
     /**
      * Queue.
-     * @param  string $query
-     * @param  array  $params
+     * @param  string     $query
+     * @param  array|null $params
      * @return Oppa\Batch\BatchInterface
      */
     public function queue(string $query, array $params = null): BatchInterface;
@@ -56,6 +56,14 @@ interface BatchInterface
      * @return void
      */
     public function run();
+
+    /**
+     * Run query.
+     * @param  string     $query
+     * @param  array|null $params
+     * @return Oppa\Query\Result\Result|null
+     */
+    public function runQuery(string $query, array $params = null);
 
     /**
      * Cancel.

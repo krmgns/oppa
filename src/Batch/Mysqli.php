@@ -62,8 +62,8 @@ final class Mysqli extends Batch
 
     /**
      * Queue.
-     * @param  string $query
-     * @param  array  $params
+     * @param  string     $query
+     * @param  array|null $params
      * @return self
      */
     final public function queue(string $query, array $params = null): BatchInterface
@@ -119,6 +119,17 @@ final class Mysqli extends Batch
         $resource->autocommit(true);
 
         return $this;
+    }
+
+    /**
+     * Run query.
+     * @param  string     $query
+     * @param  array|null $params
+     * @return Oppa\Query\Result\Result|null
+     */
+    final public function runQuery(string $query, array $params = null)
+    {
+        return $this->queue($query, $params)->run()->getResult(0);
     }
 
     /**
