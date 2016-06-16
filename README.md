@@ -47,7 +47,7 @@ $cfg = [
 $db = new Oppa\Database($cfg);
 $db->connect();
 
-$agent = $db->getConnection()->getAgent();
+$agent = $db->getLink()->getAgent();
 $agent->query('select * from `users` where `id` = ?', [1]);
 dump $agent->rowsAffected();
 ```
@@ -106,7 +106,7 @@ dump $result; // int: affected_rows
 // use and init with exists $db
 use Oppa\Query\Builder as Query;
 
-$query = new Query($db->getConnection());
+$query = new Query($db->getLink());
 // set target table
 $query->setTable('users u');
 
