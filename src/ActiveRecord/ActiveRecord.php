@@ -133,11 +133,9 @@ abstract class ActiveRecord
             throw new InvalidValueException("You need to pass a parameter to make a query!");
         }
 
-        // start query building
         $query = new QueryBuilder($this->getDatabase()->getLink());
         $query->setTable($this->table);
 
-        // add parent select fields
         $query->select("{$this->table}.*");
 
         if (method_exists($this, 'onFind')) {
@@ -148,7 +146,6 @@ abstract class ActiveRecord
 
         $query->limit(1);
 
-        // get result
         $result = $query->execute()->first();
 
         return new Entity($this, (array) $result);
@@ -163,11 +160,9 @@ abstract class ActiveRecord
      */
     final public function findAll($params = null, array $paramsParams = null, $limit = null): EntityCollection
     {
-        // start query building
         $query = new QueryBuilder($this->getDatabase()->getLink());
         $query->setTable($this->table);
 
-        // add parent select fields
         $query->select("{$this->table}.*");
 
         if (method_exists($this, 'onFind')) {
@@ -197,7 +192,6 @@ abstract class ActiveRecord
             $query->limit((int) $limitStart, $limitStop);
         }
 
-        // get results
         $result = $query->execute();
 
         // create entity collection
