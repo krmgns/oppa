@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Query;
 
-use Oppa\Link\Connection;
+use Oppa\Link\Link;
 use Oppa\Exception\InvalidValueException;
 
 /**
@@ -38,34 +38,37 @@ final class Builder
      * And/or operators.
      * @const string
      */
-    const OP_OR = 'OR', OP_AND = 'AND';
+    const OP_OR = 'OR',
+          OP_AND = 'AND';
 
     /**
      * Asc/desc operators.
      * @const string
      */
-    const OP_ASC = 'ASC', OP_DESC = 'DESC';
+    const OP_ASC = 'ASC',
+          OP_DESC = 'DESC';
 
     /**
      * Select type for JSON returns.
      * @const string
      */
-    const JSON_ARRAY = 'array', JSON_OBJECT = 'object';
+    const JSON_ARRAY = 'array',
+          JSON_OBJECT = 'object';
 
     /**
-     * Database connection.
-     * @var Oppa\Link\Connection
+     * Link.
+     * @var Oppa\Link\Link
      */
-    private $connection;
+    private $link;
 
     /**
-     * Target table for query.
+     * Table.
      * @var string
      */
     private $table;
 
     /**
-     * Query stack.
+     * Query.
      * @var array
      */
     private $query = [];
@@ -78,13 +81,13 @@ final class Builder
 
     /**
      * Constructor.
-     * @param Oppa\Link\Connection $connection
+     * @param Oppa\Link\Link $link
      * @param string $table
      */
-    final public function __construct(Connection $connection = null, string $table = null)
+    final public function __construct(Link $link = null, string $table = null)
     {
-        if ($connection) {
-            $this->setConnection($connection);
+        if ($link) {
+            $this->setLink($link);
         }
         if ($table) {
             $this->setTable($table);
@@ -101,24 +104,24 @@ final class Builder
     }
 
     /**
-     * Set connection.
-     * @param  Oppa\Link\Connection $connection
+     * Set link.
+     * @param  Oppa\Link\Link $link
      * @return self
      */
-    final public function setConnection(Connection $connection): self
+    final public function setLink(Link $link): self
     {
-        $this->connection = $connection;
+        $this->link = $link;
 
         return $this;
     }
 
     /**
-     * Get connection.
-     * @return Oppa\Link\Connection
+     * Get link.
+     * @return Oppa\Link\Link
      */
-    final public function getConnection(): Connection
+    final public function getLink(): Link
     {
-        return $this->connection;
+        return $this->link;
     }
 
     /**
@@ -319,7 +322,7 @@ final class Builder
     {
         // prepare params safely
         if (!empty($params)) {
-            $on = $this->connection->getAgent()->prepare($on, $params);
+            $on = $this->link->getAgent()->prepare($on, $params);
         }
 
         return $this->push('join', sprintf('JOIN %s ON (%s)', $table, $on));
@@ -336,7 +339,7 @@ final class Builder
     {
         // prepare params safely
         if (!empty($params)) {
-            $using = $this->connection->getAgent()->prepare($using, $params);
+            $using = $this->link->getAgent()->prepare($using, $params);
         }
 
         return $this->push('join', sprintf('JOIN %s USING (%s)', $table, $using));
@@ -353,7 +356,7 @@ final class Builder
     {
         // prepare params safely
         if (!empty($params)) {
-            $on = $this->connection->getAgent()->prepare($on, $params);
+            $on = $this->link->getAgent()->prepare($on, $params);
         }
 
         return $this->push('join', sprintf('LEFT JOIN %s ON (%s)', $table, $on));
@@ -370,7 +373,7 @@ final class Builder
     {
         // prepare params safely
         if (!empty($params)) {
-            $using = $this->connection->getAgent()->prepare($using, $params);
+            $using = $this->link->getAgent()->prepare($using, $params);
         }
 
         return $this->push('join', sprintf('LEFT JOIN %s USING (%s)', $table, $using));
@@ -387,7 +390,7 @@ final class Builder
     {
         // prepare if params provided
         if (!empty($params)) {
-            $query = $this->connection->getAgent()->prepare($query, $params);
+            $query = $this->link->getAgent()->prepare($query, $params);
         }
 
         // add and/or operator
@@ -638,7 +641,7 @@ final class Builder
         }
         // prepare if params provided
         if (!empty($params)) {
-            $query = $this->connection->getAgent()->prepare($query, $params);
+            $query = $this->link->getAgent()->prepare($query, $params);
         }
 
         return $this->where('EXISTS ('. $query .')', null, $op);
@@ -659,7 +662,7 @@ final class Builder
         }
         // prepare if params provided
         if (!empty($params)) {
-            $query = $this->connection->getAgent()->prepare($query, $params);
+            $query = $this->link->getAgent()->prepare($query, $params);
         }
 
         return $this->where('NOT EXISTS ('. $query .')', null, $op);
@@ -676,7 +679,7 @@ final class Builder
     {
         // prepare if params provided
         if (!empty($params)) {
-            $query = $this->connection->getAgent()->prepare($query, $params);
+            $query = $this->link->getAgent()->prepare($query, $params);
         }
 
         // add and/or operator
@@ -759,7 +762,7 @@ final class Builder
      */
     final public function execute()
     {
-        return $this->connection->getAgent()->query($this->toString());
+        return $this->link->getAgent()->query($this->toString());
     }
 
     /**
@@ -768,7 +771,7 @@ final class Builder
      */
     final public function get()
     {
-        return $this->connection->getAgent()->get($this->toString());
+        return $this->link->getAgent()->get($this->toString());
     }
 
     /**
@@ -777,7 +780,7 @@ final class Builder
      */
     final public function getAll()
     {
-        return $this->connection->getAgent()->getAll($this->toString());
+        return $this->link->getAgent()->getAll($this->toString());
     }
 
     /**
@@ -786,7 +789,7 @@ final class Builder
      */
     final public function count(): int
     {
-        $result = $this->connection->getAgent()->get(
+        $result = $this->link->getAgent()->get(
             sprintf('SELECT count(*) AS count FROM (%s) AS tmp', $this->toString()));
 
         return intval($result->count);
@@ -855,7 +858,7 @@ final class Builder
             }
             // prepare for "INSERT" statement
             elseif (isset($this->query['insert'])) {
-                $agent = $this->connection->getAgent();
+                $agent = $this->link->getAgent();
                 if ($data = ($this->query['insert'] ?? null)) {
                     $keys = $agent->escapeIdentifier(array_keys(current($data)));
                     $values = [];
@@ -869,7 +872,7 @@ final class Builder
             }
             // prepare for "UPDATE" statement
             elseif (isset($this->query['update'])) {
-                $agent = $this->connection->getAgent();
+                $agent = $this->link->getAgent();
                 if ($data = ($this->query['update'] ?? null)) {
                     // prepare "SET" data
                     $set = [];
@@ -897,7 +900,7 @@ final class Builder
             }
             // prepare for "DELETE" statement
             elseif (isset($this->query['delete'])) {
-                $agent = $this->connection->getAgent();
+                $agent = $this->link->getAgent();
 
                 $this->queryString = "DELETE FROM {$this->table}";
 
