@@ -192,7 +192,7 @@ final class Link
      * @return void
      * @throws \RuntimeException
      */
-    final protected function attachAgent()
+    final private function attachAgent()
     {
         $agentName = strtolower((string) $this->config['agent']);
         switch ($agentName) {
@@ -211,7 +211,7 @@ final class Link
      * Detach agent.
      * @return void
      */
-    final protected function detachAgent()
+    final private function detachAgent()
     {
         $this->agent = null;
         $this->agentName = null;
