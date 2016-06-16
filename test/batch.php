@@ -55,7 +55,7 @@ try {
 // set autocommit=1
 $batch->unlock();
 
-foreach ($batch->getResult() as $result) {
+foreach ($batch->getResults() as $result) {
     print $result->getId() ."\n";
 }
 
