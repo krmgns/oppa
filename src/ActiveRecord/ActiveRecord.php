@@ -142,9 +142,8 @@ abstract class ActiveRecord
             $query = $this->onFind($query);
         }
 
-        $query->where("{$this->table}.{$this->tablePrimary} = ?", $param);
-
-        $query->limit(1);
+        $query->where("{$this->table}.{$this->tablePrimary} = ?", $param)
+            ->limit(1);
 
         $result = $query->execute()->first();
 
