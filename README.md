@@ -18,10 +18,12 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ### Autoloading / Using Libraries
 
-```php
+```
 // composer
-{"require": {"k-gun/oppa": "~2.2"}}
+~$ composer require k-gun/oppa
+```
 
+```php
 // manual
 $autoload = require('<path to oppa>/src/Autoload.php');
 $autoload->register();
