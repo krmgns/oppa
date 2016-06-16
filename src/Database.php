@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa;
 
-use Oppa\Link\Connector;
+use Oppa\Link\Linker;
 
 /**
  * @package Oppa
@@ -39,16 +39,16 @@ final class Database
     private $info;
 
     /**
-     * Connector.
-     * @var Oppa\Link\Connector
+     * Linker.
+     * @var Oppa\Link\Linker
      */
-    private $connector;
+    private $linker;
 
     /**
-     * Connector methods.
+     * Linker methods.
      * @var array
      */
-    private $connectorMethods = [];
+    private $linkerMethods = [];
 
     /**
      * Constructor.
@@ -56,13 +56,13 @@ final class Database
      */
     final public function __construct(array $config)
     {
-        $this->connector = new Connector(new Config($config));
+        $this->linker = new Linker(new Config($config));
         // provide some speed instead using method_exists() each __call() exec
-        $this->connectorMethods = array_fill_keys(get_class_methods($this->connector), true);
+        $this->linkerMethods = array_fill_keys(get_class_methods($this->linker), true);
     }
 
     /**
-     * Call magic (forwards all non-exists methods to Connector).
+     * Call magic (forwards all non-exists methods to Linker).
      * @param  string $method
      * @param  array  $methodArgs
      * @return any
@@ -70,13 +70,13 @@ final class Database
      */
     final public function __call(string $method, array $methodArgs = [])
     {
-        if (isset($this->connectorMethods[$method])) {
-            return call_user_func_array([$this->connector, $method], $methodArgs);
+        if (isset($this->linkerMethods[$method])) {
+            return call_user_func_array([$this->linker, $method], $methodArgs);
         }
 
         throw new \BadMethodCallException(sprintf(
             "No method such '%s()' on '%s' or '%s' objects!",
-                $method, Database::class, Connector::class));
+                $method, Database::class, Linker::class));
     }
 
     // @wait
@@ -84,20 +84,20 @@ final class Database
     {}
 
     /**
-     * Get connector.
-     * @return Oppa\Link\Connector
+     * Get linker.
+     * @return Oppa\Link\Linker
      */
-    final public function getConnector(): Connector
+    final public function getLinker(): Linker
     {
-        return $this->connector;
+        return $this->linker;
     }
 
     /**
-     * Get connector methods.
+     * Get linker methods.
      * @return array
      */
-    final public function getConnectorMethods(): array
+    final public function getLinkerMethods(): array
     {
-        return $this->connectorMethods;
+        return $this->linkerMethods;
     }
 }

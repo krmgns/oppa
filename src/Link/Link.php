@@ -29,10 +29,10 @@ use Oppa\Agent;
 /**
  * @package    Oppa
  * @subpackage Oppa\Link
- * @object     Oppa\Link\Connection
+ * @object     Oppa\Link\Link
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Connection
+final class Link
 {
     /**
      * Database agent (aka worker, adapter etc.) names.
@@ -42,14 +42,14 @@ final class Connection
           AGENT_MYSQLI          = 'mysqli';
 
     /**
-     * Connection statuses.
+     * Link statuses.
      * @const int
      */
     const STATUS_CONNECTED      = 1,
           STATUS_DISCONNECTED   = 0;
 
     /**
-     * Connection types.
+     * Link types.
      * @const string
      */
     const TYPE_SINGLE           = 'single',
@@ -153,7 +153,7 @@ final class Connection
         if ($this->agent == null) {
             // attach agent first
             $this->attachAgent();
-            // and open connection
+            // and open Link
             $this->agent->connect();
         }
     }
@@ -165,7 +165,7 @@ final class Connection
     final public function close()
     {
         if ($this->agent != null) {
-            // close connection first
+            // close Link first
             $this->agent->disconnect();
             // and detach agent
             $this->detachAgent();
@@ -174,8 +174,8 @@ final class Connection
 
     /**
      * Check status.
-     * @return int    If agent exists.
-     * @return false  If agent not exists.
+     * @return int   If agent exists.
+     * @return false If agent not exists.
      */
     final public function status()
     {

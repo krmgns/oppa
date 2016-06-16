@@ -30,10 +30,10 @@ use Oppa\Exception\InvalidConfigException;
 /**
  * @package    Oppa
  * @subpackage Oppa\Link
- * @object     Oppa\Link\Connector
+ * @object     Oppa\Link\Linker
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Connector
+final class Linker
 {
     /**
      * Config.
@@ -45,12 +45,12 @@ final class Connector
      * Stack.
      * @var array
      */
-    protected $connections = [];
+    protected $links = [];
 
     /**
      * Constructor.
      * @note  For all methods in this object, "$host" parameter is important, cos
-     * it is used as a key to prevent to create new connections in excessive way.
+     * it is used as a key to prevent to create new links in excessive way.
      * Thus, host will be always set, even user does not pass/provide it.
      * @param Oppa\Config $config
      */
@@ -67,13 +67,13 @@ final class Connector
      */
     final public function connect(string $host = null): self
     {
-        // connection is already active?
-        if (isset($this->connections[$host])) {
+        // link is already active?
+        if (isset($this->links[$host])) {
             return $this;
         }
 
         // set type as single as default
-        $type = Connection::TYPE_SINGLE;
+        $type = Link::TYPE_SINGLE;
 
         // get config as array
         $config = $this->config->toArray();
@@ -88,13 +88,13 @@ final class Connector
             switch ($host) {
                 // act: master as default
                 case null:
-                case Connection::TYPE_MASTER:
-                    $type = Connection::TYPE_MASTER;
+                case Link::TYPE_MASTER:
+                    $type = Link::TYPE_MASTER;
                     $database = $database + $master;
                     break;
                 //  act: slave
-                case Connection::TYPE_SLAVE:
-                    $type = Connection::TYPE_SLAVE;
+                case Link::TYPE_SLAVE:
+                    $type = Link::TYPE_SLAVE;
                     if (!empty($slaves)) {
                         $slave = Util::arrayRand($slaves);
                         $database = $database + $slave;
@@ -103,11 +103,11 @@ final class Connector
                 default:
                     // given host is master's host?
                     if ($host == ($master['host'] ?? '')) {
-                        $type = Connection::TYPE_MASTER;
+                        $type = Link::TYPE_MASTER;
                         $database = $database + $master;
                     } else {
                         // or given host is slaves's host?
-                        $type = Connection::TYPE_SLAVE;
+                        $type = Link::TYPE_SLAVE;
                         foreach ($slaves as $slave) {
                             if (isset($slave['host'], $slave['name']) && $slave['host'] == $host) {
                                 $database = $database + $slave;
@@ -126,18 +126,18 @@ final class Connector
         if (!isset($config['host'], $config['name'], $config['username'], $config['password'])) {
             throw new InvalidConfigException(
                 'Please specify all needed credentials (host'.
-                ', name, username, password) for a connection!'
+                ', name, username, password) for a link!'
             );
         }
 
-        // use host as a key for connection stack
+        // use host as a key for link stack
         $host = $config['host'];
 
-        // create a new connection if not exists
-        if (!isset($this->connections[$host])) {
-            $connection = new Connection($type, $host, new Config($config));
-            $connection->open();
-            $this->setConnection($host, $connection);
+        // create a new link if not exists
+        if (!isset($this->links[$host])) {
+            $link = new Link($type, $host, new Config($config));
+            $link->open();
+            $this->setLink($host, $link);
         }
 
         return $this;
@@ -150,37 +150,37 @@ final class Connector
      */
     final public function disconnect(string $host = null)
     {
-        // connection exists?
-        if (isset($this->connections[$host])) {
-            $this->connections[$host]->close();
-            unset($this->connections[$host]);
+        // link exists?
+        if (isset($this->links[$host])) {
+            $this->links[$host]->close();
+            unset($this->links[$host]);
         } else {
             // check by host
             switch (trim((string) $host)) {
-                // remove all connections
+                // remove all links
                 case '':
                 case '*':
-                    foreach ($this->connections as $i => $connection) {
-                        $connection->close();
-                        unset($this->connections[$i]);
+                    foreach ($this->links as $i => $link) {
+                        $link->close();
+                        unset($this->links[$i]);
                     }
                     break;
-                // remove master connection
-                case Connection::TYPE_MASTER:
-                    foreach ($this->connections as $i => $connection) {
-                        if ($connection->getType() == Connection::TYPE_MASTER) {
-                            $connection->close();
-                            unset($this->connections[$i]);
+                // remove master link
+                case Link::TYPE_MASTER:
+                    foreach ($this->links as $i => $link) {
+                        if ($link->getType() == Link::TYPE_MASTER) {
+                            $link->close();
+                            unset($this->links[$i]);
                             break;
                         }
                     }
                     break;
-                // remove slave connections
-                case Connection::TYPE_SLAVE:
-                    foreach ($this->connections as $i => $connection) {
-                        if ($connection->getType() == Connection::TYPE_SLAVE) {
-                            $connection->close();
-                            unset($this->connections[$i]);
+                // remove slave links
+                case Link::TYPE_SLAVE:
+                    foreach ($this->links as $i => $link) {
+                        if ($link->getType() == Link::TYPE_SLAVE) {
+                            $link->close();
+                            unset($this->links[$i]);
                         }
                     }
                     break;
@@ -189,42 +189,42 @@ final class Connector
     }
 
     /**
-     * Check connection.
+     * Is linked.
      * @param  string|null $host
      * @return bool
      */
-    final public function isConnected(string $host = null): bool
+    final public function isLinked(string $host = null): bool
     {
-        // connection exists?
-        // e.g: isConnected('localhost')
-        if (isset($this->connections[$host])) {
-            return ($this->connections[$host]->status() === Connection::STATUS_CONNECTED);
+        // link exists?
+        // e.g: isLinked('localhost')
+        if (isset($this->links[$host])) {
+            return ($this->links[$host]->status() === Link::STATUS_CONNECTED);
         }
 
         // without master/slave directives
-        // e.g: isConnected()
+        // e.g: isLinked()
         if (true !== $this->config->get('sharding')) {
-            foreach ($this->connections as $connection) {
-                return ($connection->status() === Connection::STATUS_CONNECTED);
+            foreach ($this->links as $link) {
+                return ($link->status() === Link::STATUS_CONNECTED);
             }
         }
 
         // with master/slave directives, check by host
         switch (trim((string) $host)) {
-            // e.g: isConnected(), isConnected('master')
+            // e.g: isLinked(), isLinked('master')
             case '':
-            case Connection::TYPE_MASTER:
-                foreach ($this->connections as $connection) {
-                    if ($connection->getType() == Connection::TYPE_MASTER) {
-                        return ($connection->status() === Connection::STATUS_CONNECTED);
+            case Link::TYPE_MASTER:
+                foreach ($this->links as $link) {
+                    if ($link->getType() == Link::TYPE_MASTER) {
+                        return ($link->status() === Link::STATUS_CONNECTED);
                     }
                 }
                 break;
-            // e.g: isConnected('slave1.mysql.local'), isConnected('slave')
-            case Connection::TYPE_SLAVE:
-                foreach ($this->connections as $connection) {
-                    if ($connection->getType() == Connection::TYPE_SLAVE) {
-                        return ($connection->status() === Connection::STATUS_CONNECTED);
+            // e.g: isLinked('slave1.mysql.local'), isLinked('slave')
+            case Link::TYPE_SLAVE:
+                foreach ($this->links as $link) {
+                    if ($link->getType() == Link::TYPE_SLAVE) {
+                        return ($link->status() === Link::STATUS_CONNECTED);
                     }
                 }
                 break;
@@ -234,52 +234,52 @@ final class Connector
     }
 
     /**
-     * Set connection.
-     * @param  string               $host
-     * @param  Oppa\Link\Connection $connection
+     * Set link.
+     * @param  string         $host
+     * @param  Oppa\Link\Link $link
      * @return void
      */
-    final public function setConnection(string $host, Connection $connection)
+    final public function setLink(string $host, Link $link)
     {
-        $this->connections[$host] = $connection;
+        $this->links[$host] = $link;
     }
 
     /**
-     * Get connection.
+     * Get link.
      * @param  string|null $host
-     * @return Oppa\Link\Connection|null
+     * @return Oppa\Link\Link|null
      */
-    final public function getConnection(string $host = null)
+    final public function getLink(string $host = null)
     {
-        // connection exists?
-        // e.g: getConnection('localhost')
-        if (isset($this->connections[$host])) {
-            return $this->connections[$host];
+        // link exists?
+        // e.g: getLink('localhost')
+        if (isset($this->links[$host])) {
+            return $this->links[$host];
         }
 
         $host = trim((string) $host);
         // with master/slave directives
         if (true === $this->config->get('sharding')) {
-            // e.g: getConnection(), getConnection('master'), getConnection('master.mysql.local')
-            if ($host == '' || $host == Connection::TYPE_MASTER) {
+            // e.g: getLink(), getLink('master'), getLink('master.mysql.local')
+            if ($host == '' || $host == Link::TYPE_MASTER) {
                 return Util::arrayRand(
-                    array_filter($this->connections, function($connection) {
-                        return $connection->getType() == Connection::TYPE_MASTER;
+                    array_filter($this->links, function($link) {
+                        return $link->getType() == Link::TYPE_MASTER;
                 }));
             }
-            // e.g: getConnection(), getConnection('slave'), getConnection('slave1.mysql.local')
-            elseif ($host == Connection::TYPE_SLAVE) {
+            // e.g: getLink(), getLink('slave'), getLink('slave1.mysql.local')
+            elseif ($host == Link::TYPE_SLAVE) {
                 return Util::arrayRand(
-                    array_filter($this->connections, function($connection) {
-                        return $connection->getType() == Connection::TYPE_SLAVE;
+                    array_filter($this->links, function($link) {
+                        return $link->getType() == Link::TYPE_SLAVE;
                 }));
             }
         } else {
-            // e.g: getConnection()
+            // e.g: getLink()
             if ($host == '') {
                 return Util::arrayRand(
-                    array_filter($this->connections, function($connection) {
-                        return $connection->getType() == Connection::TYPE_SINGLE;
+                    array_filter($this->links, function($link) {
+                        return $link->getType() == Link::TYPE_SINGLE;
                 }));
             }
         }
@@ -295,11 +295,11 @@ final class Connector
     }
 
     /**
-     * Get connections.
+     * Get links.
      * @return array
      */
-    final public function getConnections(): array
+    final public function getLinks(): array
     {
-        return $this->connections;
+        return $this->links;
     }
 }
