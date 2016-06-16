@@ -70,7 +70,7 @@ abstract class Batch implements BatchInterface
      * Get queue.
      * @return array
      */
-    public function getQueue(): array
+    final public function getQueue(): array
     {
         return $this->queue;
     }
@@ -79,7 +79,7 @@ abstract class Batch implements BatchInterface
      * Get result.
      * @return array
      */
-    public function getResult(): array
+    final public function getResult(): array
     {
         return $this->result;
     }
@@ -88,7 +88,7 @@ abstract class Batch implements BatchInterface
      * Get total time.
      * @return float
      */
-    public function getTotalTime(): float
+    final public function getTotalTime(): float
     {
         return $this->totalTime;
     }
@@ -97,7 +97,7 @@ abstract class Batch implements BatchInterface
      * Reset.
      * @return void
      */
-    public function reset()
+    final public function reset()
     {
         $this->queue = [];
         $this->result = [];
