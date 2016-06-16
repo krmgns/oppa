@@ -65,18 +65,18 @@ final class Entity
     /**
      * Call.
      * @param  string $method
-     * @param  array  $arguments
+     * @param  array  $methodArgs
      * @return any
      * @throws \BadMethodCallException
      */
-    final public function __call(string $method, array $arguments)
+    final public function __call(string $method, array $methodArgs)
     {
         // check for method
         $method = strtolower($method);
         $methods = $this->ar->getBindMethods();
         if (isset($methods[$method])) {
             $method = $methods[$method]->bindTo($this);
-            return call_user_func_array($method, $arguments);
+            return call_user_func_array($method, $methodArgs);
         }
 
         throw new \BadMethodCallException('Method does not exists!');
