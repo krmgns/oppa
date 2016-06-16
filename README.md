@@ -18,8 +18,8 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ### Autoloading / Using Libraries
 
-```
-// composer
+```bash
+# composer
 ~$ composer require k-gun/oppa
 ```
 
@@ -51,7 +51,7 @@ $db->connect();
 
 $agent = $db->getLink()->getAgent();
 $agent->query('select * from `users` where `id` = ?', [1]);
-dump $agent->rowsAffected();
+dump $agent->rowsCount();
 ```
 
 ### Holy CRUD Stuffs
