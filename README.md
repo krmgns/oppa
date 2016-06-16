@@ -148,27 +148,60 @@ LIMIT 0,10
 
 ### Batch Actions (also Transactions)
 
+**Single Transaction**
+
 ```php
+// get batch object
 $batch = $agent->getBatch();
+
 // set autocommit=0
 $batch->lock();
 try {
-   $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
-   $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
-   $batch->queue('insert into `userz` values(null,?,?)', ['Eric', 15]); // boom!
-   // commit
-   $batch->run();
+    // commit
+    $batch->runQuery('insert into `users` values(null,?,?)', ['John', 25]);
 } catch (\Throwable $e) {
-   dump $e->getMessage();
-   // rollback & set autocommit=1
-   $batch->cancel();
+    dump $e->getMessage();
+    // rollback & set autocommit=1
+    $batch->cancel();
+}
+// set autocommit=1
+$batch->unlock();
+
+// get insert id if success
+$result = $batch->getResult();
+if ($result) {
+    dump $result->getId();
+}
+
+// remove query queue and empty result array
+$batch->reset();
+```
+
+**Bulk Transaction**
+
+```php
+// get batch object
+$batch = $agent->getBatch();
+
+// set autocommit=0
+$batch->lock();
+try {
+    $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
+    $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
+    $batch->queue('insert into `uzerz` values(null,?,?)', ['Eric', 15]); // boom!
+    // commit
+    $batch->run();
+} catch (\Throwable $e) {
+    dump $e->getMessage();
+    // rollback & set autocommit=1
+    $batch->cancel();
 }
 // set autocommit=1
 $batch->unlock();
 
 // get insert ids if success
 foreach ($batch->getResults() as $result) {
-   dump $result->getId();
+    dump $result->getId();
 }
 
 // remove query queue and empty result array
