@@ -129,7 +129,7 @@ final class Mysqli extends Batch
      */
     final public function runQuery(string $query, array $params = null): BatchInterface
     {
-        return $this->queue($query, $params)->run()->getResult(0);
+        return $this->queue($query, $params)->run();
     }
 
     /**
