@@ -233,6 +233,7 @@ abstract class ActiveRecord
 
         // insert action
         if (!isset($entity->{$this->tablePrimary})) {
+                      // set primary value
             $return = ($entity->{$this->tablePrimary} = $agent->insert($this->table, $data));
         }
         // update action
