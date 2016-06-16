@@ -75,9 +75,9 @@ final class Mysqli extends Batch
 
     /**
      * Run.
-     * @return self
+     * @return Oppa\Batch\BatchInterface
      */
-    final public function run(): self
+    final public function run(): BatchInterface
     {
         // no need to get excited
         if (empty($this->queue)) {
@@ -125,9 +125,9 @@ final class Mysqli extends Batch
      * Run query.
      * @param  string     $query
      * @param  array|null $params
-     * @return Oppa\Query\Result\Result|null
+     * @return Oppa\Batch\BatchInterface
      */
-    final public function runQuery(string $query, array $params = null)
+    final public function runQuery(string $query, array $params = null): BatchInterface
     {
         return $this->queue($query, $params)->run()->getResult(0);
     }

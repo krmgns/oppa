@@ -53,17 +53,17 @@ interface BatchInterface
 
     /**
      * Run.
-     * @return void
+     * @return Oppa\Batch\BatchInterface
      */
-    public function run();
+    public function run(): BatchInterface;
 
     /**
      * Run query.
      * @param  string     $query
      * @param  array|null $params
-     * @return Oppa\Query\Result\Result|null
+     * @return Oppa\Batch\BatchInterface
      */
-    public function runQuery(string $query, array $params = null);
+    public function runQuery(string $query, array $params = null): BatchInterface;
 
     /**
      * Cancel.
