@@ -167,7 +167,7 @@ try {
 $batch->unlock();
 
 // get insert ids if success
-foreach ($batch->getResult() as $result) {
+foreach ($batch->getResults() as $result) {
    dump $result->getId();
 }
 
