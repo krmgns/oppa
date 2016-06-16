@@ -212,8 +212,8 @@ abstract class ActiveRecord
     /**
      * Save.
      * @param  Oppa\ActiveRecord\Entity $entity
-     * @return any On insert: last insert id.
-     * @return int On update: affected rows.
+     * @return any      On insert: last insert id.
+     * @return int|null On update: affected rows.
      * @throws Oppa\InvalidValueException
      */
     final public function save(Entity $entity)
@@ -229,11 +229,14 @@ abstract class ActiveRecord
         // get worker agent
         $agent = $this->db->getLink()->getAgent();
 
+        $return = null;
+
         // insert action
         if (!isset($entity->{$this->tablePrimary})) {
             $return = ($entity->{$this->tablePrimary} = $agent->insert($this->table, $data));
-        } else {
-            // update action
+        }
+        // update action
+        elseif (isset($data[$this->tablePrimary])) {
             $return = $agent->update($this->table, $data,
                 "{$this->tablePrimary} = ?", [$data[$this->tablePrimary]]);
         }
