@@ -94,9 +94,20 @@ final class Link
      */
     final public function __construct(string $type, string $host, Config $config)
     {
-        $this->type   = $type;
-        $this->host   = $host;
+        $this->type = $type;
+        $this->host = $host;
         $this->config = $config;
+
+        // attach agent
+        $this->attachAgent();
+    }
+
+    /**
+     * Destructor.
+     */
+    final public function __destruct()
+    {
+        $this->detachAgent();
     }
 
     /**
@@ -150,12 +161,7 @@ final class Link
      */
     final public function open()
     {
-        if ($this->agent == null) {
-            // attach agent first
-            $this->attachAgent();
-            // and open Link
-            $this->agent->connect();
-        }
+        $this->agent && $this->agent->connect();
     }
 
     /**
@@ -164,22 +170,17 @@ final class Link
      */
     final public function close()
     {
-        if ($this->agent != null) {
-            // close Link first
-            $this->agent->disconnect();
-            // and detach agent
-            $this->detachAgent();
-        }
+        $this->agent && $this->agent->disconnect();
     }
 
     /**
-     * Check status.
+     * Status.
      * @return int   If agent exists.
      * @return false If agent not exists.
      */
     final public function status()
     {
-        if (isset($this->agent)) {
+        if ($this->agent) {
             return $this->agent->isConnected()
                 ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
         }
