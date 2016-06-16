@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\Query\ResultInterface;
+use Oppa\Query\Result\ResultInterface;
 
 /**
  * @package    Oppa
