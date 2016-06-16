@@ -25,7 +25,7 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 
-$qb = new QueryBuilder($db->getConnection());
+$qb = new QueryBuilder($db->getLink());
 $qb->setTable('users');
 
 // $qb->select('id,name');
@@ -92,7 +92,7 @@ pre($qb->get());
 // $qb->whereGreaterThanEqual('id', 20);
 
 // $qb->whereExists(
-//     (new QueryBuilder($db->getConnection(), 'foo'))
+//     (new QueryBuilder($db->getLink(), 'foo'))
 //         ->select('*')
 //         ->where('y > ?')
 //     , [10]);

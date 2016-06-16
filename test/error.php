@@ -18,7 +18,7 @@ use Oppa\Database;
 
 // $db = Database($cfg);
 // try {
-//     $agent = $db->connect()->getConnection()->getAgent()->query('select * from nonexists');
+//     $agent = $db->connect()->getLink()->getAgent()->query('select * from nonexists');
 // } catch (\Throwable $e) {
 //     print $e->getMessage();
 // }
@@ -37,4 +37,4 @@ $cfg = [
 ];
 
 $db = new Database($cfg);
-$db->connect()->getConnection()->getAgent()->query('select * from nonexists');
+$db->connect()->getLink()->getAgent()->query('select * from nonexists');

@@ -26,7 +26,7 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 
-$agent = $db->getConnection()->getAgent();
+$agent = $db->getLink()->getAgent();
 
 // $result = $agent->query("show tables");
 // $result = $agent->query("describe users");

@@ -24,7 +24,7 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 
-$agent = $db->getConnection()->getAgent();
+$agent = $db->getLink()->getAgent();
 
 $result = $agent->select('users', ['id','name']);
 // $result = $agent->selectOne('users', '*', 'old > ?', [50]);

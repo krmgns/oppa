@@ -29,9 +29,9 @@ $db = new Database($cfg);
 $db->connect();
 
 // @tmp
-// $db->getConnection()->getAgent()->query('delete from users where id > 10');
+// $db->getLink()->getAgent()->query('delete from users where id > 10');
 
-$batch = $db->getConnection()->getAgent()->getBatch();
+$batch = $db->getLink()->getAgent()->getBatch();
 // set autocommit=1
 $batch->lock();
 try {

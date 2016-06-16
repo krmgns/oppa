@@ -16,7 +16,7 @@ $cfg = [
 ];
 
 $db = new Database($cfg);
-$agent = $db->connect()->getConnection()->getAgent();
+$agent = $db->connect()->getLink()->getAgent();
 
 $s = $agent->prepare('sid = :sid, pid = :pid, a = ?, tid = :tid, b = %d', [
     'pid' => 2,

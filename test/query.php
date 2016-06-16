@@ -24,7 +24,7 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 
-$agent = $db->getConnection()->getAgent();
+$agent = $db->getLink()->getAgent();
 $agent->query("delete from `users` where `id` > ?", [3]);
 pre($agent->rowsAffected());
 

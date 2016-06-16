@@ -34,7 +34,7 @@ class Db
     }
 
     public function query($sql, array $params = null) {
-        return $this->db->getConnection()->getAgent()->query($sql, $params);
+        return $this->db->getLink()->getAgent()->query($sql, $params);
     }
 }
 

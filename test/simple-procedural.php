@@ -30,7 +30,7 @@ function db_init() {
 function db_query($sql, array $params = null) {
     // get database instance
     $db = db_init();
-    return $db->getConnection()->getAgent()->query($sql, $params);
+    return $db->getLink()->getAgent()->query($sql, $params);
 }
 
 // make a regular query

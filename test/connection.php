@@ -30,13 +30,13 @@ $cfg = [
 $db = new Database($cfg);
 $db->connect();
 // pre($db);
-pre($db->getConnection()->getAgent()->query("select * from users"));
-// pre($db->getConnection());
-// pre($db->getConnection('localhost'));
+pre($db->getLink()->getAgent()->query("select * from users"));
+// pre($db->getLink());
+// pre($db->getLink('localhost'));
 
 // // $db->disconnect();
 // $db->disconnect('localhost');
-// pre($db->getConnection('localhost')); // err!
+// pre($db->getLink('localhost')); // err!
 
 /*** sharding ***/
 // $cfg = [
@@ -82,11 +82,11 @@ pre($db->getConnection()->getAgent()->query("select * from users"));
 // $db->disconnect('*');
 // pre($db);
 
-// pre($db->getConnection());
-// pre($db->getConnection('master'));
-// pre($db->getConnection('master.mysql.local'));
+// pre($db->getLink());
+// pre($db->getLink('master'));
+// pre($db->getLink('master.mysql.local'));
 
-// pre($db->getConnection('slave'));
-// pre($db->getConnection('slave1.mysql.local'));
-// pre($db->getConnection('slave2.mysql.local'));
-// pre($db->getConnection('slave3.mysql.local'));
+// pre($db->getLink('slave'));
+// pre($db->getLink('slave1.mysql.local'));
+// pre($db->getLink('slave2.mysql.local'));
+// pre($db->getLink('slave3.mysql.local'));
