@@ -37,12 +37,6 @@ use Oppa\Exception\InvalidValueException;
 abstract class ActiveRecord
 {
     /**
-     * Info.
-     * @var array
-     */
-    private static $info = [];
-
-    /**
      * Database.
      * @var Oppa\Database
      */
@@ -59,6 +53,12 @@ abstract class ActiveRecord
      * @var string
      */
     protected $tablePrimary;
+
+    /**
+     * Table info.
+     * @var array
+     */
+    private static $tableInfo = [];
 
     /**
      * Bind methods for entity.
@@ -83,16 +83,16 @@ abstract class ActiveRecord
         $this->db->connect();
 
         // set table info for once
-        if (empty(self::$info)) {
+        if (empty(self::$tableInfo)) {
             $result = $this->db->getLink()->getAgent()
                 ->getAll("SHOW COLUMNS FROM {$this->table}");
 
             foreach ($result as $result) {
-                self::$info[$result->Field] = [];
+                self::$tableInfo[$result->Field] = [];
             }
 
             // set field names as shorcut
-            self::$info['@fields'] = array_keys(self::$info);
+            self::$tableInfo['fields'] = array_keys(self::$tableInfo);
         }
 
         // methods to bind to the entities
@@ -217,7 +217,7 @@ abstract class ActiveRecord
         }
 
         // use only owned fields
-        $data = array_intersect_key($data, array_flip(self::$info['@fields']));
+        $data = array_intersect_key($data, array_flip(self::$tableInfo['fields']));
 
         $agent = $this->db->getLink()->getAgent();
 
