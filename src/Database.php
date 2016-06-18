@@ -63,6 +63,7 @@ final class Database
 
     /**
      * Call magic (forwards all non-exists methods to Linker).
+     * @see    Proxy pattern <https://en.wikipedia.org/wiki/Proxy_pattern>
      * @param  string $method
      * @param  array  $methodArgs
      * @return any
