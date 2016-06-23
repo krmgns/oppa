@@ -132,7 +132,7 @@ final class Logger
                 "Define it using 'query_log_directory' key to activate logging.");
         }
 
-        // provide some performance, escaping to call is_dir, mkdir functions
+        // provide some performance escaping to call "is_dir" and "mkdir" functions
         self::$directoryChecked = self::$directoryChecked ?: is_dir($this->directory);
         if (!self::$directoryChecked) {
             self::$directoryChecked = mkdir($this->directory, 0644, true);
