@@ -50,7 +50,7 @@ $db = new Oppa\Database($cfg);
 $db->connect();
 
 $agent = $db->getLink()->getAgent();
-$agent->query('select * from `users` where `id` = ?', [1]);
+$agent->query('select * from `users` where `old` > ?', [25]);
 dump $agent->rowsCount();
 ```
 
