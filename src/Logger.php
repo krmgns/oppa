@@ -67,19 +67,19 @@ final class Logger
      * Level.
      * @var int
      */
-    protected $level = 0; // default=disabled
+    private $level = 0; // default=disabled
 
     /**
      * Directory.
      * @var string
      */
-    protected $directory;
+    private $directory;
 
     /**
      * Directory checked.
      * @var bool
      */
-    protected static $directoryChecked = false;
+    private static $directoryChecked = false;
 
     /**
      * Constructor.
