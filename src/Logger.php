@@ -34,55 +34,55 @@ use Oppa\Exception\InvalidConfigException;
 final class Logger
 {
     /**
-     * Log all events.
+     * All.
      * @const int
      */
     const ALL = 30; // FAIL | WARN | INFO | DEBUG
 
     /**
-     * Log only error events.
+     * Fail.
      * @const int
      */
     const FAIL = 2;
 
     /**
-     * Log only warning events.
+     * Warn.
      * @const int
      */
     const WARN = 4;
 
     /**
-     * Log only informal events.
+     * Info.
      * @const int
      */
     const INFO = 8;
 
     /**
-     * Log only debugging events.
+     * Debug.
      * @const int
      */
     const DEBUG = 16;
 
     /**
-     * Log level, disabled as default.
+     * Level.
      * @var int
      */
-    protected $level = 0;
+    protected $level = 0; // default=disabled
 
     /**
-     * Log directory.
+     * Directory.
      * @var string
      */
     protected $directory;
 
     /**
-     * Aims some performance, escaping to call is_dir, mkdir functions.
+     * Directory checked.
      * @var bool
      */
     protected static $directoryChecked = false;
 
     /**
-     * Set log level.
+     * Set level.
      * @param  int $level
      * @return void
      */
@@ -92,7 +92,7 @@ final class Logger
     }
 
     /**
-     * Get log level.
+     * Get level.
      * @return int
      */
     final public function getLevel(): int
@@ -101,7 +101,7 @@ final class Logger
     }
 
     /**
-     * Set log directory.
+     * Set directory.
      * @param  string $directory
      * @return void
      */
@@ -111,7 +111,7 @@ final class Logger
     }
 
     /**
-     * Get log directory.
+     * Get directory.
      * @return string
      */
     final public function getDirectory(): string
@@ -120,7 +120,7 @@ final class Logger
     }
 
     /**
-     * Check log directory, if not exists create it.
+     * Check directory (if not exists create it).
      * @return bool
      * @throws Oppa\InvalidConfigException
      */
@@ -132,6 +132,7 @@ final class Logger
                 "Define it using 'query_log_directory' key to activate logging.");
         }
 
+        // provide some performance, escaping to call is_dir, mkdir functions
         self::$directoryChecked = self::$directoryChecked ?: is_dir($this->directory);
         if (!self::$directoryChecked) {
             self::$directoryChecked = mkdir($this->directory, 0644, true);
