@@ -70,7 +70,7 @@ final class Mysql extends Result
     {
         // check link
         if (!$resource instanceof \mysqli) {
-            throw new InvalidValueException('Process link must be instanceof mysqli!');
+            throw new InvalidValueException('Process link must be instanceof \mysqli!');
         }
 
         $i = 0;
