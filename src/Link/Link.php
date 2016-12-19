@@ -38,15 +38,16 @@ final class Link
      * Database agent (aka worker, adapter etc.) names.
      * @const string
      */
-    const AGENT_PDO             = 'pdo',
-          AGENT_MYSQLI          = 'mysqli';
+    const AGENT_PDO             = 'pdo', // pgsql olucak
+          AGENT_MYSQLI          = 'mysqli'; // mysql olucak?
+          // ééééééééééééééééééé 3.0.0 belki 7.1 seylerini de uygularsin ééééééééééééééééé
 
     /**
      * Link statuses.
      * @const int
      */
     const STATUS_CONNECTED      = 1,
-          STATUS_DISCONNECTED   = 0;
+          STATUS_NOTCONNECTED   = 0;
 
     /**
      * Link types.
@@ -182,7 +183,7 @@ final class Link
     {
         if ($this->agent) {
             return $this->agent->isConnected()
-                ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
+                ? self::STATUS_CONNECTED : self::STATUS_NOTCONNECTED;
         }
 
         return false;
