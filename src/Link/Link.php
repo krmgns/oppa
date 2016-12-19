@@ -40,7 +40,6 @@ final class Link
      */
     const AGENT_PDO             = 'pdo', // pgsql olucak
           AGENT_MYSQLI          = 'mysqli'; // mysql olucak?
-          // ééééééééééééééééééé 3.0.0 belki 7.1 seylerini de uygularsin ééééééééééééééééé
 
     /**
      * Link statuses.
