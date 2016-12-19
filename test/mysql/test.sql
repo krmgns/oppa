@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(20) NOT NULL,
   `old` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=940 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `users_login` (
   `user_id` int(10) unsigned NOT NULL,
   `login` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users_login`
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `users_score` (
   `score` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users_score`

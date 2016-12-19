@@ -13,3 +13,6 @@ function pre($input, $e = false) {
 function prd($input, $e = false) {
     var_dump($input); print("\n"); $e && exit;
 }
+
+$autoload = require(__dir__.'/../../src/Autoload.php');
+$autoload->register();

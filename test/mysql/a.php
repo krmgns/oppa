@@ -1,8 +1,5 @@
 <?php
-include('inc.php');
-
-$autoload = require(__dir__.'/../../src/Autoload.php');
-$autoload->register();
+include('_inc.php');
 
 use Oppa\Database;
 
