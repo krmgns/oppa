@@ -38,8 +38,8 @@ final class Link
      * Database agent (aka worker, adapter etc.) names.
      * @const string
      */
-    const AGENT_PDO             = 'pdo', // pgsql olucak
-          AGENT_MYSQLI          = 'mysqli'; // mysql olucak?
+    const AGENT_PGSQL           = 'pgsql',
+          AGENT_MYSQL           = 'mysql';
 
     /**
      * Link statuses.
@@ -198,7 +198,7 @@ final class Link
         $agentName = strtolower((string) $this->config['agent']);
         switch ($agentName) {
             // for now, only mysqli and if time permits i will add more..
-            case self::AGENT_MYSQLI:
+            case self::AGENT_MYSQL:
                 $this->agent = new Agent\Mysqli($this->config);
                 $this->agentName = $agentName;
                 break;
