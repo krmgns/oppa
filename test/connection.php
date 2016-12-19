@@ -23,7 +23,7 @@ $cfg = [
         'query_log'=>true,
         'query_log_level' => Oppa\Logger::ALL,
         'query_log_directory' => __dir__.'/../.logs',
-        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
+        // 'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 3],
     ]
 ];
 
@@ -55,7 +55,7 @@ pre($db->getLink()->getAgent()->query("select * from users"));
 //             ['host' => 'slave2.mysql.local', 'name' => 'test'],
 //             ['host' => 'slave3.mysql.local', 'name' => 'test'],
 //         ],
-//         // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
+//         // 'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 3],
 //     ]
 // ];
 

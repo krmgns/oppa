@@ -17,7 +17,6 @@ $cfg = [
         'name'       => 'test',
         'username'   => 'test',
         'password'   => '********',
-        // 'connect_options' => ['mysqli_opt_connect_timeout' => 3],
     ]
 ];
 

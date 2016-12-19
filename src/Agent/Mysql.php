@@ -122,19 +122,10 @@ final class Mysql extends Agent
         // call big boss
         $this->resource = mysqli_init();
 
-        // supported constants: http://php.net/mysqli.real_connect
-        if (isset($this->config['connect_options'])) {
-            foreach ($this->config['connect_options'] as $option => $value) {
-                if (!is_string($option)) {
-                    throw new InvalidConfigException(
-                        'Please set all connection option constant names as '.
-                        'string to track any setting error!');
-                }
-                $option = strtoupper($option);
-                if (!defined($option)) {
-                    throw new InvalidConfigException("'{$option}' option constant is not defined!");
-                }
-                if (!$this->resource->options(constant($option), $value)) {
+        // supported constants: http://php.net/mysqli.options
+        if (isset($this->config['options'])) {
+            foreach ($this->config['options'] as $option => $value) {
+                if (!$this->resource->options($option, $value)) {
                     throw new Error("Setting '{$option}' option failed!");
                 }
             }
