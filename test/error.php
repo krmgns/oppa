@@ -7,7 +7,7 @@ $autoload->register();
 use Oppa\Database;
 
 // $cfg = [
-//     'agent' => 'mysqli',
+//     'agent' => 'mysql',
 //     'database' => [
 //         'host' => 'localhost',
 //         'name' => 'test',
@@ -24,7 +24,7 @@ use Oppa\Database;
 // }
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     'database' => [
         'host' => 'localhost',
         'name' => 'test',

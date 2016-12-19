@@ -11,7 +11,7 @@ class Db
 {
     private static $instance;
     private static $cfg = [
-        'agent'    => 'mysqli',
+        'agent'    => 'mysql',
         'database' => [
             'host'     => 'localhost',  'name'     => 'test',
             'username' => 'test',       'password' => '********',

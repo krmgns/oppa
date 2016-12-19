@@ -8,7 +8,7 @@ use Oppa\Logger;
 use Oppa\Database;
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     // 'profiling' => true,
     'query_log' => true,
     'query_log_level' => Logger::FAIL,

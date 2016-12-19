@@ -8,7 +8,7 @@ use Oppa\Database;
 use Oppa\Config;
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     'profile' => true,
     'database' => [
         'fetch_type' => 'object',

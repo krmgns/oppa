@@ -9,7 +9,7 @@ use Oppa\Config;
 
 /*** single ***/
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -40,7 +40,7 @@ pre($db->getLink()->getAgent()->query("select * from users"));
 
 /*** sharding ***/
 // $cfg = [
-//     'agent' => 'mysqli',
+//     'agent' => 'mysql',
 //     'sharding' => true,
 //     'database' => [
 //         'fetch_type' => 'object',

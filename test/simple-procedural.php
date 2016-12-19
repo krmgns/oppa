@@ -7,7 +7,7 @@ $autoload->register();
 use Oppa\Database;
 
 static $cfg = [
-    'agent'    => 'mysqli',
+    'agent'    => 'mysql',
     'database' => [
         'host'     => 'localhost',  'name'     => 'test',
         'username' => 'test',       'password' => '********',

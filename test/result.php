@@ -8,7 +8,7 @@ use Oppa\Database;
 use Oppa\Config;
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     // 'profiling' => true,
     'map_result' => true,
     'map_result_tiny2bool' => true,

@@ -9,7 +9,7 @@ use Oppa\ActiveRecord\ActiveRecord;
 
 function db() {
     return new Database([
-        'agent' => 'mysqli',
+        'agent' => 'mysql',
         'profiling' => true,
         'database' => [
             'host' => 'localhost', 'name' => 'test',

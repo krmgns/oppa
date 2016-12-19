@@ -9,7 +9,7 @@ use Oppa\Config;
 use Oppa\Query\Builder as QueryBuilder;
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     'profiling' => true,
     'database' => [
         'fetch_type' => 'object',

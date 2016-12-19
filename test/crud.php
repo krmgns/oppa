@@ -7,7 +7,7 @@ $autoload->register();
 use Oppa\Database;
 
 $cfg = [
-    'agent' => 'mysqli',
+    'agent' => 'mysql',
     'profiling' => true,
     'database' => [
         'fetch_type' => 'object',

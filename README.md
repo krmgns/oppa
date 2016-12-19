@@ -34,11 +34,11 @@ $autoload->register();
 ```php
 // simply for single databases, see wiki for more
 $cfg = [
-   'agent'   => 'mysqli',
+   'agent'    => 'mysql',
    'database' => [
-      'host'    => 'localhost',  'name'    => 'test',
-      'username' => 'test',      'password' => '********',
-      'charset'  => 'utf8',      'timezone' => '+00:00',
+      'host'     => 'localhost',  'name'    => 'test',
+      'username' => 'test',       'password' => '********',
+      'charset'  => 'utf8',       'timezone' => '+00:00',
    ]
 ];
 ```
