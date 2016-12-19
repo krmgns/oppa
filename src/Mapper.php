@@ -111,7 +111,7 @@ final class Mapper
 
     /**
      * Map given data by key.
-     * @param  string $key Table name actually, @see Oppa\Query\Result\Mysqli:process()
+     * @param  string $key Table name actually, @see Oppa\Query\Result\Mysql:process()
      * @param  array  $data
      * @return array
      */

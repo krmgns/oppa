@@ -36,10 +36,10 @@ use Oppa\Exception\{Error, QueryException, InvalidValueException, InvalidConfigE
 /**
  * @package    Oppa
  * @subpackage Oppa\Agent
- * @object     Oppa\Agent\Mysqli
+ * @object     Oppa\Agent\Mysql
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends Agent
+final class Mysql extends Agent
 {
     /**
      * Constructor.
@@ -57,7 +57,7 @@ final class Mysqli extends Agent
         $this->config = $config;
 
         // assign batch object (for transaction)
-        $this->batch = new Batch\Mysqli($this);
+        $this->batch = new Batch\Mysql($this);
 
         // assign data mapper
         $mapping = $this->config['map_result'];
@@ -68,7 +68,7 @@ final class Mysqli extends Agent
         }
 
         // assign result object
-        $this->result = new Result\Mysqli($this);
+        $this->result = new Result\Mysql($this);
         $this->result->setFetchType(
             isset($this->config['fetch_type'])
                 ? $this->config['fetch_type'] : Result\Result::FETCH_OBJECT

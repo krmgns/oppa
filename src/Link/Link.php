@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Link;
 
 use Oppa\Config;
-use Oppa\Agent;
+use Oppa\Agent{Mysql, Pgsql};
 
 /**
  * @package    Oppa
@@ -199,7 +199,7 @@ final class Link
         switch ($agentName) {
             // for now, only mysqli and if time permits i will add more..
             case self::AGENT_MYSQL:
-                $this->agent = new Agent\Mysqli($this->config);
+                $this->agent = new Mysql($this->config);
                 $this->agentName = $agentName;
                 break;
             default:

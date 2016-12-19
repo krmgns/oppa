@@ -28,16 +28,16 @@ use Oppa\Agent;
 /**
  * @package    Oppa
  * @subpackage Oppa\Batch
- * @object     Oppa\Batch\Mysqli
+ * @object     Oppa\Batch\Mysql
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends Batch
+final class Mysql extends Batch
 {
     /**
      * Constructor.
-     * @param Oppa\Agent\Mysqli $agent
+     * @param Oppa\Agent\Mysql $agent
      */
-    final public function __construct(Agent\Mysqli $agent)
+    final public function __construct(Agent\Mysql $agent)
     {
         $this->agent = $agent;
     }

@@ -29,16 +29,16 @@ use Oppa\Exception\InvalidValueException;
 /**
  * @package    Oppa
  * @subpackage Oppa\Query\Result
- * @object     Oppa\Query\Result\Mysqli
+ * @object     Oppa\Query\Result\Mysql
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class Mysqli extends Result
+final class Mysql extends Result
 {
     /**
      * Constructor.
-     * @param Oppa\Agent\Mysqli $agent
+     * @param Oppa\Agent\Mysql $agent
      */
-    final public function __construct(Agent\Mysqli $agent)
+    final public function __construct(Agent\Mysql $agent)
     {
         $this->agent = $agent;
     }
@@ -114,8 +114,8 @@ final class Mysqli extends Result
 
             // map result data
             if (isset($this->agent->mapper)
-                && ($mapper = $this->agent->getMapper())
-                && ($key = $this->result->fetch_field()->orgtable)) {
+                && null != ($mapper = $this->agent->getMapper())
+                && null != ($key = $this->result->fetch_field()->orgtable)) {
                 $this->data = $mapper->map($key, $this->data);
             }
         }
