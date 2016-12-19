@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Link;
 
 use Oppa\Config;
-use Oppa\Agent{Mysql, Pgsql};
+use Oppa\Agent\{Mysql, Pgsql};
 
 /**
  * @package    Oppa
