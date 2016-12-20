@@ -44,33 +44,21 @@ final class Mysql extends Result
     }
 
     /**
-     * Free.
-     * @return void
-     */
-    final public function free()
-    {
-        if ($this->result instanceof \mysqli_result) {
-            $this->result->free();
-            $this->result = null;
-        }
-    }
-
-    /**
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete", etc then process affected result.
      * @param  \mysqli        $resource
      * @param  \mysqli_result $result
-     * @param  int            $limit
-     * @param  int            $fetchType
-     * @return self
+     * @param  int|null       $limit
+     * @param  int|null       $fetchType
+     * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\InvalidValueException
      */
     final public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         // check link
         if (!$resource instanceof \mysqli) {
-            throw new InvalidValueException('Process link must be instanceof \mysqli!');
+            throw new InvalidValueException('Process resource must be instanceof \mysqli!');
         }
 
         $i = 0;
@@ -78,36 +66,37 @@ final class Mysql extends Result
         if ($result instanceof \mysqli_result && $result->num_rows) {
             $this->result = $result;
 
-            if ($limit == null) {
-                $limit = PHP_INT_MAX; // wtf?
+            if ($limit === null) {
+                $limit = ResultInterface::LIMIT;
             }
 
             $fetchType = ($fetchType == null)
                 ? $this->fetchType : $this->detectFetchType($fetchType);
 
             switch ($fetchType) {
-                case self::FETCH_OBJECT:
+                case Result::AS_OBJECT:
                     while ($i < $limit && $row = $this->result->fetch_object()) {
                         $this->data[$i++] = $row;
                     }
                     break;
-                case self::FETCH_ARRAY_ASSOC:
+                case ResultInterface::AS_ARRAY_ASC:
                     while ($i < $limit && $row = $this->result->fetch_assoc()) {
                         $this->data[$i++] = $row;
                     }
                     break;
-                case self::FETCH_ARRAY_NUM:
+                case ResultInterface::AS_ARRAY_NUM:
                     while ($i < $limit && $row = $this->result->fetch_array(MYSQLI_NUM)) {
                         $this->data[$i++] = $row;
                     }
                     break;
-                case self::FETCH_ARRAY_BOTH:
+                case ResultInterface::AS_ARRAY_ASCNUM:
                     while ($i < $limit && $row = $this->result->fetch_array()) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 default:
                     $this->free();
+
                     throw new InvalidValueException(
                         "Could not implement given '{$fetchType}' fetch type!");
             }
@@ -153,5 +142,17 @@ final class Mysql extends Result
         $this->setRowsAffected($resource->affected_rows);
 
         return $this;
+    }
+
+    /**
+     * Free.
+     * @return void
+     */
+    final public function free(): void
+    {
+        if ($this->result instanceof \mysqli_result) {
+            $this->result->free();
+            $this->result = null;
+        }
     }
 }

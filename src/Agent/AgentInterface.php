@@ -43,7 +43,7 @@ interface AgentInterface
      * Disconnect.
      * @return void
      */
-    public function disconnect();
+    public function disconnect(): void;
 
     /**
      * Is connected.
@@ -55,7 +55,7 @@ interface AgentInterface
      * Query.
      * @param  string $query
      * @param  array  $params
-     * @return Oppa\Query\ResultInterface
+     * @return Oppa\Query\Result\ResultInterface
      */
     public function query(string $query, array $params = null): ResultInterface;
 
@@ -69,11 +69,11 @@ interface AgentInterface
 
     /**
      * Get all.
-     * @param string $query
-     * @param array  $params
+     * @param  string $query
+     * @param  array  $params
      * @return array
      */
-    public function getAll(string $query, array $params = null);
+    public function getAll(string $query, array $params = null): array;
 
     /**
      * Select.
@@ -166,8 +166,8 @@ interface AgentInterface
 
     /**
      * Escape.
-     * @param any    $input
-     * @param string $type
+     * @param  any    $input
+     * @param  string $type
      * @return any
      */
     public function escape($input, string $type = null);
@@ -183,9 +183,9 @@ interface AgentInterface
      * Where.
      * @param  string $where
      * @param  array  $params
-     * @return string|null
+     * @return ?string
      */
-    public function where(string $where = null, array $params = null);
+    public function where(string $where = null, array $params = null): ?string;
 
     /**
      * Limit.

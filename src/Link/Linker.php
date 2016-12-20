@@ -23,8 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Link;
 
-use Oppa\Util;
-use Oppa\Config;
+use Oppa\{Util, Config};
 use Oppa\Exception\InvalidConfigException;
 
 /**
@@ -68,7 +67,7 @@ final class Linker
     final public function connect(string $host = null): self
     {
         // link is already active?
-        if (isset($this->links[$host])) {
+        if ($host && isset($this->links[$host])) {
             return $this;
         }
 
@@ -148,10 +147,10 @@ final class Linker
      * @param  string|null $host
      * @return void
      */
-    final public function disconnect(string $host = null)
+    final public function disconnect(string $host = null): void
     {
         // link exists?
-        if (isset($this->links[$host])) {
+        if ($host && isset($this->links[$host])) {
             $this->links[$host]->close();
             unset($this->links[$host]);
         } else {
@@ -197,7 +196,7 @@ final class Linker
     {
         // link exists?
         // e.g: isLinked('localhost')
-        if (isset($this->links[$host])) {
+        if ($host && isset($this->links[$host])) {
             return ($this->links[$host]->status() === Link::STATUS_CONNECTED);
         }
 
@@ -239,7 +238,7 @@ final class Linker
      * @param  Oppa\Link\Link $link
      * @return void
      */
-    final public function setLink(string $host, Link $link)
+    final public function setLink(string $host, Link $link): void
     {
         $this->links[$host] = $link;
     }
@@ -247,13 +246,13 @@ final class Linker
     /**
      * Get link.
      * @param  string|null $host
-     * @return Oppa\Link\Link|null
+     * @return ?Oppa\Link\Link
      */
-    final public function getLink(string $host = null)
+    final public function getLink(string $host = null): ?Link
     {
         // link exists?
         // e.g: getLink('localhost')
-        if (isset($this->links[$host])) {
+        if ($host && isset($this->links[$host])) {
             return $this->links[$host];
         }
 

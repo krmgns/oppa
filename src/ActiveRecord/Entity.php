@@ -88,7 +88,7 @@ final class Entity
      * @param  any    $value
      * @return void
      */
-    final public function __set(string $key, $value)
+    final public function __set(string $key, $value): void
     {
         $this->data[$key] = $value;
     }
@@ -129,7 +129,7 @@ final class Entity
      * @param  string $key
      * @return void
      */
-    final public function __unset(string $key)
+    final public function __unset(string $key): void
     {
         unset($this->data[$key]);
     }
@@ -140,7 +140,7 @@ final class Entity
      * @param  bool  $reset
      * @return void
      */
-    final public function fromArray(array $data, bool $reset = false)
+    final public function fromArray(array $data, bool $reset = false): void
     {
         if ($reset) $this->data = [];
 
@@ -178,13 +178,15 @@ final class Entity
 
     /**
      * Remove.
-     * @return int|null
+     * @return ?int
      */
-    final public function remove()
+    final public function remove():  ?int
     {
         $tablePrimary = $this->ar->getTablePrimary();
         if ($this->__isset($tablePrimary)) {
             return $this->ar->remove($this->__get($tablePrimary));
         }
+
+        return null;
     }
 }

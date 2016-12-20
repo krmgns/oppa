@@ -83,7 +83,7 @@ abstract class Agent implements AgentInterface
      * @param  string $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         return isset($this->{$name});
     }
@@ -182,7 +182,7 @@ abstract class Agent implements AgentInterface
      * @param  bool $all For bulk insert actions.
      * @return any       If all returns array, if not int or null.
      */
-    final public function id($all = false)
+    final public function id(bool $all = false)
     {
         return $this->result->getId($all);
     }
@@ -246,12 +246,11 @@ abstract class Agent implements AgentInterface
 
                     $keys[] = sprintf('~:%s~', $key);
                     $values[] = $this->escape($params[$key]);
-                    $keysUsed[] = $key;
+
+                    // remove used params
+                    unset($params[$key]);
                 }
                 $input = preg_replace($keys, $values, $input, 1);
-
-                // remove used params
-                foreach ($keysUsed as $key) unset($params[$key]);
             }
 
             // available indicator: "?"

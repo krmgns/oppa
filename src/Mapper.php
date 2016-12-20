@@ -35,7 +35,7 @@ final class Mapper
      * Type constants.
      * @const string
      */
-    const
+    public const
         // int
         TYPE_INT        = 'int',
         TYPE_BIGINT     = 'bigint',
@@ -76,7 +76,7 @@ final class Mapper
      * @param  array $map
      * @return void
      */
-    final public function setMap(array $map)
+    final public function setMap(array $map): void
     {
         $this->map = $map;
     }
@@ -95,7 +95,7 @@ final class Mapper
      * @param  array $mapOptions
      * @return void
      */
-    final public function setMapOptions(array $mapOptions)
+    final public function setMapOptions(array $mapOptions): void
     {
         $this->mapOptions = array_merge($this->mapOptions, $mapOptions);
     }
@@ -163,8 +163,7 @@ final class Mapper
             case self::TYPE_BIGINT:
             case self::TYPE_SMALLINT:
             case self::TYPE_MEDIUMINT:
-                $value = ($nullable && $value === null)
-                    ? null : (int) $value;
+                $value = ($nullable && $value === null) ? null : (int) $value;
                 break;
             // tiny it baby.. =)
             case self::TYPE_TINYINT:
@@ -185,8 +184,7 @@ final class Mapper
             case self::TYPE_DOUBLE:
             case self::TYPE_DECIMAL:
             case self::TYPE_REAL:
-                $value = ($nullable && $value === null)
-                    ? null : (float) $value;
+                $value = ($nullable && $value === null) ? null : (float) $value;
                 break;
         }
 

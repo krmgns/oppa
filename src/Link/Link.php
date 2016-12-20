@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Link;
 
 use Oppa\Config;
-use Oppa\Agent\{Mysql, Pgsql};
+use Oppa\Agent\{AgentInterface, Mysql, Pgsql};
 
 /**
  * @package    Oppa
@@ -38,23 +38,23 @@ final class Link
      * Database agent (aka worker, adapter etc.) names.
      * @const string
      */
-    const AGENT_PGSQL           = 'pgsql',
-          AGENT_MYSQL           = 'mysql';
+    public const AGENT_PGSQL           = 'pgsql',
+                 AGENT_MYSQL           = 'mysql';
 
     /**
      * Link statuses.
      * @const int
      */
-    const STATUS_CONNECTED      = 1,
-          STATUS_NOTCONNECTED   = 0;
+    public const STATUS_CONNECTED      = 1,
+                 STATUS_NOTCONNECTED   = 0;
 
     /**
      * Link types.
      * @const string
      */
-    const TYPE_SINGLE           = 'single',
-          TYPE_MASTER           = 'master',
-          TYPE_SLAVE            = 'slave';
+    public const TYPE_SINGLE           = 'single',
+                 TYPE_MASTER           = 'master',
+                 TYPE_SLAVE            = 'slave';
 
     /**
      * Type.
@@ -130,18 +130,18 @@ final class Link
 
     /**
      * Get agent.
-     * @return Oppa\Agent\AgentInterface|null
+     * @return ?Oppa\Agent\AgentInterface
      */
-    final public function getAgent()
+    final public function getAgent(): ?AgentInterface
     {
         return $this->agent;
     }
 
     /**
      * Get agent name.
-     * @return string|null
+     * @return ?string
      */
-    final public function getAgentName()
+    final public function getAgentName(): ?string
     {
         return $this->agentName;
     }
@@ -159,7 +159,7 @@ final class Link
      * Open.
      * @return void
      */
-    final public function open()
+    final public function open(): void
     {
         $this->agent && $this->agent->connect();
     }
@@ -168,7 +168,7 @@ final class Link
      * Close.
      * @return void
      */
-    final public function close()
+    final public function close(): void
     {
         $this->agent && $this->agent->disconnect();
     }
@@ -193,7 +193,7 @@ final class Link
      * @return void
      * @throws \RuntimeException
      */
-    final private function attachAgent()
+    final private function attachAgent(): void
     {
         $agentName = strtolower((string) $this->config['agent']);
         switch ($agentName) {
@@ -211,7 +211,7 @@ final class Link
      * Detach agent.
      * @return void
      */
-    final private function detachAgent()
+    final private function detachAgent(): void
     {
         $this->agent = null;
         $this->agentName = null;

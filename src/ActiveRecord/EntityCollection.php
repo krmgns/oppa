@@ -55,7 +55,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * @param  int $i
      * @return void
      */
-    final public function remove(int $i)
+    final public function remove(int $i): void
     {
         unset($this->collection[$i]);
     }
@@ -63,27 +63,27 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     /**
      * Get.
      * @param  int $i
-     * @return Oppa\ActiveRecord\Entity|null
+     * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function item($i)
+    final public function item($i): ?Entity
     {
         return $this->collection[$i] ?? null;
     }
 
     /**
      * First.
-     * @return Oppa\ActiveRecord\Entity|null
+     * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function first()
+    final public function first(): ?Entity
     {
         return $this->item(0);
     }
 
     /**
      * Last.
-     * @return Oppa\ActiveRecord\Entity|null
+     * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function last()
+    final public function last(): ?Entity
     {
         return $this->item(count($this->collection) - 1);
     }

@@ -23,14 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\Util;
-use Oppa\Config;
-use Oppa\Logger;
-use Oppa\Mapper;
-use Oppa\Profiler;
-use Oppa\Batch;
-use Oppa\Query\Sql;
-use Oppa\Query\Result;
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch};
+use Oppa\Query\{Sql, Result};
 use Oppa\Exception\{Error, QueryException, InvalidValueException, InvalidConfigException};
 
 /**
@@ -60,8 +54,7 @@ final class Mysql extends Agent
         $this->batch = new Batch\Mysql($this);
 
         // assign data mapper
-        $mapping = $this->config['map_result'];
-        if ($mapping === true) {
+        if ($this->config['map_result']) {
             $this->mapper = new Mapper([
                 'tiny2bool' => (bool) $this->config['map_result_tiny2bool'],
             ]);
@@ -69,13 +62,10 @@ final class Mysql extends Agent
 
         // assign result object
         $this->result = new Result\Mysql($this);
-        $this->result->setFetchType(
-            isset($this->config['fetch_type'])
-                ? $this->config['fetch_type'] : Result\Result::FETCH_OBJECT
-        );
+        $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
 
         // assign logger if config'ed
-        if ($this->config['query_log'] == true) {
+        if ($this->config['query_log']) {
             $this->logger = new Logger();
             isset($this->config['query_log_level']) &&
                 $this->logger->setLevel($this->config['query_log_level']);
@@ -84,7 +74,7 @@ final class Mysql extends Agent
         }
 
         // assign profiler if config'ed
-        if ($this->config['profile'] == true) {
+        if ($this->config['profile']) {
             $this->profiler = new Profiler();
         }
     }
@@ -160,7 +150,7 @@ final class Mysql extends Agent
         // set timezone for connection
         if (isset($this->config['timezone'])) {
             $run = (bool) $this->resource->query($this->prepare(
-                "SET `time_zone` = ?", [$this->config['timezone']]));
+                'SET `time_zone` = ?', [$this->config['timezone']]));
             if ($run === false) {
                 throw new Error(sprintf('Query error! errmsg[%s]', $this->resource->error));
             }
@@ -202,7 +192,7 @@ final class Mysql extends Agent
      * Disconnect.
      * @return void
      */
-    final public function disconnect()
+    final public function disconnect(): void
     {
         if ($this->resource) {
             $this->resource->close();
@@ -225,11 +215,11 @@ final class Mysql extends Agent
      * @param  array     $params    Prepare params.
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
-     * @return Oppa\Query\ResultInterface
+     * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\InvalidValueException, Oppa\QueryException
      */
-    final public function query(string $query, array $params = null,
-        $limit = null, $fetchType = null): Result\ResultInterface
+    final public function query(string $query, array $params = null, $limit = null,
+        $fetchType = null): Result\ResultInterface
     {
         // reset result vars
         $this->result->reset();
@@ -303,9 +293,9 @@ final class Mysql extends Agent
 
     /**
      * Get all.
-     * @param string $query
-     * @param array  $params
-     * @param int    $fetchType
+     * @param  string $query
+     * @param  array  $params
+     * @param  int    $fetchType
      * @return array
      */
     final public function getAll(string $query, array $params = null, int $fetchType = null): array
@@ -509,9 +499,9 @@ final class Mysql extends Agent
      * Prepare "WHERE" statement.
      * @param  string $where
      * @param  array  $params
-     * @return string|null
+     * @return ?string
      */
-    final public function where(string $where = null, array $params = null)
+    final public function where(string $where = null, array $params = null): ?string
     {
         if (!empty($params)) {
             $where = 'WHERE '. $this->prepare($where, $params);

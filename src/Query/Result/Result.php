@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
+use Oppa\Agent\AgentInterface;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Query\Result
@@ -31,15 +33,6 @@ namespace Oppa\Query\Result;
  */
 abstract class Result implements ResultInterface
 {
-    /**
-     * Fetch types.
-     * @const int
-     */
-    const FETCH_OBJECT      = 1, // @default
-          FETCH_ARRAY_ASSOC = 2,
-          FETCH_ARRAY_NUM   = 3,
-          FETCH_ARRAY_BOTH  = 4;
-
     /**
      * Agent.
      * @var Oppa\Agent\AgentInterface
@@ -83,10 +76,28 @@ abstract class Result implements ResultInterface
     protected $rowsAffected = 0;
 
     /**
+     * Get agent.
+     * @return Oppa\Agent\AgentInterface
+     */
+    final public function getAgent(): AgentInterface
+    {
+        return $this->agent;
+    }
+
+    /**
+     * Get result.
+     * @return object|resource
+     */
+    final public function getResult()
+    {
+        return $this->resource;
+    }
+
+    /**
      * Reset.
      * @return void
      */
-    final public function reset()
+    final public function reset(): void
     {
         // reset data
         $this->data = [];
@@ -115,7 +126,7 @@ abstract class Result implements ResultInterface
         }
 
         // or could be string as default like 'object', 'array_assoc' etc.
-        $fetchTypeConst = 'self::FETCH_'. strtoupper($fetchType);
+        $fetchTypeConst = 'self::AS_'. strtoupper($fetchType);
         if (!defined($fetchTypeConst)) {
             throw new InvalidValueException("Given '{$fetchType}' fetch type is not implemented!");
         }
@@ -128,7 +139,7 @@ abstract class Result implements ResultInterface
      * @param  int|string $fetchType
      * @return void
      */
-    final public function setFetchType($fetchType)
+    final public function setFetchType($fetchType): void
     {
         $this->fetchType = $this->detectFetchType($fetchType);
     }
@@ -147,7 +158,7 @@ abstract class Result implements ResultInterface
      * @param  int|array $id
      * @return void
      */
-    final public function setId($id)
+    final public function setId($id): void
     {
         $this->id = (array) $id;
     }
@@ -155,16 +166,26 @@ abstract class Result implements ResultInterface
     /**
      * Get id(s).
      * @param  bool $all Returns an array containing all ids.
-     * @return int|array|null
+     * @return int|null  If $all false.
+     * @return array     If $all true.
      */
     final public function getId(bool $all = false)
     {
+        // only last insert id
         if (!$all) {
-            // only last insert id
             return (false !== ($id = end($this->id))) ? $id : null;
         }
 
-        // all insert ids
+        // all last insert id's
+        return $this->id;
+    }
+
+    /**
+     * Get ids.
+     * @return array
+     */
+    final public function getIds(): array
+    {
         return $this->id;
     }
 
@@ -173,7 +194,7 @@ abstract class Result implements ResultInterface
      * @param  int $count
      * @return void
      */
-    final public function setRowsCount(int $count)
+    final public function setRowsCount(int $count): void
     {
         $this->rowsCount = $count;
     }
@@ -189,9 +210,10 @@ abstract class Result implements ResultInterface
 
     /**
      * Set rows affected.
-     * @param int $count
+     * @param  int $count
+     * @return void
      */
-    final public function setRowsAffected(int $count)
+    final public function setRowsAffected(int $count): void
     {
         $this->rowsAffected = $count;
     }
@@ -213,8 +235,7 @@ abstract class Result implements ResultInterface
     final public function getData(int $i = null)
     {
         if ($i !== null) {
-            return isset($this->data[$i])
-                ? $this->data[$i] : null;
+            return $this->data[$i] ?? null;
         }
 
         return $this->data;

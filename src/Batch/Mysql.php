@@ -136,7 +136,7 @@ final class Mysql extends Batch
      * Cancel.
      * @return void
      */
-    final public function cancel()
+    final public function cancel(): void
     {
         // get big boss
         $resource = $this->agent->getResource();

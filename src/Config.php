@@ -86,7 +86,7 @@ final class Config implements \ArrayAccess
      * @param  string $key
      * @return void
      */
-    final public function __unset(string $key)
+    final public function __unset(string $key): void
     {
         unset($this->options[$key]);
     }
@@ -122,18 +122,18 @@ final class Config implements \ArrayAccess
 
     /**
      * Set an option.
-     * @param  any $key
+     * @param  int|string $key
      * @param  any $value
      * @return self
      */
-    final public function offsetSet($key, $value)
+    final public function offsetSet($key, $value): self
     {
         return $this->set($key, $value);
     }
 
     /**
      * Get an option.
-     * @param  any $key
+     * @param  int|string $key
      * @return any
      */
     final public function offsetGet($key)
@@ -143,10 +143,10 @@ final class Config implements \ArrayAccess
 
     /**
      * Check an option.
-     * @param  any $key
+     * @param  int|string $key
      * @return bool
      */
-    final public function offsetExists($key)
+    final public function offsetExists($key): bool
     {
         return $this->__isset($key);
     }
@@ -156,7 +156,7 @@ final class Config implements \ArrayAccess
      * @param  any $key
      * @return void
      */
-    final public function offsetUnset($key)
+    final public function offsetUnset($key): void
     {
         $this->__unset($key);
     }

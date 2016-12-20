@@ -32,23 +32,39 @@ namespace Oppa\Query\Result;
 interface ResultInterface extends \Countable, \IteratorAggregate
 {
     /**
+     * Fetch limit.
+     * @const int
+     */
+    public const LIMIT           = 1000000; // 1 million rows..
+
+    /**
+     * Fetch types.
+     * @const int
+     */
+    public const AS_OBJECT       = 1, // @default
+                 AS_ARRAY_ASC    = 2,
+                 AS_ARRAY_NUM    = 3,
+                 AS_ARRAY_ASCNUM = 4;
+
+    /**
      * Free.
      * @return void
      */
-    public function free();
+    public function free(): void;
 
     /**
      * Reset.
      * @return void
      */
-    public function reset();
+    public function reset(): void;
 
     /**
      * Process.
-     * @param object|resource $resource
-     * @param object|resource $result
-     * @param int             $limit
-     * @param string          $fetchType
+     * @param  object|resource $resource
+     * @param  object|resource $result
+     * @param  int             $limit
+     * @param  string          $fetchType
+     * @return Oppa\Query\Result\ResultInterface
      */
     public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface;
 }

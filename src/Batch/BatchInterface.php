@@ -69,5 +69,5 @@ interface BatchInterface
      * Cancel.
      * @return void
      */
-    public function cancel();
+    public function cancel(): void;
 }

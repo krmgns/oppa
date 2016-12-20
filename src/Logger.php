@@ -34,34 +34,14 @@ use Oppa\Exception\InvalidConfigException;
 final class Logger
 {
     /**
-     * All.
+     * Levels.
      * @const int
      */
-    const ALL = 30; // FAIL | WARN | INFO | DEBUG
-
-    /**
-     * Fail.
-     * @const int
-     */
-    const FAIL = 2;
-
-    /**
-     * Warn.
-     * @const int
-     */
-    const WARN = 4;
-
-    /**
-     * Info.
-     * @const int
-     */
-    const INFO = 8;
-
-    /**
-     * Debug.
-     * @const int
-     */
-    const DEBUG = 16;
+    public const ALL = 30, // FAIL | WARN | INFO | DEBUG,
+                 FAIL = 2,
+                 WARN = 4,
+                 INFO = 8,
+                 DEBUG = 16;
 
     /**
      * Level.
@@ -92,7 +72,7 @@ final class Logger
      * @param  int $level
      * @return void
      */
-    final public function setLevel(int $level)
+    final public function setLevel(int $level): void
     {
         $this->level = $level;
     }
@@ -111,16 +91,16 @@ final class Logger
      * @param  string $directory
      * @return void
      */
-    final public function setDirectory(string $directory)
+    final public function setDirectory(string $directory): void
     {
         $this->directory = $directory;
     }
 
     /**
      * Get directory.
-     * @return string
+     * @return ?string
      */
-    final public function getDirectory(): string
+    final public function getDirectory(): ?string
     {
         return $this->directory;
     }
@@ -160,7 +140,7 @@ final class Logger
      * Log.
      * @param  int    $level
      * @param  string $message
-     * @return bool|null
+     * @return void|bool
      */
     final public function log(int $level, string $message)
     {

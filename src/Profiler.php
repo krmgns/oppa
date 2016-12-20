@@ -36,9 +36,9 @@ final class Profiler
      * Profile keys.
      * @const string
      */
-    const CONNECTION  = 'connection',
-          QUERY       = 'query',
-          TRANSACTION = 'transaction'; // @notimplemented
+    public const CONNECTION  = 'connection',
+                 QUERY       = 'query',
+                 TRANSACTION = 'transaction'; // @notimplemented
 
     /**
      * Profiles.
@@ -89,16 +89,16 @@ final class Profiler
      * @param  string $query
      * @return void
      */
-    final public function addQuery(string $query)
+    final public function addQuery(string $query): void
     {
         $this->profiles[self::QUERY][++$this->queryCount]['string'] = $query;
     }
 
     /**
      * Get last query.
-     * @return string|null
+     * @return ?string
      */
-    final public function getLastQuery()
+    final public function getLastQuery(): ?string
     {
         return $this->profiles[self::QUERY][$this->queryCount]['string'] ?? null;
     }
@@ -118,7 +118,7 @@ final class Profiler
      * @return void
      * @throws Oppa\InvalidKeyException
      */
-    final public function start(string $key)
+    final public function start(string $key): void
     {
         switch ($key) {
             case self::CONNECTION:
@@ -145,7 +145,7 @@ final class Profiler
      * @return void
      * @throws Oppa\InvalidKeyException
      */
-    final public function stop(string $key)
+    final public function stop(string $key): void
     {
         if (!isset($this->profiles[$key])) {
             throw new InvalidKeyException("Could not find a '{$key}' profile key!");
@@ -173,7 +173,7 @@ final class Profiler
      * Reset.
      * @return void
      */
-    final public function reset()
+    final public function reset(): void
     {
         $this->profiles = [];
     }

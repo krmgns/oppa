@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Query;
 
 use Oppa\Link\Link;
+use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\InvalidValueException;
 
 /**
@@ -38,22 +39,22 @@ final class Builder
      * And/or operators.
      * @const string
      */
-    const OP_OR = 'OR',
-          OP_AND = 'AND';
+    public const OP_OR       = 'OR',
+                 OP_AND      = 'AND';
 
     /**
      * Asc/desc operators.
      * @const string
      */
-    const OP_ASC = 'ASC',
-          OP_DESC = 'DESC';
+    public const OP_ASC      = 'ASC',
+                 OP_DESC     = 'DESC';
 
     /**
      * Select type for JSON returns.
      * @const string
      */
-    const JSON_ARRAY = 'array',
-          JSON_OBJECT = 'object';
+    public const JSON_ARRAY  = 'array',
+                 JSON_OBJECT = 'object';
 
     /**
      * Link.
@@ -758,9 +759,9 @@ final class Builder
 
     /**
      * Execute builded query.
-     * @return any
+     * @return : Oppa\Query\Result\ResultInterface
      */
-    final public function execute()
+    final public function execute(): ResultInterface
     {
         return $this->link->getAgent()->query($this->toString());
     }
@@ -776,9 +777,9 @@ final class Builder
 
     /**
      * Shortcut for select all operations.
-     * @return any
+     * @return array
      */
-    final public function getAll()
+    final public function getAll(): array
     {
         return $this->link->getAgent()->getAll($this->toString());
     }

@@ -314,7 +314,7 @@ abstract class ActiveRecord
      * @param  Oppa\Database $db
      * @return void
      */
-    final public function setDatabase(Database $db)
+    final public function setDatabase(Database $db): void
     {
         $this->db = $db;
     }
