@@ -31,16 +31,33 @@ namespace Oppa;
 final class Util
 {
     /**
-     * Shuffle array and get a random value.
+     * Array rand.
      * @param  array $array
-     * @param  any   $valueDefault
+     * @param  any   $value
      * @return any
      */
-    final public static function arrayRand(array $array, $valueDefault = null)
+    final public static function arrayRand(array $array, $value = null)
     {
         shuffle($array);
 
-        return $array[0] ?? $valueDefault;
+        return $array[0] ?? $value;
+    }
+
+    /**
+     * Array pick.
+     * @param  array      &$array
+     * @param  int|string $key
+     * @param  any        $value
+     * @return any
+     */
+    final public static function arrayPick(array &$array, $key, $value = null)
+    {
+        if (array_key_exists($key, $array)) {
+            $value = $array[$key] ?? $value;
+            unset($array[$key]);
+        }
+
+        return $value;
     }
 
     /**
