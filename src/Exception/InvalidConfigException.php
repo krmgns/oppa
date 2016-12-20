@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package Oppa
- * @object  Oppa\InvalidConfigException
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @package    Oppa
+ * @subpackage Oppa\Exception
+ * @object     Oppa\Exception\InvalidConfigException
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class InvalidConfigException extends \InvalidArgumentException
 {}

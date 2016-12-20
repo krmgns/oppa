@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package Oppa
- * @object  Oppa\InvalidValueException
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @package    Oppa
+ * @subpackage Oppa\Exception
+ * @object     Oppa\Exception\InvalidValueException
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class InvalidValueException extends \InvalidArgumentException
 {}

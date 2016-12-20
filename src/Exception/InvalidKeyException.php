@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package Oppa
- * @object  Oppa\InvalidKeyException
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @package    Oppa
+ * @subpackage Oppa\Exception
+ * @object     Oppa\Exception\InvalidKeyException
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class InvalidKeyException extends \InvalidArgumentException
 {}

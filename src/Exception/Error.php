@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package Oppa
- * @object  Oppa\Error
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @package    Oppa
+ * @subpackage Oppa\Exception
+ * @object     Oppa\Exception\Error
+ * @author     Kerem Güneş <k-gun@mail.com>
  */
 final class Error extends \Error
 {}
