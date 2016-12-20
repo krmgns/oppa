@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch};
 use Oppa\Query\{Sql, Result};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch};
 use Oppa\Exception\{Error, QueryException, InvalidValueException, InvalidConfigException};
 
 /**
@@ -42,12 +42,11 @@ final class Mysql extends Agent
      */
     final public function __construct(Config $config)
     {
-        // we need it like crazy..
+        // we need it like a crazy..
         if (!extension_loaded('mysqli')) {
-            throw new \RuntimeException('Mysqli extension is not loaded.');
+            throw new \RuntimeException('mysqli extension is not loaded.');
         }
 
-        // assign config
         $this->config = $config;
 
         // assign batch object (for transaction)
@@ -100,12 +99,11 @@ final class Mysql extends Agent
             return $this->resource;
         }
 
-        // export credentials
+        // export credentials & others
         list($host, $name, $username, $password) = [
             $this->config['host'], $this->config['name'],
             $this->config['username'], $this->config['password'],
         ];
-        // get port/socket options if provided
         $port = (int) $this->config['port'];
         $socket = (string) $this->config['socket'];
 
@@ -206,7 +204,7 @@ final class Mysql extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->resource && $this->resource->connect_errno === 0);
+        return ($this->resource != null && $this->resource->connect_errno === 0);
     }
 
     /**
