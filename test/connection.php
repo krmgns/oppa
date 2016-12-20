@@ -20,14 +20,14 @@ $cfg = [
         'query_log'=>true,
         'query_log_level' => Oppa\Logger::ALL,
         'query_log_directory' => __dir__.'/../.logs',
-        // 'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 3],
+        'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 0],
     ]
 ];
 
 $db = new Database($cfg);
 $db->connect();
 // pre($db);
-pre($db->getLink()->getAgent()->query("select * from users"));
+// pre($db->getLink()->getAgent()->query("select * from users"));
 // pre($db->getLink());
 // pre($db->getLink('localhost'));
 
