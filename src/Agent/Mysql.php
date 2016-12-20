@@ -150,7 +150,8 @@ final class Mysql extends Agent
             $run = (bool) $this->resource->query($this->prepare(
                 'SET `time_zone` = ?', [$this->config['timezone']]));
             if ($run === false) {
-                throw new QueryException(sprintf('Query error! errmsg[%s]', $this->resource->error));
+                throw new QueryException(sprintf('Query error! errno[%d] errmsg[%s]',
+                    $this->resource->errno, $this->resource->error));
             }
         }
 
