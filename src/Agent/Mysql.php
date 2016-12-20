@@ -25,7 +25,7 @@ namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
 use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch};
-use Oppa\Exception\{Error, QueryException, InvalidValueException, InvalidConfigException};
+use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
 /**
  * @package    Oppa
@@ -123,7 +123,7 @@ final class Mysql extends Agent
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
         if (!$this->resource->real_connect($host, $username, $password, $name, $port, $socket)) {
-            throw new Error(sprintf(
+            throw new ConnectionException(sprintf(
                 'Connection error! errno[%d] errmsg[%s]',
                     $this->resource->connect_errno, $this->resource->connect_error));
         }
@@ -139,7 +139,7 @@ final class Mysql extends Agent
         if (isset($this->config['charset'])) {
             $run = (bool) $this->resource->set_charset($this->config['charset']);
             if ($run === false) {
-                throw new Error(sprintf(
+                throw new QueryException(sprintf(
                     "Failed setting charset as '%s'! errno[%d] errmsg[%s]",
                         $this->config['charset'], $this->resource->errno, $this->resource->error));
             }
@@ -150,7 +150,7 @@ final class Mysql extends Agent
             $run = (bool) $this->resource->query($this->prepare(
                 'SET `time_zone` = ?', [$this->config['timezone']]));
             if ($run === false) {
-                throw new Error(sprintf('Query error! errmsg[%s]', $this->resource->error));
+                throw new QueryException(sprintf('Query error! errmsg[%s]', $this->resource->error));
             }
         }
 
