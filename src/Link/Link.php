@@ -161,7 +161,7 @@ final class Link
      */
     final public function open(): void
     {
-        $this->agent && $this->agent->connect();
+        $this->agent->connect();
     }
 
     /**
@@ -170,7 +170,7 @@ final class Link
      */
     final public function close(): void
     {
-        $this->agent && $this->agent->disconnect();
+        $this->agent->disconnect();
     }
 
     /**
@@ -180,7 +180,7 @@ final class Link
      */
     final public function status()
     {
-        if ($this->agent) {
+        if ($this->agent != null) {
             return $this->agent->isConnected()
                 ? self::STATUS_CONNECTED : self::STATUS_NOTCONNECTED;
         }
@@ -195,15 +195,16 @@ final class Link
      */
     final private function attachAgent(): void
     {
-        $agentName = strtolower((string) $this->config['agent']);
-        switch ($agentName) {
-            // for now, only mysqli and if time permits i will add more..
+        $this->agentName = strtolower((string) $this->config['agent']);
+        switch ($this->agentName) {
             case self::AGENT_MYSQL:
                 $this->agent = new Mysql($this->config);
-                $this->agentName = $agentName;
+                break;
+            case self::AGENT_PGSQL:
+                $this->agent = new Pgsql($this->config);
                 break;
             default:
-                throw new \RuntimeException("Sorry, but '{$agentName}' agent not implemented!");
+                throw new \RuntimeException("Sorry, but '{$this->agentName}' agent not implemented!");
         }
     }
 
