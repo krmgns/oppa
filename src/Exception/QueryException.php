@@ -29,5 +29,5 @@ namespace Oppa\Exception;
  * @object     Oppa\Exception\QueryException
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class QueryException extends \ErrorException
+final class QueryException extends SqlException
 {}

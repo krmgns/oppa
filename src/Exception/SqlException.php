@@ -26,8 +26,43 @@ namespace Oppa\Exception;
 /**
  * @package    Oppa
  * @subpackage Oppa\Exception
- * @object     Oppa\Exception\ConnectionException
+ * @object     Oppa\Exception\SqlException
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-final class ConnectionException extends SqlException
-{}
+class SqlException extends \Exception
+{
+    /**
+     * SQL state.
+     * @var ?string
+     */
+    protected $sqlState;
+
+    /**
+     * Constructor.
+     * @param string $message
+     * @param int    $code
+     * @param string $sqlState
+     */
+    final public function __construct(string $message = '', int $code = 0, string $sqlState = null,
+        \Throwable $previous = null)
+    {
+        // set state
+        $this->sqlState = $sqlState;
+
+        // prepend state to message
+        if ($this->sqlState != null) {
+            $message = sprintf('SQLSTATE[%s]: %s', $this->sqlState, $message);
+        }
+
+        parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * Get State
+     * @return ?string
+     */
+    final public function getSqlState(): ?string
+    {
+        return $this->sqlState;
+    }
+}
