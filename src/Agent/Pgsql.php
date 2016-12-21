@@ -74,8 +74,7 @@ final class Pgsql //extends Agent
         }
 
         if (!$this->resource) {
-            [$eCode, $eMessage] = Util::getLastError();
-            throw new ConnectionException($eMessage, $eCode, SqlState\Pgsql::CONNECTION_FAILURE);
+            throw new ConnectionException(error_get_last()['message'], null, SqlState\Pgsql::CONNECTION_FAILURE);
         }
 
         return $this->resource;
