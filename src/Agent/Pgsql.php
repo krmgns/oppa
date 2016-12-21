@@ -68,9 +68,9 @@ final class Pgsql //extends Agent
         }
 
         if ($connectionType == 0) {
-            $this->resource =@ pg_connect($connectionString);
+            $this->resource = pg_connect($connectionString);
         } else {
-            $this->resource =@ pg_connect($connectionString, $connectionType);
+            $this->resource = pg_connect($connectionString, $connectionType);
         }
 
         if (!$this->resource) {
@@ -94,5 +94,7 @@ final class Pgsql //extends Agent
     }
 
     final public function query(string $query, array $params = null): Result\ResultInterface
-    {}
+    {
+        //
+    }
 }
