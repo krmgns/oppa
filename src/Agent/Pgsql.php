@@ -82,7 +82,7 @@ final class Pgsql //extends Agent
 
     final public function disconnect(): void
     {
-        if ($this->resource != null) {
+        if (is_resource($this->resource)) {
             pg_close($this->resource);
             $this->resource = null;
         }
@@ -90,7 +90,7 @@ final class Pgsql //extends Agent
 
     final public function isConnected(): bool
     {
-        return ($this->resource != null && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK);
+        return (is_resource($this->resource) && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK);
     }
 
     final public function query(string $query, array $params = null): Result\ResultInterface
