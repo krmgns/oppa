@@ -32,10 +32,16 @@ namespace Oppa\SqlState;
  */
 abstract class Pgsql
 {
-    // 00 - successful completion
+    /**
+     * 00 - successful completion
+     * @const string
+     */
     public const OK = '00000';
 
-    // 01 - warning
+    /**
+     * 01 - warning
+     * @const string
+     */
     public const WARNING = '01000';
     public const DYNAMIC_RESULT_SETS_RETURNED = '0100C';
     public const IMPLICIT_ZERO_BIT_PADDING = '01008';
@@ -45,14 +51,23 @@ abstract class Pgsql
     public const STRING_DATA_RIGHT_TRUNCATION_WRN = '01004';
     public const DEPRECATED_FEATURE = '01P01';
 
-    // 02 - no data (this is also a warning class per the sql standard)
+    /**
+     * 02 - no data (this is also a warning class per the sql standard)
+     * @const string
+     */
     public const NO_DATA = '02000';
     public const NO_ADDITIONAL_DYNAMIC_RESULT_SETS_RETURNED = '02001';
 
-    // 03 - sql statement not yet complete
+    /**
+     * 03 - sql statement not yet complete
+     * @const string
+     */
     public const SQL_STATEMENT_NOT_YET_COMPLETE = '03000';
 
-    // 08 - connection exception
+    /**
+     * 08 - connection exception
+     * @const string
+     */
     public const CONNECTION_EXCEPTION = '08000';
     public const CONNECTION_DOES_NOT_EXIST = '08003';
     public const CONNECTION_FAILURE = '08006';
@@ -61,37 +76,67 @@ abstract class Pgsql
     public const TRANSACTION_RESOLUTION_UNKNOWN = '08007';
     public const PROTOCOL_VIOLATION = '08P01';
 
-    // 09 - triggered action exception
+    /**
+     * 09 - triggered action exception
+     * @const string
+     */
     public const TRIGGERED_ACTION_EXCEPTION = '09000';
 
-    // 0a - feature not supported
+    /**
+     * 0a - feature not supported
+     * @const string
+     */
     public const FEATURE_NOT_SUPPORTED = '0A000';
 
-    // 0b - invalid transaction initiation
+    /**
+     * 0b - invalid transaction initiation
+     * @const string
+     */
     public const INVALID_TRANSACTION_INITIATION = '0B000';
 
-    // 0f - locator exception
+    /**
+     * 0f - locator exception
+     * @const string
+     */
     public const LOCATOR_EXCEPTION = '0F000';
     public const INVALID_LOCATOR_SPECIFICATION = '0F001';
 
-    // 0l - invalid grantor
+    /**
+     * 0l - invalid grantor
+     * @const string
+     */
     public const INVALID_GRANTOR = '0L000';
     public const INVALID_GRANT_OPERATION = '0LP01';
 
-    // 0p - invalid role specification
+    /**
+     * 0p - invalid role specification
+     * @const string
+     */
     public const INVALID_ROLE_SPECIFICATION = '0P000';
 
-    // 0z - diagnostics exception
+    /**
+     * 0z - diagnostics exception
+     * @const string
+     */
     public const DIAGNOSTICS_EXCEPTION = '0Z000';
     public const STACKED_DIAGNOSTICS_ACCESSED_WITHOUT_ACTIVE_HANDLER = '0Z002';
 
-    // 20 - case not found
+    /**
+     * 20 - case not found
+     * @const string
+     */
     public const CASE_NOT_FOUND = '20000';
 
-    // 21 - cardinality violation
+    /**
+     * 21 - cardinality violation
+     * @const string
+     */
     public const CARDINALITY_VIOLATION = '21000';
 
-    // 22 - data exception
+    /**
+     * 22 - data exception
+     * @const string
+     */
     public const DATA_EXCEPTION = '22000';
     public const ARRAY_SUBSCRIPT_ERROR = '2202E';
     public const CHARACTER_NOT_IN_REPERTOIRE = '22021';
@@ -142,7 +187,10 @@ abstract class Pgsql
     public const INVALID_XML_COMMENT = '2200S';
     public const INVALID_XML_PROCESSING_INSTRUCTION = '2200T';
 
-    // 23 - integrity constraint violation
+    /**
+     * 23 - integrity constraint violation
+     * @const string
+     */
     public const INTEGRITY_CONSTRAINT_VIOLATION = '23000';
     public const RESTRICT_VIOLATION = '23001';
     public const NOT_NULL_VIOLATION = '23502';
@@ -151,10 +199,16 @@ abstract class Pgsql
     public const CHECK_VIOLATION = '23514';
     public const EXCLUSION_VIOLATION = '23P01';
 
-    // 24 - invalid cursor state
+    /**
+     * 24 - invalid cursor state
+     * @const string
+     */
     public const INVALID_CURSOR_STATE = '24000';
 
-    // 25 - invalid transaction state
+    /**
+     * 25 - invalid transaction state
+     * @const string
+     */
     public const INVALID_TRANSACTION_STATE = '25000';
     public const ACTIVE_SQL_TRANSACTION = '25001';
     public const BRANCH_TRANSACTION_ALREADY_ACTIVE = '25002';
@@ -168,41 +222,68 @@ abstract class Pgsql
     public const IN_FAILED_SQL_TRANSACTION = '25P02';
     public const IDLE_IN_TRANSACTION_SESSION_TIMEOUT = '25P03';
 
-    // 26 - invalid sql statement name
+    /**
+     * 26 - invalid sql statement name
+     * @const string
+     */
     public const INVALID_SQL_STATEMENT_NAME = '26000';
 
-    // 27 - triggered data change violation
+    /**
+     * 27 - triggered data change violation
+     * @const string
+     */
     public const TRIGGERED_DATA_CHANGE_VIOLATION = '27000';
 
-    // 28 - invalid authorization specification
+    /**
+     * 28 - invalid authorization specification
+     * @const string
+     */
     public const INVALID_AUTHORIZATION_SPECIFICATION = '28000';
     public const INVALID_PASSWORD = '28P01';
 
-    // 2b - dependent privilege descriptors still exist
+    /**
+     * 2b - dependent privilege descriptors still exist
+     * @const string
+     */
     public const DEPENDENT_PRIVILEGE_DESCRIPTORS_STILL_EXIST = '2B000';
     public const DEPENDENT_OBJECTS_STILL_EXIST = '2BP01';
 
-    // 2d - invalid transaction termination
+    /**
+     * 2d - invalid transaction termination
+     * @const string
+     */
     public const INVALID_TRANSACTION_TERMINATION = '2D000';
 
-    // 2f - sql routine exception
+    /**
+     * 2f - sql routine exception
+     * @const string
+     */
     public const SQL_ROUTINE_EXCEPTION = '2F000';
     public const FUNCTION_EXECUTED_NO_RETURN_STATEMENT = '2F005';
     public const MODIFYING_SQL_DATA_NOT_PERMITTED = '2F002';
     public const PROHIBITED_SQL_STATEMENT_ATTEMPTED = '2F003';
     public const READING_SQL_DATA_NOT_PERMITTED = '2F004';
 
-    // 34 - invalid cursor name
+    /**
+     * 34 - invalid cursor name
+     * @const string
+     */
     public const INVALID_CURSOR_NAME = '34000';
 
-    // 38 - external routine exception
+    /**
+     * 38 - external routine exception
+     * @const string
+     */
     public const EXTERNAL_ROUTINE_EXCEPTION = '38000';
     public const CONTAINING_SQL_NOT_PERMITTED = '38001';
     public const MODIFYING_SQL_DATA_NOT_PERMITTED_EXTERNAL = '38002';
     public const PROHIBITED_SQL_STATEMENT_ATTEMPTED_EXTERNAL = '38003';
     public const READING_SQL_DATA_NOT_PERMITTED_EXTERNAL = '38004';
 
-    // 39 - external routine invocation exception
+    /**
+     * 39 - external routine invocation exception
+     * @const string
+     */
     public const EXTERNAL_ROUTINE_INVOCATION_EXCEPTION = '39000';
     public const INVALID_SQLSTATE_RETURNED = '39001';
     public const NULL_VALUE_NOT_ALLOWED_EXTERNAL = '39004';
@@ -210,24 +291,39 @@ abstract class Pgsql
     public const SRF_PROTOCOL_VIOLATED = '39P02';
     public const EVENT_TRIGGER_PROTOCOL_VIOLATED = '39P03';
 
-    // 3b - savepoint exception
+    /**
+     * 3b - savepoint exception
+     * @const string
+     */
     public const SAVEPOINT_EXCEPTION = '3B000';
     public const INVALID_SAVEPOINT_SPECIFICATION = '3B001';
 
-    // 3d - invalid catalog name
+    /**
+     * 3d - invalid catalog name
+     * @const string
+     */
     public const INVALID_CATALOG_NAME = '3D000';
 
-    // 3f - invalid schema name
+    /**
+     * 3f - invalid schema name
+     * @const string
+     */
     public const INVALID_SCHEMA_NAME = '3F000';
 
-    // 40 - transaction rollback
+    /**
+     * 40 - transaction rollback
+     * @const string
+     */
     public const TRANSACTION_ROLLBACK = '40000';
     public const TRANSACTION_INTEGRITY_CONSTRAINT_VIOLATION = '40002';
     public const SERIALIZATION_FAILURE = '40001';
     public const STATEMENT_COMPLETION_UNKNOWN = '40003';
     public const DEADLOCK_DETECTED = '40P01';
 
-    // 42 - syntax error or access rule violation
+    /**
+     * 42 - syntax error or access rule violation
+     * @const string
+     */
     public const SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION = '42000';
     public const SYNTAX_ERROR = '42601';
     public const INSUFFICIENT_PRIVILEGE = '42501';
@@ -272,29 +368,44 @@ abstract class Pgsql
     public const INVALID_TABLE_DEFINITION = '42P16';
     public const INVALID_OBJECT_DEFINITION = '42P17';
 
-    // 44 - with check option violation
+    /**
+     * 44 - with check option violation
+     * @const string
+     */
     public const WITH_CHECK_OPTION_VIOLATION = '44000';
 
-    // 53 - insufficient resources
+    /**
+     * 53 - insufficient resources
+     * @const string
+     */
     public const INSUFFICIENT_RESOURCES = '53000';
     public const DISK_FULL = '53100';
     public const OUT_OF_MEMORY = '53200';
     public const TOO_MANY_CONNECTIONS = '53300';
     public const CONFIGURATION_LIMIT_EXCEEDED = '53400';
 
-    // 54 - program limit exceeded
+    /**
+     * 54 - program limit exceeded
+     * @const string
+     */
     public const PROGRAM_LIMIT_EXCEEDED = '54000';
     public const STATEMENT_TOO_COMPLEX = '54001';
     public const TOO_MANY_COLUMNS = '54011';
     public const TOO_MANY_ARGUMENTS = '54023';
 
-    // 55 - object not in prerequisite state
+    /**
+     * 55 - object not in prerequisite state
+     * @const string
+     */
     public const OBJECT_NOT_IN_PREREQUISITE_STATE = '55000';
     public const OBJECT_IN_USE = '55006';
     public const CANT_CHANGE_RUNTIME_PARAM = '55P02';
     public const LOCK_NOT_AVAILABLE = '55P03';
 
-    // 57 - operator intervention
+    /**
+     * 57 - operator intervention
+     * @const string
+     */
     public const OPERATOR_INTERVENTION = '57000';
     public const QUERY_CANCELED = '57014';
     public const ADMIN_SHUTDOWN = '57P01';
@@ -302,20 +413,32 @@ abstract class Pgsql
     public const CANNOT_CONNECT_NOW = '57P03';
     public const DATABASE_DROPPED = '57P04';
 
-    // 58 - system error (errors external to postgresql itself)
+    /**
+     * 58 - system error (errors external to postgresql itself)
+     * @const string
+     */
     public const SYSTEM_ERROR = '58000';
     public const IO_ERROR = '58030';
     public const UNDEFINED_FILE = '58P01';
     public const DUPLICATE_FILE = '58P02';
 
-    // 72 - snapshot failure
+    /**
+     * 72 - snapshot failure
+     * @const string
+     */
     public const SNAPSHOT_TOO_OLD = '72000';
 
-    // f0 - configuration file error
+    /**
+     * f0 - configuration file error
+     * @const string
+     */
     public const CONFIG_FILE_ERROR = 'F0000';
     public const LOCK_FILE_EXISTS = 'F0001';
 
-    // hv - foreign data wrapper error (sql/med)
+    /**
+     * hv - foreign data wrapper error (sql/med)
+     * @const string
+     */
     public const FDW_ERROR = 'HV000';
     public const FDW_COLUMN_NAME_NOT_FOUND = 'HV005';
     public const FDW_DYNAMIC_PARAMETER_VALUE_NEEDED = 'HV002';
@@ -344,14 +467,20 @@ abstract class Pgsql
     public const FDW_UNABLE_TO_CREATE_REPLY = 'HV00M';
     public const FDW_UNABLE_TO_ESTABLISH_CONNECTION = 'HV00N';
 
-    // p0 - pl/pgsql error
+    /**
+     * p0 - pl/pgsql error
+     * @const string
+     */
     public const PLPGSQL_ERROR = 'P0000';
     public const RAISE_EXCEPTION = 'P0001';
     public const NO_DATA_FOUND = 'P0002';
     public const TOO_MANY_ROWS = 'P0003';
     public const ASSERT_FAILURE = 'P0004';
 
-    // xx - internal error
+    /**
+     * xx - internal error
+     * @const string
+     */
     public const INTERNAL_ERROR = 'XX000';
     public const DATA_CORRUPTED = 'XX001';
     public const INDEX_CORRUPTED = 'XX002';
