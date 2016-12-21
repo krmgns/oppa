@@ -28,7 +28,6 @@ namespace Oppa;
  * @object  Oppa\Mapper
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-
 final class Mapper
 {
     /**
