@@ -61,6 +61,20 @@ final class Util
     }
 
     /**
+     * Get last error.
+     * @return ?array
+     */
+    final public static function getLastError(): ?array
+    {
+        $error = error_get_last();
+        if ($error != null) {
+            $error = array_values(error_get_last());
+        }
+
+        return $error;
+    }
+
+    /**
      * Convert given input from uppers to underscore.
      * @param  string $input
      * @return string
