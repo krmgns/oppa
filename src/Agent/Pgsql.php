@@ -60,17 +60,10 @@ final class Pgsql //extends Agent
             $connectionString .= " options='". join(' ', $connectionStringOptions) ."'";
         }
 
-        $connectionType = 0;
-        if (isset($options['connect_type'])) {
-            foreach ($options['connect_type'] as $opt) {
-                $connectionType |= $opt;
-            }
-        }
-
-        if ($connectionType == 0) {
+        if (!isset($options['connect_type'])) {
             $this->resource = pg_connect($connectionString);
         } else {
-            $this->resource = pg_connect($connectionString, $connectionType);
+            $this->resource = pg_connect($connectionString, $options['connect_type']);
         }
 
         if (!$this->resource) {
