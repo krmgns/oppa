@@ -33,6 +33,12 @@ namespace Oppa\SqlState;
 abstract class Mysql
 {
     /**
+     * OK
+     * @const string
+     */
+    public const OK = '00000';
+
+    /**
      * States.
      * @const string
      */
