@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, SqlState};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, SqlState\Pgsql as SqlState};
 use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
 final class Pgsql //extends Agent
@@ -74,7 +74,7 @@ final class Pgsql //extends Agent
         }
 
         if (!$this->resource) {
-            throw new ConnectionException(error_get_last()['message'], null, SqlState\Pgsql::CONNECTION_FAILURE);
+            throw new ConnectionException(error_get_last()['message'], null, SqlState::CONNECTION_FAILURE);
         }
 
         return $this->resource;
