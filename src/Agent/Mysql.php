@@ -24,7 +24,8 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch,
+    SqlState\Mysql as SqlState, SqlState\MysqlError as SqlStateError};
 use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
 /**
@@ -123,35 +124,28 @@ final class Mysql extends Agent
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
         if (!$this->resource->real_connect($host, $username, $password, $name, $port, $socket)) {
-            throw new ConnectionException(sprintf(
-                'Connection error! errno[%d] errmsg[%s]',
-                    $this->resource->connect_errno, $this->resource->connect_error));
+            throw new ConnectionException($this->resource->connect_error, $this->resource->connect_errno, SqlState::ER_YES);
         }
 
         // finish connection profiling
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         // log with info level
-        $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New connection via %s addr.', Util::getIp()));
+        $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
 
         // set charset for connection
         if (isset($this->config['charset'])) {
             $run = (bool) $this->resource->set_charset($this->config['charset']);
             if ($run === false) {
-                throw new QueryException(sprintf(
-                    "Failed setting charset as '%s'! errno[%d] errmsg[%s]",
-                        $this->config['charset'], $this->resource->errno, $this->resource->error));
+                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
             }
         }
 
         // set timezone for connection
         if (isset($this->config['timezone'])) {
-            $run = (bool) $this->resource->query($this->prepare(
-                'SET `time_zone` = ?', [$this->config['timezone']]));
+            $run = (bool) $this->resource->query($this->prepare('SET `time_zone` = ?', [$this->config['timezone']]));
             if ($run === false) {
-                throw new QueryException(sprintf('Query error! errno[%d] errmsg[%s]',
-                    $this->resource->errno, $this->resource->error));
+                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
             }
         }
 
@@ -205,7 +199,7 @@ final class Mysql extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->resource instanceof \mysqli && $this->resource->connect_errno === 0);
+        return ($this->resource instanceof \mysqli && $this->resource->connect_errno === SqlStateError::OK);
     }
 
     /**
@@ -254,9 +248,7 @@ final class Mysql extends Agent
 
         if ($result === false) {
             try {
-                throw new QueryException(sprintf('Query error: query[%s] errno[%s] errmsg[%s]',
-                    $query, $this->resource->errno, $this->resource->error
-                ), $this->resource->errno);
+                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
             } catch (QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -469,8 +461,7 @@ final class Mysql extends Agent
             case 'string':
                 return "'". $this->resource->real_escape_string($input) ."'";
             default:
-                throw new InvalidValueException(sprintf(
-                    "Unimplemented '{$inputType}' type encountered!"));
+                throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
         }
 
         return $input;
