@@ -193,7 +193,7 @@ final class Mysql extends Agent
      */
     final public function disconnect(): void
     {
-        if ($this->resource) {
+        if ($this->resource instanceof \mysqli) {
             $this->resource->close();
             $this->resource = null;
         }
@@ -205,7 +205,7 @@ final class Mysql extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->resource != null && $this->resource->connect_errno === 0);
+        return ($this->resource instanceof \mysqli && $this->resource->connect_errno === 0);
     }
 
     /**
