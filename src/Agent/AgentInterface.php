@@ -123,24 +123,6 @@ interface AgentInterface
     public function count(string $query): int;
 
     /**
-     * Id.
-     * @return any
-     */
-    public function id();
-
-    /**
-     * Rows count.
-     * @return int
-     */
-    public function rowsCount(): int;
-
-    /**
-     * Rows affected.
-     * @return int
-     */
-    public function rowsAffected(): int;
-
-    /**
      * Prepare.
      * @param  string $input
      * @param  array  $params
