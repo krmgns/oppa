@@ -271,28 +271,6 @@ final class Mysql extends Agent
     }
 
     /**
-     * Get.
-     * @param  string $query
-     * @param  array  $params
-     * @return object|array|null
-     */
-    final public function get(string $query, array $params = null)
-    {
-        return $this->query($query, $params, 1)->item(0);
-    }
-
-    /**
-     * Get all.
-     * @param  string $query
-     * @param  array  $params
-     * @return array
-     */
-    final public function getAll(string $query, array $params = null): array
-    {
-        return $this->query($query, $params, null)->getData();
-    }
-
-    /**
      * Select.
      * @param  string       $table
      * @param  string|array $fields

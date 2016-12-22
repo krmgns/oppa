@@ -281,4 +281,93 @@ abstract class Agent implements AgentInterface
 
         return $input;
     }
+
+    /**
+     * Get.
+     * @param  string $query
+     * @param  array  $params
+     * @return object|array|null
+     */
+    final public function get(string $query, array $params = null)
+    {
+        return $this->query($query, $params, 1)->item(0);
+    }
+
+    /**
+     * Get array.
+     * @param  string $query
+     * @param  array  $params
+     * @return ?array
+     */
+    final public function getArray(string $query, array $params = null): ?array
+    {
+        return $this->query($query, $params, 1)->toArray()[0] ?? null;
+    }
+
+    /**
+     * Get object.
+     * @param  string $query
+     * @param  array  $params
+     * @return ?\stdClass
+     */
+    final public function getObject(string $query, array $params = null): ?\stdClass
+    {
+        return $this->query($query, $params, 1)->toObject()[0] ?? null;
+    }
+
+    /**
+     * Get class.
+     * @param  string $query
+     * @param  array  $params
+     * @return object
+     */
+    final public function getClass(string $query, array $params = null, string $class)
+    {
+        return $this->query($query, $params, 1)->toClass($class)[0] ?? null;
+    }
+
+    /**
+     * Get all.
+     * @param  string $query
+     * @param  array  $params
+     * @return array
+     */
+    final public function getAll(string $query, array $params = null): array
+    {
+        return $this->query($query, $params)->getData();
+    }
+
+    /**
+     * Get all array.
+     * @param  string $query
+     * @param  array  $params
+     * @return ?array
+     */
+    final public function getAllArray(string $query, array $params = null): ?array
+    {
+        return $this->query($query, $params)->toArray();
+    }
+
+    /**
+     * Get all object.
+     * @param  string $query
+     * @param  array  $params
+     * @return ?array
+     */
+    final public function getAllObject(string $query, array $params = null): ?array
+    {
+        return $this->query($query, $params)->toObject();
+    }
+
+    /**
+     * Get all array.
+     * @param  string $query
+     * @param  array  $params
+     * @param  string $class
+     * @return ?array
+     */
+    final public function getAllClass(string $query, array $params = null, string $class): ?array
+    {
+        return $this->query($query, $params)->toClass($class);
+    }
 }
