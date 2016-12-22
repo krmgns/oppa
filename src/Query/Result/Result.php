@@ -237,6 +237,53 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Get data as object.
+     * @return array
+     */
+    final public function toObject(): array
+    {
+        $data = $this->data;
+        foreach ($data as &$dat) {
+            $dat = (object) $dat;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get data as array.
+     * @return array
+     */
+    final public function toArray(): array
+    {
+        $data = $this->data;
+        foreach ($data as &$dat) {
+            $dat = (array) $dat;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get data as class.
+     * @param  string $class
+     * @return class
+     */
+    final public function toClass(string $class)
+    {
+        $data = $this->data;
+        foreach ($data as &$dat) {
+            $class = new $class();
+            foreach ((array) $dat as $key => $value) {
+                $class->{$key} = $value;
+            }
+            $dat = $class;
+        }
+
+        return $data;
+    }
+
+    /**
      * Get first data item.
      * @return any
      */
