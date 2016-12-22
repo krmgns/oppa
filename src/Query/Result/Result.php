@@ -58,10 +58,10 @@ abstract class Result implements ResultInterface
     protected $data = [];
 
     /**
-     * Id(s).
+     * Ids.
      * @var array
      */
-    protected $id = [];
+    protected $ids = [];
 
     /**
      * Rows count.
@@ -183,7 +183,7 @@ abstract class Result implements ResultInterface
 
     /**
      * Get id.
-     * @return any
+     * @return int|string|null
      */
     final public function getId()
     {
