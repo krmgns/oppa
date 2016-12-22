@@ -284,21 +284,31 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Get first data item.
-     * @return any
+     * Item.
+     * @param  int $i
+     * @return any|null
      */
-    final public function first()
+    final public function item(int $i)
     {
-        return $this->getData(0);
+        return $this->data[$i] ?? null;
     }
 
     /**
-     * Get last data item.
+     * Item first.
      * @return any
      */
-    final public function last()
+    final public function itemFirst()
     {
-        return $this->getData(count($this->data) - 1);
+        return $this->item(0);
+    }
+
+    /**
+     * Item last.
+     * @return any
+     */
+    final public function itemLast()
+    {
+        return $this->item(count($this->data) - 1);
     }
 
     /**
