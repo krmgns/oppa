@@ -268,9 +268,9 @@ abstract class Result implements ResultInterface
     /**
      * To class.
      * @param  string $class
-     * @return class
+     * @return array
      */
-    final public function toClass(string $class)
+    final public function toClass(string $class): array
     {
         $data = $this->data;
         $class = new $class();
