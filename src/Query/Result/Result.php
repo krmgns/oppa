@@ -239,13 +239,20 @@ abstract class Result implements ResultInterface
 
     /**
      * To array.
-     * @return array
+     * @return ?array
      */
-    final public function toArray(): array
+    final public function toArray(): ?array
     {
-        $data = $this->data;
-        foreach ($data as &$dat) {
-            $dat = (array) $dat;
+        $data = null;
+        if (!empty($this->data)) {
+            // no need to type-cast
+            if (is_array($this->data[0])) {
+                return $this->data;
+            }
+            $data = $this->data;
+            foreach ($data as &$dat) {
+                $dat = (array) $dat;
+            }
         }
 
         return $data;
@@ -253,13 +260,20 @@ abstract class Result implements ResultInterface
 
     /**
      * To object.
-     * @return array
+     * @return ?array
      */
-    final public function toObject(): array
+    final public function toObject(): ?array
     {
-        $data = $this->data;
-        foreach ($data as &$dat) {
-            $dat = (object) $dat;
+        $data = null;
+        if (!empty($this->data)) {
+            // no need to type-cast
+            if (is_object($this->data[0])) {
+                return $this->data;
+            }
+            $data = $this->data;
+            foreach ($data as &$dat) {
+                $dat = (object) $dat;
+            }
         }
 
         return $data;
@@ -268,18 +282,21 @@ abstract class Result implements ResultInterface
     /**
      * To class.
      * @param  string $class
-     * @return array
+     * @return ?array
      */
-    final public function toClass(string $class): array
+    final public function toClass(string $class): ?array
     {
-        $data = $this->data;
-        $class = new $class();
-        foreach ($data as &$dat) {
-            $datClass = clone $class;
-            foreach ((array) $dat as $key => $value) {
-                $datClass->{$key} = $value;
+        $data = null;
+        if (!empty($this->data)) {
+            $data = $this->data;
+            $class = new $class();
+            foreach ($data as &$dat) {
+                $datClass = clone $class;
+                foreach ((array) $dat as $key => $value) {
+                    $datClass->{$key} = $value;
+                }
+                $dat = $datClass;
             }
-            $dat = $datClass;
         }
 
         return $data;
