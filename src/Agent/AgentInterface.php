@@ -60,22 +60,6 @@ interface AgentInterface
     public function query(string $query, array $params = null): ResultInterface;
 
     /**
-     * Get.
-     * @param  string $query
-     * @param  array  $params
-     * @return object|array|null
-     */
-    public function get(string $query, array $params = null);
-
-    /**
-     * Get all.
-     * @param  string $query
-     * @param  array  $params
-     * @return array
-     */
-    public function getAll(string $query, array $params = null): array;
-
-    /**
      * Select.
      * @param  string       $table
      * @param  string|array $fields
