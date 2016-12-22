@@ -327,6 +327,19 @@ abstract class Agent implements AgentInterface
     }
 
     /**
+     * Get json.
+     * @param  string     $query
+     * @param  array      $params
+     * @param  int        $options
+     * @param  int        $depth
+     * @return ?string
+     */
+    final public function getJson(string $query, array $params = null, int $options = 0, int $depth = 512): ?string
+    {
+        return (null !== ($data = $this->get($query, $params))) ? json_encode($data, $options, $depth) : null;
+    }
+
+    /**
      * Get all.
      * @param  string $query
      * @param  array  $params
@@ -369,5 +382,18 @@ abstract class Agent implements AgentInterface
     final public function getAllClass(string $query, array $params = null, string $class): ?array
     {
         return $this->query($query, $params)->toClass($class);
+    }
+
+    /**
+     * Get all json.
+     * @param  string     $query
+     * @param  array      $params
+     * @param  int        $options
+     * @param  int        $depth
+     * @return ?string
+     */
+    final public function getAllJson(string $query, array $params = null, int $options = 0, int $depth = 512): ?string
+    {
+        return !empty($data = $this->getAll($query, $params)) ? json_encode($data, $options, $depth) : null;
     }
 }
