@@ -179,12 +179,20 @@ abstract class Agent implements AgentInterface
 
     /**
      * Id.
-     * @param  bool $all For bulk insert actions.
-     * @return any       If all returns array, if not int or null.
+     * @return int|string|null
      */
-    final public function id(bool $all = false)
+    final public function id()
     {
-        return $this->result->getId($all);
+        return $this->result->getId();
+    }
+
+    /**
+     * Ids.
+     * @return array
+     */
+    final public function ids()
+    {
+        return $this->result->getIds();
     }
 
     /**
