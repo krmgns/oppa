@@ -273,12 +273,13 @@ abstract class Result implements ResultInterface
     final public function toClass(string $class)
     {
         $data = $this->data;
+        $class = new $class();
         foreach ($data as &$dat) {
-            $class = new $class();
+            $datClass = clone $class;
             foreach ((array) $dat as $key => $value) {
-                $class->{$key} = $value;
+                $datClass->{$key} = $value;
             }
-            $dat = $class;
+            $dat = $datClass;
         }
 
         return $data;
