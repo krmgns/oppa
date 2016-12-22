@@ -87,4 +87,27 @@ final class Pgsql //extends Agent
 
     final public function query(string $query, array $params = null): Result\ResultInterface
     {}
+
+    final private function parseError(): ?array
+    {
+        $return = null;
+        if ($error = pg_last_error($this->resource)) {
+            $error = explode(PHP_EOL, $error);
+            preg_match('~ERROR:\s+([0-9A-Z]+?):\s+(.+)~', $error[0], $match);
+            if (isset($match[1], $match[2])) {
+                $return = ['sqlstate' => $match[1]];
+                if (isset($error[2])) {
+                    preg_match('~(LINE\s+(\d+):\s+).+~', $error[1], $match2);
+                    if (isset($match2[1], $match2[2])) {
+                        $nearbyCut = abs(strlen($error[1]) - strlen($error[2]));
+                        $nearbyStr = trim(substr($error[1], -($nearbyCut + 1)));
+                        $return['error'] = sprintf('%s, line %s, nearby "... %s"', $match[2], $match2[2], $nearbyStr);
+                    }
+                } else {
+                    $return['error'] = $match[2];
+                }
+            }
+        }
+        return $return;
+    }
 }
