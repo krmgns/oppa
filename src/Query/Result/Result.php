@@ -237,21 +237,7 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Get data as object.
-     * @return array
-     */
-    final public function toObject(): array
-    {
-        $data = $this->data;
-        foreach ($data as &$dat) {
-            $dat = (object) $dat;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Get data as array.
+     * To array.
      * @return array
      */
     final public function toArray(): array
@@ -265,7 +251,21 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Get data as class.
+     * To object.
+     * @return array
+     */
+    final public function toObject(): array
+    {
+        $data = $this->data;
+        foreach ($data as &$dat) {
+            $dat = (object) $dat;
+        }
+
+        return $data;
+    }
+
+    /**
+     * To class.
      * @param  string $class
      * @return class
      */
@@ -281,6 +281,17 @@ abstract class Result implements ResultInterface
         }
 
         return $data;
+    }
+
+    /**
+     * To JSON.
+     * @param  int $options
+     * @param  int $depth
+     * @return string
+     */
+    final public function toJson(int $options = 0, int $depth = 512): string
+    {
+        return json_encode($this->data, $options, $depth);
     }
 
     /**
