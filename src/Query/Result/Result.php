@@ -154,30 +154,13 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Set result id(s).
-     * @param  int|array $id
+     * Set ids.
+     * @param  array $ids
      * @return void
      */
-    final public function setId($id): void
+    final public function setIds(array $ids): void
     {
-        $this->id = (array) $id;
-    }
-
-    /**
-     * Get id(s).
-     * @param  bool $all Returns an array containing all ids.
-     * @return int|null  If $all false.
-     * @return array     If $all true.
-     */
-    final public function getId(bool $all = false)
-    {
-        // only last insert id
-        if (!$all) {
-            return (false !== ($id = end($this->id))) ? $id : null;
-        }
-
-        // all last insert id's
-        return $this->id;
+        $this->ids = $ids;
     }
 
     /**
@@ -186,7 +169,25 @@ abstract class Result implements ResultInterface
      */
     final public function getIds(): array
     {
-        return $this->id;
+        return $this->ids;
+    }
+
+    /**
+     * Set id.
+     * @param int|string $id
+     */
+    final public function setId($id): void
+    {
+        $this->ids[] = $id;
+    }
+
+    /**
+     * Get id.
+     * @return any
+     */
+    final public function getId()
+    {
+        return (false !== ($id = end($this->ids))) ? $id : null;
     }
 
     /**

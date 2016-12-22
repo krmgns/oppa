@@ -137,7 +137,7 @@ final class Mysql extends Result
         }
 
         // set properties
-        $this->setId($ids);
+        $this->setIds($ids);
         $this->setRowsCount($i);
         $this->setRowsAffected($resource->affected_rows);
 
