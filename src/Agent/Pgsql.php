@@ -60,10 +60,9 @@ final class Pgsql //extends Agent
             $connectionString .= " options='". join(' ', $connectionStringOptions) ."'";
         }
 
-        if (!isset($options['connect_type'])) {
-            $this->resource = pg_connect($connectionString);
-        } else {
-            $this->resource = pg_connect($connectionString, $options['connect_type']);
+        @ $this->resource = pg_connect($connectionString);
+        if (pg_connection_status($this->resource) === PGSQL_CONNECTION_BAD) {
+            @ $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW);
         }
 
         if (!$this->resource) {
@@ -83,11 +82,9 @@ final class Pgsql //extends Agent
 
     final public function isConnected(): bool
     {
-        return (is_resource($this->resource) && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK);
+        return is_resource($this->resource) && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK;
     }
 
     final public function query(string $query, array $params = null): Result\ResultInterface
-    {
-        //
-    }
+    {}
 }
