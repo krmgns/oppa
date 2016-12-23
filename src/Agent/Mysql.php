@@ -168,11 +168,9 @@ final class Mysql extends Agent
                         $map[$result->table_name][$result->column_name]['length'] = $length;
                         $map[$result->table_name][$result->column_name]['nullable'] = ($result->is_nullable == 'YES');
                     }
+                    $this->mapper->setMap($map);
 
                     $this->result->reset();
-                    pre($map,1);
-
-                    $this->mapper->setMap($map);
                 }
             } catch (QueryException $e) {}
         }
