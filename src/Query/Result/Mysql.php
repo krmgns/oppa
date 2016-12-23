@@ -62,7 +62,7 @@ final class Mysql extends Result
 
         $i = 0;
         // if result contains result object
-        if ($result instanceof \mysqli_result && $result->num_rows) {
+        if ($result instanceof \mysqli_result && $result->num_rows > 0) {
             $this->result = $result;
 
             if ($limit === null) {
