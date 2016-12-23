@@ -7,8 +7,8 @@ use Oppa\Query\{Sql, Result};
 use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, SqlState\Pgsql as SqlState};
 use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
-final class Pgsql //extends Agent
-{ private $resource,$config;
+final class Pgsql extends Agent
+{   //private $resource,$config;
     final public function __construct(Config $config)
     {
         // we need it like a crazy..
@@ -17,6 +17,9 @@ final class Pgsql //extends Agent
         }
 
         $this->config = $config;
+
+        $this->result = new Result\Pgsql($this);
+        $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
     }
 
     final public function __destruct()
@@ -85,8 +88,51 @@ final class Pgsql //extends Agent
         return is_resource($this->resource) && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK;
     }
 
-    final public function query(string $query, array $params = null): Result\ResultInterface
+    final public function query(string $query, array $params = null, $limit = null,
+        $fetchType = null): Result\ResultInterface
+    {
+        pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
+
+        @ $result = pg_query($this->resource, $query);
+        if ($result === false) {
+            $error = $this->parseError();
+            try {
+                throw new QueryException($error['error'], null, $error['sqlstate']);
+            } catch(QueryException $e) {
+                // check user error handler
+                $errorHandler = $this->config['query_error_handler'];
+                if ($errorHandler && is_callable($errorHandler)) {
+                    $errorHandler($e, $query, $params);
+
+                    // no throw
+                    return $this->result;
+                }
+
+                throw $e;
+            }
+        }
+
+        return $this->result->process($result, $limit, $fetchType);
+    }
+
+    final public function select(string $table, $fields = null, string $where = null,
+        array $params = null, $limit = null, int $fetchType = null)
     {}
+    final public function selectOne(string $table, $fields = null, string $where = null,
+        array $params = null, int $fetchType = null)
+    {
+        return $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
+    }
+    final public function insert(string $table, array $data) {}
+    final public function update(string $table, array $data, string $where = null,
+        array $params = null, $limit = null): int {}
+    final public function delete(string $table, string $where = null,
+        array $params = null, $limit = null): int {}
+    final public function count(string $query): int {}
+    final public function escape($input, string $type = null) {}
+    final public function escapeIdentifier($input): string {}
+    final public function where(string $where = null, array $params = null): ?string {}
+    final public function limit($limit): string {}
 
     final private function parseError(): ?array
     {
