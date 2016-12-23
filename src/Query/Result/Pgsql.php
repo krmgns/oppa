@@ -70,12 +70,6 @@ final class Pgsql extends Result
             $resultRowsAffected = pg_affected_rows($result);
         }
 
-        // pre(pg_result_status($result)); // PGSQL_COMMAND_OK
-        // pre(pg_num_rows($result));
-        // pre($result);
-        // pre(get_resource_type($result));
-        // die;
-
         $i = 0;
         // select etc.
         if ($resultStatus === PGSQL_TUPLES_OK && $resultRowsCount > 0) {
