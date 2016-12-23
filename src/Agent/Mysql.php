@@ -55,9 +55,10 @@ final class Mysql extends Agent
 
         // assign data mapper
         if ($this->config['map_result']) {
-            $this->mapper = new Mapper([
-                'bool' => (bool) $this->config['map_result_bool'],
-            ]);
+            $this->mapper = new Mapper();
+            if (isset($this->config['map_result_bool'])) {
+                $this->mapper->setMapOptions(['bool' => (bool) $this->config['map_result_bool']]);
+            }
         }
 
         // assign result object
@@ -152,8 +153,7 @@ final class Mysql extends Agent
         // fill mapper map for once
         if ($this->mapper) {
             try {
-                // get table columns info
-                $this->query('SELECT * FROM `information_schema`.`columns` WHERE `table_schema` = %s', [$name]);
+                $this->query('SELECT * FROM information_schema.columns WHERE table_schema = %s', [$name]);
                 if ($this->result->count()) {
                     $map = [];
                     foreach ($this->result as $result) {
@@ -167,9 +167,9 @@ final class Mysql extends Agent
                         $map[$result->TABLE_NAME][$result->COLUMN_NAME]['length'] = $length;
                         $map[$result->TABLE_NAME][$result->COLUMN_NAME]['nullable'] = ($result->IS_NULLABLE == 'YES');
                     }
-                    // free result
+
                     $this->result->reset();
-                    // set mapper map
+
                     $this->mapper->setMap($map);
                 }
             } catch (QueryException $e) {}
