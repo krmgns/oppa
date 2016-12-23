@@ -153,22 +153,24 @@ final class Mysql extends Agent
         // fill mapper map for once
         if ($this->mapper) {
             try {
-                $this->query('SELECT * FROM information_schema.columns WHERE table_schema = %s', [$name]);
+                $this->query("SELECT table_name, column_name, data_type, is_nullable, column_type
+                    FROM information_schema.columns WHERE table_schema = '{$name}'");
                 if ($this->result->count()) {
                     $map = [];
                     foreach ($this->result as $result) {
                         $length = null;
                         // detect length for integers (actually, used for only bool action)
-                        if (substr($result->DATA_TYPE, -3) == 'int') {
-                            $length = sscanf($result->COLUMN_TYPE, "{$result->DATA_TYPE}(%d)%s")[0] ?? null;
+                        if (substr($result->data_type, -3) == 'int') {
+                            $length = sscanf($result->column_type, "{$result->data_type}(%d)%s")[0] ?? null;
                         }
                         // needed only these for now
-                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['type'] = $result->DATA_TYPE;
-                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['length'] = $length;
-                        $map[$result->TABLE_NAME][$result->COLUMN_NAME]['nullable'] = ($result->IS_NULLABLE == 'YES');
+                        $map[$result->table_name][$result->column_name]['type'] = $result->data_type;
+                        $map[$result->table_name][$result->column_name]['length'] = $length;
+                        $map[$result->table_name][$result->column_name]['nullable'] = ($result->is_nullable == 'YES');
                     }
 
                     $this->result->reset();
+                    pre($map,1);
 
                     $this->mapper->setMap($map);
                 }
