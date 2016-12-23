@@ -266,8 +266,7 @@ final class Mysql extends Agent
             }
         }
 
-        // send query result to Result object to process and return it
-        return $this->result->process($this->resource, $result, $limit, $fetchType);
+        return $this->result->process($result, $limit, $fetchType);
     }
 
     /**

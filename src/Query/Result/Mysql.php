@@ -47,16 +47,15 @@ final class Mysql extends Result
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete", etc then process affected result.
-     * @param  \mysqli        $resource
      * @param  \mysqli_result $result
      * @param  int|null       $limit
      * @param  int|null       $fetchType
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\InvalidValueException
      */
-    final public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface
+    final public function process($result, int $limit = null, int $fetchType = null): ResultInterface
     {
-        // check link
+        $resource = $this->agent->getResource();
         if (!$resource instanceof \mysqli) {
             throw new InvalidValueException('Process resource must be instanceof \mysqli!');
         }
