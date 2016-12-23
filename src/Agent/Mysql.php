@@ -56,7 +56,7 @@ final class Mysql extends Agent
         // assign data mapper
         if ($this->config['map_result']) {
             $this->mapper = new Mapper([
-                'tiny2bool' => (bool) $this->config['map_result_tiny2bool'],
+                'bool' => (bool) $this->config['map_result_bool'],
             ]);
         }
 
@@ -158,11 +158,8 @@ final class Mysql extends Agent
                     $map = [];
                     foreach ($this->result as $result) {
                         $length = null;
-                        if (// detect length for integers (actually, used for only tiny2bool action)
-                            substr($result->DATA_TYPE, -3) == 'int' ||
-                            // detect length for strings (actually, not in use for now)
-                            substr($result->DATA_TYPE, -4) == 'char'
-                        ) {
+                        // detect length for integers (actually, used for only bool action)
+                        if (substr($result->DATA_TYPE, -3) == 'int') {
                             $length = sscanf($result->COLUMN_TYPE, "{$result->DATA_TYPE}(%d)%s")[0] ?? null;
                         }
                         // needed only these for now
