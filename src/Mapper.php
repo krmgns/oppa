@@ -41,11 +41,15 @@ final class Mapper
         TYPE_TINYINT    = 'tinyint',
         TYPE_SMALLINT   = 'smallint',
         TYPE_MEDIUMINT  = 'mediumint',
+        TYPE_INTEGER    = 'integer',
         // float
         TYPE_FLOAT      = 'float',
         TYPE_DOUBLE     = 'double',
         TYPE_DECIMAL    = 'decimal',
-        TYPE_REAL       = 'real';
+        TYPE_REAL       = 'real',
+        TYPE_NUMERIC    = 'numeric',
+        // boolean
+        TYPE_BOOLEAN    = 'boolean';
 
     /**
      * Map.
@@ -58,7 +62,7 @@ final class Mapper
      * @var array
      */
     protected $mapOptions = [
-        'tiny2bool' => false, // converts tinyints to booleans
+        'bool' => false, // converts bits & tinyints to booleans
     ];
 
     /**
@@ -150,19 +154,27 @@ final class Mapper
      */
     final public function cast($value, array $properties)
     {
-        // some speed?
-        $nullable =& $properties['nullable'];
+        $nullable = $properties['nullable'];
 
         // 1.000.000 iters
         // regexp-------7.442563
         // switch-------2.709796
-        switch (strtolower($properties['type'])) {
-            // ints
+        switch ($type = strtolower($properties['type'])) {
             case self::TYPE_INT:
             case self::TYPE_BIGINT:
             case self::TYPE_SMALLINT:
             case self::TYPE_MEDIUMINT:
+            case self::TYPE_INTEGER:
                 $value = ($nullable && $value === null) ? null : (int) $value;
+                break;
+            case self::TYPE_FLOAT:
+            case self::TYPE_DOUBLE:
+            case self::TYPE_DECIMAL:
+            case self::TYPE_REAL:
+                $value = ($nullable && $value === null) ? null : (float) $value;
+                break;
+            case self::TYPE_BOOLEAN:
+                $value = ($nullable && $value === null) ? null : ($value == 't');
                 break;
             // tiny it baby.. =)
             case self::TYPE_TINYINT:
@@ -170,20 +182,13 @@ final class Mapper
                     // pass
                 } else {
                     $value = (int) $value;
-                    if ($this->mapOptions['tiny2bool']
-                        && $properties['length'] === 1    /* @important */
-                        && ($value === 0 || $value === 1) /* @important */
-                    ) {
+                    if ($this->mapOptions['bool'] && (
+                            // mysql @important
+                            $properties['length'] === 1 && ($value === 0 || $value === 1)
+                    )) {
                         $value = (bool) $value;
                     }
                 }
-                break;
-            // floats
-            case self::TYPE_FLOAT:
-            case self::TYPE_DOUBLE:
-            case self::TYPE_DECIMAL:
-            case self::TYPE_REAL:
-                $value = ($nullable && $value === null) ? null : (float) $value;
                 break;
         }
 
