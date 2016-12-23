@@ -109,7 +109,6 @@ final class Mysql extends Result
             }
         }
 
-        // free result
         $this->free();
 
         // dirty ways to detect last insert id for multiple inserts
@@ -136,7 +135,6 @@ final class Mysql extends Result
             $ids = range($id, ($id + $resource->affected_rows) - 1);
         }
 
-        // set properties
         $this->setIds($ids);
         $this->setRowsCount($i);
         $this->setRowsAffected($resource->affected_rows);
