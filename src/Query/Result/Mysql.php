@@ -101,10 +101,11 @@ final class Mysql extends Result
             }
 
             // map result data
-            if (isset($this->agent->mapper)
-                && null != ($mapper = $this->agent->getMapper())
-                && null != ($key = $this->result->fetch_field()->orgtable)) {
-                $this->data = $mapper->map($key, $this->data);
+            if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
+                $field = $this->result->fetch_field();
+                if (isset($field->orgtable)) {
+                    $this->data = $mapper->map($field->orgtable, $this->data);
+                }
             }
         }
 
