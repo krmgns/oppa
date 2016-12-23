@@ -60,11 +60,10 @@ interface ResultInterface extends \Countable, \IteratorAggregate
 
     /**
      * Process.
-     * @param  object|resource $resource
      * @param  object|resource $result
      * @param  int             $limit
      * @param  string          $fetchType
      * @return Oppa\Query\Result\ResultInterface
      */
-    public function process($resource, $result, int $limit = null, int $fetchType = null): ResultInterface;
+    public function process($result, int $limit = null, int $fetchType = null): ResultInterface;
 }
