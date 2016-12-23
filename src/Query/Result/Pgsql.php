@@ -117,11 +117,12 @@ final class Pgsql extends Result
             }
 
             // map result data
-            // if (isset($this->agent->mapper)
-            //     && null != ($mapper = $this->agent->getMapper())
-            //     && null != ($key = $this->result->fetch_field()->orgtable)) {
-            //     $this->data = $mapper->map($key, $this->data);
-            // }
+            if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
+                $fieldTable = pg_field_table($this->result, 0);
+                if ($fieldTable) {
+                    $this->data = $mapper->map($fieldTable, $this->data);
+                }
+            }
         }
 
         $this->free();

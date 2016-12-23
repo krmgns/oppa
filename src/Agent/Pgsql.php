@@ -18,6 +18,13 @@ final class Pgsql extends Agent
 
         $this->config = $config;
 
+        if ($this->config['map_result']) {
+            $this->mapper = new Mapper();
+            if (isset($this->config['map_result_bool'])) {
+                $this->mapper->setMapOptions(['bool' => (bool) $this->config['map_result_bool']]);
+            }
+        }
+
         $this->result = new Result\Pgsql($this);
         $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
     }
@@ -70,6 +77,22 @@ final class Pgsql extends Agent
 
         if (!$this->resource) {
             throw new ConnectionException(error_get_last()['message'], null, SqlState::CONNECTION_FAILURE);
+        }
+        if ($this->mapper) {
+            try {
+                $this->query("SELECT table_name, column_name, data_type, is_nullable
+                    FROM information_schema.columns WHERE table_schema = 'public'");
+                if ($this->result->count()) {
+                    $map = [];
+                    foreach ($this->result as $result) {
+                        $map[$result->table_name][$result->column_name]['type'] = $result->data_type;
+                        $map[$result->table_name][$result->column_name]['length'] = null;
+                        $map[$result->table_name][$result->column_name]['nullable'] = ($result->is_nullable == 'YES');
+                    }
+                    $this->mapper->setMap($map);
+                }
+                $this->result->reset();
+            } catch (QueryException $e) {}
         }
 
         return $this->resource;
