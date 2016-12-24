@@ -44,26 +44,10 @@ interface BatchInterface
     public function unlock(): bool;
 
     /**
-     * Queue.
-     * @param  string     $query
-     * @param  array|null $params
-     * @return Oppa\Batch\BatchInterface
-     */
-    public function queue(string $query, array $params = null): BatchInterface;
-
-    /**
      * Run.
      * @return Oppa\Batch\BatchInterface
      */
     public function run(): BatchInterface;
-
-    /**
-     * Run query.
-     * @param  string     $query
-     * @param  array|null $params
-     * @return Oppa\Batch\BatchInterface
-     */
-    public function runQuery(string $query, array $params = null): BatchInterface;
 
     /**
      * Cancel.

@@ -61,19 +61,6 @@ final class Mysql extends Batch
     }
 
     /**
-     * Queue.
-     * @param  string     $query
-     * @param  array|null $params
-     * @return self
-     */
-    final public function queue(string $query, array $params = null): BatchInterface
-    {
-        $this->queue[] = $this->agent->prepare($query, $params);
-
-        return $this;
-    }
-
-    /**
      * Run.
      * @return Oppa\Batch\BatchInterface
      */
@@ -119,17 +106,6 @@ final class Mysql extends Batch
         $resource->autocommit(true);
 
         return $this;
-    }
-
-    /**
-     * Run query.
-     * @param  string     $query
-     * @param  array|null $params
-     * @return Oppa\Batch\BatchInterface
-     */
-    final public function runQuery(string $query, array $params = null): BatchInterface
-    {
-        return $this->queue($query, $params)->run();
     }
 
     /**

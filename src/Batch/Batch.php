@@ -114,4 +114,41 @@ abstract class Batch implements BatchInterface
         $this->results = [];
         $this->totalTime = 0.00;
     }
+
+    /**
+     * Queue.
+     * @param  string     $query
+     * @param  array|null $params
+     * @return self
+     */
+    final public function queue(string $query, array $params = null): BatchInterface
+    {
+        $this->queue[] = $this->agent->prepare($query, $params);
+
+        return $this;
+    }
+
+    /**
+     * Run queue.
+     * @param  string     $query
+     * @param  array|null $params
+     * @return Oppa\Batch\BatchInterface
+     */
+    final public function queueRun(string $query, array $params = null): BatchInterface
+    {
+        return $this->queue($query, $params)->run();
+    }
+
+    /**
+     * Run query.
+     * @deprecated
+     */
+    final public function runQuery()
+    {
+        $class = get_class($this);
+        trigger_error("{$class}::runQuery() is deprecated, ".
+            "use {$class}::queueRun() instead!", E_USER_DEPRECATED);
+
+        return call_user_func_array([$this, 'queueRun'], func_get_args());
+    }
 }
