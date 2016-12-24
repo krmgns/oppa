@@ -117,7 +117,7 @@ final class Pgsql extends Agent
         pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
 
         @ $result = pg_query($this->resource, $query);
-        if ($result === false) {
+        if (!$result) {
             $error = $this->parseError();
             try {
                 throw new QueryException($error['error'], null, $error['sqlstate']);
@@ -135,7 +135,26 @@ final class Pgsql extends Agent
             }
         }
 
-        return $this->result->process($result, $limit, $fetchType);
+        $result = $this->result->process($result, $limit, $fetchType);
+
+        // last insert id
+        if (false !== stripos($query, 'insert')) {
+            @ $lastResult = pg_query($this->resource, 'SELECT lastval() AS id');
+            if ($lastResult) {
+                $lastResultObject = pg_fetch_object($lastResult);
+                if (isset($lastResultObject->id)) {
+                    $id = (int) $lastResultObject->id;
+                    $rowsAffected = $result->getRowsAffected();
+                    if ($id && $rowsAffected > 1) {
+                        $id = range($id - $rowsAffected + 1, $id);
+                    }
+                    $result->setIds((array) $id);
+                }
+                pg_free_result($lastResult);
+            }
+        }
+
+        return $result;
     }
 
     final public function select(string $table, $fields = null, string $where = null,

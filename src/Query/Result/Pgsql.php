@@ -61,25 +61,23 @@ final class Pgsql extends Result
             throw new InvalidValueException('Process resource must be type of pgsql!');
         }
 
-        $resultStatus = null;
-        $resultRowsCount = 0;
-        $resultRowsAffected = 0;
+        $rowsCount = 0;
+        $rowsAffected = 0;
         if (is_resource($result)) {
-            $resultStatus = pg_result_status($result);
-            $resultRowsCount = pg_num_rows($result);
-            $resultRowsAffected = pg_affected_rows($result);
+            $rowsCount = pg_num_rows($result);
+            $rowsAffected = pg_affected_rows($result);
         }
 
         $i = 0;
         // select etc.
-        if ($resultStatus === PGSQL_TUPLES_OK && $resultRowsCount > 0) {
+        if (pg_result_status($result) === PGSQL_TUPLES_OK && $rowsCount > 0) {
             $this->result = $result;
 
             if ($limit === null) {
                 $limit = ResultInterface::LIMIT;
             }
 
-            $fetchType = ($fetchType == null)
+            $fetchType = ($fetchType === null)
                 ? $this->fetchType : $this->detectFetchType($fetchType);
 
             switch ($fetchType) {
@@ -106,8 +104,7 @@ final class Pgsql extends Result
                 default:
                     $this->free();
 
-                    throw new InvalidValueException(
-                        "Could not implement given '{$fetchType}' fetch type!");
+                    throw new InvalidValueException("Could not implement given '{$fetchType}' fetch type!");
             }
 
             // map result data
@@ -121,19 +118,8 @@ final class Pgsql extends Result
 
         $this->free();
 
-        // insert & update etc.
-        if ($resultStatus === PGSQL_COMMAND_OK) {
-            $id  = pg_last_oid($result);
-            $ids = $id ? [$id] : [];
-
-            if ($id && $resultRowsAffected > 1) {
-                $ids = range($id, ($id + $resultRowsAffected) - 1);
-            }
-
-            $this->setIds($ids);
-            $this->setRowsCount($i);
-            $this->setRowsAffected($resultRowsAffected);
-        }
+        $this->setRowsCount($i);
+        $this->setRowsAffected($rowsAffected);
 
         return $this;
     }
