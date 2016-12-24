@@ -71,9 +71,9 @@ final class Mysql extends Batch
             return $this;
         }
 
-        $startTime = microtime(true);
-
         $resource = $this->agent->getResource();
+
+        $startTime = microtime(true);
 
         foreach ($this->queue as $query) {
             // @important (clone)
