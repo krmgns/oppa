@@ -44,21 +44,18 @@ final class Profiler
      * Profiles.
      * @var array
      */
-    protected $profiles = [];
+    private $profiles = [];
 
     /**
      * Query count.
      * @var int
      */
-    protected $queryCount = 0;
+    private $queryCount = 0;
 
     /**
      * Constructor.
      */
-    public function __construct()
-    {
-        $this->reset();
-    }
+    public function __construct() {}
 
     /**
      * Get profile.
@@ -95,10 +92,39 @@ final class Profiler
     }
 
     /**
-     * Get last query.
+     * Get query.
+     * @param  int $i
+     * @return ?array
+     */
+    final public function getQuery(int $i): ?array
+    {
+        return $this->profiles[self::QUERY][$i] ?? null;
+    }
+
+    /**
+     * Get query string.
+     * @param  int $i
      * @return ?string
      */
-    final public function getLastQuery(): ?string
+    final public function getQueryString(int $i): ?string
+    {
+        return $this->profiles[self::QUERY][$i]['string'] ?? null;
+    }
+
+    /**
+     * Get last query.
+     * @return ?array
+     */
+    final public function getLastQuery(): ?array
+    {
+        return $this->profiles[self::QUERY][$this->queryCount] ?? null;
+    }
+
+    /**
+     * Get last query string.
+     * @return ?string
+     */
+    final public function getLastQueryString(): ?string
     {
         return $this->profiles[self::QUERY][$this->queryCount]['string'] ?? null;
     }
@@ -120,17 +146,19 @@ final class Profiler
      */
     final public function start(string $key): void
     {
+        $startTime = microtime(true);
         switch ($key) {
             case self::CONNECTION:
             case self::TRANSACTION:
-                $this->profiles[$key] = [
-                    'start' => microtime(true), 'stop' => 0, 'total' => 0,
-                ];
+                $this->profiles[$key]['start'] = $startTime;
+                $this->profiles[$key]['stop'] = 0.00;
+                $this->profiles[$key]['total'] = 0.00;
                 break;
             case self::QUERY:
-                if (isset($this->profiles[self::QUERY][$this->queryCount])) {
-                    $this->profiles[self::QUERY][$this->queryCount] += [
-                        'start' => microtime(true), 'stop' => 0, 'total' => 0,
+                $i = $this->queryCount;
+                if (isset($this->profiles[$key][$i])) {
+                    $this->profiles[$key][$i] += [
+                        'start' => $startTime, 'stop' => 0.00, 'total' => 0.00
                     ];
                 }
                 break;
@@ -147,23 +175,24 @@ final class Profiler
      */
     final public function stop(string $key): void
     {
-        if (!isset($this->profiles[$key])) {
-            throw new InvalidKeyException("Could not find a '{$key}' profile key!");
+        if (!isset($this->profiles[$key]['start'])) {
+            throw new InvalidKeyException("Could not find a profile with given key '{$key}'!");
         }
 
+        $stopTime = microtime(true);
         switch ($key) {
             case self::CONNECTION:
             case self::TRANSACTION:
-                $this->profiles[$key]['stop'] = microtime(true);
+                $this->profiles[$key]['stop'] = $stopTime;
                 $this->profiles[$key]['total'] = (float) number_format(
-                    $this->profiles[$key]['stop'] - $this->profiles[$key]['start'], 10);
+                    $stopTime - $this->profiles[$key]['start'], 10);
                 break;
             case self::QUERY:
-                if (isset($this->profiles[self::QUERY][$this->queryCount])) {
-                    $this->profiles[self::QUERY][$this->queryCount]['stop'] = microtime(true);
-                    $this->profiles[self::QUERY][$this->queryCount]['total'] = (float) number_format(
-                        $this->profiles[self::QUERY][$this->queryCount]['stop'] -
-                        $this->profiles[self::QUERY][$this->queryCount]['start'], 10);
+                $i = $this->queryCount;
+                if (isset($this->profiles[$key][$i])) {
+                    $this->profiles[$key][$i]['stop'] = $stopTime;
+                    $this->profiles[$key][$i]['total'] = (float) number_format(
+                        $stopTime - $this->profiles[$key][$i]['start'], 10);
                 }
                 break;
         }
