@@ -50,7 +50,7 @@ final class Mysql extends Agent
 
         $this->config = $config;
 
-        // assign batch object (for transaction)
+        // assign batch object (for transactions)
         $this->batch = new Batch\Mysql($this);
 
         // assign data mapper
