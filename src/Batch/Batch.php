@@ -146,7 +146,7 @@ abstract class Batch implements BatchInterface
     final public function runQuery()
     {
         $class = get_class($this);
-        trigger_error("{$class}::runQuery() is deprecated, ".
+        user_error("{$class}::runQuery() is deprecated, ".
             "use {$class}::queueRun() instead!", E_USER_DEPRECATED);
 
         return call_user_func_array([$this, 'queueRun'], func_get_args());
