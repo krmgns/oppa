@@ -96,8 +96,7 @@ final class Mysql extends Result
                 default:
                     $this->free();
 
-                    throw new InvalidValueException(
-                        "Could not implement given '{$fetchType}' fetch type!");
+                    throw new InvalidValueException("Could not implement given '{$fetchType}' fetch type!");
             }
 
             // map result data
