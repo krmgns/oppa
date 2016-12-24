@@ -139,18 +139,17 @@ final class Pgsql extends Agent
 
         // last insert id
         if (false !== stripos($query, 'insert')) {
-            @ $lastResult = pg_query($this->resource, 'SELECT lastval() AS id');
-            if ($lastResult) {
-                $lastResultObject = pg_fetch_object($lastResult);
-                if (isset($lastResultObject->id)) {
-                    $id = (int) $lastResultObject->id;
+            @ $idResult = pg_query($this->resource, 'SELECT lastval() AS id');
+            if ($idResult) {
+                $id = (int) pg_fetch_result($idResult, 'id');
+                if ($id) {
                     $rowsAffected = $result->getRowsAffected();
-                    if ($id && $rowsAffected > 1) {
+                    if ($rowsAffected > 1) {
                         $id = range($id - $rowsAffected + 1, $id);
                     }
                     $result->setIds((array) $id);
                 }
-                pg_free_result($lastResult);
+                pg_free_result($idResult);
             }
         }
 
