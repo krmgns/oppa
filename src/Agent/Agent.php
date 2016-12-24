@@ -179,9 +179,9 @@ abstract class Agent implements AgentInterface
 
     /**
      * Id.
-     * @return int|string|null
+     * @return ?int
      */
-    final public function id()
+    final public function id(): ?int
     {
         return $this->result->getId();
     }
@@ -190,7 +190,7 @@ abstract class Agent implements AgentInterface
      * Ids.
      * @return array
      */
-    final public function ids()
+    final public function ids(): array
     {
         return $this->result->getIds();
     }

@@ -310,9 +310,9 @@ final class Mysql extends Agent
      * Insert.
      * @param  string $table
      * @param  array  $data
-     * @return int|null
+     * @return ?int
      */
-    final public function insert(string $table, array $data)
+    final public function insert(string $table, array $data): ?int
     {
         // simply check is not assoc to prepare multi-insert
         if (!isset($data[0])) {
@@ -321,8 +321,8 @@ final class Mysql extends Agent
 
         $keys = array_keys(current($data));
         $values = [];
-        foreach ($data as $d) {
-            $values[] = '('. $this->escape(array_values($d)) .')';
+        foreach ($data as $dat) {
+            $values[] = '('. $this->escape(array_values($dat)) .')';
         }
 
         return $this->query(sprintf(

@@ -154,6 +154,24 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Set id.
+     * @param int $id
+     */
+    final public function setId(int $id): void
+    {
+        $this->ids[] = $id;
+    }
+
+    /**
+     * Get id.
+     * @return ?int
+     */
+    final public function getId(): ?int
+    {
+        return (false !== ($id = end($this->ids))) ? $id : null;
+    }
+
+    /**
      * Set ids.
      * @param  array $ids
      * @return void
@@ -170,24 +188,6 @@ abstract class Result implements ResultInterface
     final public function getIds(): array
     {
         return $this->ids;
-    }
-
-    /**
-     * Set id.
-     * @param int|string $id
-     */
-    final public function setId($id): void
-    {
-        $this->ids[] = $id;
-    }
-
-    /**
-     * Get id.
-     * @return int|string|null
-     */
-    final public function getId()
-    {
-        return (false !== ($id = end($this->ids))) ? $id : null;
     }
 
     /**
