@@ -44,7 +44,7 @@ final class Mysql extends Batch
 
     /**
      * Lock.
-     * @return void
+     * @return bool
      */
     final public function lock(): bool
     {
@@ -53,7 +53,7 @@ final class Mysql extends Batch
 
     /**
      * Unlock.
-     * @return void
+     * @return bool
      */
     final public function unlock(): bool
     {
