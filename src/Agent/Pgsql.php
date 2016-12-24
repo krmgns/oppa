@@ -108,7 +108,7 @@ final class Pgsql extends Agent
 
     final public function isConnected(): bool
     {
-        return is_resource($this->resource) && pg_connection_status($this->resource) === PGSQL_CONNECTION_OK;
+        return pg_connection_status($this->resource) === PGSQL_CONNECTION_OK;
     }
 
     final public function query(string $query, array $params = null, $limit = null,
