@@ -112,7 +112,7 @@ final class Mysql extends Result
 
         // dirty ways to detect last insert id for multiple inserts
         // good point! http://stackoverflow.com/a/15664201/362780
-        $id  = $resource->insert_id;
+        $id  = (int) $resource->insert_id;
         $ids = $id ? [$id] : [];
 
         /**
