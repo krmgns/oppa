@@ -192,12 +192,12 @@ abstract class Result implements ResultInterface
 
     /**
      * Set rows count.
-     * @param  int $count
+     * @param  int $rowsCount
      * @return void
      */
-    final public function setRowsCount(int $count): void
+    final public function setRowsCount(int $rowsCount): void
     {
-        $this->rowsCount = $count;
+        $this->rowsCount = $rowsCount;
     }
 
     /**
@@ -211,12 +211,12 @@ abstract class Result implements ResultInterface
 
     /**
      * Set rows affected.
-     * @param  int $count
+     * @param  int $rowsAffected
      * @return void
      */
-    final public function setRowsAffected(int $count): void
+    final public function setRowsAffected(int $rowsAffected): void
     {
-        $this->rowsAffected = $count;
+        $this->rowsAffected = $rowsAffected;
     }
 
     /**
