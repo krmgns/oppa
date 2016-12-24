@@ -109,7 +109,7 @@ final class Mysql extends Batch
         $end = microtime(true);
 
         // calculate process time just for simple profiling
-        $this->totalTime = (float) number_format((float) ($end - $start), 10);
+        $this->totalTime = (float) number_format($end - $start, 10);
 
         // even transactions are designed for insert/update/delete/replace
         // actions, let it be sure resetting the result object
