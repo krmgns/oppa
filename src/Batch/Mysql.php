@@ -71,18 +71,17 @@ final class Mysql extends Batch
             return $this;
         }
 
-        // get the big boss
+        $startTime = microtime(true);
+
         $resource = $this->agent->getResource();
 
-        $start = microtime(true);
-
         foreach ($this->queue as $query) {
-            // that what i see: clone is important in such actions
+            // @important (clone)
             $result = clone $this->agent->query($query);
 
             if ($result->getRowsAffected() > 0) {
-                // this is also important for insert actions!
-                $result->setId($resource->insert_id);
+                // @important
+                $result->setIds([$resource->insert_id]);
 
                 $this->results[] = $result;
             }
@@ -93,17 +92,13 @@ final class Mysql extends Batch
         // go go go
         $resource->commit();
 
-        $end = microtime(true);
+        $resource->autocommit(true);
 
-        // calculate process time just for simple profiling
-        $this->totalTime = (float) number_format($end - $start, 10);
+        $this->totalTime = (float) number_format(microtime(true) - $startTime, 10);
 
         // even transactions are designed for insert/update/delete/replace
         // actions, let it be sure resetting the result object
         $this->agent->getResult()->reset();
-
-        // forgot to call unlock(), hmmm?
-        $resource->autocommit(true);
 
         return $this;
     }
@@ -114,13 +109,8 @@ final class Mysql extends Batch
      */
     final public function cancel(): void
     {
-        // get big boss
         $resource = $this->agent->getResource();
-
-        // mayday mayday
-        $resource->rollback();
-
-        // free autocommits
+        $resource->rollback(); // mayday mayday
         $resource->autocommit(true);
 
         $this->reset();
