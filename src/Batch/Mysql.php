@@ -92,8 +92,6 @@ final class Mysql extends Batch
         // go go go
         $resource->commit();
 
-        $resource->autocommit(true);
-
         $this->totalTime = (float) number_format(microtime(true) - $startTime, 10);
 
         // even transactions are designed for insert/update/delete/replace
