@@ -81,7 +81,7 @@ abstract class Batch implements BatchInterface
      * @param  int $i
      * @return ?Oppa\Query\Result\Result
      */
-    final public function getResult(int $i = 0): ?Result
+    final public function getResult(int $ia): ?Result
     {
         return $this->results[$i] ?? null;
     }
