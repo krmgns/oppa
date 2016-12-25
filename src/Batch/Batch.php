@@ -88,12 +88,54 @@ abstract class Batch implements BatchInterface
     }
 
     /**
+     * Get result id.
+     * @param  int $i
+     * @return ?int
+     */
+    final public function getResultId(int $i): ?int
+    {
+        return ($result = $this->getResult($i)) ? $result->getId() : null;
+    }
+
+    /**
+     * Get result ids.
+     * @param  int $i
+     * @return array
+     */
+    final public function getResultIds(int $i): array
+    {
+        return ($result = $this->getResult($i)) ? $result->getIds() : [];
+    }
+
+    /**
      * Get results.
      * @return array
      */
     final public function getResults(): array
     {
         return $this->results;
+    }
+
+    /**
+     * Get results ids.
+     * @return array
+     */
+    final public function getResultsIds(bool $merge = true): array
+    {
+        $return = [];
+        if (!empty($this->results)) {
+            if ($merge) {
+                foreach ($this->results as $result) {
+                    $return = array_merge($return, $result->getIds());
+                }
+            } else {
+                foreach ($this->results as $result) {
+                    $return[] = $result->getIds();
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**
