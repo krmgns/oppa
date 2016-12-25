@@ -44,14 +44,14 @@ interface BatchInterface
     public function unlock(): bool;
 
     /**
-     * Run.
+     * Do.
      * @return Oppa\Batch\BatchInterface
      */
-    public function run(): BatchInterface;
+    public function do(): BatchInterface;
 
     /**
-     * Cancel.
+     * Undo.
      * @return void
      */
-    public function cancel(): void;
+    public function undo(): void;
 }

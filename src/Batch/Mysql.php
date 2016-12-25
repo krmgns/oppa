@@ -61,32 +61,33 @@ final class Mysql extends Batch
     }
 
     /**
-     * Run.
+     * Do.
      * @return Oppa\Batch\BatchInterface
      */
-    final public function run(): BatchInterface
+    final public function do(): BatchInterface
     {
         // no need to get excited
         if (empty($this->queue)) {
             return $this;
         }
 
+        $result = $this->agent->getResult();
         $resource = $this->agent->getResource();
 
         $startTime = microtime(true);
 
         foreach ($this->queue as $query) {
             // @important (clone)
-            $result = clone $this->agent->query($query);
+            $queryResult = clone $this->agent->query($query);
 
-            if ($result->getRowsAffected() > 0) {
+            if ($queryResult->getRowsAffected() > 0) {
                 // @important
-                $result->setIds([$resource->insert_id]);
+                $queryResult->setIds([$resource->insert_id]);
 
-                $this->results[] = $result;
+                $this->results[] = $queryResult;
             }
 
-            unset($result);
+            unset($queryResult);
         }
 
         // go go go
@@ -94,22 +95,19 @@ final class Mysql extends Batch
 
         $this->totalTime = (float) number_format(microtime(true) - $startTime, 10);
 
-        // even transactions are designed for insert/update/delete/replace
-        // actions, let it be sure resetting the result object
-        $this->agent->getResult()->reset();
+        $result->reset();
 
         return $this;
     }
 
     /**
-     * Cancel.
+     * Undo.
      * @return void
      */
-    final public function cancel(): void
+    final public function undo(): void
     {
-        $resource = $this->agent->getResource();
         // mayday mayday
-        $resource->rollback();
+        $this->agent->getResource()->rollback();
 
         $this->reset();
     }

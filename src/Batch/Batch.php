@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Batch;
 
+use Oppa\Util;
 use Oppa\Agent\AgentInterface;
 use Oppa\Query\Result\Result;
 
@@ -129,26 +130,48 @@ abstract class Batch implements BatchInterface
     }
 
     /**
-     * Run queue.
+     * Do query.
      * @param  string     $query
      * @param  array|null $params
      * @return Oppa\Batch\BatchInterface
      */
-    final public function queueRun(string $query, array $params = null): BatchInterface
+    final public function doQuery(string $query, array $params = null): BatchInterface
     {
-        return $this->queue($query, $params)->run();
+        return $this->queue($query, $params)->do();
+    }
+
+    /**
+     * Run.
+     * @deprecated
+     */
+    final public function run(...$args)
+    {
+        Util::generateDeprecatedMessage($this, 'run()', 'do()');
+
+        return call_user_func_array([$this, 'do'], $args);
+
     }
 
     /**
      * Run query.
      * @deprecated
      */
-    final public function runQuery()
+    final public function runQuery(...$args)
     {
-        $class = get_class($this);
-        user_error("{$class}::runQuery() is deprecated, ".
-            "use {$class}::queueRun() instead!", E_USER_DEPRECATED);
+        Util::generateDeprecatedMessage($this, 'runQuery()', 'doQuery()');
 
-        return call_user_func_array([$this, 'queueRun'], func_get_args());
+        return call_user_func_array([$this, 'doQuery'], $args);
+    }
+
+    /**
+     * Cancel.
+     * @deprecated
+     */
+    final public function cancel(...$args)
+    {
+        Util::generateDeprecatedMessage($this, 'cancel()', 'undo()');
+
+        return call_user_func_array([$this, 'undo'], $args);
+
     }
 }
