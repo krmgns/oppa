@@ -92,4 +92,17 @@ final class Util
 
         return $ip;
     }
+
+    /**
+     * Generate deprecated message.
+     * @param  class  $class
+     * @param  string $oldMethod
+     * @param  string $newMethod
+     * @return string
+     */
+    final private function generateDeprecatedMessage($class, string $oldMethod, string $newMethod): string
+    {
+        return sprintf("'%s::%s()' is deprecated, use '{%s}::%s()' instead!",
+            get_class($class), $oldMethod, $newMethod);
+    }
 }
