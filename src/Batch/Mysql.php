@@ -81,9 +81,6 @@ final class Mysql extends Batch
             $queryResult = clone $this->agent->query($query);
 
             if ($queryResult->getRowsAffected() > 0) {
-                // @important
-                $queryResult->setIds([$resource->insert_id]);
-
                 $this->results[] = $queryResult;
             }
 
