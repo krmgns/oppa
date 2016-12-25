@@ -108,8 +108,8 @@ final class Mysql extends Batch
     final public function cancel(): void
     {
         $resource = $this->agent->getResource();
-        $resource->rollback(); // mayday mayday
-        $resource->autocommit(true);
+        // mayday mayday
+        $resource->rollback();
 
         $this->reset();
     }
