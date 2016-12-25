@@ -50,6 +50,14 @@ interface BatchInterface
     public function do(): BatchInterface;
 
     /**
+     * Do query.
+     * @param  string     $query
+     * @param  array|null $params
+     * @return Oppa\Batch\BatchInterface
+     */
+    public function doQuery(string $query, array $params = null): BatchInterface;
+
+    /**
      * Undo.
      * @return void
      */
