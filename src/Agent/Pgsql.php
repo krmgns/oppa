@@ -18,6 +18,8 @@ final class Pgsql extends Agent
 
         $this->config = $config;
 
+        $this->batch = new Batch\Pgsql($this);
+
         if ($this->config['map_result']) {
             $this->mapper = new Mapper();
             if (isset($this->config['map_result_bool'])) {
