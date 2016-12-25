@@ -61,40 +61,21 @@ final class Mysql extends Batch
     }
 
     /**
-     * Do.
-     * @return Oppa\Batch\BatchInterface
+     * Start.
+     * @return bool
      */
-    final public function do(): BatchInterface
+    final public function start(): bool
     {
-        // no need to get excited
-        if (empty($this->queue)) {
-            return $this;
-        }
+        return $this->agent->getResource()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+    }
 
-        $result = $this->agent->getResult();
-        $resource = $this->agent->getResource();
-
-        $startTime = microtime(true);
-
-        foreach ($this->queue as $query) {
-            // @important (clone)
-            $queryResult = clone $this->agent->query($query);
-
-            if ($queryResult->getRowsAffected() > 0) {
-                $this->results[] = $queryResult;
-            }
-
-            unset($queryResult);
-        }
-
-        // go go go
-        $resource->commit();
-
-        $this->totalTime = (float) number_format(microtime(true) - $startTime, 10);
-
-        $result->reset();
-
-        return $this;
+    /**
+     * End.
+     * @return bool
+     */
+    final public function end(): bool
+    {
+        return $this->agent->getResource()->commit();
     }
 
     /**

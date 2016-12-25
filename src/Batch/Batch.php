@@ -172,6 +172,41 @@ abstract class Batch implements BatchInterface
     }
 
     /**
+     * Do.
+     * @return Oppa\Batch\BatchInterface
+     */
+    final public function do(): BatchInterface
+    {
+        // no need to get excited
+        if (empty($this->queue)) {
+            return $this;
+        }
+
+        $startTime = microtime(true);
+
+        $this->start();
+
+        foreach ($this->queue as $query) {
+            // @important (clone)
+            $result = clone $this->agent->query($query);
+
+            if ($result->getRowsAffected() > 0) {
+                $this->results[] = $result;
+            }
+
+            unset($result);
+        }
+
+        $this->end(); // commit, go go go!
+
+        $this->totalTime = (float) number_format(microtime(true) - $startTime, 10);
+
+        $this->agent->getResult()->reset();
+
+        return $this;
+    }
+
+    /**
      * Do query.
      * @param  string     $query
      * @param  array|null $params

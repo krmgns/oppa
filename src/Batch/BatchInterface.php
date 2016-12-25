@@ -44,6 +44,18 @@ interface BatchInterface
     public function unlock(): bool;
 
     /**
+     * Start.
+     * @return bool
+     */
+    public function start(): bool;
+
+    /**
+     * End.
+     * @return bool
+     */
+    public function end(): bool;
+
+    /**
      * Do.
      * @return Oppa\Batch\BatchInterface
      */
