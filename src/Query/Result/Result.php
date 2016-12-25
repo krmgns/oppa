@@ -303,17 +303,6 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * To JSON.
-     * @param  int $options
-     * @param  int $depth
-     * @return string
-     */
-    final public function toJson(int $options = 0, int $depth = 512): string
-    {
-        return json_encode($this->data, $options, $depth);
-    }
-
-    /**
      * Item.
      * @param  int $i
      * @return any|null
