@@ -96,18 +96,18 @@ final class Util
     /**
      * Generate deprecated message.
      * @param  string|object   $class
-     * @param  string          $oldMethod
-     * @param  string          $newMethod
+     * @param  string          $oldStuff
+     * @param  string          $newStuff
      * @return string
      */
-    final public static function generateDeprecatedMessage($class, string $oldMethod,
-        string $newMethod): string
+    final public static function generateDeprecatedMessage($class, string $oldStuff,
+        string $newStuff): string
     {
         if (is_object($class)) {
             $class = get_class($class);
         }
 
-        return printf('%1$s::%2$s() is deprecated, use %1$s::%3$s() instead!',
-            $class, $oldMethod, $newMethod);
+        return printf('%1$s::%2$s is deprecated, use %1$s::%3$s instead!',
+            $class, $oldStuff, $newStuff);
     }
 }
