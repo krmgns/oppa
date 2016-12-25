@@ -103,7 +103,7 @@ abstract class Result implements ResultInterface
         $this->data = [];
 
         // reset properties
-        $this->id = [];
+        $this->ids = [];
         $this->rowsCount = 0;
         $this->rowsAffected = 0;
     }
