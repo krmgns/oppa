@@ -153,7 +153,7 @@ final class Mysql extends Agent
                         // detect length (used for only bool's)
                         if ($data->data_type == Mapper::DATA_TYPE_BIT) {
                             $length = (int) $data->numeric_precision;
-                        } elseif (substr($data->data_type, -3) == 'int') {
+                        } elseif (substr($data->data_type, -3) == Mapper::DATA_TYPE_INT) {
                             $length = sscanf($data->column_type, $data->data_type .'(%d)')[0] ?? null;
                         }
                         $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
