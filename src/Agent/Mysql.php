@@ -45,7 +45,7 @@ final class Mysql extends Agent
     {
         // we need it like a crazy..
         if (!extension_loaded('mysqli')) {
-            throw new \RuntimeException('mysqli extension is not loaded.');
+            throw new \RuntimeException('MySQLi extension is not loaded.');
         }
 
         $this->config = $config;
