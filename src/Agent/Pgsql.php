@@ -8,7 +8,7 @@ use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, SqlState\Pgsql as SqlSt
 use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
 final class Pgsql extends Agent
-{   //private $resource,$config;
+{
     final public function __construct(Config $config)
     {
         // we need it like a crazy..
@@ -18,8 +18,10 @@ final class Pgsql extends Agent
 
         $this->config = $config;
 
+        // assign batch object (for transactions)
         $this->batch = new Batch\Pgsql($this);
 
+        // assign data mapper
         if ($this->config['map_result']) {
             $this->mapper = new Mapper();
             if (isset($this->config['map_result_bool'])) {
@@ -27,8 +29,23 @@ final class Pgsql extends Agent
             }
         }
 
+        // assign result object
         $this->result = new Result\Pgsql($this);
         $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
+
+        // assign logger if config'ed
+        if ($this->config['query_log']) {
+            $this->logger = new Logger();
+            isset($this->config['query_log_level']) &&
+                $this->logger->setLevel($this->config['query_log_level']);
+            isset($this->config['query_log_directory']) &&
+                $this->logger->setDirectory($this->config['query_log_directory']);
+        }
+
+        // assign profiler if config'ed
+        if ($this->config['profile']) {
+            $this->profiler = new Profiler();
+        }
     }
 
     final public function connect()
