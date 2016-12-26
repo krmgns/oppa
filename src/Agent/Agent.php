@@ -79,6 +79,14 @@ abstract class Agent implements AgentInterface
     protected $config;
 
     /**
+     * Destructor.
+     */
+    final public function __destruct()
+    {
+        $this->free();
+    }
+
+    /**
      * Isset (needed to prevent exception thrown).
      * @param  string $name
      * @return bool

@@ -31,11 +31,6 @@ final class Pgsql extends Agent
         $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
     }
 
-    final public function __destruct()
-    {
-        $this->disconnect();
-    }
-
     final public function connect()
     {
         // no need to get excited

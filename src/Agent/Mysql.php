@@ -81,15 +81,6 @@ final class Mysql extends Agent
     }
 
     /**
-     * Unplug itself before saying goodbye to world.
-     * @return void
-     */
-    final public function __destruct()
-    {
-        $this->disconnect();
-    }
-
-    /**
      * Connect.
      * @return \mysqli
      * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\Error
