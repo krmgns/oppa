@@ -184,7 +184,7 @@ abstract class Batch implements BatchInterface
 
         $startTime = microtime(true);
 
-        $this->start();
+        $this->start(); // begin
 
         foreach ($this->queue as $query) {
             // @important (clone)
