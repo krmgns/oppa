@@ -83,7 +83,7 @@ abstract class Agent implements AgentInterface
      */
     final public function __destruct()
     {
-        $this->free();
+        $this->disconnect();
     }
 
     /**
