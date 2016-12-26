@@ -91,7 +91,7 @@ abstract class Agent implements AgentInterface
      * @param  string $name
      * @return bool
      */
-    public function __isset($name): bool
+    final public function __isset($name): bool
     {
         return isset($this->{$name});
     }
