@@ -144,24 +144,23 @@ final class Mysql extends Agent
         // fill mapper map for once
         if ($this->mapper) {
             try {
-                $this->query("SELECT table_name, column_name, data_type, is_nullable, column_type
+                $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, column_type
                     FROM information_schema.columns WHERE table_schema = '{$name}'");
-                if ($this->result->count()) {
+                if ($result->count()) {
                     $map = [];
-                    foreach ($this->result as $result) {
+                    foreach ($result->getData() as $data) {
                         $length = null;
                         // detect length for integers (actually, used for only bool action)
-                        if (substr($result->data_type, -3) == 'int') {
-                            $length = sscanf($result->column_type, "{$result->data_type}(%d)%s")[0] ?? null;
+                        if (substr($data->data_type, -3) == 'int') {
+                            $length = sscanf($data->column_type, "{$data->data_type}(%d)%s")[0] ?? null;
                         }
-                        // needed only these for now
-                        $map[$result->table_name][$result->column_name]['type'] = $result->data_type;
-                        $map[$result->table_name][$result->column_name]['length'] = $length;
-                        $map[$result->table_name][$result->column_name]['nullable'] = ($result->is_nullable == 'YES');
+                        $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
+                        $map[$data->table_name][$data->column_name]['length'] = $length;
+                        $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
                     }
                     $this->mapper->setMap($map);
                 }
-                $this->result->reset();
+                $result->reset();
             } catch (QueryException $e) {}
         }
 
@@ -219,7 +218,7 @@ final class Mysql extends Agent
         $this->logger && $this->logger->log(Logger::INFO, sprintf(
             'New query [%s] via %s addr.', $query, Util::getIp()));
 
-        // increase query count, set last query
+        // increase query count, add last query profiler
         if ($this->profiler) {
             $this->profiler->addQuery($query);
         }
@@ -227,7 +226,7 @@ final class Mysql extends Agent
         // start last query profiling
         $this->profiler && $this->profiler->start(Profiler::QUERY);
 
-        // go go go..
+        // go go go!
         $result = $this->resource->query($query);
 
         // finish last query profiling
