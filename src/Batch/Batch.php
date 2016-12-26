@@ -25,7 +25,7 @@ namespace Oppa\Batch;
 
 use Oppa\Util;
 use Oppa\Agent\AgentInterface;
-use Oppa\Query\Result\Result;
+use Oppa\Query\Result\ResultInterface;
 
 /**
  * @package    Oppa
@@ -80,9 +80,9 @@ abstract class Batch implements BatchInterface
     /**
      * Get result.
      * @param  int $i
-     * @return ?Oppa\Query\Result\Result
+     * @return ?Oppa\Query\Result\ResultInterface
      */
-    final public function getResult(int $i): ?Result
+    final public function getResult(int $i): ?ResultInterface
     {
         return $this->results[$i] ?? null;
     }
