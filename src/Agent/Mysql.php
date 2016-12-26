@@ -93,7 +93,7 @@ final class Mysql extends Agent
         }
 
         // export credentials & others
-        list($host, $name, $username, $password) = [
+        [$host, $name, $username, $password] = [
             $this->config['host'], $this->config['name'],
             $this->config['username'], $this->config['password'],
         ];
