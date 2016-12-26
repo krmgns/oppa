@@ -175,7 +175,7 @@ final class Profiler
      */
     final public function stop(string $key): void
     {
-        if (!isset($this->profiles[$key]['start'])) {
+        if (!isset($this->profiles[$key])) {
             throw new InvalidKeyException("Could not find a profile with given key '{$key}'!");
         }
 
@@ -195,6 +195,8 @@ final class Profiler
                         $stopTime - $this->profiles[$key][$i]['start'], 10);
                 }
                 break;
+            default:
+                throw new InvalidKeyException("Unimplemented key '{$key}' given!");
         }
     }
 
