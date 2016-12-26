@@ -64,7 +64,7 @@ final class Mysql extends Batch
      * Start.
      * @return bool
      */
-    final public function start(): bool
+    final protected function start(): bool
     {
         return $this->agent->getResource()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
     }
@@ -73,7 +73,7 @@ final class Mysql extends Batch
      * End.
      * @return bool
      */
-    final public function end(): bool
+    final protected function end(): bool
     {
         return $this->agent->getResource()->commit();
     }
