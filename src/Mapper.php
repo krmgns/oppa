@@ -36,20 +36,20 @@ final class Mapper
      */
     public const
         // int
-        TYPE_INT        = 'int',
-        TYPE_BIGINT     = 'bigint',
-        TYPE_TINYINT    = 'tinyint',
-        TYPE_SMALLINT   = 'smallint',
-        TYPE_MEDIUMINT  = 'mediumint',
-        TYPE_INTEGER    = 'integer',
+        DATA_TYPE_INT        = 'int',
+        DATA_TYPE_BIGINT     = 'bigint',
+        DATA_TYPE_TINYINT    = 'tinyint',
+        DATA_TYPE_SMALLINT   = 'smallint',
+        DATA_TYPE_MEDIUMINT  = 'mediumint',
+        DATA_TYPE_INTEGER    = 'integer',
         // float
-        TYPE_FLOAT      = 'float',
-        TYPE_DOUBLE     = 'double',
-        TYPE_DECIMAL    = 'decimal',
-        TYPE_REAL       = 'real',
-        TYPE_NUMERIC    = 'numeric',
+        DATA_TYPE_FLOAT      = 'float',
+        DATA_TYPE_DOUBLE     = 'double',
+        DATA_TYPE_DECIMAL    = 'decimal',
+        DATA_TYPE_REAL       = 'real',
+        DATA_TYPE_NUMERIC    = 'numeric',
         // boolean
-        TYPE_BOOLEAN    = 'boolean';
+        DATA_TYPE_BOOLEAN    = 'boolean';
 
     /**
      * Map.
@@ -160,24 +160,24 @@ final class Mapper
         // regexp-------7.442563
         // switch-------2.709796
         switch ($type = strtolower($properties['type'])) {
-            case self::TYPE_INT:
-            case self::TYPE_BIGINT:
-            case self::TYPE_SMALLINT:
-            case self::TYPE_MEDIUMINT:
-            case self::TYPE_INTEGER:
+            case self::DATA_TYPE_INT:
+            case self::DATA_TYPE_BIGINT:
+            case self::DATA_TYPE_SMALLINT:
+            case self::DATA_TYPE_MEDIUMINT:
+            case self::DATA_TYPE_INTEGER:
                 $value = ($nullable && $value === null) ? null : (int) $value;
                 break;
-            case self::TYPE_FLOAT:
-            case self::TYPE_DOUBLE:
-            case self::TYPE_DECIMAL:
-            case self::TYPE_REAL:
+            case self::DATA_TYPE_FLOAT:
+            case self::DATA_TYPE_DOUBLE:
+            case self::DATA_TYPE_DECIMAL:
+            case self::DATA_TYPE_REAL:
                 $value = ($nullable && $value === null) ? null : (float) $value;
                 break;
-            case self::TYPE_BOOLEAN:
+            case self::DATA_TYPE_BOOLEAN:
                 $value = ($nullable && $value === null) ? null : ($value == 't');
                 break;
             // tiny it baby.. =)
-            case self::TYPE_TINYINT:
+            case self::DATA_TYPE_TINYINT:
                 if ($nullable && $value === null) {
                     // pass
                 } else {
