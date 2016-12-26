@@ -254,7 +254,7 @@ abstract class Agent implements AgentInterface
             // available named word limits: :foo, :foo123, :foo_bar
             preg_match_all('~:([a-zA-Z0-9_]+)~', $input, $match);
             if (isset($match[1]) && !empty($match[1])) {
-                $keys = $values = $keysUsed = [];
+                $keys = $values = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
                         throw new InvalidKeyException("Replacement '{$key}' key not found in params!");
