@@ -251,4 +251,16 @@ abstract class Batch implements BatchInterface
         return call_user_func_array([$this, 'undo'], $args);
 
     }
+
+    /**
+     * Start.
+     * @return bool
+     */
+    abstract protected function start(): bool;
+
+    /**
+     * End.
+     * @return bool
+     */
+    abstract protected function end(): bool;
 }
