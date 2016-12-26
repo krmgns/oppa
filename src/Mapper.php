@@ -42,6 +42,7 @@ final class Mapper
         DATA_TYPE_SMALLINT   = 'smallint',
         DATA_TYPE_MEDIUMINT  = 'mediumint',
         DATA_TYPE_INTEGER    = 'integer',
+        DATA_TYPE_SERIAL     = 'serial',
         // float
         DATA_TYPE_FLOAT      = 'float',
         DATA_TYPE_DOUBLE     = 'double',
@@ -49,7 +50,9 @@ final class Mapper
         DATA_TYPE_REAL       = 'real',
         DATA_TYPE_NUMERIC    = 'numeric',
         // boolean
-        DATA_TYPE_BOOLEAN    = 'boolean';
+        DATA_TYPE_BOOLEAN    = 'boolean',
+        // bit
+        DATA_TYPE_BIT        = 'bit';
 
     /**
      * Map.
@@ -127,16 +130,16 @@ final class Mapper
 
         // let's do it!
         foreach ($this->map[$key] as $fieldName => $fieldProperties) {
-            foreach ($data as &$d) {
+            foreach ($data as &$dat) {
                 // keep data type
-                $dType = gettype($d);
-                foreach ($d as $key => $value) {
+                $datType = gettype($dat);
+                foreach ($dat as $key => $value) {
                     // match field?
                     if ($key == $fieldName) {
-                        if ($dType == 'array') {
-                            $d[$key] = $this->cast($value, $fieldProperties);
-                        } elseif ($dType == 'object') {
-                            $d->{$key} = $this->cast($value, $fieldProperties);
+                        if ($datType == 'array') {
+                            $dat[$key] = $this->cast($value, $fieldProperties);
+                        } elseif ($datType == 'object') {
+                            $dat->{$key} = $this->cast($value, $fieldProperties);
                         }
                     }
                 }
@@ -154,7 +157,10 @@ final class Mapper
      */
     final public function cast($value, array $properties)
     {
-        $nullable = $properties['nullable'];
+        // nullable?
+        if ($properties['nullable'] && $value === null) {
+            return $value;
+        }
 
         // 1.000.000 iters
         // regexp-------7.442563
@@ -165,31 +171,29 @@ final class Mapper
             case self::DATA_TYPE_SMALLINT:
             case self::DATA_TYPE_MEDIUMINT:
             case self::DATA_TYPE_INTEGER:
-                $value = ($nullable && $value === null) ? null : (int) $value;
+            case self::DATA_TYPE_SERIAL:
+                $value = (int) $value;
                 break;
             case self::DATA_TYPE_FLOAT:
             case self::DATA_TYPE_DOUBLE:
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_REAL:
-                $value = ($nullable && $value === null) ? null : (float) $value;
+                $value = (float) $value;
                 break;
             case self::DATA_TYPE_BOOLEAN:
-                $value = ($nullable && $value === null) ? null : ($value == 't');
+                $value = ($value == 't');
                 break;
-            // tiny it baby.. =)
-            case self::DATA_TYPE_TINYINT:
-                if ($nullable && $value === null) {
-                    // pass
-                } else {
-                    $value = (int) $value;
-                    if ($this->mapOptions['bool'] && (
-                            // mysql @important
-                            $properties['length'] === 1 && ($value === 0 || $value === 1)
-                    )) {
-                        $value = (bool) $value;
+            default:
+                if ($this->mapOptions['bool'] && $properties['length'] === 1) {
+                    if (self::DATA_TYPE_TINYINT) {
+                        $value = (int) $value;
+                        if ($value === 0 || $value === 1) { $value = (bool) $value; }
+                    } elseif ($type == self::DATA_TYPE_BIT) {
+                        $value = (string) $value;
+                        // @important
+                        if ($value === '0' || $value === '1') { $value = (bool) $value; }
                     }
                 }
-                break;
         }
 
         return $value;
