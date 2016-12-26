@@ -144,15 +144,17 @@ final class Mysql extends Agent
         // fill mapper map for once
         if ($this->mapper) {
             try {
-                $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, column_type
+                $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, numeric_precision, column_type
                     FROM information_schema.columns WHERE table_schema = '{$name}'");
                 if ($result->count()) {
                     $map = [];
                     foreach ($result->getData() as $data) {
                         $length = null;
-                        // detect length for integers (actually, used for only bool action)
-                        if (substr($data->data_type, -3) == 'int') {
-                            $length = sscanf($data->column_type, "{$data->data_type}(%d)%s")[0] ?? null;
+                        // detect length (used for only bool's)
+                        if ($data->data_type == Mapper::DATA_TYPE_BIT) {
+                            $length = (int) $data->numeric_precision;
+                        } elseif (substr($data->data_type, -3) == 'int') {
+                            $length = sscanf($data->column_type, $data->data_type .'(%d)')[0] ?? null;
                         }
                         $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
                         $map[$data->table_name][$data->column_name]['length'] = $length;
