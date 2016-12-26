@@ -13,7 +13,7 @@ final class Pgsql extends Agent
     {
         // we need it like a crazy..
         if (!extension_loaded('pgsql')) {
-            throw new \RuntimeException('pgsql extension is not loaded.');
+            throw new \RuntimeException('PgSQL extension is not loaded!');
         }
 
         $this->config = $config;
@@ -62,11 +62,11 @@ final class Pgsql extends Agent
         ];
         $port = (int) $this->config['port'];
 
+        // prepare connection string
         $connectionString = sprintf("host=%s dbname=%s", $host, $name);
         if ($port)     $connectionString .= " port={$port}";
         if ($username) $connectionString .= " user={$username}";
         if ($password) $connectionString .= " password='". addcslashes($password, "'\\") ."'";
-
         $options = $this->config['options'] ?? [];
         if (null !== ($opt = Util::arrayPick($options, 'connect_timeout'))) {
             $connectionString .= " connect_timeout={$opt}";
@@ -77,35 +77,50 @@ final class Pgsql extends Agent
         if ($opt = Util::arrayPick($options, 'service')) {
             $connectionString .= " service={$opt}";
         }
-
         if ($opt = $this->config['timezone']) $connectionStringOptions[] = "--timezone=\'{$opt}\'";
         if ($opt = $this->config['charset'])  $connectionStringOptions[] = "--client_encoding=\'{$opt}\'";
         if (isset($connectionStringOptions)) {
             $connectionString .= " options='". join(' ', $connectionStringOptions) ."'";
         }
 
-        @ $this->resource = pg_connect($connectionString);
+        // start connection profiling
+        $this->profiler && $this->profiler->start(Profiler::CONNECTION);
+
+        $this->resource = pg_connect($connectionString);
         if (pg_connection_status($this->resource) === PGSQL_CONNECTION_BAD) {
-            @ $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW);
+            $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW);
         }
 
         if (!$this->resource) {
             throw new ConnectionException(error_get_last()['message'], null, SqlState::CONNECTION_FAILURE);
         }
+
+        // finish connection profiling
+        $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
+
+        // log with info level
+        $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
+
+        // fill mapper map for once
         if ($this->mapper) {
             try {
-                $this->query("SELECT table_name, column_name, data_type, is_nullable
+                $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, character_maximum_length
                     FROM information_schema.columns WHERE table_schema = 'public'");
-                if ($this->result->count()) {
+                if ($result->count()) {
                     $map = [];
-                    foreach ($this->result as $result) {
-                        $map[$result->table_name][$result->column_name]['type'] = $result->data_type;
-                        $map[$result->table_name][$result->column_name]['length'] = null;
-                        $map[$result->table_name][$result->column_name]['nullable'] = ($result->is_nullable == 'YES');
+                    foreach ($result->getData() as $data) {
+                        $length = null;
+                        // detect length (used for only bool's)
+                        if ($data->data_type == Mapper::DATA_TYPE_BIT) {
+                            $length = (int) $data->character_maximum_length;
+                        }
+                        $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
+                        $map[$data->table_name][$data->column_name]['length'] = $length;
+                        $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
                     }
                     $this->mapper->setMap($map);
                 }
-                $this->result->reset();
+                $result->reset();
             } catch (QueryException $e) {}
         }
 
