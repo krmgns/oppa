@@ -76,6 +76,14 @@ abstract class Result implements ResultInterface
     protected $rowsAffected = 0;
 
     /**
+     * Destructor.
+     */
+    final public function __destruct()
+    {
+        $this->free();
+    }
+
+    /**
      * Get agent.
      * @return Oppa\Agent\AgentInterface
      */
