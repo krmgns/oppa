@@ -197,7 +197,7 @@ final class Mysql extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\InvalidValueException, Oppa\QueryException
+     * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\QueryException
      */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
@@ -293,7 +293,7 @@ final class Mysql extends Agent
                 if ($input instanceof Sql) {
                     return $input->toString();
                 }
-                throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
+                throw new InvalidValueException("Unimplemented '{$inputType}' type encountered!");
         }
 
         return $input;
@@ -311,6 +311,7 @@ final class Mysql extends Agent
         if ($quote) {
             $input = "'{$input}'";
         }
+
         return $input;
     }
 
@@ -329,6 +330,6 @@ final class Mysql extends Agent
             return join(', ', array_map([$this, 'escapeIdentifier'], $input));
         }
 
-        return '`'. trim($input, ' `') .'`';
+        return '`'. trim($input, '`') .'`';
     }
 }
