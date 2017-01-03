@@ -162,10 +162,14 @@ abstract class AgentCrud
     /**
      * Count.
      * @param  string $query
+     * @param  array  $params
      * @return int
      */
-    final public function count(string $query): int
+    final public function count(string $query, array $params = null): int
     {
+        if (!empty($params)) {
+            $query = $this->prepare($query, $params);
+        }
         $result = $this->get("SELECT count(*) AS count FROM ({$query}) AS tmp");
 
         return intval($result->count);
