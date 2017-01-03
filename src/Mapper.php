@@ -43,9 +43,11 @@ final class Mapper
         DATA_TYPE_MEDIUMINT  = 'mediumint',
         DATA_TYPE_INTEGER    = 'integer',
         DATA_TYPE_SERIAL     = 'serial',
+        DATA_TYPE_BIGSERIAL  = 'bigserial',
         // float
         DATA_TYPE_FLOAT      = 'float',
         DATA_TYPE_DOUBLE     = 'double',
+        DATA_TYPE_DOUBLEP    = 'double precision',
         DATA_TYPE_DECIMAL    = 'decimal',
         DATA_TYPE_REAL       = 'real',
         DATA_TYPE_NUMERIC    = 'numeric',
@@ -172,10 +174,12 @@ final class Mapper
             case self::DATA_TYPE_MEDIUMINT:
             case self::DATA_TYPE_INTEGER:
             case self::DATA_TYPE_SERIAL:
+            case self::DATA_TYPE_BIGSERIAL:
                 $value = (int) $value;
                 break;
             case self::DATA_TYPE_FLOAT:
             case self::DATA_TYPE_DOUBLE:
+            case self::DATA_TYPE_DOUBLEP:
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_REAL:
                 $value = (float) $value;
@@ -187,11 +191,12 @@ final class Mapper
                 if ($this->mapOptions['bool'] && $properties['length'] === 1) {
                     if (self::DATA_TYPE_TINYINT) {
                         $value = (int) $value;
-                        if ($value === 0 || $value === 1) { $value = (bool) $value; }
+                        // @important
+                        if ($value === 0 || $value === 1) $value = (bool) $value;
                     } elseif ($type == self::DATA_TYPE_BIT) {
                         $value = (string) $value;
                         // @important
-                        if ($value === '0' || $value === '1') { $value = (bool) $value; }
+                        if ($value === '0' || $value === '1') $value = (bool) $value;
                     }
                 }
         }
