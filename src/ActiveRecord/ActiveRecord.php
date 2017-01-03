@@ -85,14 +85,10 @@ abstract class ActiveRecord
         // set table info for once
         if (empty(self::$tableInfo)) {
             $result = $this->db->getLink()->getAgent()
-                ->getAll("SHOW COLUMNS FROM {$this->table}");
-
-            foreach ($result as $result) {
-                self::$tableInfo[$result->Field] = [];
-            }
+                ->get("SELECT * FROM {$this->table} LIMIT 1");
 
             // set field names as shorcut
-            self::$tableInfo['fields'] = array_keys(self::$tableInfo);
+            self::$tableInfo['@fields'] = array_keys((array) $result);
         }
 
         // methods to bind to the entities
@@ -217,7 +213,7 @@ abstract class ActiveRecord
         }
 
         // use only owned fields
-        $data = array_intersect_key($data, array_flip(self::$tableInfo['fields']));
+        $data = array_intersect_key($data, array_flip(self::$tableInfo['@fields']));
 
         $agent = $this->db->getLink()->getAgent();
 
