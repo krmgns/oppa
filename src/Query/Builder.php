@@ -852,9 +852,9 @@ final class Builder
 
                 // add limit statement
                 if (isset($this->query['limit'])) {
-                    $this->queryString .= !isset($this->query['limit'][1])
-                        ? sprintf(' LIMIT %d', $this->query['limit'][0])
-                        : sprintf(' LIMIT %d,%d', $this->query['limit'][0], $this->query['limit'][1]);
+                    $this->queryString .= isset($this->query['limit'][1])
+                        ? sprintf(' LIMIT %d OFFSET %d', $this->query['limit'][1], $this->query['limit'][0])
+                        : sprintf(' LIMIT %d', $this->query['limit'][0]);
                 }
             }
             // prepare for "INSERT" statement
@@ -878,8 +878,7 @@ final class Builder
                     // prepare "SET" data
                     $set = [];
                     foreach ($data as $key => $value) {
-                        $set[] = sprintf('%s = %s',
-                            $agent->escapeIdentifier($key), $agent->escape($value));
+                        $set[] = sprintf('%s = %s', $agent->escapeIdentifier($key), $agent->escape($value));
                     }
                     // check again
                     if (!empty($set)) {
@@ -901,8 +900,6 @@ final class Builder
             }
             // prepare for "DELETE" statement
             elseif (isset($this->query['delete'])) {
-                $agent = $this->link->getAgent();
-
                 $this->queryString = "DELETE FROM {$this->table}";
 
                 // add criterias
