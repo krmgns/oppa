@@ -205,13 +205,11 @@ final class Mysql extends Agent
         // reset result vars
         $this->result->reset();
 
-        // trim query
         $query = trim($query);
         if ($query == '') {
             throw new InvalidValueException('Query cannot be empty!');
         }
 
-        // prepare if any params
         if (!empty($params)) {
             $query = $this->prepare($query, $params);
         }
