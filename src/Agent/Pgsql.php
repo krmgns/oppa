@@ -215,19 +215,6 @@ final class Pgsql extends Agent
         return $result;
     }
 
-    final public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, int $fetchType = null) {}
-    final public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, int $fetchType = null){}
-
-    final public function insert(string $table, array $data) {}
-    final public function update(string $table, array $data, string $where = null,
-        array $params = null, $limit = null): int {}
-    final public function delete(string $table, string $where = null,
-        array $params = null, $limit = null): int {}
-
-    final public function count(string $query): int {}
-
     final public function escape($input, string $type = null)
     {
         $inputType = gettype($input);
