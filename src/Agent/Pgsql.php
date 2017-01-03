@@ -163,6 +163,7 @@ final class Pgsql extends Agent
         if ($this->profiler) {
             $this->profiler->addQuery($query);
         }
+        pre($query);
 
         // used for getting extra query details
         pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
@@ -216,21 +217,88 @@ final class Pgsql extends Agent
     }
 
     final public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, int $fetchType = null)
-    {}
+        array $params = null, $limit = null, int $fetchType = null) {}
     final public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, int $fetchType = null)
-    {
-        return $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
-    }
+        array $params = null, int $fetchType = null){}
+
     final public function insert(string $table, array $data) {}
     final public function update(string $table, array $data, string $where = null,
         array $params = null, $limit = null): int {}
     final public function delete(string $table, string $where = null,
         array $params = null, $limit = null): int {}
+
     final public function count(string $query): int {}
-    final public function escape($input, string $type = null) {}
-    final public function escapeIdentifier($input): string {}
+
+    final public function escape($input, string $type = null)
+    {
+        $inputType = gettype($input);
+
+        // escape strings %s and for all formattable types like %d, %f and %F
+        if ($inputType != 'array' && $type && $type[0] == '%') {
+            if ($type == '%b') {
+                return $this->escapeBytea((string) $input);
+            } elseif ($type != '%s') {
+                return sprintf($type, $input);
+            } else {
+                return $this->escapeString((string) $input);
+            }
+        }
+
+        switch ($inputType) {
+            case 'string':
+                return $this->escapeString($input);
+            case 'NULL':
+                return 'NULL';
+            case 'integer':
+                return $input;
+            case 'boolean':
+                return $input ? 'TRUE' : 'FALSE';
+            case 'double':
+                return sprintf('%F', $input); // %F = non-locale aware
+            case 'array':
+                return join(', ', array_map([$this, 'escape'], $input)); // in/not in statements
+            default:
+                // no escape raws sql inputs like NOW(), ROUND(total) etc.
+                if ($input instanceof Sql) {
+                    return $input->toString();
+                }
+                throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
+        }
+
+        return $input;
+    }
+
+    final public function escapeString(string $input, bool $quote = true): string
+    {
+        $input = pg_escape_string($this->resource, $input);
+        if ($quote) {
+            $input = "'{$input}'";
+        }
+        return $input;
+    }
+
+    final public function escapeIdentifier($input): string
+    {
+        if ($input == '*') {
+            return $input;
+        }
+
+        if (is_array($input)) {
+            return join(', ', array_map([$this, 'escapeIdentifier'], $input));
+        }
+
+        return pg_escape_identifier($this->resource, trim($input, ' "'));
+    }
+
+    final public function escapeBytea(string $input): string
+    {
+        return pg_escape_bytea($this->resource, $input);
+    }
+    final public function unescapeBytea(string $input): string
+    {
+        return pg_unescape_bytea($input);
+    }
+
     final public function where(string $where = null, array $params = null): ?string {}
     final public function limit($limit): string {}
 
