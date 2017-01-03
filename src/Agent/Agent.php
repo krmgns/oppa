@@ -257,7 +257,7 @@ abstract class Agent implements AgentInterface
                 $keys = $values = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
-                        throw new InvalidKeyException("Replacement '{$key}' key not found in params!");
+                        throw new InvalidKeyException("Replacement named '{$key}' key not found in params!");
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
@@ -275,7 +275,7 @@ abstract class Agent implements AgentInterface
             if (isset($match[0]) && !empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
-                        throw new InvalidKeyException("Replacement '{$i}' key not found in input!");
+                        throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
                     }
 
                     $key = $match[0][$i];
