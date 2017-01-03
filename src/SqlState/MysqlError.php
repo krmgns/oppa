@@ -32,78 +32,80 @@ namespace Oppa\SqlState;
  */
 abstract class MysqlError
 {
+    public const
+
     /**
      * OK
      * @const int
      */
-    public const OK = 0;
+    OK = 0,
 
     /**
      * States.
      * @const string
      */
-    public const CR_UNKNOWN_ERROR = 2000;
-    public const CR_SOCKET_CREATE_ERROR = 2001;
-    public const CR_CONNECTION_ERROR = 2002;
-    public const CR_CONN_HOST_ERROR = 2003;
-    public const CR_IPSOCK_ERROR = 2004;
-    public const CR_UNKNOWN_HOST = 2005;
-    public const CR_SERVER_GONE_ERROR = 2006;
-    public const CR_VERSION_ERROR = 2007;
-    public const CR_OUT_OF_MEMORY = 2008;
-    public const CR_WRONG_HOST_INFO = 2009;
-    public const CR_LOCALHOST_CONNECTION = 2010;
-    public const CR_TCP_CONNECTION = 2011;
-    public const CR_SERVER_HANDSHAKE_ERR = 2012;
-    public const CR_SERVER_LOST = 2013;
-    public const CR_COMMANDS_OUT_OF_SYNC = 2014;
-    public const CR_NAMEDPIPE_CONNECTION = 2015;
-    public const CR_NAMEDPIPEWAIT_ERROR = 2016;
-    public const CR_NAMEDPIPEOPEN_ERROR = 2017;
-    public const CR_NAMEDPIPESETSTATE_ERROR = 2018;
-    public const CR_CANT_READ_CHARSET = 2019;
-    public const CR_NET_PACKET_TOO_LARGE = 2020;
-    public const CR_EMBEDDED_CONNECTION = 2021;
-    public const CR_PROBE_SLAVE_STATUS = 2022;
-    public const CR_PROBE_SLAVE_HOSTS = 2023;
-    public const CR_PROBE_SLAVE_CONNECT = 2024;
-    public const CR_PROBE_MASTER_CONNECT = 2025;
-    public const CR_SSL_CONNECTION_ERROR = 2026;
-    public const CR_MALFORMED_PACKET = 2027;
-    public const CR_WRONG_LICENSE = 2028;
-    public const CR_NULL_POINTER = 2029;
-    public const CR_NO_PREPARE_STMT = 2030;
-    public const CR_PARAMS_NOT_BOUND = 2031;
-    public const CR_DATA_TRUNCATED = 2032;
-    public const CR_NO_PARAMETERS_EXISTS = 2033;
-    public const CR_INVALID_PARAMETER_NO = 2034;
-    public const CR_INVALID_BUFFER_USE = 2035;
-    public const CR_UNSUPPORTED_PARAM_TYPE = 2036;
-    public const CR_SHARED_MEMORY_CONNECTION = 2037;
-    public const CR_SHARED_MEMORY_CONNECT_REQUEST_ERROR = 2038;
-    public const CR_SHARED_MEMORY_CONNECT_ANSWER_ERROR = 2039;
-    public const CR_SHARED_MEMORY_CONNECT_FILE_MAP_ERROR = 2040;
-    public const CR_SHARED_MEMORY_CONNECT_MAP_ERROR = 2041;
-    public const CR_SHARED_MEMORY_FILE_MAP_ERROR = 2042;
-    public const CR_SHARED_MEMORY_MAP_ERROR = 2043;
-    public const CR_SHARED_MEMORY_EVENT_ERROR = 2044;
-    public const CR_SHARED_MEMORY_CONNECT_ABANDONED_ERROR = 2045;
-    public const CR_SHARED_MEMORY_CONNECT_SET_ERROR = 2046;
-    public const CR_CONN_UNKNOW_PROTOCOL = 2047;
-    public const CR_INVALID_CONN_HANDLE = 2048;
-    public const CR_SECURE_AUTH = 2049;
-    public const CR_UNUSED_1 = 2049;
-    public const CR_FETCH_CANCELED = 2050;
-    public const CR_NO_DATA = 2051;
-    public const CR_NO_STMT_METADATA = 2052;
-    public const CR_NO_RESULT_SET = 2053;
-    public const CR_NOT_IMPLEMENTED = 2054;
-    public const CR_SERVER_LOST_EXTENDED = 2055;
-    public const CR_STMT_CLOSED = 2056;
-    public const CR_NEW_STMT_METADATA = 2057;
-    public const CR_ALREADY_CONNECTED = 2058;
-    public const CR_AUTH_PLUGIN_CANNOT_LOAD = 2059;
-    public const CR_DUPLICATE_CONNECTION_ATTR = 2060;
-    public const CR_AUTH_PLUGIN_ERR = 2061;
-    public const CR_INSECURE_API_ERR = 2062;
+        CR_UNKNOWN_ERROR = 2000,
+        CR_SOCKET_CREATE_ERROR = 2001,
+        CR_CONNECTION_ERROR = 2002,
+        CR_CONN_HOST_ERROR = 2003,
+        CR_IPSOCK_ERROR = 2004,
+        CR_UNKNOWN_HOST = 2005,
+        CR_SERVER_GONE_ERROR = 2006,
+        CR_VERSION_ERROR = 2007,
+        CR_OUT_OF_MEMORY = 2008,
+        CR_WRONG_HOST_INFO = 2009,
+        CR_LOCALHOST_CONNECTION = 2010,
+        CR_TCP_CONNECTION = 2011,
+        CR_SERVER_HANDSHAKE_ERR = 2012,
+        CR_SERVER_LOST = 2013,
+        CR_COMMANDS_OUT_OF_SYNC = 2014,
+        CR_NAMEDPIPE_CONNECTION = 2015,
+        CR_NAMEDPIPEWAIT_ERROR = 2016,
+        CR_NAMEDPIPEOPEN_ERROR = 2017,
+        CR_NAMEDPIPESETSTATE_ERROR = 2018,
+        CR_CANT_READ_CHARSET = 2019,
+        CR_NET_PACKET_TOO_LARGE = 2020,
+        CR_EMBEDDED_CONNECTION = 2021,
+        CR_PROBE_SLAVE_STATUS = 2022,
+        CR_PROBE_SLAVE_HOSTS = 2023,
+        CR_PROBE_SLAVE_CONNECT = 2024,
+        CR_PROBE_MASTER_CONNECT = 2025,
+        CR_SSL_CONNECTION_ERROR = 2026,
+        CR_MALFORMED_PACKET = 2027,
+        CR_WRONG_LICENSE = 2028,
+        CR_NULL_POINTER = 2029,
+        CR_NO_PREPARE_STMT = 2030,
+        CR_PARAMS_NOT_BOUND = 2031,
+        CR_DATA_TRUNCATED = 2032,
+        CR_NO_PARAMETERS_EXISTS = 2033,
+        CR_INVALID_PARAMETER_NO = 2034,
+        CR_INVALID_BUFFER_USE = 2035,
+        CR_UNSUPPORTED_PARAM_TYPE = 2036,
+        CR_SHARED_MEMORY_CONNECTION = 2037,
+        CR_SHARED_MEMORY_CONNECT_REQUEST_ERROR = 2038,
+        CR_SHARED_MEMORY_CONNECT_ANSWER_ERROR = 2039,
+        CR_SHARED_MEMORY_CONNECT_FILE_MAP_ERROR = 2040,
+        CR_SHARED_MEMORY_CONNECT_MAP_ERROR = 2041,
+        CR_SHARED_MEMORY_FILE_MAP_ERROR = 2042,
+        CR_SHARED_MEMORY_MAP_ERROR = 2043,
+        CR_SHARED_MEMORY_EVENT_ERROR = 2044,
+        CR_SHARED_MEMORY_CONNECT_ABANDONED_ERROR = 2045,
+        CR_SHARED_MEMORY_CONNECT_SET_ERROR = 2046,
+        CR_CONN_UNKNOW_PROTOCOL = 2047,
+        CR_INVALID_CONN_HANDLE = 2048,
+        CR_SECURE_AUTH = 2049,
+        CR_UNUSED_1 = 2049,
+        CR_FETCH_CANCELED = 2050,
+        CR_NO_DATA = 2051,
+        CR_NO_STMT_METADATA = 2052,
+        CR_NO_RESULT_SET = 2053,
+        CR_NOT_IMPLEMENTED = 2054,
+        CR_SERVER_LOST_EXTENDED = 2055,
+        CR_STMT_CLOSED = 2056,
+        CR_NEW_STMT_METADATA = 2057,
+        CR_ALREADY_CONNECTED = 2058,
+        CR_AUTH_PLUGIN_CANNOT_LOAD = 2059,
+        CR_DUPLICATE_CONNECTION_ATTR = 2060,
+        CR_AUTH_PLUGIN_ERR = 2061,
+        CR_INSECURE_API_ERR = 2062;
 }
