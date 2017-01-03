@@ -191,9 +191,7 @@ final class Builder
         return $this->push('select', trim($field, ', '));
     }
 
-    /**
-     * Shortcut for self.select() with no resetting.
-     */
+    /** Shortcut for self.select() with no reset. */
     final public function selectMore($field, string $alias = null): self
     {
         return $this->select($field, false, $alias);
@@ -265,12 +263,34 @@ final class Builder
         throw new InvalidValueException('Given JSON type is not implemented.');
     }
 
-    /**
-     * Shortcut for self.selectJson() with no resetting.
-     */
+    /** Shortcut for self.selectJson() with no reset. */
     final public function selectMoreJson($field, string $as, string $type = self::JSON_OBJECT): self
     {
         return $this->selectJson($field, $as, $type, false);
+    }
+
+    /** Shortcut for self.selectJson() with JSON_OBJECT type. */
+    final public function selectJsonObject($field, string $as, bool $reset = true): self
+    {
+        return $this->selectJson($field, $as, self::JSON_OBJECT, $reset);
+    }
+
+    /** Shortcut for self.selectJson() with JSON_OBJECT type with no reset. */
+    final public function selectMoreJsonObject($field, string $as): self
+    {
+        return $this->selectMoreJson($field, $as, self::JSON_OBJECT);
+    }
+
+    /** Shortcut for self.selectJson() with JSON_ARRAY type. */
+    final public function selectJsonArray($field, string $as, bool $reset = true): self
+    {
+        return $this->selectJson($field, $as, self::JSON_ARRAY, $reset);
+    }
+
+    /** Shortcut for self.selectJson() with JSON_ARRAY type with no reset. */
+    final public function selectMoreJsonArray($field, string $as): self
+    {
+        return $this->selectMoreJson($field, $as, self::JSON_ARRAY);
     }
 
     /**
