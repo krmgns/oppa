@@ -83,7 +83,7 @@ final class Mysql extends Agent
     /**
      * Connect.
      * @return \mysqli
-     * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\Error
+     * @throws Oppa\Exception\Error, Oppa\Exception\ConnectionException, Oppa\Exception\QueryException
      */
     final public function connect(): \mysqli
     {
