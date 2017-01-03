@@ -163,7 +163,6 @@ final class Pgsql extends Agent
         if ($this->profiler) {
             $this->profiler->addQuery($query);
         }
-        pre($query);
 
         // used for getting extra query details
         pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
@@ -298,9 +297,6 @@ final class Pgsql extends Agent
     {
         return pg_unescape_bytea($input);
     }
-
-    final public function where(string $where = null, array $params = null): ?string {}
-    final public function limit($limit): string {}
 
     final private function parseError(): ?array
     {
