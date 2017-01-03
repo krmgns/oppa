@@ -252,7 +252,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
         // any params provided?
         if (!empty($params)) {
             // available named word limits: :foo, :foo123, :foo_bar
-            preg_match_all('~:([a-zA-Z0-9_]+)~', $input, $match);
+            preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
             if (isset($match[1]) && !empty($match[1])) {
                 $keys = $values = [];
                 foreach ($match[1] as $key) {
