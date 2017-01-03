@@ -74,7 +74,7 @@ abstract class AgentCrud
     final public function selectOne(string $table, $fields = null, string $where = null,
         array $params = null, int $fetchType = null)
     {
-        return $this->select($table, $fields, $where, $params, 1, $fetchType)[0] ?? null;
+        return $this->select($table, $fields, $where, $params, 1, $fetchType)->getDataItem(0);
     }
 
     /**
