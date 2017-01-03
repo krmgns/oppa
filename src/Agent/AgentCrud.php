@@ -108,8 +108,8 @@ abstract class AgentCrud
         return $this->query(sprintf(
             'INSERT INTO %s (%s) VALUES %s',
                 $this->escapeIdentifier($table),
-                $this->escapeIdentifier($keys),
-                join(',', $values)
+                    $this->escapeIdentifier($keys),
+                        join(',', $values)
         ))->getId();
     }
 
@@ -134,9 +134,9 @@ abstract class AgentCrud
         return $this->query(sprintf(
             'UPDATE %s SET %s %s %s',
                 $this->escapeIdentifier($table),
-                join(', ', $set),
-                $this->where($where, $params),
-                $this->limit($limit)
+                    join(', ', $set),
+                        $this->where($where, $params),
+                            $this->limit($limit)
         ))->getRowsAffected();
     }
 
@@ -154,8 +154,8 @@ abstract class AgentCrud
         return $this->query(sprintf(
             'DELETE FROM %s %s %s',
                 $this->escapeIdentifier($table),
-                $this->where($where, $params),
-                $this->limit($limit)
+                    $this->where($where, $params),
+                        $this->limit($limit)
         ))->getRowsAffected();
     }
 
