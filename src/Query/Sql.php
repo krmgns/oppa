@@ -65,4 +65,14 @@ final class Sql
     {
         return $this->query;
     }
+
+    /**
+     * New.
+     * @param  string $query
+     * @return Oppa\Query\Sql
+     */
+    final public static function new(string $query): Sql
+    {
+        return new Sql($query);
+    }
 }
