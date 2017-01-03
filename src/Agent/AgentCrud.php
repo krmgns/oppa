@@ -56,9 +56,9 @@ abstract class AgentCrud
         return $this->query(sprintf(
             'SELECT %s FROM %s %s %s',
                 $this->escapeIdentifier($fields),
-                $this->escapeIdentifier($table),
-                $this->where($where, $params),
-                $this->limit($limit)
+                    $this->escapeIdentifier($table),
+                        $this->where($where, $params),
+                            $this->limit($limit)
         ), null, null, $fetchType)->getData();
     }
 
@@ -74,7 +74,16 @@ abstract class AgentCrud
     final public function selectOne(string $table, $fields = null, string $where = null,
         array $params = null, int $fetchType = null)
     {
-        return $this->select($table, $fields, $where, $params, 1, $fetchType)->getDataItem(0);
+        if ($fields == null) {
+            $fields = '*';
+        }
+
+        return $this->query(sprintf(
+            'SELECT %s FROM %s %s LIMIT 2',
+                $this->escapeIdentifier($fields),
+                    $this->escapeIdentifier($table),
+                        $this->where($where, $params)
+        ), null, null, $fetchType)->getDataItem(0);
     }
 
     /**
