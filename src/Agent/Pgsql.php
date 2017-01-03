@@ -271,6 +271,27 @@ final class Pgsql extends Agent
     }
 
     /**
+     * Count.
+     * @param  ?string $table
+     * @param  string  $query
+     * @param  array   $params
+     * @return ?int
+     */
+    final public function count(?string $table, string $query = null, array $params = null): ?int
+    {
+        if ($table) {
+            $result = $this->get("SELECT reltuples::bigint AS count FROM pg_class WHERE oid = '{$table}'::regclass");
+        } else {
+            if (!empty($params)) {
+                $query = $this->prepare($query, $params);
+            }
+            $result = $this->get("SELECT count(*) AS count FROM ({$query}) AS tmp");
+        }
+
+        return isset($result->count) ? intval($result->count) : null;
+    }
+
+    /**
      * Escape.
      * @param  any    $input
      * @param  string $type

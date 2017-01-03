@@ -117,11 +117,12 @@ interface AgentInterface
 
     /**
      * Count.
-     * @param  string $query
-     * @param  array  $params
-     * @return int
+     * @param  ?string $table
+     * @param  string  $query
+     * @param  array   $params
+     * @return ?int
      */
-    public function count(string $query, array $params = null): int;
+    public function count(?string $table, string $query = null, array $params = null): ?int;
 
     /**
      * Prepare.
