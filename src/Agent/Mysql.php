@@ -390,8 +390,10 @@ final class Mysql extends Agent
      */
     final public function escape($input, string $type = null)
     {
+        $inputType = gettype($input);
+
         // escape strings %s and for all formattable types like %d, %f and %F
-        if (!is_array($input) && $type && $type[0] == '%') {
+        if ($inputType != 'array' && $type && $type[0] == '%') {
             if ($type != '%s') {
                 return sprintf($type, $input);
             } else {
@@ -399,29 +401,24 @@ final class Mysql extends Agent
             }
         }
 
-        // no escape raws sql inputs like NOW(), ROUND(total) etc.
-        if ($input instanceof Sql) {
-            return $input->toString();
-        }
-
-        switch ($inputType = gettype($input)) {
+        switch ($inputType) {
+            case 'string':
+                return $this->escapeString($input);
             case 'NULL':
                 return 'NULL';
             case 'integer':
                 return $input;
-            // 1/0, afaik true/false not supported yet in mysql
             case 'boolean':
                 return (int) $input;
-            // %F = non-locale aware
             case 'double':
-                return sprintf('%F', $input);
-            // in/not in statements
+                return sprintf('%F', $input); // %F = non-locale aware
             case 'array':
-                return join(', ', array_map([$this, 'escape'], $input));
-            // i trust you baby..
-            case 'string':
-                return $this->escapeString($input);
+                return join(', ', array_map([$this, 'escape'], $input)); // in/not in statements
             default:
+                // no escape raws sql inputs like NOW(), ROUND(total) etc.
+                if ($input instanceof Sql) {
+                    return $input->toString();
+                }
                 throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
         }
 
