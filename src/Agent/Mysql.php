@@ -395,7 +395,7 @@ final class Mysql extends Agent
             if ($type != '%s') {
                 return sprintf($type, $input);
             } else {
-                return "'". $this->resource->real_escape_string($input) ."'";
+                return $this->escapeString((string) $input);
             }
         }
 
@@ -420,11 +420,26 @@ final class Mysql extends Agent
                 return join(', ', array_map([$this, 'escape'], $input));
             // i trust you baby..
             case 'string':
-                return "'". $this->resource->real_escape_string($input) ."'";
+                return $this->escapeString($input);
             default:
                 throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
         }
 
+        return $input;
+    }
+
+    /**
+     * Escape string.
+     * @param  string $input
+     * @param  bool   $quote
+     * @return string
+     */
+    final public function escapeString(string $input, bool $quote = true): string
+    {
+        $input = $this->resource->real_escape_string($input);
+        if ($quote) {
+            $input = "'{$input}'";
+        }
         return $input;
     }
 

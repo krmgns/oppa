@@ -139,6 +139,14 @@ interface AgentInterface
     public function escape($input, string $type = null);
 
     /**
+     * Escape string.
+     * @param  string $input
+     * @param  bool   $quote
+     * @return string
+     */
+    public function escapeString(string $input, bool $quote = true): string;
+
+    /**
      * Escape identifier.
      * @param  string|array $input
      * @return string
