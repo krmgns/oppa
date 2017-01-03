@@ -297,6 +297,15 @@ abstract class ActiveRecord
     }
 
     /**
+     * Get table info.
+     * @return array
+     */
+    final public function getTableInfo(): array
+    {
+        return self::$tableInfo;
+    }
+
+    /**
      * Get bind methods.
      * @return array
      */
