@@ -187,7 +187,7 @@ abstract class ActiveRecord
             $query->where($params, $paramsParams);
         }
 
-        @list($limitStart, $limitStop) = (array) $limit;
+        @ [$limitStart, $limitStop] = (array) $limit;
         if ($limitStart !== null) {
             $query->limit((int) $limitStart, $limitStop);
         }
@@ -205,11 +205,11 @@ abstract class ActiveRecord
     /**
      * Save.
      * @param  Oppa\ActiveRecord\Entity $entity
-     * @return any      On insert: last insert id.
-     * @return int|null On update: affected rows.
+     * @return ?int On insert: last insert id.
+     * @return int  On update: affected rows.
      * @throws Oppa\InvalidValueException
      */
-    final public function save(Entity $entity)
+    final public function save(Entity $entity): ?int
     {
         $data = $entity->toArray();
         if (empty($data)) {
