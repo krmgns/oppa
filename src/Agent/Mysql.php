@@ -459,21 +459,6 @@ final class Mysql extends Agent
     }
 
     /**
-     * Prepare "WHERE" statement.
-     * @param  string $where
-     * @param  array  $params
-     * @return ?string
-     */
-    final public function where(string $where = null, array $params = null): ?string
-    {
-        if (!empty($params)) {
-            $where = 'WHERE '. $this->prepare($where, $params);
-        }
-
-        return $where;
-    }
-
-    /**
      * Prepare "LIMIT" statement.
      * @param  array|int $limit
      * @return string

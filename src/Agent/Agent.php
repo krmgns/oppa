@@ -291,6 +291,21 @@ abstract class Agent implements AgentInterface
     }
 
     /**
+     * Prepare "WHERE" statement.
+     * @param  string $where
+     * @param  array  $params
+     * @return ?string
+     */
+    final public function where(string $where = null, array $params = null): ?string
+    {
+        if (!empty($params)) {
+            $where = 'WHERE '. $this->prepare($where, $params);
+        }
+
+        return $where;
+    }
+
+    /**
      * Get.
      * @param  string $query
      * @param  array  $params
