@@ -246,6 +246,18 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Get data item.
+     * @param  int $i
+     * @return any
+     */
+    final public function getDataItem(int $i)
+    {
+        if (isset($this->data[$i])) {
+            return $this->data[$i];
+        }
+    }
+
+    /**
      * To array.
      * @return ?array
      */
