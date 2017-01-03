@@ -268,10 +268,10 @@ final class Mysql extends Agent
 
         // escape strings %s and for all formattable types like %d, %f and %F
         if ($inputType != 'array' && $type && $type[0] == '%') {
-            if ($type != '%s') {
-                return sprintf($type, $input);
-            } else {
+            if ($type == '%s') {
                 return $this->escapeString((string) $input);
+            } else {
+                return sprintf($type, $input);
             }
         }
 
