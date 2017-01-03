@@ -143,9 +143,38 @@ final class Pgsql extends Agent
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
+        // reset result vars
+        $this->result->reset();
+
+        $query = trim($query);
+        if ($query == '') {
+            throw new InvalidValueException('Query cannot be empty!');
+        }
+
+        if (!empty($params)) {
+            $query = $this->prepare($query, $params);
+        }
+
+        // log query with info level
+        $this->logger && $this->logger->log(Logger::INFO, sprintf(
+            'New query [%s] via %s addr.', $query, Util::getIp()));
+
+        // increase query count, add last query profiler
+        if ($this->profiler) {
+            $this->profiler->addQuery($query);
+        }
+
+        // used for getting extra query details
         pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
 
-        @ $result = pg_query($this->resource, $query);
+        // start last query profiling
+        $this->profiler && $this->profiler->start(Profiler::QUERY);
+
+        $result = pg_query($this->resource, $query);
+
+        // finish last query profiling
+        $this->profiler && $this->profiler->stop(Profiler::QUERY);
+
         if (!$result) {
             $error = $this->parseError();
             try {
@@ -167,11 +196,12 @@ final class Pgsql extends Agent
         $result = $this->result->process($result, $limit, $fetchType);
 
         // last insert id
-        if (false !== stripos($query, 'insert')) {
-            @ $idResult = pg_query($this->resource, 'SELECT lastval() AS id');
+        if (stripos($query, 'insert') !== false) {
+            $idResult = pg_query($this->resource, 'SELECT lastval() AS id');
             if ($idResult) {
                 $id = (int) pg_fetch_result($idResult, 'id');
                 if ($id) {
+                    // multiple inserts
                     $rowsAffected = $result->getRowsAffected();
                     if ($rowsAffected > 1) {
                         $id = range($id - $rowsAffected + 1, $id);
