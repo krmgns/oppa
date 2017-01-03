@@ -1,14 +1,46 @@
 <?php
+/**
+ * Copyright (c) 2015 Kerem Güneş
+ *    <k-gun@mail.com>
+ *
+ * GNU General Public License v3.0
+ *    <http://www.gnu.org/licenses/gpl-3.0.txt>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 declare(strict_types=1);
 
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, SqlState\Pgsql as SqlState};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch,
+    SqlState\Pgsql as SqlState};
 use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
 
+/**
+ * @package    Oppa
+ * @subpackage Oppa\Agent
+ * @object     Oppa\Agent\Pgsql
+ * @author     Kerem Güneş <k-gun@mail.com>
+ */
 final class Pgsql extends Agent
 {
+    /**
+     * Constructor.
+     * @param  Oppa\Config $config
+     * @throws \RuntimeException
+     */
     final public function __construct(Config $config)
     {
         // we need it like a crazy..
@@ -48,6 +80,11 @@ final class Pgsql extends Agent
         }
     }
 
+    /**
+     * Connect.
+     * @return resource(pgsql)
+     * @throws Oppa\Exception\ConnectionException
+     */
     final public function connect()
     {
         // no need to get excited
@@ -88,6 +125,7 @@ final class Pgsql extends Agent
 
         $this->resource = pg_connect($connectionString);
         if (pg_connection_status($this->resource) === PGSQL_CONNECTION_BAD) {
+            // re-try
             $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW);
         }
 
@@ -127,6 +165,10 @@ final class Pgsql extends Agent
         return $this->resource;
     }
 
+    /**
+     * Disconnect.
+     * @return void
+     */
     final public function disconnect(): void
     {
         if (is_resource($this->resource)) {
@@ -135,11 +177,24 @@ final class Pgsql extends Agent
         }
     }
 
+    /**
+     * Check connection.
+     * @return bool
+     */
     final public function isConnected(): bool
     {
-        return pg_connection_status($this->resource) === PGSQL_CONNECTION_OK;
+        return (pg_connection_status($this->resource) === PGSQL_CONNECTION_OK);
     }
 
+    /**
+     * Yes, "Query" of the S(Q)L...
+     * @param  string    $query     Raw SQL query.
+     * @param  array     $params    Prepare params.
+     * @param  int|array $limit     Generally used in internal methods.
+     * @param  int       $fetchType By-pass Result::fetchType.
+     * @return Oppa\Query\Result\ResultInterface
+     * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\QueryException
+     */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
@@ -215,6 +270,13 @@ final class Pgsql extends Agent
         return $result;
     }
 
+    /**
+     * Escape.
+     * @param  any    $input
+     * @param  string $type
+     * @return any
+     * @throws Oppa\Exception\InvalidValueException
+     */
     final public function escape($input, string $type = null)
     {
         $inputType = gettype($input);
@@ -248,21 +310,33 @@ final class Pgsql extends Agent
                 if ($input instanceof Sql) {
                     return $input->toString();
                 }
-                throw new InvalidValueException(sprintf("Unimplemented '{$inputType}' type encountered!"));
+                throw new InvalidValueException("Unimplemented '{$inputType}' type encountered!");
         }
 
         return $input;
     }
 
+    /**
+     * Escape string.
+     * @param  string $input
+     * @param  bool   $quote
+     * @return string
+     */
     final public function escapeString(string $input, bool $quote = true): string
     {
         $input = pg_escape_string($this->resource, $input);
         if ($quote) {
             $input = "'{$input}'";
         }
+
         return $input;
     }
 
+    /**
+     * Escape identifier.
+     * @param  string|array $input
+     * @return string
+     */
     final public function escapeIdentifier($input): string
     {
         if ($input == '*') {
@@ -273,26 +347,43 @@ final class Pgsql extends Agent
             return join(', ', array_map([$this, 'escapeIdentifier'], $input));
         }
 
-        return pg_escape_identifier($this->resource, trim($input, ' "'));
+        return pg_escape_identifier($this->resource, trim($input, '"'));
     }
 
+    /**
+     * Escape bytea.
+     * @param  string $input
+     * @return string
+     */
     final public function escapeBytea(string $input): string
     {
         return pg_escape_bytea($this->resource, $input);
     }
+
+    /**
+     * Unescape bytea.
+     * @param  string $input
+     * @return string
+     */
     final public function unescapeBytea(string $input): string
     {
         return pg_unescape_bytea($input);
     }
 
+    /**
+     * Parse error.
+     * @return ?array
+     */
     final private function parseError(): ?array
     {
         $return = null;
         if ($error = pg_last_error($this->resource)) {
             $error = explode(PHP_EOL, $error);
+            // search for sql state
             preg_match('~ERROR:\s+([0-9A-Z]+?):\s+(.+)~', $error[0], $match);
             if (isset($match[1], $match[2])) {
                 $return = ['sqlstate' => $match[1]];
+                // line & nearby details etc.
                 if (isset($error[2])) {
                     preg_match('~(LINE\s+(\d+):\s+).+~', $error[1], $match2);
                     if (isset($match2[1], $match2[2])) {
@@ -305,6 +396,7 @@ final class Pgsql extends Agent
                 }
             }
         }
+
         return $return;
     }
 }
