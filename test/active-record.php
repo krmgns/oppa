@@ -6,7 +6,7 @@ use Oppa\ActiveRecord\ActiveRecord;
 
 function db() {
     return new Database([
-        'agent' => 'mysql',
+        'agent' => 'pgsql',
         'profiling' => true,
         'database' => [
             'host' => 'localhost', 'name' => 'test',
@@ -36,51 +36,51 @@ class Users extends ActiveRecord {
     }
 }
 
-$usersObject = new Users();
-// pre($usersObject,1);
+$users = new Users();
+pre($users,1);
 
-$user = $usersObject->find(1);
+$user = $users->find(1);
 pre($user);
 // pre($user->getPageLink());
 // prd($user->isFound());
 
-// $users = $usersObject->findAll();
-// $users = $usersObject->findAll([1,2,3]);
-// $users = $usersObject->findAll('users.id in(?)', [[1,2,3]]);
-// $users = $usersObject->findAll('users.id in(?,?,?)', [1,2,3]);
+// $users = $users->findAll();
+// $users = $users->findAll([1,2,3]);
+// $users = $users->findAll('users.id in(?)', [[1,2,3]]);
+// $users = $users->findAll('users.id in(?,?,?)', [1,2,3]);
 // pre($users);
 // foreach ($users as $user) {
     // pre($user->name);
 // }
-// $users = $usersObject->findAll([111111111,222222222,33333333]);
+// $users = $users->findAll([111111111,222222222,33333333]);
 // prd($users->isFound());
 
 // insert
-// $user = $usersObject->entity();
+// $user = $users->entity();
 // $user->name = 'Deli';
 // $user->old = rand(100,500);
 // prd($user->save());
 // pre($user);
 
 // update
-// $user = $usersObject->entity();
+// $user = $users->entity();
 // $user->id = 933;
 // $user->name = 'Veli';
 // $user->old = 55;
-// prd($usersObject->save($user));
+// prd($users->save($user));
 // pre($user);
 
 // update exists
-// $user = $usersObject->find(933);
+// $user = $users->find(933);
 // $user->old = 100;
 // pre($user->save());
 
 // remove
-// $result = $usersObject->remove(933);
-// $result = $usersObject->remove([931,925,926]);
+// $result = $users->remove(933);
+// $result = $users->remove([931,925,926]);
 // prd($result);
 
 // remove exists
-// $user = $usersObject->find(937);
+// $user = $users->find(937);
 // pre($user);
 // pre($user->remove());
