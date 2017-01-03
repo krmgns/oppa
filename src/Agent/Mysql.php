@@ -457,20 +457,4 @@ final class Mysql extends Agent
 
         return '`'. trim($input, ' `') .'`';
     }
-
-    /**
-     * Prepare "LIMIT" statement.
-     * @param  array|int $limit
-     * @return string
-     */
-    final public function limit($limit): string
-    {
-        if (is_array($limit)) {
-            return isset($limit[0], $limit[1])
-                ? sprintf('LIMIT %d, %d', $limit[0], $limit[1])
-                : sprintf('LIMIT %d', $limit[0]);
-        }
-
-        return $limit ? 'LIMIT '. $limit : '';
-    }
 }

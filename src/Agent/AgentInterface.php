@@ -163,8 +163,8 @@ interface AgentInterface
 
     /**
      * Limit.
-     * @param  array|int $limit
-     * @return string
+     * @param  int|array $limit
+     * @return ?string
      */
-    public function limit($limit): string;
+    public function limit($limit): ?string;
 }

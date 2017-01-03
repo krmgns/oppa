@@ -306,6 +306,22 @@ abstract class Agent implements AgentInterface
     }
 
     /**
+     * Prepare "LIMIT" statement.
+     * @param  int|array $limit
+     * @return ?string
+     */
+    final public function limit($limit): ?string
+    {
+        if (is_array($limit)) {
+            return isset($limit[0], $limit[1])
+                ? sprintf('LIMIT %d OFFSET %d', $limit[0], $limit[1])
+                : sprintf('LIMIT %d', $limit[0]);
+        }
+
+        return ($limit || $limit === 0 || $limit === '0') ? 'LIMIT '. intval($limit) : null;
+    }
+
+    /**
      * Get.
      * @param  string $query
      * @param  array  $params
