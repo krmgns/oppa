@@ -806,12 +806,24 @@ final class Builder
 
     /**
      * Count.
-     * @return int
+     * @return ?int
      */
-    final public function count(): int
+    final public function count(): ?int
     {
-        $result = $this->link->getAgent()->get(
-            sprintf('SELECT count(*) AS count FROM (%s) AS tmp', $this->toString()));
+        $agent = $this->link->getAgent();
+
+        // no where, count all simply
+        $where = $this->query['where'] ?? '';
+        if ($where == '') {
+            return $agent->count($this->table);
+        }
+
+        $from = $this->toString();
+        if ($from == '') {
+            $from = "SELECT 1 FROM {$this->table} WHERE ". join(' ', $where);
+        }
+
+        $result = $agent->get("SELECT count(*) AS count FROM ({$from}) AS tmp");
 
         return intval($result->count);
     }
@@ -829,7 +841,7 @@ final class Builder
                 throw new \LogicException(
                     "Table is not defined yet! Call 'setTable()' to set target table first.");
             }
-            // reset query
+
             $this->queryString = '';
 
             // prepare for "SELECT" statement
