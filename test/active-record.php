@@ -2,6 +2,7 @@
 include('_inc.php');
 
 use Oppa\Database;
+use Oppa\Query\Builder;
 use Oppa\ActiveRecord\ActiveRecord;
 
 function db() {
@@ -23,36 +24,40 @@ class Users extends ActiveRecord {
         parent::__construct(db());
     }
 
-    public function onFind($query) {
-        return $query
+    public function onFind(Builder $qb) {
+        return $qb
             ->select('users.*')
             ->joinLeft('users_score', 'users_score.user_id = users.id')
             ->selectMore('sum(users_score.score) score')
-            ->groupBy('users.id');
+            ->groupBy('users.id')
+        ;
     }
 
-    public function getPageLink() {
-        return sprintf('<a href="user.php?id=%d">%s</a>', $this->id, $this->name);
+    public function onEntity($entity)
+    {
+        $entity->addMethod('getPageLink', function() use($entity) {
+            return sprintf('<a href="user.php?id=%d">%s</a>', $entity->id, $entity->name);
+        });
     }
 }
 
 $users = new Users();
-pre($users,1);
+// pre($users);
 
-$user = $users->find(1);
-pre($user);
+// $user = $users->find(1);
+// pre($user);
 // pre($user->getPageLink());
 // prd($user->isFound());
 
 // $users = $users->findAll();
-// $users = $users->findAll([1,2,3]);
-// $users = $users->findAll('users.id in(?)', [[1,2,3]]);
-// $users = $users->findAll('users.id in(?,?,?)', [1,2,3]);
+$users = $users->findAll([1,2]);
+// $users = $users->findAll('users.id in(?)', [[1,2]]);
+// $users = $users->findAll('users.id in(?,?)', [1,2]);
 // pre($users);
-// foreach ($users as $user) {
-    // pre($user->name);
-// }
-// $users = $users->findAll([111111111,222222222,33333333]);
+foreach ($users as $user) {
+    pre($user->getPageLink());
+}
+// $users = $users->findAll([-1,-2,-399]);
 // prd($users->isFound());
 
 // insert
