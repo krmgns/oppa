@@ -114,19 +114,19 @@ abstract class ActiveRecord
             throw new InvalidValueException("You need to pass a parameter to make a query!");
         }
 
-        $query = new QueryBuilder($this->db->getLink());
-        $query->setTable($this->table);
+        $queryBuilder = new QueryBuilder($this->db->getLink());
+        $queryBuilder->setTable($this->table);
 
-        $query->select("{$this->table}.*");
+        $queryBuilder->select("{$this->table}.*");
 
         if (method_exists($this, 'onFind')) {
-            $query = $this->onFind($query);
+            $queryBuilder = $this->onFind($queryBuilder);
         }
 
-        $query->where("{$this->table}.{$this->tablePrimary} = ?", $param)
+        $queryBuilder->where("{$this->table}.{$this->tablePrimary} = ?", $param)
             ->limit(1);
 
-        $result = $query->run()->itemFirst();
+        $result = $queryBuilder->run()->itemFirst();
 
         $entity = new Entity($this, (array) $result);
         if (method_exists($this, 'onEntity')) {
