@@ -130,7 +130,7 @@ abstract class ActiveRecord
             throw new InvalidValueException("You need to pass a parameter to make a query!");
         }
 
-        $query = new QueryBuilder($this->getDatabase()->getLink());
+        $query = new QueryBuilder($this->db->getLink());
         $query->setTable($this->table);
 
         $query->select("{$this->table}.*");
@@ -156,7 +156,7 @@ abstract class ActiveRecord
      */
     final public function findAll($params = null, array $paramsParams = null, $limit = null): EntityCollection
     {
-        $query = new QueryBuilder($this->getDatabase()->getLink());
+        $query = new QueryBuilder($this->db->getLink());
         $query->setTable($this->table);
 
         $query->select("{$this->table}.*");
@@ -268,7 +268,7 @@ abstract class ActiveRecord
      */
     final public function count(string $params = null, array $paramsParams = null): int
     {
-        $query = new QueryBuilder($this->getDatabase()->getLink());
+        $query = new QueryBuilder($this->db->getLink());
         $query->setTable($this->table);
 
         if (!empty($params) && !empty($paramsParams)) {
