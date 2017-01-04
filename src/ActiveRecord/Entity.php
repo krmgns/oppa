@@ -44,14 +44,14 @@ final class Entity
      * ActiveRecord.
      * @var Oppa\ActiveRecord\ActiveRecord
      */
-    private $ar;
+    private $activeRecord;
 
     /**
      * Constructor.
-     * @param Oppa\ActiveRecord\ActiveRecord $ar
+     * @param Oppa\ActiveRecord\ActiveRecord $activeRecord
      * @param array                          $data
      */
-    final public function __construct(ActiveRecord $ar, array $data = [])
+    final public function __construct(ActiveRecord $activeRecord, array $data = [])
     {
         // set data
         foreach ($data as $key => $value) {
@@ -59,7 +59,7 @@ final class Entity
         }
 
         // set owner active record
-        $this->ar = $ar;
+        $this->activeRecord = $activeRecord;
     }
 
     /**
@@ -73,7 +73,7 @@ final class Entity
     {
         // check for method
         $method = strtolower($method);
-        $methods = $this->ar->getBindMethods();
+        $methods = $this->activeRecord->getBindMethods();
         if (isset($methods[$method])) {
             $method = $methods[$method]->bindTo($this);
             return call_user_func_array($method, $methodArgs);
@@ -173,7 +173,7 @@ final class Entity
      */
     final public function save()
     {
-        return $this->ar->save($this);
+        return $this->activeRecord->save($this);
     }
 
     /**
@@ -182,9 +182,9 @@ final class Entity
      */
     final public function remove():  ?int
     {
-        $tablePrimary = $this->ar->getTablePrimary();
+        $tablePrimary = $this->activeRecord->getTablePrimary();
         if ($this->__isset($tablePrimary)) {
-            return $this->ar->remove($this->__get($tablePrimary));
+            return $this->activeRecord->remove($this->__get($tablePrimary));
         }
 
         return null;
