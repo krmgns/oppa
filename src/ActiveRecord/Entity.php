@@ -159,6 +159,15 @@ final class Entity
     }
 
     /**
+     * To object.
+     * @return \stdClass
+     */
+    final public function toObject(): \stdClass
+    {
+        return (object) $this->data;
+    }
+
+    /**
      * Is found.
      * @return bool
      */
@@ -188,15 +197,6 @@ final class Entity
         }
 
         return null;
-    }
-
-    /**
-     * Get data.
-     * @return array
-     */
-    final public function getData(): array
-    {
-        return $this->data;
     }
 
     /**
