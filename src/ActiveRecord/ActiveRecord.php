@@ -109,9 +109,8 @@ abstract class ActiveRecord
      */
     final public function find($param): Entity
     {
-        $param = [$param];
-        if (empty($param)) {
-            throw new InvalidValueException("You need to pass a parameter to make a query!");
+        if ($param === null || $param === '') {
+            throw new InvalidValueException("You need to pass a parameter for select action!");
         }
 
         $queryBuilder = new QueryBuilder($this->db->getLink());
@@ -123,7 +122,7 @@ abstract class ActiveRecord
             $queryBuilder = $this->onFind($queryBuilder);
         }
 
-        $queryBuilder->where("{$this->table}.{$this->tablePrimary} = ?", $param)
+        $queryBuilder->where("{$this->table}.{$this->tablePrimary} = ?", [$param])
             ->limit(1);
 
         $result = $queryBuilder->run()->itemFirst();
@@ -242,7 +241,7 @@ abstract class ActiveRecord
     {
         $params = [$params];
         if ($params[0] === null || $params[0] === '') {
-            throw new InvalidValueException('You need to pass a parameter to make delete action!');
+            throw new InvalidValueException('You need to pass a parameter for delete action!');
         }
 
         $return = $this->db->getLink()->getAgent()
