@@ -76,7 +76,6 @@ final class Entity
      */
     final public function __call(string $method, array $methodArgs)
     {
-        // check for method
         $method = strtolower($method);
         if (isset($this->methods[$method])) {
             return call_user_func_array($this->methods[$method], $methodArgs);
