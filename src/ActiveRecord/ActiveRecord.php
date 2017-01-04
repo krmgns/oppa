@@ -202,7 +202,7 @@ abstract class ActiveRecord
     {
         $data = $entity->toArray();
         if (empty($data)) {
-            throw new InvalidValueException('There is no data ehough on entity for save action!');
+            throw new InvalidValueException('There is no data enough on entity for save action!');
         }
 
         // use only owned fields
@@ -211,7 +211,6 @@ abstract class ActiveRecord
         $agent = $this->db->getLink()->getAgent();
 
         $return = null;
-
         // insert action
         if (!isset($entity->{$this->tablePrimary})) {
                       // set primary value
@@ -239,8 +238,8 @@ abstract class ActiveRecord
     final public function remove($params): int
     {
         $params = [$params];
-        if (empty($params)) {
-            throw new InvalidValueException('You need to pass a parameter to make a query!');
+        if ($params[0] === null || $params[0] === '') {
+            throw new InvalidValueException('You need to pass a parameter to make delete action!');
         }
 
         $return = $this->db->getLink()->getAgent()
