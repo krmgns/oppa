@@ -142,7 +142,7 @@ abstract class ActiveRecord
         $query->where("{$this->table}.{$this->tablePrimary} = ?", $param)
             ->limit(1);
 
-        $result = $query->execute()->itemFirst();
+        $result = $query->run()->itemFirst();
 
         return new Entity($this, (array) $result);
     }
@@ -188,7 +188,7 @@ abstract class ActiveRecord
             $query->limit((int) $limitStart, $limitStop);
         }
 
-        $result = $query->execute();
+        $result = $query->run();
 
         $entityCollection = new EntityCollection();
         foreach ($result as $result) {

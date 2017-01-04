@@ -778,10 +778,10 @@ final class Builder
     }
 
     /**
-     * Execute builded query.
+     * Run.
      * @return : Oppa\Query\Result\ResultInterface
      */
-    final public function execute(): ResultInterface
+    final public function run(): ResultInterface
     {
         return $this->link->getAgent()->query($this->toString());
     }
