@@ -224,7 +224,7 @@ abstract class ActiveRecord
         }
 
         if (method_exists($this, 'onSave')) {
-            $this->onSave();
+            $this->onSave($return);
         }
 
         return $return;
@@ -247,7 +247,7 @@ abstract class ActiveRecord
             ->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
         if (method_exists($this, 'onDelete')) {
-            $this->onDelete();
+            $this->onDelete($return);
         }
 
         return $return;
