@@ -118,9 +118,9 @@ final class Builder
 
     /**
      * Get link.
-     * @return Oppa\Link\Link
+     * @return ?Oppa\Link\Link
      */
-    final public function getLink(): Link
+    final public function getLink(): ?Link
     {
         return $this->link;
     }
@@ -139,9 +139,9 @@ final class Builder
 
     /**
      * Get target table.
-     * @return string
+     * @return ?string
      */
-    final public function getTable(): string
+    final public function getTable(): ?string
     {
         return $this->table;
     }
