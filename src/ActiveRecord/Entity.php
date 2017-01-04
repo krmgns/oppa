@@ -202,15 +202,6 @@ final class Entity
     }
 
     /**
-     * Get active record.
-     * @return Oppa\ActiveRecord\ActiveRecord
-     */
-    final public function getActiveRecord(): ActiveRecord
-    {
-        return $this->activeRecord;
-    }
-
-    /**
      * Add method.
      * @param  string   $methodName
      * @param  callable $methodClosure
@@ -219,5 +210,33 @@ final class Entity
     final public function addMethod(string $methodName, callable $methodClosure): void
     {
         $this->methods[strtolower($methodName)] = $methodClosure->bindTo($this);
+    }
+
+    /**
+     * Get method.
+     * @param  string $methodName
+     * @return ?callable
+     */
+    final public function getMethod(string $methodName): ?callable
+    {
+        return $this->methods[strtolower($methodName)] ?? null;
+    }
+
+    /**
+     * Get methods.
+     * @return array
+     */
+    final public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    /**
+     * Get active record.
+     * @return Oppa\ActiveRecord\ActiveRecord
+     */
+    final public function getActiveRecord(): ActiveRecord
+    {
+        return $this->activeRecord;
     }
 }
