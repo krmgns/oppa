@@ -30,6 +30,7 @@ class Users extends ActiveRecord {
             ->joinLeft('users_score', 'users_score.user_id = users.id')
             ->selectMore('sum(users_score.score) score')
             ->groupBy('users.id')
+            ->orderBy('users.id')
         ;
     }
 
@@ -44,9 +45,9 @@ class Users extends ActiveRecord {
 $users = new Users();
 // pre($users);
 
-// $user = $users->find(1);
+$user = $users->find(1);
 // pre($user);
-// pre($user->getPageLink());
+pre($user->getPageLink(),1);
 // prd($user->isFound());
 
 // $users = $users->findAll();
