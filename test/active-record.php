@@ -34,8 +34,7 @@ class Users extends ActiveRecord {
         ;
     }
 
-    public function onEntity($entity)
-    {
+    public function onEntity($entity) {
         $entity->addMethod('getPageLink', function() use($entity) {
             return sprintf('<a href="user.php?id=%d">%s</a>', $entity->id, $entity->name);
         });
