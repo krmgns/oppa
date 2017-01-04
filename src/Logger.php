@@ -64,8 +64,7 @@ final class Logger
     /**
      * Constructor.
      */
-    final public function __construct()
-    {}
+    final public function __construct() {}
 
     /**
      * Set level.
