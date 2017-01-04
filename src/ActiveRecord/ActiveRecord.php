@@ -138,49 +138,52 @@ abstract class ActiveRecord
 
     /**
      * Find all.
-     * @param  any       $params
-     * @param  array     $paramsParams
+     * @param  any       $query
+     * @param  array     $params
      * @param  array|int $limit
      * @return Oppa\ActiveRecord\EntityCollection
      */
-    final public function findAll($params = null, array $paramsParams = null, $limit = null): EntityCollection
+    final public function findAll($query = null, array $params = null, $limit = null): EntityCollection
     {
-        $query = new QueryBuilder($this->db->getLink());
-        $query->setTable($this->table);
+        $queryBuilder = new QueryBuilder($this->db->getLink());
+        $queryBuilder->setTable($this->table);
 
-        $query->select("{$this->table}.*");
+        $queryBuilder->select("{$this->table}.*");
 
         if (method_exists($this, 'onFind')) {
-            $query = $this->onFind($query);
+            $queryBuilder = $this->onFind($queryBuilder);
         }
+
+        $isEmptyQuery = empty($query);
+        $isEmptyParams = empty($params);
 
         // fetch all rows, oh ohh..
         // e.g: findAll()
-        if (empty($params)) {
+        if ($isEmptyQuery) {
             // nothing to do..
         }
         // fetch all rows by primary key with given params
         // e.g: findAll([1,2,3])
-        elseif (!empty($params) && empty($paramsParams)) {
-            $query->where("{$this->table}.{$this->tablePrimary} IN(?)", [$params]);
+        elseif (!$isEmptyQuery && $isEmptyParams) {
+            $queryBuilder->where("{$this->table}.{$this->tablePrimary} IN(?)", [$query]);
         }
-        // fetch all rows with given params and paramsParams
+        // fetch all rows with given params and params
         // e.g: findAll('id IN (?)', [[1,2,3]])
         // e.g: findAll('id IN (?,?,?)', [1,2,3])
-        elseif (!empty($params) && !empty($paramsParams)) {
+        elseif (!$isEmptyQuery && !$isEmptyParams) {
             // now, it is user's responsibility to append table(s) before field(s)
-            $query->where($params, $paramsParams);
+            $queryBuilder->where($query, $params);
         }
 
         @ [$limitStart, $limitStop] = (array) $limit;
         if ($limitStart !== null) {
-            $query->limit((int) $limitStart, $limitStop);
+            $queryBuilder->limit((int) $limitStart, $limitStop);
         }
 
         $hasOnEntity = method_exists($this, 'onEntity');
 
         $entityCollection = new EntityCollection();
-        foreach ($query->run() as $result) {
+        foreach ($queryBuilder->run() as $result) {
             $entity = new Entity($this, (array) $result);
             if ($hasOnEntity) {
                 $this->onEntity($entity);
