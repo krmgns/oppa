@@ -213,8 +213,9 @@ final class Entity
 
     /**
      * Add method.
-     * @param string   $methodName
-     * @param callable $methodClosure
+     * @param  string   $methodName
+     * @param  callable $methodClosure
+     * @return void
      */
     final public function addMethod(string $methodName, callable $methodClosure): void
     {
