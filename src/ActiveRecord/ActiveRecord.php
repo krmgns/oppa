@@ -254,20 +254,20 @@ abstract class ActiveRecord
 
     /**
      * Count.
-     * @param  string $params
-     * @param  array  $paramsParams
-     * @return int
+     * @param  string $query
+     * @param  array  $params
+     * @return ?int
      */
-    final public function count(string $params = null, array $paramsParams = null): int
+    final public function count(string $query = null, array $params = null): ?int
     {
-        $query = new QueryBuilder($this->db->getLink());
-        $query->setTable($this->table);
+        $queryBuilder = new QueryBuilder($this->db->getLink());
+        $queryBuilder->setTable($this->table);
 
-        if (!empty($params) && !empty($paramsParams)) {
-            $query->where($params, $paramsParams);
+        if (!empty($query) && !empty($params)) {
+            $queryBuilder->where($query, $params);
         }
 
-        return $query->count();
+        return $queryBuilder->count();
     }
 
     /**
