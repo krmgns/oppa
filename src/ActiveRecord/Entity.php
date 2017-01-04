@@ -189,4 +189,22 @@ final class Entity
 
         return null;
     }
+
+    /**
+     * Get data.
+     * @return array
+     */
+    final public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * Get active record.
+     * @return Oppa\ActiveRecord\ActiveRecord
+     */
+    final public function getActiveRecord(): ActiveRecord
+    {
+        return $this->activeRecord;
+    }
 }
