@@ -41,6 +41,12 @@ final class Entity
     private $data = [];
 
     /**
+     * Methods.
+     * @var array
+     */
+    private $methods = [];
+
+    /**
      * ActiveRecord.
      * @var Oppa\ActiveRecord\ActiveRecord
      */
@@ -53,7 +59,6 @@ final class Entity
      */
     final public function __construct(ActiveRecord $activeRecord, array $data = [])
     {
-        // set data
         foreach ($data as $key => $value) {
             $this->data[$key] = $value;
         }
@@ -73,10 +78,8 @@ final class Entity
     {
         // check for method
         $method = strtolower($method);
-        $methods = $this->activeRecord->getBindMethods();
-        if (isset($methods[$method])) {
-            $method = $methods[$method]->bindTo($this);
-            return call_user_func_array($method, $methodArgs);
+        if (isset($this->methods[$method])) {
+            return call_user_func_array($this->methods[$method], $methodArgs);
         }
 
         throw new \BadMethodCallException('Method does not exists!');
@@ -206,5 +209,15 @@ final class Entity
     final public function getActiveRecord(): ActiveRecord
     {
         return $this->activeRecord;
+    }
+
+    /**
+     * Add method.
+     * @param string   $methodName
+     * @param callable $methodClosure
+     */
+    final public function addMethod(string $methodName, callable $methodClosure): void
+    {
+        $this->methods[strtolower($methodName)] = $methodClosure->bindTo($this);
     }
 }

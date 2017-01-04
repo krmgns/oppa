@@ -39,15 +39,23 @@ final class EntityCollection implements \Countable, \IteratorAggregate
 
     /**
      * Add.
-     * @param  Oppa\ActiveRecord\ActiveRecord $ar
+     * @param  Oppa\ActiveRecord\ActiveRecord $activeRecord
      * @param  array                          $data
-     * @return self
+     * @return void
      */
-    final public function add(ActiveRecord $ar, array $data = []): self
+    final public function add(ActiveRecord $activeRecord, array $data = []): void
     {
-        $this->collection[] = new Entity($ar, $data);
+        $this->collection[] = new Entity($activeRecord, $data);
+    }
 
-        return $this;
+    /**
+     * Add entity.
+     * @param  Oppa\ActiveRecord\Entity $entity
+     * @return void
+     */
+    final public function addEntity(Entity $entity): void
+    {
+        $this->collection[] = $entity;
     }
 
     /**

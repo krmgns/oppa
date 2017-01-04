@@ -61,12 +61,6 @@ abstract class ActiveRecord
     private static $tableInfo = [];
 
     /**
-     * Bind methods for entity.
-     * @var array
-     */
-    private $bindMethods = [];
-
-    /**
      * Constructor.
      * @param  Oppa\Database $db
      * @throws Oppa\InvalidValueException
@@ -90,21 +84,6 @@ abstract class ActiveRecord
             // set field names as shorcut
             self::$tableInfo['@fields'] = array_keys((array) $result);
         }
-
-        // methods to bind to the entities
-        $className = get_class($this);
-        $reflection = new \ReflectionClass($className);
-        foreach ($reflection->getMethods() as $method) {
-            if ($method->class == $className) {
-                $methodName = strtolower($method->name);
-                $methodPrefix = substr($methodName, 0, 2);
-                // skip magics and on* methods
-                if ($methodPrefix == '__' || $methodPrefix == 'on') {
-                    continue;
-                }
-                $this->bindMethods[$methodName] = $reflection->getMethod($methodName)->getClosure($this);
-            }
-        }
     }
 
     /**
@@ -114,7 +93,12 @@ abstract class ActiveRecord
      */
     final public function entity(array $data = []): Entity
     {
-        return new Entity($this, $data);
+        $entity = new Entity($this, $data);
+        if (method_exists($this, 'onEntity')) {
+            $this->onEntity($entity);
+        }
+
+        return $entity;
     }
 
     /**
@@ -144,7 +128,12 @@ abstract class ActiveRecord
 
         $result = $query->run()->itemFirst();
 
-        return new Entity($this, (array) $result);
+        $entity = new Entity($this, (array) $result);
+        if (method_exists($this, 'onEntity')) {
+            $this->onEntity($entity);
+        }
+
+        return $entity;
     }
 
     /**
@@ -188,11 +177,15 @@ abstract class ActiveRecord
             $query->limit((int) $limitStart, $limitStop);
         }
 
-        $result = $query->run();
+        $hasOnEntity = method_exists($this, 'onEntity');
 
         $entityCollection = new EntityCollection();
-        foreach ($result as $result) {
-            $entityCollection->add($this, (array) $result);
+        foreach ($query->run() as $result) {
+            $entity = new Entity($this, (array) $result);
+            if ($hasOnEntity) {
+                $this->onEntity($entity);
+            }
+            $entityCollection->addEntity($entity);
         }
 
         return $entityCollection;
@@ -303,15 +296,6 @@ abstract class ActiveRecord
     final public function getTableInfo(): array
     {
         return self::$tableInfo;
-    }
-
-    /**
-     * Get bind methods.
-     * @return array
-     */
-    final public function getBindMethods(): array
-    {
-        return $this->bindMethods;
     }
 
     /**
