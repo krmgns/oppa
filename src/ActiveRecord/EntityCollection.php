@@ -79,19 +79,19 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * First.
+     * Item first.
      * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function first(): ?Entity
+    final public function itemFirst(): ?Entity
     {
         return $this->item(0);
     }
 
     /**
-     * Last.
+     * Item last.
      * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function last(): ?Entity
+    final public function itemLast(): ?Entity
     {
         return $this->item(count($this->collection) - 1);
     }
