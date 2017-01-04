@@ -178,9 +178,9 @@ final class Entity
 
     /**
      * Save.
-     * @return any
+     * @return ?int
      */
-    final public function save()
+    final public function save(): ?int
     {
         return $this->activeRecord->save($this);
     }
