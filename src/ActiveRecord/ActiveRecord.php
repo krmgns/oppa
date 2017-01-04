@@ -142,7 +142,7 @@ abstract class ActiveRecord
         $query->where("{$this->table}.{$this->tablePrimary} = ?", $param)
             ->limit(1);
 
-        $result = $query->execute()->first();
+        $result = $query->execute()->itemFirst();
 
         return new Entity($this, (array) $result);
     }
