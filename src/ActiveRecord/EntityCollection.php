@@ -38,6 +38,11 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     private $collection = [];
 
     /**
+     * Constructor.
+     */
+    final public function __construct() {}
+
+    /**
      * Add.
      * @param  Oppa\ActiveRecord\ActiveRecord $activeRecord
      * @param  array                          $data
