@@ -69,19 +69,19 @@ final class Entity
 
     /**
      * Call.
-     * @param  string $method
+     * @param  string $methodName
      * @param  array  $methodArgs
      * @return any
      * @throws \BadMethodCallException
      */
-    final public function __call(string $method, array $methodArgs)
+    final public function __call(string $methodName, array $methodArgs)
     {
-        $method = strtolower($method);
-        if (isset($this->methods[$method])) {
-            return call_user_func_array($this->methods[$method], $methodArgs);
+        $methodClosure = $this->methods[strtolower($methodName)] ?? null;
+        if ($methodClosure) {
+            return call_user_func_array($methodClosure, $methodArgs);
         }
 
-        throw new \BadMethodCallException('Method does not exists!');
+        throw new \BadMethodCallException("Method '{$methodName}' does not exists on this entity!");
     }
 
     /**
@@ -113,7 +113,7 @@ final class Entity
             return $this->data[$keyCC];
         }
 
-        throw new InvalidKeyException("Given '{$key}' key is not found in this entity!");
+        throw new InvalidKeyException("Given '{$key}' key is not found on this entity!");
     }
 
     /**
