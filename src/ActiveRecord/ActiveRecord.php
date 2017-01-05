@@ -280,8 +280,13 @@ abstract class ActiveRecord
         $queryBuilder = new QueryBuilder($this->db->getLink());
         $queryBuilder->setTable($this->table);
 
-        if (!empty($query) && !empty($params)) {
+        $isEmptyQuery = empty($query);
+        $isEmptyParams = empty($params);
+
+        if (!$isEmptyQuery && !$isEmptyParams) {
             $queryBuilder->where($query, $params);
+        } elseif (!$isEmptyQuery && $isEmptyParams) {
+            $queryBuilder->where($query);
         }
 
         return $queryBuilder->count();
