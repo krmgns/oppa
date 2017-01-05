@@ -221,10 +221,10 @@ class Users extends Oppa\ActiveRecord {
 }
 
 // init active record object
-$usersObject = new Users();
+$users = new Users();
 
 // find one that id=1
-$user = $usersObject->find(1);
+$user = $users->find(1);
 dump $user;
 
 // check user found?
@@ -233,53 +233,53 @@ if ($user->isFound()) {
 }
 
 // find all
-$users = $usersObject->findAll();
+$users = $users->findAll();
 // find many that id=1,2,3
-$users = $usersObject->findAll([1,2,3]);
-$users = $usersObject->findAll('id in(?)', [[1,2,3]]);
-$users = $usersObject->findAll('id in(?,?,?)', [1,2,3]);
+$users = $users->findAll([1,2,3]);
+$users = $users->findAll('id in(?)', [[1,2,3]]);
+$users = $users->findAll('id in(?,?,?)', [1,2,3]);
 dump $users;
 
 foreach ($users as $user) {
    dump $user->name;
 }
 
-$users = $usersObject->findAll([1111111111,2222222222,3333333333]);
+$users = $users->findAll([-1,null,'foo']);
 dump $users->isEmpty(); // true
 
 // insert a user
-$user = $usersObject->entity();
+$user = $users->entity();
 $user->name = 'Ali';
 $user->old  = 40;
 dump $user->save();
 // or
-$user = $usersObject->save($user);
+$user = $users->save($user);
 // here we see "id" will be filled with last insert id
 dump $user;
 
 // update a user "id=1"
-$user = $usersObject->entity();
+$user = $users->entity();
 $user->id   = 1;
 $user->name = 'Ali';
 $user->old  = 55;
-dump $usersObject->save($user);
+dump $users->save($user);
 
 // update a user that already exists "id=1"
-$user = $usersObject->find(1);
+$user = $users->find(1);
 $user->name = 'Ali';
 $user->old  = 100;
 dump $user->save();
 
 // remove a user "id=1"
-$result = $usersObject->remove(1);
+$result = $users->remove(1);
 dump $result;
 
 // remove a user that already exists "id=1"
-$user = $usersObject->find(1);
+$user = $users->find(1);
 dump $user->remove();
 
 // remove users "id=1,2,3"
-$result = $usersObject->remove([1,2,3]);
+$result = $users->remove([1,2,3]);
 dump $result;
 ```
 
