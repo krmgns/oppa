@@ -334,7 +334,7 @@ abstract class Result implements ResultInterface
 
     /**
      * Item first.
-     * @return any
+     * @return any|null
      */
     final public function itemFirst()
     {
@@ -343,7 +343,7 @@ abstract class Result implements ResultInterface
 
     /**
      * Item last.
-     * @return any
+     * @return any|null
      */
     final public function itemLast()
     {
