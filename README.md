@@ -37,7 +37,7 @@ $autoload->register();
 $cfg = [
    'agent'    => 'mysql',
    'database' => [
-      'host'     => 'localhost',  'name'    => 'test',
+      'host'     => 'localhost',  'name'     => 'test',
       'username' => 'test',       'password' => '********',
       'charset'  => 'utf8',       'timezone' => '+00:00',
    ]
