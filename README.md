@@ -215,14 +215,10 @@ $batch->reset();
 class Users extends Oppa\ActiveRecord\ActiveRecord {
    protected $table = 'users';
    protected $tablePrimary = 'id';
-
-   public function __construct() {
-      parent::__construct($db);
-   }
 }
 
 // init active record object
-$users = new Users();
+$users = new Users($db);
 
 // find one that id=1
 $user = $users->find(1);
