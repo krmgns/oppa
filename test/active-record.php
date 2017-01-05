@@ -44,19 +44,19 @@ class Users extends ActiveRecord {
 $users = new Users();
 // pre($users);
 
-$user = $users->find(1);
-// pre($user);
-pre($user->getPageLink(),1);
-// prd($user->isFound());
+// $user = $users->find(1);
+// // pre($user);
+// pre($user->getPageLink(),1);
+// // prd($user->isFound());
 
-// $users = $users->findAll();
-$users = $users->findAll([1,2]);
-// $users = $users->findAll('users.id in(?)', [[1,2]]);
-// $users = $users->findAll('users.id in(?,?)', [1,2]);
-// pre($users);
-foreach ($users as $user) {
-    pre($user->getPageLink());
-}
+// // $users = $users->findAll();
+// $users = $users->findAll([1,2]);
+// // $users = $users->findAll('users.id in(?)', [[1,2]]);
+// // $users = $users->findAll('users.id in(?,?)', [1,2]);
+// // pre($users);
+// foreach ($users as $user) {
+//     pre($user->getPageLink());
+// }
 // $users = $users->findAll([-1,-2,-399]);
 // prd($users->isFound());
 
@@ -80,12 +80,18 @@ foreach ($users as $user) {
 // $user->old = 100;
 // pre($user->save());
 
-// remove
-// $result = $users->remove(933);
-// $result = $users->remove([931,925,926]);
-// prd($result);
-
 // remove exists
-// $user = $users->find(937);
-// pre($user);
+// $user = $users->entity();
+// $user->id = 262;
 // pre($user->remove());
+
+// $user = $users->find(261);
+// if ($user->isFound())
+//     pre($user->remove());
+// else
+//     pre("nö!");
+
+// remove
+// $result = $users->removeAll(933);
+// $result = $users->removeAll([258,259,260]);
+// pre($result);
