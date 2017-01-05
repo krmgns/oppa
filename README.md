@@ -155,17 +155,16 @@ LIMIT 0,10
 // get batch object
 $batch = $agent->getBatch();
 
-// set autocommit=0
+// set autocommit=0 (not needed for pgsql)
 $batch->lock();
 try {
     // commit
     $batch->doQuery('insert into `users` values(null,?,?)', ['John', 25]);
 } catch (\Throwable $e) {
-    dump $e->getMessage();
     // rollback
     $batch->undo();
 }
-// set autocommit=1
+// set autocommit=1 (not needed for pgsql)
 $batch->unlock();
 
 // get last insert id if success
@@ -184,7 +183,7 @@ $batch->reset();
 // get batch object
 $batch = $agent->getBatch();
 
-// set autocommit=0
+// set autocommit=0 (not needed for pgsql)
 $batch->lock();
 try {
     $batch->queue('insert into `users` values(null,?,?)', ['John', 25]);
@@ -193,11 +192,10 @@ try {
     // commit
     $batch->do();
 } catch (\Throwable $e) {
-    dump $e->getMessage();
     // rollback
     $batch->undo();
 }
-// set autocommit=1
+// set autocommit=1 (not needed for pgsql)
 $batch->unlock();
 
 // get insert ids if success
