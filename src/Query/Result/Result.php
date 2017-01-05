@@ -237,6 +237,15 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Has data.
+     * @return bool
+     */
+    final public function hasData(): bool
+    {
+        return !empty($this->data);
+    }
+
+    /**
      * Get data.
      * @return array
      */
@@ -348,6 +357,15 @@ abstract class Result implements ResultInterface
     final public function itemLast()
     {
         return $this->item(count($this->data) - 1);
+    }
+
+    /**
+     * Is empty.
+     * @return bool
+     */
+    final public function isEmpty(): bool
+    {
+        return empty($this->data);
     }
 
     /**
