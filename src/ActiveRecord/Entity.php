@@ -183,6 +183,15 @@ final class Entity
     }
 
     /**
+     * Is empty.
+     * @return bool
+     */
+    final public function isEmpty(): bool
+    {
+        return empty($this->data);
+    }
+
+    /**
      * Save.
      * @return ?int
      */
