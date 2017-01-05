@@ -262,8 +262,8 @@ abstract class ActiveRecord
         $return = $this->db->getLink()->getAgent()
             ->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
 
-        if (method_exists($this, 'onDelete')) {
-            $this->onDelete($return);
+        if (method_exists($this, 'onRemove')) {
+            $this->onRemove($return);
         }
 
         return $return;
