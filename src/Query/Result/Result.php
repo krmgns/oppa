@@ -98,7 +98,7 @@ abstract class Result implements ResultInterface
      */
     final public function getResult()
     {
-        return $this->resource;
+        return $this->result;
     }
 
     /**
