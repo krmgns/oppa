@@ -62,20 +62,6 @@ $agent = $db->getLink()->getAgent();
 //     pre($r->getIds());
 // }
 
-// $ii = [[154, 155], [156]];
-// $id = [];
-// pre($ii);
-// foreach($ii as $i) $id = array_merge($id, $i);
-// pre($id);
-// $id=[];
-// foreach($ii as $i) $id[] = $i;
-// pre($id);
-
-// $b = $db->getLink()->getAgent()->getBatch();
-// pre($b);
-// prd($s->getId());
-// prd($s->getIds());
-
 // pre($db);
 // pre($db->getLink()->getAgent()->isConnected());
 // pre($db->getLink()->getAgent()->queryMulti(["select * from foos limit 1"])); // @TODO
@@ -88,27 +74,28 @@ $agent = $db->getLink()->getAgent();
 // pre($db->getLink('localhost')); // err!
 
 /*** sharding ***/
-// $cfg = [
-//     'agent' => 'mysql',
-//     'sharding' => true,
-//     'database' => [
-//         'fetch_type' => 'object',
-//         'charset'    => 'utf8',
-//         'timezone'   => '+00:00',
-//         'port'       => 3306,
-//         'username'   => 'test',
-//         'password'   => '********',
-//         'master'     => ['host' => 'master.mysql.local', 'name' => 'test', 'port' => 3307],
-//         'slaves'     => [
-//             ['host' => 'slave1.mysql.local', 'name' => 'test'],
-//             ['host' => 'slave2.mysql.local', 'name' => 'test'],
-//             ['host' => 'slave3.mysql.local', 'name' => 'test'],
-//         ],
-//         // 'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 3],
-//     ]
-// ];
+$cfg = [
+    'agent' => 'mysql',
+    'sharding' => true,
+    'database' => [
+        'fetch_type' => 'object',
+        'charset'    => 'utf8',
+        'timezone'   => '+00:00',
+        'name'       => 'test',
+        'port'       => 3306,
+        'username'   => 'test',
+        'password'   => '********',
+        'master'     => ['host' => 'master.mysql.local'],
+        'slaves'     => [
+            ['host' => 'slave1.mysql.local'],
+            ['host' => 'slave2.mysql.local'],
+            ['host' => 'slave3.mysql.local'],
+        ],
+        // 'options' => [MYSQLI_OPT_CONNECT_TIMEOUT => 3],
+    ]
+];
 
-// $db = new Database($cfg);
+$db = new Database($cfg);
 
 // // for master connection
 // $db->connect();
