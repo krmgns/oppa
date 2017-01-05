@@ -9,7 +9,7 @@ You will be enjoying while using it, promise.. :)
 Before beginning;
 
 - Set your autoloader properly
-- Use PHP >= 7.1 (older versions here: [v1](https://github.com/k-gun/oppa/tree/1.26.4), [v2 | PHP 7.0](https://github.com/k-gun/oppa/tree/2.3.2))
+- Use PHP >= 7.1 (older versions here: [v1](https://github.com/k-gun/oppa/tree/1.26.4), [v2 (PHP 7.0)](https://github.com/k-gun/oppa/tree/2.3.2))
 - Use try/catch blocks
 - You can use `test.sql` in test folder
 - Wiki updated for v2
