@@ -1,17 +1,16 @@
 {
     "name": "k-gun/oppa",
     "type": "library",
-    "version": "2.3.2",
+    "version": "3.0.0",
     "homepage": "http://github.com/k-gun/oppa",
     "description": "Oppa: Database abstraction, query building and active record implementation with PHP.",
-    "keywords": ["mysql", "mysqli", "abstraction layer", "database", "active record"],
+    "keywords": ["mysql", "pgsql", "abstraction layer", "database", "active record"],
     "license": "GNU General Public License v3.0",
     "authors": [
         {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
     ],
     "require": {
-        "php": "^7.0",
-        "ext-mysqli": "*"
+        "php": "^7.1"
     },
     "autoload": {
         "classmap": ["src/"]
