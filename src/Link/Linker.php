@@ -89,27 +89,26 @@ final class Linker
                 case null:
                 case Link::TYPE_MASTER:
                     $type = Link::TYPE_MASTER;
-                    $database = $database + $master;
+                    $database = array_merge($database, $master);
                     break;
                 //  act: slave
                 case Link::TYPE_SLAVE:
                     $type = Link::TYPE_SLAVE;
                     if (!empty($slaves)) {
-                        $slave = Util::arrayRand($slaves);
-                        $database = $database + $slave;
+                        $database = array_merge($database, Util::arrayRand($slaves));
                     }
                     break;
                 default:
                     // given host is master's host?
                     if ($host == ($master['host'] ?? '')) {
                         $type = Link::TYPE_MASTER;
-                        $database = $database + $master;
+                        $database = array_merge($database, $master);
                     } else {
                         // or given host is slaves's host?
                         $type = Link::TYPE_SLAVE;
                         foreach ($slaves as $slave) {
-                            if (isset($slave['host'], $slave['name']) && $slave['host'] == $host) {
-                                $database = $database + $slave;
+                            if (isset($slave['host']) && $slave['host'] == $host) {
+                                $database = array_merge($database, $slave);
                                 break;
                             }
                         }
@@ -121,12 +120,10 @@ final class Linker
         unset($config['database'], $database['master'], $database['slaves']);
 
         // merge configs
-        $config = $config + (array) $database;
+        $config = array_merge($config, $database);
         if (!isset($config['host'], $config['name'], $config['username'], $config['password'])) {
             throw new InvalidConfigException(
-                'Please specify all needed credentials (host'.
-                ', name, username, password) for a link!'
-            );
+                'Please specify all needed credentials (host, name, username, password) for a link!');
         }
 
         // use host as a key for link stack
@@ -136,6 +133,7 @@ final class Linker
         if (!isset($this->links[$host])) {
             $link = new Link($type, $host, new Config($config));
             $link->open();
+            // add link to links stack
             $this->setLink($host, $link);
         }
 
