@@ -63,7 +63,7 @@ abstract class ActiveRecord
     /**
      * Constructor.
      * @param  Oppa\Database $db
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     public function __construct(Database $db)
     {
@@ -105,7 +105,7 @@ abstract class ActiveRecord
      * Find.
      * @param  any $param
      * @return Oppa\ActiveRecord\Entity
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function find($param): Entity
     {
@@ -198,7 +198,7 @@ abstract class ActiveRecord
      * @param  Oppa\ActiveRecord\Entity $entity
      * @return ?int On insert: last insert id.
      * @return int  On update: affected rows.
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function save(Entity $entity): ?int
     {
@@ -234,7 +234,7 @@ abstract class ActiveRecord
      * Remove.
      * @param  Oppa\ActiveRecord\Entity $entity
      * @return int
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function remove(Entity $entity): int
     {
@@ -250,7 +250,7 @@ abstract class ActiveRecord
      * Remove all.
      * @param  any $params
      * @return int
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function removeAll($params): int
     {
