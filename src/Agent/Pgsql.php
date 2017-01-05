@@ -125,8 +125,7 @@ final class Pgsql extends Agent
 
         $this->resource = pg_connect($connectionString);
         if (pg_connection_status($this->resource) === PGSQL_CONNECTION_BAD) {
-            // re-try
-            $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW);
+            $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW); // re-try
         }
 
         if (!$this->resource) {
@@ -219,7 +218,7 @@ final class Pgsql extends Agent
             $this->profiler->addQuery($query);
         }
 
-        // used for getting extra query details
+        // used for getting extra error details
         pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
 
         // start last query profiling
