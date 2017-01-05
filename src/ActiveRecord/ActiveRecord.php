@@ -240,7 +240,7 @@ abstract class ActiveRecord
     {
         $primaryValue = $entity->getPrimaryValue();
         if ($primaryValue === null) {
-            throw new InvalidValueException('Primary value not found for delete action!');
+            throw new InvalidValueException('Primary value not found on entity for delete action!');
         }
 
         return $this->removeAll($primaryValue);
