@@ -210,18 +210,17 @@ abstract class ActiveRecord
         // use only owned fields
         $data = array_intersect_key($data, array_flip(self::$tableInfo['@fields']));
 
-        $agent = $this->db->getLink()->getAgent();
-
         $return = null;
+
         // insert action
-        if (!isset($entity->{$this->tablePrimary})) {
-                      // set primary value
-            $return = ($entity->{$this->tablePrimary} = $agent->insert($this->table, $data));
-        }
-        // update action
-        elseif (isset($data[$this->tablePrimary])) {
-            $return = $agent->update($this->table, $data,
-                "{$this->tablePrimary} = ?", [$data[$this->tablePrimary]]);
+        if (!$entity->hasPrimaryValue()) {
+            $return = $this->db->getLink()->getAgent()->insert($this->table, $data);
+            // set primary value
+            $entity->setPrimaryValue($return);
+        } else {
+            // update action
+            $return = $this->db->getLink()->getAgent()->update($this->table, $data,
+                "{$this->tablePrimary} = ?", [$entity->getPrimaryValue()]);
         }
 
         if (method_exists($this, 'onSave')) {
