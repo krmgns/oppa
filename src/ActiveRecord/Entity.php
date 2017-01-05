@@ -189,16 +189,11 @@ final class Entity
 
     /**
      * Remove.
-     * @return ?int
+     * @return int
      */
-    final public function remove(): ?int
+    final public function remove(): int
     {
-        $tablePrimary = $this->activeRecord->getTablePrimary();
-        if ($this->__isset($tablePrimary)) {
-            return $this->activeRecord->remove($this->__get($tablePrimary));
-        }
-
-        return null;
+        return $this->activeRecord->remove($this);
     }
 
     /**

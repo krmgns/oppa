@@ -232,11 +232,27 @@ abstract class ActiveRecord
 
     /**
      * Remove.
+     * @param  Oppa\ActiveRecord\Entity $entity
+     * @return int
+     * @throws Oppa\InvalidValueException
+     */
+    final public function remove(Entity $entity): int
+    {
+        $primaryValue = $entity->getPrimaryValue();
+        if ($primaryValue === null) {
+            throw new InvalidValueException('Primary value not found for delete action!');
+        }
+
+        return $this->removeAll($primaryValue);
+    }
+
+    /**
+     * Remove all.
      * @param  any $params
      * @return int
      * @throws Oppa\InvalidValueException
      */
-    final public function remove($params): int
+    final public function removeAll($params): int
     {
         $params = [$params];
         if ($params[0] === null || $params[0] === '') {
