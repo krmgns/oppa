@@ -787,7 +787,7 @@ final class Builder
     }
 
     /**
-     * Shortcut for select one operations.
+     * Get.
      * @return any
      */
     final public function get()
@@ -796,7 +796,7 @@ final class Builder
     }
 
     /**
-     * Shortcut for select all operations.
+     * Get all.
      * @return array
      */
     final public function getAll(): array
