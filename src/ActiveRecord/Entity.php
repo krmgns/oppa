@@ -239,4 +239,23 @@ final class Entity
     {
         return $this->activeRecord;
     }
+
+    /**
+     * Set primary value.
+     * @param  int|string $primaryValue
+     * @return void
+     */
+    final public function setPrimaryValue($primaryValue): void
+    {
+        $this->data[$this->activeRecord->getTablePrimary()] = $primaryValue;
+    }
+
+    /**
+     * Get primary value.
+     * @return int|string|null
+     */
+    final public function getPrimaryValue()
+    {
+        return $this->data[$this->activeRecord->getTablePrimary()] ?? null;
+    }
 }
