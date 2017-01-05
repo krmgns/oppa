@@ -182,6 +182,7 @@ final class Mapper
             case self::DATA_TYPE_DOUBLEP:
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_REAL:
+            case self::DATA_TYPE_NUMERIC:
                 $value = (float) $value;
                 break;
             case self::DATA_TYPE_BOOLEAN:
