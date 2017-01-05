@@ -257,13 +257,11 @@ abstract class Result implements ResultInterface
     /**
      * Get data item.
      * @param  int $i
-     * @return any
+     * @return any|null
      */
     final public function getDataItem(int $i)
     {
-        if (isset($this->data[$i])) {
-            return $this->data[$i];
-        }
+        return $this->data[$i] ?? null;
     }
 
     /**
