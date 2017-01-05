@@ -241,6 +241,15 @@ final class Entity
     }
 
     /**
+     * Has primary value.
+     * @return bool
+     */
+    final public function hasPrimaryValue(): bool
+    {
+        return isset($this->data[$this->activeRecord->getTablePrimary()]);
+    }
+
+    /**
      * Set primary value.
      * @param  int|string $primaryValue
      * @return void
