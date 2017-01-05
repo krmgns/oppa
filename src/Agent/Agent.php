@@ -253,7 +253,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
         if (!empty($params)) {
             // available named word limits: :foo, :foo123, :foo_bar
             preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
-            if (isset($match[1]) && !empty($match[1])) {
+            if (!empty($match[1])) {
                 $keys = $values = [];
                 foreach ($match[1] as $key) {
                     if (!isset($params[$key])) {
@@ -272,7 +272,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             // available indicator: "?"
             // available operators with type definition: "%s, %d, %f, %F"
             preg_match_all('~\?|%[sdfF]~', $input, $match);
-            if (isset($match[0]) && !empty($match[0])) {
+            if (!empty($match[0])) {
                 foreach ($params as $i => $param) {
                     if (!isset($match[0][$i])) {
                         throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
