@@ -133,7 +133,7 @@ abstract class Result implements ResultInterface
             return $fetchType;
         }
 
-        // or could be string as default like 'object', 'array_assoc' etc.
+        // or could be string as default like 'object', 'array_asc' etc.
         $fetchTypeConst = 'self::AS_'. strtoupper($fetchType);
         if (!defined($fetchTypeConst)) {
             throw new InvalidValueException("Given '{$fetchType}' fetch type is not implemented!");
