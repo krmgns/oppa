@@ -12,7 +12,8 @@ Before beginning;
 - Use PHP >= 7.1 (older versions here: [v1](https://github.com/k-gun/oppa/tree/1.26.4), [v2 (7.0)](https://github.com/k-gun/oppa/tree/2.3.2))
 - Use try/catch blocks
 - You can use `test.sql` in test folder
-- Wiki updated for v2
+- Wiki updated for v2, v3
+- Supports [MySQLi](http://php.net/manual/en/book.mysqli.php) and [PgSQL](http://php.net/manual/en/book.pgsql.php)
 
 You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
@@ -25,7 +26,7 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ```php
 // manual
-$autoload = require('<path to oppa>/src/Autoload.php');
+$autoload = (require('<path to oppa>/src/Autoload.php'))();
 $autoload->register();
 ```
 
@@ -59,9 +60,9 @@ dump $agent->rowsCount();
 ```php
 // raw queries
 $result = $agent->query('select * from `users`');
-if ($result->count())
-// or if ($result->getRowsCount())
-// or if ($result->getRowsCount() > 0)
+if ($result->hasData())
+// if (!$result->isEmpty())
+// if ($result->count() > 0)
    foreach ($result as $user)
       dump $user->name;
 
@@ -158,16 +159,16 @@ $batch = $agent->getBatch();
 $batch->lock();
 try {
     // commit
-    $batch->runQuery('insert into `users` values(null,?,?)', ['John', 25]);
+    $batch->doQuery('insert into `users` values(null,?,?)', ['John', 25]);
 } catch (\Throwable $e) {
     dump $e->getMessage();
-    // rollback & set autocommit=1
-    $batch->cancel();
+    // rollback
+    $batch->undo();
 }
 // set autocommit=1
 $batch->unlock();
 
-// get insert id if success
+// get last insert id if success
 $result = $batch->getResult();
 if ($result) {
     dump $result->getId();
@@ -190,11 +191,11 @@ try {
     $batch->queue('insert into `users` values(null,?,?)', ['Boby', 35]);
     $batch->queue('insert into `uzerz` values(null,?,?)', ['Eric', 15]); // boom!
     // commit
-    $batch->run();
+    $batch->do();
 } catch (\Throwable $e) {
     dump $e->getMessage();
-    // rollback & set autocommit=1
-    $batch->cancel();
+    // rollback
+    $batch->undo();
 }
 // set autocommit=1
 $batch->unlock();
@@ -211,7 +212,7 @@ $batch->reset();
 ### Active Record
 
 ```php
-class Users extends Oppa\ActiveRecord {
+class Users extends Oppa\ActiveRecord\ActiveRecord {
    protected $table = 'users';
    protected $tablePrimary = 'id';
 
@@ -234,7 +235,7 @@ if ($user->isFound()) {
 
 // find all
 $users = $users->findAll();
-// find many that id=1,2,3
+// find many (id=1,2,3)
 $users = $users->findAll([1,2,3]);
 $users = $users->findAll('id in(?)', [[1,2,3]]);
 $users = $users->findAll('id in(?,?,?)', [1,2,3]);
@@ -252,35 +253,37 @@ $user = $users->entity();
 $user->name = 'Ali';
 $user->old  = 40;
 dump $user->save();
-// or
-$user = $users->save($user);
+// or $user = $users->save($user);
 // here we see "id" will be filled with last insert id
 dump $user;
 
-// update a user "id=1"
+// update a user (id=1)
 $user = $users->entity();
-$user->id   = 1;
-$user->name = 'Ali';
-$user->old  = 55;
-dump $users->save($user);
-
-// update a user that already exists "id=1"
-$user = $users->find(1);
-$user->name = 'Ali';
-$user->old  = 100;
+$user->id  = 1;
+$user->old = 55;
 dump $user->save();
+// or $users->save($user);
 
-// remove a user "id=1"
-$result = $users->remove(1);
-dump $result;
-
-// remove a user that already exists "id=1"
+// update a user that already exists (id=1)
 $user = $users->find(1);
-dump $user->remove();
+if ($user->isFound()) {
+    $user->old = 100;
+    dump $user->save();
+}
 
-// remove users "id=1,2,3"
-$result = $users->remove([1,2,3]);
-dump $result;
+// remove a user (id=1)
+$user = $users->entity();
+$user->id = 1;
+dump $users->remove(1);
+
+// remove a user that already exists (id=1)
+$user = $users->find(1);
+if ($user->isFound()) {
+    dump $user->remove();
+}
+
+// remove users (id=1,2,3)
+dump $users->removeAll([1,2,3]);
 ```
 
 See wiki pages for more doc: https://github.com/k-gun/oppa/wiki
