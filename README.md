@@ -275,6 +275,7 @@ if ($user->isFound()) {
 $user = $users->entity();
 $user->id = 1;
 dump $users->remove(1);
+// or $users->remove($user);
 
 // remove a user that already exists (id=1)
 $user = $users->find(1);
