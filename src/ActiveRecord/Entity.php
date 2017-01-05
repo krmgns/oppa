@@ -76,7 +76,7 @@ final class Entity
      */
     final public function __call(string $methodName, array $methodArgs)
     {
-        $methodClosure = $this->methods[strtolower($methodName)] ?? null;
+        $methodClosure = $this->getMethod($methodName);
         if ($methodClosure) {
             return call_user_func_array($methodClosure, $methodArgs);
         }
@@ -191,7 +191,7 @@ final class Entity
      * Remove.
      * @return ?int
      */
-    final public function remove():  ?int
+    final public function remove(): ?int
     {
         $tablePrimary = $this->activeRecord->getTablePrimary();
         if ($this->__isset($tablePrimary)) {
