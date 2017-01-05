@@ -234,6 +234,9 @@ final class Pgsql extends Agent
             try {
                 throw new QueryException($error['error'], null, $error['sqlstate']);
             } catch(QueryException $e) {
+                // log query error with fail level
+                $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
+
                 // check user error handler
                 $errorHandler = $this->config['query_error_handler'];
                 if ($errorHandler && is_callable($errorHandler)) {
