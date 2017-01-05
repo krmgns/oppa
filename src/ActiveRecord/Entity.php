@@ -137,18 +137,22 @@ final class Entity
     }
 
     /**
-     * From array.
+     * Set data.
      * @param  array $data
-     * @param  bool  $reset
      * @return void
      */
-    final public function fromArray(array $data, bool $reset = false): void
+    final public function setData(array $data): void
     {
-        if ($reset) $this->data = [];
+        $this->data = array_merge($this->data, $data);
+    }
 
-        foreach ($data as $key => $value) {
-            $this->data[$key] = $value;
-        }
+    /**
+     * Get data.
+     * @return array
+     */
+    final public function getData(): array
+    {
+        return $this->data;
     }
 
     /**
