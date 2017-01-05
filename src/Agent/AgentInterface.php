@@ -88,9 +88,9 @@ interface AgentInterface
      * Insert.
      * @param  string $table
      * @param  array  $data
-     * @return int|null
+     * @return ?int
      */
-    public function insert(string $table, array $data);
+    public function insert(string $table, array $data): ?int;
 
     /**
      * Update.
