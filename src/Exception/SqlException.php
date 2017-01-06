@@ -58,7 +58,7 @@ class SqlException extends \Exception
     }
 
     /**
-     * Get State
+     * Get SQL state.
      * @return ?string
      */
     final public function getSqlState(): ?string
