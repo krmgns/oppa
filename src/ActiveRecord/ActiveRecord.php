@@ -110,7 +110,7 @@ abstract class ActiveRecord
     final public function find($param): Entity
     {
         if ($param === null || $param === '') {
-            throw new InvalidValueException("You need to pass a parameter for select action!");
+            throw new InvalidValueException('You need to pass a parameter for select action!');
         }
 
         $queryBuilder = new QueryBuilder($this->db->getLink());
@@ -120,6 +120,9 @@ abstract class ActiveRecord
 
         if (method_exists($this, 'onFind')) {
             $queryBuilder = $this->onFind($queryBuilder);
+            if (!$queryBuilder || !($queryBuilder instanceof QueryBuilder)) {
+                throw new InvalidValueException('You should return query builder back from onFind()!');
+            }
         }
 
         $queryBuilder->where("{$this->table}.{$this->tablePrimary} = ?", [$param])
