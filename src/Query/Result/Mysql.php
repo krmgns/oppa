@@ -60,9 +60,16 @@ final class Mysql extends Result
             throw new InvalidValueException('Process resource must be instanceof \mysqli!');
         }
 
+        $rowsCount = 0;
+        $rowsAffected = 0;
+        if ($result instanceof \mysqli_result) {
+            $rowsCount = $result->num_rows;
+            $rowsAffected = $resource->affected_rows;
+        }
+
         $i = 0;
-        // if result contains result object
-        if ($result instanceof \mysqli_result && $result->num_rows > 0) {
+        // if results
+        if ($rowsCount > 0) {
             $this->result = $result;
 
             if ($limit === null) {
@@ -117,26 +124,27 @@ final class Mysql extends Result
 
         /**
          * // only last id
-         * if ($id && $resource->affected_rows > 1) {
-         *     $id = ($id + $resource->affected_rows) - 1;
+         * if ($id && $rowsAffected > 1) {
+         *     $id = ($id + $rowsAffected) - 1;
          * }
          *
          * // all ids
-         * if ($id && $resource->affected_rows > 1) {
-         *     for ($i = 0; $i < $resource->affected_rows - 1; $i++) {
+         * if ($id && $rowsAffected > 1) {
+         *     for ($i = 0; $i < $rowsAffected - 1; $i++) {
          *         $ids[] = $id + 1;
          *     }
          * }
          */
 
         // all ids (more tricky)
-        if ($id && $resource->affected_rows > 1) {
-            $ids = range($id, ($id + $resource->affected_rows) - 1);
+        if ($id && $rowsAffected > 1) {
+            $ids = range($id, ($id + $rowsAffected) - 1);
         }
 
         $this->setIds($ids);
+
         $this->setRowsCount($i);
-        $this->setRowsAffected($resource->affected_rows);
+        $this->setRowsAffected($rowsAffected);
 
         return $this;
     }
