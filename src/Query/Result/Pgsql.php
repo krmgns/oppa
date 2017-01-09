@@ -46,11 +46,10 @@ final class Pgsql extends Result
     /**
      * Process.
      * If query action contains "select", then process returned result.
-     * If query action contains "update/delete", etc then process affected result.
-     * @param  \mysqli        $resource
-     * @param  \mysqli_result $result
-     * @param  int|null       $limit
-     * @param  int|null       $fetchType
+     * If query action contains "update/delete" etc, then process affected result.
+     * @param  resource $result
+     * @param  int|null $limit
+     * @param  int|null $fetchType
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\InvalidValueException
      */
@@ -58,7 +57,7 @@ final class Pgsql extends Result
     {
         $resource = $this->agent->getResource();
         if (!is_resource($resource)) {
-            throw new InvalidValueException('Process resource must be type of pgsql!');
+            throw new InvalidValueException('Process resource must be type of pgsql link!');
         }
 
         $rowsCount = 0;
@@ -69,8 +68,8 @@ final class Pgsql extends Result
         }
 
         $i = 0;
-        // select etc.
-        if (pg_result_status($result) === PGSQL_TUPLES_OK && $rowsCount > 0) {
+        // if results
+        if ($rowsCount > 0 && pg_result_status($result) === PGSQL_TUPLES_OK) {
             $this->result = $result;
 
             if ($limit === null) {
