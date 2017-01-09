@@ -250,26 +250,7 @@ final class Pgsql extends Agent
             }
         }
 
-        $result = $this->result->process($result, $limit, $fetchType);
-
-        // last insert id
-        if (stripos($query, 'insert') !== false) {
-            $idResult = pg_query($this->resource, 'SELECT lastval() AS id');
-            if ($idResult) {
-                $id = (int) pg_fetch_result($idResult, 'id');
-                if ($id) {
-                    // multiple inserts
-                    $rowsAffected = $result->getRowsAffected();
-                    if ($rowsAffected > 1) {
-                        $id = range($id - $rowsAffected + 1, $id);
-                    }
-                    $result->setIds((array) $id);
-                }
-                pg_free_result($idResult);
-            }
-        }
-
-        return $result;
+        return $this->result->process($result, $limit, $fetchType, $query);
     }
 
     /**

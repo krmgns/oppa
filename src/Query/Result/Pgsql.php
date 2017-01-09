@@ -48,12 +48,13 @@ final class Pgsql extends Result
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete" etc, then process affected result.
      * @param  resource $result
-     * @param  int|null $limit
-     * @param  int|null $fetchType
+     * @param  int      $limit
+     * @param  int      $fetchType
+     * @param  string   $query @internal
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\InvalidValueException
      */
-    final public function process($result, int $limit = null, int $fetchType = null): ResultInterface
+    final public function process($result, int $limit = null, int $fetchType = null, string $query = null): ResultInterface
     {
         $resource = $this->agent->getResource();
         if (!is_resource($resource)) {
@@ -119,6 +120,23 @@ final class Pgsql extends Result
 
         $this->setRowsCount($i);
         $this->setRowsAffected($rowsAffected);
+
+        // last insert id
+        if ($query && stripos($query, 'INSERT') === 0) {
+            $result = pg_query($resource, 'SELECT lastval() AS id');
+            if ($result) {
+                $id = (int) pg_fetch_result($result, 'id');
+                if ($id) {
+                    $ids = [$id];
+                    // multiple inserts
+                    if ($rowsAffected > 1) {
+                        $ids = range($id - $rowsAffected + 1, $id);
+                    }
+                    $this->setIds($ids);
+                }
+                pg_free_result($result);
+            }
+        }
 
         return $this;
     }
