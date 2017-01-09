@@ -61,10 +61,9 @@ final class Mysql extends Result
         }
 
         $rowsCount = 0;
-        $rowsAffected = 0;
+        $rowsAffected = $resource->affected_rows;
         if ($result instanceof \mysqli_result) {
             $rowsCount = $result->num_rows;
-            $rowsAffected = $resource->affected_rows;
         }
 
         $i = 0;
@@ -117,34 +116,36 @@ final class Mysql extends Result
 
         $this->free();
 
-        // dirty ways to detect last insert id for multiple inserts
-        // good point! http://stackoverflow.com/a/15664201/362780
-        $id  = (int) $resource->insert_id;
-        $ids = $id ? [$id] : [];
-
-        /**
-         * // only last id
-         * if ($id && $rowsAffected > 1) {
-         *     $id = ($id + $rowsAffected) - 1;
-         * }
-         *
-         * // all ids
-         * if ($id && $rowsAffected > 1) {
-         *     for ($i = 0; $i < $rowsAffected - 1; $i++) {
-         *         $ids[] = $id + 1;
-         *     }
-         * }
-         */
-
-        // all ids (more tricky)
-        if ($id && $rowsAffected > 1) {
-            $ids = range($id, ($id + $rowsAffected) - 1);
-        }
-
-        $this->setIds($ids);
-
         $this->setRowsCount($i);
         $this->setRowsAffected($rowsAffected);
+
+        // last insert id
+        $id = (int) $resource->insert_id;
+        if ($id) {
+            $ids = [$id];
+
+            // dirty ways to detect last insert id for multiple inserts
+            // good point! http://stackoverflow.com/a/15664201/362780
+
+            // only last id
+            // if ($rowsAffected > 1) {
+            //     $id = ($id + $rowsAffected) - 1;
+            // }
+
+            // all ids
+            // if ($rowsAffected > 1) {
+            //     for ($i = 0; $i < $rowsAffected - 1; $i++) {
+            //         $ids[] = $id + 1;
+            //     }
+            // }
+
+            // all ids (more tricky?)
+            if ($rowsAffected > 1) {
+                $ids = range($id, ($id + $rowsAffected) - 1);
+            }
+
+            $this->setIds($ids);
+        }
 
         return $this;
     }
