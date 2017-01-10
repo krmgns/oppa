@@ -39,11 +39,11 @@ class SqlException extends \Exception
 
     /**
      * Constructor.
-     * @param string $message
-     * @param int    $code
-     * @param string $sqlState
+     * @param ?string $message
+     * @param ?int    $code
+     * @param ?string $sqlState
      */
-    final public function __construct(string $message = '', int $code = null, string $sqlState = null,
+    final public function __construct(?string $message, ?int $code, ?string $sqlState = null,
         \Throwable $previous = null)
     {
         // set state
@@ -54,7 +54,7 @@ class SqlException extends \Exception
             $message = sprintf('SQLSTATE[%s]: %s', $this->sqlState, $message);
         }
 
-        parent::__construct($message, (int) $code, $previous);
+        parent::__construct((string) $message, (int) $code, $previous);
     }
 
     /**
