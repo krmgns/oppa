@@ -164,7 +164,7 @@ final class Builder
      * @param  bool   $reset
      * @param  string $alias (for sub-select)
      * @return self
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function select($field = null, bool $reset = true, string $alias = null): self
     {
@@ -204,7 +204,7 @@ final class Builder
      * @param  string $type
      * @param  bool   $reset
      * @return self
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
     {
@@ -726,7 +726,7 @@ final class Builder
      * @param  string $field
      * @param  string $op
      * @return self
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function orderBy(string $field, string $op = null): self
     {
