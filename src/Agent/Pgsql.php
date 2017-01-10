@@ -124,13 +124,16 @@ final class Pgsql extends Agent
         // start connection profile
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        $resource = pg_connect($connectionString);
-        if (pg_connection_status($resource) === PGSQL_CONNECTION_BAD) {
-            $resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW); // re-try
+        $resource =@ pg_connect($connectionString);
+        $resourceStatus = pg_connection_status($resource);
+        if ($resourceStatus === false || $resourceStatus === PGSQL_CONNECTION_BAD) {
+            $resource =@ pg_connect($connectionString, PGSQL_CONNECT_FORCE_NEW); // re-try
+            $resourceStatus = pg_connection_status($resource);
         }
 
-        if (!$resource) {
-            throw new ConnectionException(error_get_last()['message'], null, SqlState::CONNECTION_FAILURE);
+        if (!$resource || !($resourceStatus === PGSQL_CONNECTION_OK)) {
+            $error = $this->parseConnectionError();
+            throw new ConnectionException($error['message'], null, $error['sql_state']);
         }
 
         // finish connection profile
@@ -227,13 +230,13 @@ final class Pgsql extends Agent
 
         // query & query profile
         $this->profiler && $this->profiler->start(Profiler::QUERY);
-        $result = pg_query($resource, $query);
+        $result =@ pg_query($resource, $query);
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
-            $error = $this->parseError();
+            $error = $this->parseQueryError();
             try {
-                throw new QueryException($error['error'], null, $error['sqlstate']);
+                throw new QueryException($error['message'], null, $error['sql_state']);
             } catch(QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -378,29 +381,56 @@ final class Pgsql extends Agent
     }
 
     /**
-     * Parse error.
-     * @return ?array
+     * Parse connection error.
+     * @return array
      */
-    final private function parseError(): ?array
+    final public function parseConnectionError(): array
     {
-        $return = null;
-        if ($error = pg_last_error($this->resource->getObject())) {
-            $error = explode(PHP_EOL, $error);
+        $return = ['message' => 'Unknown error.', 'sql_state' => null];
+        if ($error = error_get_last()) {
+            $errorMessage = strstr($error['message'], "\n", true);
+            if ($errorMessage === false) {
+                $errorMessage = $error['message'];
+            }
+            $errorMessage = explode(':', preg_replace('~(pg_connect\(\)|fatal):\s+~i', '', $errorMessage));
+            if (count($errorMessage) > 2) {
+                $errorMessage = array_slice($errorMessage, 0, 2);
+            }
+            $errorMessage = implode(',', $errorMessage);
+
+            $return['message'] = $errorMessage .'.';
+            $return['sql_state'] = SqlState::CONNECTION_FAILURE;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Parse error.
+     * @return array
+     */
+    final private function parseQueryError(): array
+    {
+        $return = ['message' => 'Unknown error.', 'sql_state' => null];
+        if ($error = error_get_last()) {
+            $error = explode("\n", $error['message']);
             // search for sql state
-            preg_match('~ERROR:\s+([0-9A-Z]+?):\s+(.+)~', $error[0], $match);
-            if (isset($match[1], $match[2])) {
-                $return = ['sqlstate' => $match[1]];
-                // line & nearby details etc.
+            preg_match('~ERROR:\s+(?<sql_state>[0-9A-Z]+?):\s+(?<message>.+)~', $error[0], $match);
+            if (isset($match['sql_state'], $match['message'])) {
+                // line & query details etc.
                 if (isset($error[2])) {
-                    preg_match('~(LINE\s+(\d+):\s+).+~', $error[1], $match2);
-                    if (isset($match2[1], $match2[2])) {
-                        $nearbyCut = abs(strlen($error[1]) - strlen($error[2]));
-                        $nearbyStr = trim(substr($error[1], -($nearbyCut + 1)));
-                        $return['error'] = sprintf('%s, line %s, nearby "... %s"', $match[2], $match2[2], $nearbyStr);
+                    preg_match('~(LINE\s+(?<line>\d+):\s+).+~', $error[1], $match2);
+                    if (isset($match2['line'])) {
+                        $queryCut = abs(strlen($error[1]) - strlen($error[2]));
+                        $queryStr = trim(substr($error[1], -($queryCut + 2)));
+                        $errorMessage = sprintf('%s, line %d. Query: "... %s"',
+                            ucfirst($match['message']), $match2['line'], $queryStr);
                     }
                 } else {
-                    $return['error'] = $match[2];
+                    $errorMessage = $match['message'];
                 }
+                $return['message'] = $errorMessage .'.';
+                $return['sql_state'] = $match['sql_state'];
             }
         }
 
