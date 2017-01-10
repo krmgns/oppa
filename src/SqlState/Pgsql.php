@@ -495,6 +495,8 @@ abstract class Pgsql
         OPPA_HOST_ERROR = 'OPPA1',
         OPPA_DATABASE_ERROR = 'OPPA2',
         OPPA_AUTHENTICATION_ERROR = 'OPPA3',
-        OPPA_QUERY_ERROR = 'OPPA4'
+        OPPA_CHARSET_ERROR = 'OPPA4',
+        OPPA_TIMEZONE_ERROR = 'OPPA5',
+        OPPA_QUERY_ERROR = 'OPPA6'
     ;
 }
