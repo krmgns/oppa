@@ -118,6 +118,7 @@ abstract class Batch implements BatchInterface
 
     /**
      * Get results ids.
+     * @param  bool $merge
      * @return array
      */
     final public function getResultsIds(bool $merge = true): array
