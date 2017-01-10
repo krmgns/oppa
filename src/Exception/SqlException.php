@@ -50,7 +50,7 @@ class SqlException extends \Exception
         $this->sqlState = $sqlState;
 
         // prepend state to message
-        if ($this->sqlState != null) {
+        if ($this->sqlState) {
             $message = sprintf('SQLSTATE[%s]: %s', $this->sqlState, $message);
         }
 
