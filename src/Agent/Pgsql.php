@@ -397,9 +397,22 @@ final class Pgsql extends Agent
                 $errorMessage = array_slice($errorMessage, 0, 2);
             }
             $errorMessage = implode(',', $errorMessage);
-
-            $return['message'] = $errorMessage .'.';
-            $return['sql_state'] = SqlState::CONNECTION_FAILURE;
+            if (strpos($errorMessage, 'to address')) {
+                $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
+                    'could not translate host name "%s" to address.', $this->config['host'], $this->config['host']);
+                $return['sql_state'] = SqlState::OPPA_HOST_ERROR;
+            } elseif (strpos($errorMessage, 'not exist')) {
+                $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
+                    'database "%s" does not exist.', $this->config['host'], $this->config['name']);
+                $return['sql_state'] = SqlState::OPPA_DATABASE_ERROR;
+            } elseif (strpos($errorMessage, 'password authentication')) {
+                $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
+                    'password authentication failed for user "%s".', $this->config['host'], $this->config['username']);
+                $return['sql_state'] = SqlState::OPPA_AUTHENTICATION_ERROR;
+            } else {
+                $return['message'] = $errorMessage .'.';
+                $return['sql_state'] = SqlState::CONNECTION_FAILURE;
+            }
         }
 
         return $return;
