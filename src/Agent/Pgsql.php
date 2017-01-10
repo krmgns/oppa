@@ -384,7 +384,7 @@ final class Pgsql extends Agent
      * Parse connection error.
      * @return array
      */
-    final public function parseConnectionError(): array
+    final private function parseConnectionError(): array
     {
         $return = ['message' => 'Unknown error.', 'sql_state' => null];
         if ($error = error_get_last()) {
