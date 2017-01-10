@@ -41,8 +41,8 @@ abstract class MysqlClientError
         OK = 0,
 
         /**
-         * States.
-         * @const string
+         * Codes.
+         * @const int
          */
         UNKNOWN_ERROR = 2000,
         SOCKET_CREATE_ERROR = 2001,
