@@ -133,7 +133,7 @@ final class Pgsql extends Agent
 
         if (!$resource || !($resourceStatus === PGSQL_CONNECTION_OK)) {
             $error = $this->parseConnectionError();
-            throw new ConnectionException($error['message'], null, $error['sql_state']);
+            throw new ConnectionException($error['message'], $error['code'], $error['sql_state']);
         }
 
         // finish connection profile
@@ -236,7 +236,7 @@ final class Pgsql extends Agent
         if (!$result) {
             $error = $this->parseQueryError();
             try {
-                throw new QueryException($error['message'], null, $error['sql_state']);
+                throw new QueryException($error['message'], $error['code'], $error['sql_state']);
             } catch(QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -386,7 +386,7 @@ final class Pgsql extends Agent
      */
     final private function parseConnectionError(): array
     {
-        $return = ['message' => 'Unknown error.', 'sql_state' => null];
+        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {
             $errorMessage = strstr($error['message'], "\n", true);
             if ($errorMessage === false) {
@@ -411,7 +411,7 @@ final class Pgsql extends Agent
      */
     final private function parseQueryError(): array
     {
-        $return = ['message' => 'Unknown error.', 'sql_state' => null];
+        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {
             $error = explode("\n", $error['message']);
             // search for sql state
