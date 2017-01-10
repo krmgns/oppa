@@ -411,7 +411,7 @@ final class Pgsql extends Agent
                 $return['sql_state'] = SqlState::OPPA_AUTHENTICATION_ERROR;
             } else {
                 $return['message'] = $errorMessage .'.';
-                $return['sql_state'] = SqlState::CONNECTION_FAILURE;
+                $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
             }
         }
 
