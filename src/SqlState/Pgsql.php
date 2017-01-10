@@ -491,6 +491,7 @@ abstract class Pgsql
          * Oppa additions.
          * @const string
          */
+        OPPA_CONNECTION_ERROR = 'OPPA0',
         OPPA_HOST_ERROR = 'OPPA1',
         OPPA_DATABASE_ERROR = 'OPPA2',
         OPPA_AUTHENTICATION_ERROR = 'OPPA3',
