@@ -99,7 +99,7 @@ final class Entity
      * Get.
      * @param  string $key
      * @return any
-     * @throws Oppa\InvalidKeyException
+     * @throws Oppa\Exception\InvalidKeyException
      */
     final public function __get(string $key)
     {
