@@ -34,12 +34,20 @@ use Oppa\Agent;
 final class Mysql extends Batch
 {
     /**
+     * Agent resource.
+     * @var \mysqli
+     */
+    private $agentResource;
+
+    /**
      * Constructor.
      * @param Oppa\Agent\Mysql $agent
      */
     final public function __construct(Agent\Mysql $agent)
     {
         $this->agent = $agent;
+        // shortcut
+        $this->agentResource = $agent->getResource()->getObject();
     }
 
     /**
@@ -48,7 +56,7 @@ final class Mysql extends Batch
      */
     final public function lock(): bool
     {
-        return $this->agent->getResource()->autocommit(false);
+        return $this->agentResource->autocommit(false);
     }
 
     /**
@@ -57,7 +65,7 @@ final class Mysql extends Batch
      */
     final public function unlock(): bool
     {
-        return $this->agent->getResource()->autocommit(true);
+        return $this->agentResource->autocommit(true);
     }
 
     /**
@@ -66,7 +74,7 @@ final class Mysql extends Batch
      */
     final protected function start(): bool
     {
-        return $this->agent->getResource()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        return $this->agentResource->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
     }
 
     /**
@@ -75,7 +83,7 @@ final class Mysql extends Batch
      */
     final protected function end(): bool
     {
-        return $this->agent->getResource()->commit();
+        return $this->agentResource->commit();
     }
 
     /**
@@ -85,8 +93,17 @@ final class Mysql extends Batch
     final public function undo(): void
     {
         // mayday mayday
-        $this->agent->getResource()->rollback();
+        $this->agentResource->rollback();
 
         $this->reset();
+    }
+
+    /**
+     * Get agent resource.
+     * @return \mysqli
+     */
+    final public function getAgentResource(): \mysqli
+    {
+        return $this->agentResource;
     }
 }
