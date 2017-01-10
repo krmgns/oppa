@@ -397,6 +397,10 @@ final class Pgsql extends Agent
                 $errorMessage = array_slice($errorMessage, 0, 2);
             }
             $errorMessage = implode(',', $errorMessage);
+
+            $return['message'] = $errorMessage .'.';
+            $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
+
             if (strpos($errorMessage, 'to address')) {
                 $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
                     'could not translate host name "%s" to address.', $this->config['host'], $this->config['host']);
@@ -409,9 +413,12 @@ final class Pgsql extends Agent
                 $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
                     'password authentication failed for user "%s".', $this->config['host'], $this->config['username']);
                 $return['sql_state'] = SqlState::OPPA_AUTHENTICATION_ERROR;
-            } else {
-                $return['message'] = $errorMessage .'.';
-                $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
+            } elseif (strpos($errorMessage, 'client_encoding')) {
+                $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
+                    'invalid or not-supported character set "%s" given.', $this->config['host'], $this->config['charset']);
+            } elseif (strpos($errorMessage, 'TimeZone')) {
+                $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
+                    'invalid or not-supported timezone "%s" given.', $this->config['host'], $this->config['timezone']);
             }
         }
 
