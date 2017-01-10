@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\Config;
+use Oppa\{Config, Resource};
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\{Error, InvalidKeyException};
@@ -38,7 +38,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 {
     /**
      * Resource.
-     * @var object|resource
+     * @var Resource
      */
     protected $resource;
 
@@ -98,9 +98,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Get resource.
-     * @return object|resource
+     * @return Oppa\Resource
      */
-    final public function getResource()
+    final public function getResource(): Resource
     {
         return $this->resource;
     }
@@ -245,7 +245,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  string $input  Raw SQL complete/not complete.
      * @param  array  $params Binding params.
      * @return string
-     * @throws Oppa\InvalidKeyException
+     * @throws Oppa\Exception\InvalidKeyException
      */
     final public function prepare(string $input, array $params = null): string
     {

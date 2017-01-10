@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
+use Oppa\Resource;
+
 /**
  * @package    Oppa
  * @subpackage Oppa\Query\Result
@@ -60,10 +62,10 @@ interface ResultInterface extends \Countable, \IteratorAggregate
 
     /**
      * Process.
-     * @param  object|resource $result
-     * @param  int             $limit
-     * @param  string          $fetchType
+     * @param  Oppa\Resource $result
+     * @param  int           $limit
+     * @param  string        $fetchType
      * @return Oppa\Query\Result\ResultInterface
      */
-    public function process($result, int $limit = null, int $fetchType = null): ResultInterface;
+    public function process(Resource $result, int $limit = null, int $fetchType = null): ResultInterface;
 }

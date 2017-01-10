@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch,
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource,
     SqlState\Mysql as SqlState, SqlState\MysqlError as SqlStateError};
-use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
+use Oppa\Exception\{Error, QueryException, ConnectionException,
+    InvalidValueException, InvalidConfigException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -82,14 +83,14 @@ final class Mysql extends Agent
 
     /**
      * Connect.
-     * @return \mysqli
-     * @throws Oppa\Exception\Error, Oppa\Exception\ConnectionException, Oppa\Exception\QueryException
+     * @return void
+     * @throws Oppa\Exception\{Error, ConnectionException, QueryException}
      */
-    final public function connect(): \mysqli
+    final public function connect(): void
     {
         // no need to get excited
         if ($this->isConnected()) {
-            return $this->resource;
+            return;
         }
 
         // export credentials & others
@@ -101,43 +102,46 @@ final class Mysql extends Agent
         $socket = (string) $this->config['socket'];
 
         // call big boss
-        $this->resource = mysqli_init();
+        $resource = mysqli_init();
 
         // supported constants: http://php.net/mysqli.options
         if (isset($this->config['options'])) {
             foreach ($this->config['options'] as $option => $value) {
-                if (!$this->resource->options($option, $value)) {
+                if (!$resource->options($option, $value)) {
                     throw new Error("Setting '{$option}' option failed!");
                 }
             }
         }
 
-        // start connection profiling
+        // start connection profile
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        if (!$this->resource->real_connect($host, $username, $password, $name, $port, $socket)) {
-            throw new ConnectionException($this->resource->connect_error, $this->resource->connect_errno, SqlState::ER_YES);
+        if (!$resource->real_connect($host, $username, $password, $name, $port, $socket)) {
+            throw new ConnectionException($resource->connect_error, $resource->connect_errno, SqlState::ER_YES);
         }
 
-        // finish connection profiling
+        // finish connection profile
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
 
+        // assign resource
+        $this->resource = new Resource($resource);
+
         // set charset for connection
         if (isset($this->config['charset'])) {
-            $run = (bool) $this->resource->set_charset($this->config['charset']);
+            $run = (bool) $resource->set_charset($this->config['charset']);
             if ($run === false) {
-                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
+                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
             }
         }
 
         // set timezone for connection
         if (isset($this->config['timezone'])) {
-            $run = (bool) $this->resource->query($this->prepare('SET `time_zone` = ?', [$this->config['timezone']]));
+            $run = (bool) $resource->query($this->prepare('SET `time_zone` = ?', [$this->config['timezone']]));
             if ($run === false) {
-                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
+                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
             }
         }
 
@@ -165,8 +169,6 @@ final class Mysql extends Agent
                 $result->reset();
             } catch (QueryException $e) {}
         }
-
-        return $this->resource;
     }
 
     /**
@@ -175,10 +177,7 @@ final class Mysql extends Agent
      */
     final public function disconnect(): void
     {
-        if ($this->resource instanceof \mysqli) {
-            $this->resource->close();
-            $this->resource = null;
-        }
+        $this->resource && $this->resource->close();
     }
 
     /**
@@ -187,7 +186,7 @@ final class Mysql extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->resource instanceof \mysqli && $this->resource->connect_errno === SqlStateError::OK);
+        return ($this->resource && $this->resource->getObject()->connect_errno === SqlStateError::OK);
     }
 
     /**
@@ -197,17 +196,22 @@ final class Mysql extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\QueryException
+     * @throws Oppa\Exception\{InvalidValueException, InvalidResourceException, QueryException}
      */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
-        // reset result vars
+        // reset result
         $this->result->reset();
 
         $query = trim($query);
         if ($query == '') {
             throw new InvalidValueException('Query cannot be empty!');
+        }
+
+        $resource = $this->resource->getObject();
+        if (!$resource) {
+            throw new InvalidResourceException('No valid connection resource to make a query!');
         }
 
         if (!empty($params)) {
@@ -223,18 +227,14 @@ final class Mysql extends Agent
             $this->profiler->addQuery($query);
         }
 
-        // start last query profiling
+        // query & query profile
         $this->profiler && $this->profiler->start(Profiler::QUERY);
-
-        // go go go!
-        $result = $this->resource->query($query);
-
-        // finish last query profiling
+        $result = $resource->query($query);
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
-        if ($result === false) {
+        if (!$result) {
             try {
-                throw new QueryException($this->resource->error, $this->resource->errno, $this->resource->sqlstate);
+                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
             } catch (QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -251,6 +251,8 @@ final class Mysql extends Agent
                 throw $e;
             }
         }
+
+        $result = new Resource($result);
 
         return $this->result->process($result, $limit, $fetchType);
     }
@@ -328,7 +330,7 @@ final class Mysql extends Agent
      */
     final public function escapeString(string $input, bool $quote = true): string
     {
-        $input = $this->resource->real_escape_string($input);
+        $input = $this->resource->getObject()->real_escape_string($input);
         if ($quote) {
             $input = "'{$input}'";
         }

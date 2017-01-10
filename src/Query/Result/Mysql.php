@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
-use Oppa\Agent;
-use Oppa\Exception\InvalidValueException;
+use Oppa\{Agent, Resource};
+use Oppa\Exception\{InvalidValueException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -47,23 +47,26 @@ final class Mysql extends Result
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete", etc then process affected result.
-     * @param  \mysqli_result $result
-     * @param  int            $limit
-     * @param  int            $fetchType
+     * @param  Oppa\Resource $result
+     * @param  int           $limit
+     * @param  int           $fetchType
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidResourceException
      */
-    final public function process($result, int $limit = null, int $fetchType = null): ResultInterface
+    final public function process(Resource $result, int $limit = null, int $fetchType = null): ResultInterface
     {
         $resource = $this->agent->getResource();
-        if (!$resource instanceof \mysqli) {
-            throw new InvalidValueException('Process resource must be instanceof \mysqli!');
+        if ($resource->getType() != Resource::TYPE_MYSQL_LINK) {
+            throw new InvalidResourceException('Process resource must be instanceof \mysqli!');
         }
 
+        $resourceObject = $resource->getObject();
+        $resultObject = $result->getObject();
+
         $rowsCount = 0;
-        $rowsAffected = $resource->affected_rows;
-        if ($result instanceof \mysqli_result) {
-            $rowsCount = $result->num_rows;
+        $rowsAffected = $resourceObject->affected_rows;
+        if ($result->getType() == Resource::TYPE_MYSQL_RESULT) {
+            $rowsCount = $resultObject->num_rows;
         }
 
         $i = 0;
@@ -80,22 +83,22 @@ final class Mysql extends Result
 
             switch ($fetchType) {
                 case Result::AS_OBJECT:
-                    while ($i < $limit && $row = $this->result->fetch_object()) {
+                    while ($i < $limit && $row = $resultObject->fetch_object()) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASC:
-                    while ($i < $limit && $row = $this->result->fetch_assoc()) {
+                    while ($i < $limit && $row = $resultObject->fetch_assoc()) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_NUM:
-                    while ($i < $limit && $row = $this->result->fetch_array(MYSQLI_NUM)) {
+                    while ($i < $limit && $row = $resultObject->fetch_array(MYSQLI_NUM)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASCNUM:
-                    while ($i < $limit && $row = $this->result->fetch_array()) {
+                    while ($i < $limit && $row = $resultObject->fetch_array()) {
                         $this->data[$i++] = $row;
                     }
                     break;
@@ -107,7 +110,7 @@ final class Mysql extends Result
 
             // map result data
             if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
-                $field = $this->result->fetch_field();
+                $field = $resultObject->fetch_field();
                 if (isset($field->orgtable)) {
                     $this->data = $mapper->map($field->orgtable, $this->data);
                 }
@@ -120,7 +123,7 @@ final class Mysql extends Result
         $this->setRowsAffected($rowsAffected);
 
         // last insert id
-        $id = (int) $resource->insert_id;
+        $id = (int) $resourceObject->insert_id;
         if ($id) {
             $ids = [$id];
 
@@ -148,17 +151,5 @@ final class Mysql extends Result
         }
 
         return $this;
-    }
-
-    /**
-     * Free.
-     * @return void
-     */
-    final public function free(): void
-    {
-        if ($this->result instanceof \mysqli_result) {
-            $this->result->free();
-            $this->result = null;
-        }
     }
 }

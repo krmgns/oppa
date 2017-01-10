@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
+use Oppa\Resource;
 use Oppa\Agent\AgentInterface;
 
 /**
@@ -41,7 +42,7 @@ abstract class Result implements ResultInterface
 
     /**
      * Resource.
-     * @var object|resource
+     * @var Oppa\Resource
      */
     protected $result;
 
@@ -94,11 +95,20 @@ abstract class Result implements ResultInterface
 
     /**
      * Get result.
-     * @return object|resource
+     * @return ?Oppa\Resource
      */
-    final public function getResult()
+    final public function getResult(): ?Resource
     {
         return $this->result;
+    }
+
+    /**
+     * Free.
+     * @return void
+     */
+    final public function free(): void
+    {
+        $this->result && $this->result->free();
     }
 
     /**
@@ -109,7 +119,6 @@ abstract class Result implements ResultInterface
     {
         // reset data
         $this->data = [];
-
         // reset properties
         $this->ids = [];
         $this->rowsCount = 0;
@@ -120,7 +129,7 @@ abstract class Result implements ResultInterface
      * Detect fetch type.
      * @param  int|string $fetchType
      * @return int
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidValueException
      */
     final public function detectFetchType($fetchType): int
     {

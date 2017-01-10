@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa\Query\Result;
 
-use Oppa\Agent;
-use Oppa\Exception\InvalidValueException;
+use Oppa\{Agent, Resource};
+use Oppa\Exception\{InvalidValueException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -47,30 +47,34 @@ final class Pgsql extends Result
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete" etc, then process affected result.
-     * @param  resource $result
-     * @param  int      $limit
-     * @param  int      $fetchType
-     * @param  string   $query @internal
+     * @param  Oppa\Resource $result
+     * @param  int           $limit
+     * @param  int           $fetchType
+     * @param  string        $query @internal
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\InvalidValueException
+     * @throws Oppa\Exception\InvalidResourceException
      */
-    final public function process($result, int $limit = null, int $fetchType = null, string $query = null): ResultInterface
+    final public function process(Resource $result, int $limit = null, int $fetchType = null,
+        string $query = null): ResultInterface
     {
         $resource = $this->agent->getResource();
-        if (!is_resource($resource)) {
-            throw new InvalidValueException('Process resource must be type of pgsql link!');
+        if ($resource->getType() != Resource::TYPE_PGSQL_LINK) {
+            throw new InvalidResourceException('Process resource must be type of pgsql link!');
         }
+
+        $resourceObject = $resource->getObject();
+        $resultObject = $result->getObject();
 
         $rowsCount = 0;
         $rowsAffected = 0;
-        if (is_resource($result)) {
-            $rowsCount = pg_num_rows($result);
-            $rowsAffected = pg_affected_rows($result);
+        if ($result->getType() == Resource::TYPE_PGSQL_RESULT) {
+            $rowsCount = pg_num_rows($resultObject);
+            $rowsAffected = pg_affected_rows($resultObject);
         }
 
         $i = 0;
         // if results
-        if ($rowsCount > 0 && pg_result_status($result) === PGSQL_TUPLES_OK) {
+        if ($rowsCount > 0) {
             $this->result = $result;
 
             if ($limit === null) {
@@ -82,22 +86,22 @@ final class Pgsql extends Result
 
             switch ($fetchType) {
                 case Result::AS_OBJECT:
-                    while ($i < $limit && $row = pg_fetch_object($this->result)) {
+                    while ($i < $limit && $row = pg_fetch_object($resultObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASC:
-                    while ($i < $limit && $row = pg_fetch_assoc($this->result)) {
+                    while ($i < $limit && $row = pg_fetch_assoc($resultObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_NUM:
-                    while ($i < $limit && $row = pg_fetch_array($this->result, null, PGSQL_NUM)) {
+                    while ($i < $limit && $row = pg_fetch_array($resultObject, null, PGSQL_NUM)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASCNUM:
-                    while ($i < $limit && $row = pg_fetch_array($this->result)) {
+                    while ($i < $limit && $row = pg_fetch_array($resultObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
@@ -109,7 +113,7 @@ final class Pgsql extends Result
 
             // map result data
             if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
-                $fieldTable = pg_field_table($this->result, 0);
+                $fieldTable = pg_field_table($resultObject, 0);
                 if ($fieldTable) {
                     $this->data = $mapper->map($fieldTable, $this->data);
                 }
@@ -123,7 +127,7 @@ final class Pgsql extends Result
 
         // last insert id
         if ($query && stripos($query, 'INSERT') === 0) {
-            $result = pg_query($resource, 'SELECT lastval() AS id');
+            $result = pg_query($resourceObject, 'SELECT lastval() AS id');
             if ($result) {
                 $id = (int) pg_fetch_result($result, 'id');
                 if ($id) {
@@ -139,17 +143,5 @@ final class Pgsql extends Result
         }
 
         return $this;
-    }
-
-    /**
-     * Free.
-     * @return void
-     */
-    final public function free(): void
-    {
-        if (is_resource($this->result)) {
-            pg_free_result($this->result);
-            $this->result = null;
-        }
     }
 }

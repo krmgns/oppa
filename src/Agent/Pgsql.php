@@ -24,9 +24,10 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch,
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource,
     SqlState\Pgsql as SqlState};
-use Oppa\Exception\{Error, QueryException, ConnectionException, InvalidValueException, InvalidConfigException};
+use Oppa\Exception\{Error, QueryException, ConnectionException,
+    InvalidValueException, InvalidConfigException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -82,14 +83,14 @@ final class Pgsql extends Agent
 
     /**
      * Connect.
-     * @return resource(pgsql)
+     * @return void
      * @throws Oppa\Exception\ConnectionException
      */
-    final public function connect()
+    final public function connect(): void
     {
         // no need to get excited
         if ($this->isConnected()) {
-            return $this->resource;
+            return;
         }
 
         // export credentials & others
@@ -120,23 +121,26 @@ final class Pgsql extends Agent
             $connectionString .= " options='". join(' ', $connectionStringOptions) ."'";
         }
 
-        // start connection profiling
+        // start connection profile
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        $this->resource = pg_connect($connectionString);
-        if (pg_connection_status($this->resource) === PGSQL_CONNECTION_BAD) {
-            $this->resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW); // re-try
+        $resource = pg_connect($connectionString);
+        if (pg_connection_status($resource) === PGSQL_CONNECTION_BAD) {
+            $resource = pg_pconnect($connectionString, PGSQL_CONNECT_FORCE_NEW); // re-try
         }
 
-        if (!$this->resource) {
+        if (!$resource) {
             throw new ConnectionException(error_get_last()['message'], null, SqlState::CONNECTION_FAILURE);
         }
 
-        // finish connection profiling
+        // finish connection profile
         $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
 
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
+
+        // assign resource
+        $this->resource = new Resource($resource);
 
         // fill mapper map for once
         if ($this->mapper) {
@@ -160,8 +164,6 @@ final class Pgsql extends Agent
                 $result->reset();
             } catch (QueryException $e) {}
         }
-
-        return $this->resource;
     }
 
     /**
@@ -170,10 +172,7 @@ final class Pgsql extends Agent
      */
     final public function disconnect(): void
     {
-        if (is_resource($this->resource)) {
-            pg_close($this->resource);
-            $this->resource = null;
-        }
+        $this->resource && $this->resource->close();
     }
 
     /**
@@ -182,7 +181,7 @@ final class Pgsql extends Agent
      */
     final public function isConnected(): bool
     {
-        return (pg_connection_status($this->resource) === PGSQL_CONNECTION_OK);
+        return ($this->resource && pg_connection_status($this->resource->getObject()) === PGSQL_CONNECTION_OK);
     }
 
     /**
@@ -192,17 +191,22 @@ final class Pgsql extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\InvalidValueException, Oppa\Exception\QueryException
+     * @throws Oppa\Exception\{InvalidValueException, InvalidResourceException, QueryException}
      */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
-        // reset result vars
+        // reset result
         $this->result->reset();
 
         $query = trim($query);
         if ($query == '') {
             throw new InvalidValueException('Query cannot be empty!');
+        }
+
+        $resource = $this->resource->getObject();
+        if (!$resource) {
+            throw new InvalidResourceException('No valid connection resource to make a query!');
         }
 
         if (!empty($params)) {
@@ -219,14 +223,11 @@ final class Pgsql extends Agent
         }
 
         // used for getting extra error details
-        pg_set_error_verbosity($this->resource, PGSQL_ERRORS_VERBOSE);
+        pg_set_error_verbosity($resource, PGSQL_ERRORS_VERBOSE);
 
-        // start last query profiling
+        // query & query profile
         $this->profiler && $this->profiler->start(Profiler::QUERY);
-
-        $result = pg_query($this->resource, $query);
-
-        // finish last query profiling
+        $result = pg_query($resource, $query);
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
@@ -249,6 +250,8 @@ final class Pgsql extends Agent
                 throw $e;
             }
         }
+
+        $result = new Resource($result);
 
         return $this->result->process($result, $limit, $fetchType, $query);
     }
@@ -328,7 +331,7 @@ final class Pgsql extends Agent
      */
     final public function escapeString(string $input, bool $quote = true): string
     {
-        $input = pg_escape_string($this->resource, $input);
+        $input = pg_escape_string($this->resource->getObject(), $input);
         if ($quote) {
             $input = "'{$input}'";
         }
@@ -351,7 +354,7 @@ final class Pgsql extends Agent
             return join(', ', array_map([$this, 'escapeIdentifier'], $input));
         }
 
-        return pg_escape_identifier($this->resource, trim($input, '"'));
+        return pg_escape_identifier($this->resource->getObject(), trim($input, '"'));
     }
 
     /**
@@ -361,7 +364,7 @@ final class Pgsql extends Agent
      */
     final public function escapeBytea(string $input): string
     {
-        return pg_escape_bytea($this->resource, $input);
+        return pg_escape_bytea($this->resource->getObject(), $input);
     }
 
     /**
@@ -381,7 +384,7 @@ final class Pgsql extends Agent
     final private function parseError(): ?array
     {
         $return = null;
-        if ($error = pg_last_error($this->resource)) {
+        if ($error = pg_last_error($this->resource->getObject())) {
             $error = explode(PHP_EOL, $error);
             // search for sql state
             preg_match('~ERROR:\s+([0-9A-Z]+?):\s+(.+)~', $error[0], $match);
