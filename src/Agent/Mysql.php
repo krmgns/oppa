@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource,
-    SqlState\Mysql as SqlState, SqlState\MysqlError as SqlStateError};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource, SqlState\Mysql as SqlState};
 use Oppa\Exception\{Error, QueryException, ConnectionException,
-    InvalidValueException, InvalidConfigException, InvalidResourceException};
+    InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -116,8 +115,10 @@ final class Mysql extends Agent
         // start connection profile
         $this->profiler && $this->profiler->start(Profiler::CONNECTION);
 
-        if (!$resource->real_connect($host, $username, $password, $name, $port, $socket)) {
-            throw new ConnectionException($resource->connect_error, $resource->connect_errno, SqlState::ER_YES);
+        $resourceStatus =@ $resource->real_connect($host, $username, $password, $name, $port, $socket);
+        if (!$resourceStatus) {
+            $error = $this->parseConnectionError();
+            throw new ConnectionException($error['message'], $error['code'], $error['sql_state']);
         }
 
         // finish connection profile
@@ -131,17 +132,19 @@ final class Mysql extends Agent
 
         // set charset for connection
         if (isset($this->config['charset'])) {
-            $run = (bool) $resource->set_charset($this->config['charset']);
-            if ($run === false) {
-                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
+            $run = $resource->set_charset($this->config['charset']);
+            if (!$run) {
+                throw new QueryException(sprintf('Invalid or not-supported character set "%s" given!',
+                    $this->config['charset']), $resource->errno, SqlState::UNKNOWN_CHARACTER_SET);
             }
         }
 
         // set timezone for connection
         if (isset($this->config['timezone'])) {
-            $run = (bool) $resource->query($this->prepare('SET `time_zone` = ?', [$this->config['timezone']]));
-            if ($run === false) {
-                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
+            $run = $resource->query($this->prepare('SET time_zone = ?', [$this->config['timezone']]));
+            if (!$run) {
+                throw new QueryException(sprintf('Invalid or not-supported timezone "%s" given!',
+                    $this->config['timezone']), $resource->errno, SqlState::UNKNOWN_TIME_ZONE);
             }
         }
 
@@ -186,7 +189,7 @@ final class Mysql extends Agent
      */
     final public function isConnected(): bool
     {
-        return ($this->resource && $this->resource->getObject()->connect_errno === SqlStateError::OK);
+        return ($this->resource && $this->resource->getObject()->connect_errno === 0);
     }
 
     /**
@@ -196,7 +199,7 @@ final class Mysql extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\{InvalidValueException, InvalidResourceException, QueryException}
+     * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
@@ -206,7 +209,7 @@ final class Mysql extends Agent
 
         $query = trim($query);
         if ($query == '') {
-            throw new InvalidValueException('Query cannot be empty!');
+            throw new InvalidQueryException('Query cannot be empty!');
         }
 
         $resource = $this->resource->getObject();
@@ -233,8 +236,9 @@ final class Mysql extends Agent
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
+            $error = $this->parseQueryError();
             try {
-                throw new QueryException($resource->error, $resource->errno, $resource->sqlstate);
+                throw new QueryException($error['message'], $error['code'], $error['sql_state']);
             } catch (QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
@@ -354,5 +358,70 @@ final class Mysql extends Agent
         }
 
         return '`'. trim($input, '`') .'`';
+    }
+
+    /**
+     * Parse connection error.
+     * @return array
+     */
+    final private function parseConnectionError(): array
+    {
+        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        if ($error = error_get_last()) {
+            $errorMessage = preg_replace('~mysqli::real_connect\(\): +\(.+\): +~', '', $error['message']);
+            preg_match('~\((?<sql_state>[0-9A-Z]+)/(?<code>\d+)\)~', $error['message'], $match);
+            if (isset($match['sql_state'], $match['code'])) {
+                $return['sql_state'] = $match['sql_state'];
+                switch ($match['code']) {
+                    case '2002':
+                        $return['message'] = sprintf('Unable to connect to MySQL server at "%s", '.
+                            'could not translate host name "%s" to address.', $this->config['host'], $this->config['host']);
+                        $return['sql_state'] = SqlState::OPPA_HOST_ERROR;
+                        break;
+                    case '1044':
+                        $return['message'] = sprintf('Unable to connect to MySQL server at "%s", '.
+                            'database "%s" does not exist.', $this->config['host'], $this->config['name']);
+                        $return['sql_state'] = SqlState::OPPA_DATABASE_ERROR;
+                        break;
+                    case '1045':
+                        $return['message'] = sprintf('Unable to connect to MySQL server at "%s", '.
+                            'password authentication failed for user "%s".', $this->config['host'], $this->config['username']);
+                        $return['sql_state'] = SqlState::OPPA_AUTHENTICATION_ERROR;
+                        break;
+                    default:
+                        $return['message'] = $errorMessage .'.';
+                }
+            } else {
+                $return['message'] = $errorMessage .'.';
+                $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Parse query error.
+     * @return array
+     */
+    final private function parseQueryError(): array
+    {
+        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        $resource = $this->resource->getObject();
+        if ($resource->errno) {
+            $return['code'] = $resource->errno;
+            $return['sql_state'] = $resource->sqlstate;
+            // dump useless verbose message
+            if ($resource->sqlstate == '42000') {
+                preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~', $resource->error, $match);
+                if (isset($match['query'], $match['line'])) {
+                    $query = substr($match['query'], 1, -1);
+                    $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "... %s".',
+                        $query[0], $match['line'], $query);
+                }
+            }
+        }
+
+        return $return;
     }
 }
