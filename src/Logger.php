@@ -107,7 +107,7 @@ final class Logger
     /**
      * Check directory (if not exists create it).
      * @return bool
-     * @throws Oppa\InvalidConfigException
+     * @throws Oppa\Exception\InvalidConfigException
      */
     public function checkDirectory(): bool
     {

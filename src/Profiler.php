@@ -61,7 +61,7 @@ final class Profiler
      * Get profile.
      * @param  string $key
      * @return array
-     * @throws Oppa\InvalidKeyException
+     * @throws Oppa\Exception\InvalidKeyException
      */
     public function getProfile(string $key): array
     {
@@ -142,7 +142,7 @@ final class Profiler
      * Start.
      * @param  string $key
      * @return void
-     * @throws Oppa\InvalidKeyException
+     * @throws Oppa\Exception\InvalidKeyException
      */
     final public function start(string $key): void
     {
@@ -171,7 +171,7 @@ final class Profiler
      * Stop.
      * @param  string $key
      * @return void
-     * @throws Oppa\InvalidKeyException
+     * @throws Oppa\Exception\InvalidKeyException
      */
     final public function stop(string $key): void
     {

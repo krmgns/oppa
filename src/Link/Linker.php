@@ -62,7 +62,7 @@ final class Linker
      * Connect.
      * @param  string|null $host
      * @return self
-     * @throws Oppa\InvalidConfigException
+     * @throws Oppa\Exception\InvalidConfigException
      */
     final public function connect(string $host = null): self
     {
