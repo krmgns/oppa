@@ -35,9 +35,9 @@ interface AgentInterface
 {
     /**
      * Connect.
-     * @return object|resource
+     * @return void
      */
-    public function connect();
+    public function connect(): void;
 
     /**
      * Disconnect.
