@@ -392,7 +392,8 @@ final class Pgsql extends Agent
             if ($errorMessage === false) {
                 $errorMessage = $error['message'];
             }
-            $errorMessage = explode(':', preg_replace('~(pg_connect\(\)|fatal):\s+~i', '', $errorMessage));
+            $errorMessage = preg_replace('~(pg_connect\(\)|fatal):\s+~i', '', $errorMessage);
+            $errorMessage = explode(':', $errorMessage);
             if (count($errorMessage) > 2) {
                 $errorMessage = array_slice($errorMessage, 0, 2);
             }
