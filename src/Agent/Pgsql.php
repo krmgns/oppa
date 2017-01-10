@@ -24,8 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Agent;
 
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource,
-    SqlState\Pgsql as SqlState};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource, SqlState\Pgsql as SqlState};
 use Oppa\Exception\{Error, QueryException, ConnectionException,
     InvalidValueException, InvalidConfigException, InvalidResourceException};
 
