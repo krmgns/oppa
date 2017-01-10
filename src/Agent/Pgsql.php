@@ -419,7 +419,7 @@ final class Pgsql extends Agent
     }
 
     /**
-     * Parse error.
+     * Parse query error.
      * @return array
      */
     final private function parseQueryError(): array
