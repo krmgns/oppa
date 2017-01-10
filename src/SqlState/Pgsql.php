@@ -485,5 +485,15 @@ abstract class Pgsql
          */
         INTERNAL_ERROR = 'XX000',
         DATA_CORRUPTED = 'XX001',
-        INDEX_CORRUPTED = 'XX002';
+        INDEX_CORRUPTED = 'XX002',
+
+        /**
+         * Oppa additions.
+         * @const string
+         */
+        OPPA_HOST_ERROR = 'OPPA1',
+        OPPA_DATABASE_ERROR = 'OPPA2',
+        OPPA_AUTHENTICATION_ERROR = 'OPPA3',
+        OPPA_QUERY_ERROR = 'OPPA4'
+    ;
 }
