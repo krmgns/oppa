@@ -6,11 +6,6 @@ use Oppa\Database;
 
 $cfg = [
     'agent' => 'mysql',
-    // 'profiling' => true,
-    'query_log' => true,
-    'query_log_level' => Logger::FAIL,
-    'query_log_directory' => __dir__.'/../.logs',
-    'query_log_filename_format' => 'Y-m-d',
     'database' => [
         'fetch_type' => 'object',
         'charset'    => 'utf8',
@@ -23,17 +18,31 @@ $cfg = [
 ];
 
 $db = new Database($cfg);
-$db->connect();
+try {
+    $db->connect();
+} catch(\Throwable $e) {
+    print $e->getMessage() ."\n";
+    print $e->getCode() ."\n";
+    print $e->getSqlState() ."\n";
+    // throw $e;
+    return;
+}
+
+$agent = $db->getLink()->getAgent();
 
 // @tmp
-// $db->getLink()->getAgent()->query('delete from users where id > 10');
+// $agent->query('delete from users where id > 3');
+// $agent->query("select * from noneexists");
 
-$batch = $db->getLink()->getAgent()->getBatch();
+// pre($agent->getResourceStats(), 1);
+
+$batch = $agent->getBatch();
 // set autocommit=1
 $batch->lock();
 try {
-    $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    $agent->query("select * from noneexists");
     // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
+    // $batch->queue('insert into users (name,old!) values (?,?)', ['John Doe', rand(1,100)]);
     // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
@@ -43,19 +52,25 @@ try {
     // $batch->queue('insert into users (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // $batch->queue('insert into userssssss (name,old) values (?,?)', ['John Doe', rand(1,100)]);
     // commit
-    $batch->run();
-} catch (\Throwable $e) {
-    print $e->getMessage();
-    // rollback & set autocommit=1
-    $batch->cancel();
+    $batch->do();
+// } catch (Oppa\Exception\QueryException $e) {
+} catch (Throwable $e) {
+    print $e->getMessage() ."\n";
+    print $e->getCode() ."\n";
+    print $e->getSqlState() ."\n";
+    // rollback
+    $batch->undo();
+    // throw $e;
+    return;
 }
 // set autocommit=1
 $batch->unlock();
 
+pre($batch->getResultsIds());
 foreach ($batch->getResults() as $result) {
     print $result->getId() ."\n";
 }
 
 // $batch->reset();
-pre($batch);
+// pre($batch);
 // pre($db);
