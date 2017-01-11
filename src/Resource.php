@@ -47,7 +47,7 @@ final class Resource
      * Type.
      * @var int
      */
-    private $type;
+    private $type = 0; // unknown
 
     /**
      * Object.
@@ -79,8 +79,8 @@ final class Resource
                     $this->type = self::TYPE_PGSQL_RESULT;
                 }
                 break;
+            // unknown
             default:
-                $this->type = self::TYPE_UNKNOWN;
                 return;
         }
 
@@ -150,7 +150,7 @@ final class Resource
      */
     final private function reset(): void
     {
-        $this->type = null;
+        $this->type = 0;
         $this->object = null;
     }
 }
