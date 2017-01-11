@@ -26,7 +26,7 @@ namespace Oppa\Agent;
 use Oppa\SqlState\SqlState;
 use Oppa\Query\{Sql, Result};
 use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource};
-use Oppa\Exception\{Error, QueryException, ConnectionException,
+use Oppa\Exception\{QueryException, ConnectionException,
     InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 
 /**
