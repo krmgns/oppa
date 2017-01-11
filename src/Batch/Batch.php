@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace Oppa\Batch;
 
-use Oppa\Util;
+use Oppa\{Util, Resource};
 use Oppa\Agent\AgentInterface;
 use Oppa\Query\Result\ResultInterface;
 
@@ -184,12 +184,15 @@ abstract class Batch implements BatchInterface
         }
 
         // check transaction status
-        $resource = $this->agent->getResource()->getObject();
-        $resourceStatus = pg_transaction_status($resource);
-        if ($resourceStatus !== PGSQL_TRANSACTION_IDLE) do {
-            time_nanosleep(0, 100000);
+        $resource = $this->agent->getResource();
+        if ($resource->getType() == Resource::TYPE_PGSQL_LINK) {
+            $resource = $resource->getObject();
             $resourceStatus = pg_transaction_status($resource);
-        } while ($resourceStatus === PGSQL_TRANSACTION_ACTIVE);
+            if ($resourceStatus !== PGSQL_TRANSACTION_IDLE) do {
+                time_nanosleep(0, 100000);
+                $resourceStatus = pg_transaction_status($resource);
+            } while ($resourceStatus === PGSQL_TRANSACTION_ACTIVE);
+        }
 
         $startTime = microtime(true);
 
