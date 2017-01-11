@@ -62,22 +62,20 @@ final class Pgsql extends Batch
 
     /**
      * Start.
-     * @return bool
+     * @return void
      */
-    final protected function start(): bool
+    final protected function start(): void
     {
-        return ($result = pg_query($this->agent->getResource()->getObject(), 'BEGIN'))
-            && (pg_result_status($result) === PGSQL_COMMAND_OK);
+        pg_query($this->agent->getResource()->getObject(), 'BEGIN');
     }
 
     /**
      * End.
-     * @return bool
+     * @return void
      */
-    final protected function end(): bool
+    final protected function end(): void
     {
-        return ($result = pg_query($this->agent->getResource()->getObject(), 'COMMIT'))
-            && (pg_result_status($result) === PGSQL_COMMAND_OK);
+        pg_query($this->agent->getResource()->getObject(), 'COMMIT');
     }
 
     /**

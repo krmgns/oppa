@@ -62,20 +62,20 @@ final class Mysql extends Batch
 
     /**
      * Start.
-     * @return bool
+     * @return void
      */
-    final protected function start(): bool
+    final protected function start(): void
     {
-        return $this->agent->getResource()->getObject()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        $this->agent->getResource()->getObject()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
     }
 
     /**
      * End.
-     * @return bool
+     * @return void
      */
-    final protected function end(): bool
+    final protected function end(): void
     {
-        return $this->agent->getResource()->getObject()->commit();
+        $this->agent->getResource()->getObject()->commit();
     }
 
     /**

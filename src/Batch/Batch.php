@@ -255,13 +255,13 @@ abstract class Batch implements BatchInterface
 
     /**
      * Start.
-     * @return bool
+     * @return void
      */
-    abstract protected function start(): bool;
+    abstract protected function start(): void;
 
     /**
      * End.
-     * @return bool
+     * @return void
      */
-    abstract protected function end(): bool;
+    abstract protected function end(): void;
 }
