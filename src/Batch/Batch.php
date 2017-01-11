@@ -185,7 +185,9 @@ abstract class Batch implements BatchInterface
 
         // check transaction status
         $resource = $this->agent->getResource();
-        if ($resource->getType() == Resource::TYPE_PGSQL_LINK) {
+        /* if ($resource->getType() == Resource::TYPE_MYSQL_LINK) {
+            // nope..
+        } else */ if ($resource->getType() == Resource::TYPE_PGSQL_LINK) {
             $resource = $resource->getObject();
             $resourceStatus = pg_transaction_status($resource);
             if ($resourceStatus !== PGSQL_TRANSACTION_IDLE) do {
