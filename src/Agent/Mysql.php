@@ -23,8 +23,9 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
+use Oppa\SqlState\SqlState;
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource, SqlState\Mysql as SqlState};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource};
 use Oppa\Exception\{Error, QueryException, ConnectionException,
     InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 

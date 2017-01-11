@@ -33,7 +33,6 @@ namespace Oppa\SqlState;
 abstract class Pgsql
 {
     public const
-
         /**
          * 00 - successful completion
          * @const string
@@ -485,18 +484,5 @@ abstract class Pgsql
          */
         INTERNAL_ERROR = 'XX000',
         DATA_CORRUPTED = 'XX001',
-        INDEX_CORRUPTED = 'XX002',
-
-        /**
-         * Oppa additions.
-         * @const string
-         */
-        OPPA_CONNECTION_ERROR = 'OPPA0',
-        OPPA_HOST_ERROR = 'OPPA1',
-        OPPA_DATABASE_ERROR = 'OPPA2',
-        OPPA_AUTHENTICATION_ERROR = 'OPPA3',
-        OPPA_CHARSET_ERROR = 'OPPA4',
-        OPPA_TIMEZONE_ERROR = 'OPPA5',
-        OPPA_QUERY_ERROR = 'OPPA6'
-    ;
+        INDEX_CORRUPTED = 'XX002';
 }

@@ -33,7 +33,6 @@ namespace Oppa\SqlState;
 abstract class MysqlClientError
 {
     public const
-
         /**
          * OK
          * @const int

@@ -33,7 +33,6 @@ namespace Oppa\SqlState;
 abstract class Mysql
 {
     public const
-
         /**
          * OK
          * @const string
@@ -1136,18 +1135,5 @@ abstract class Mysql
         GROUP_REPLICATION_MAX_GROUP_SIZE = 'HY000',
         CANNOT_ADD_FOREIGN_BASE_COL_STORED = 'HY000',
         TABLE_REFERENCED = 'HY000',
-        PARTITION_ENGINE_DEPRECATED_FOR_TABLE = 'HY000',
-
-        /**
-         * Oppa additions.
-         * @const string
-         */
-        OPPA_CONNECTION_ERROR = 'OPPA0',
-        OPPA_HOST_ERROR = 'OPPA1',
-        OPPA_DATABASE_ERROR = 'OPPA2',
-        OPPA_AUTHENTICATION_ERROR = 'OPPA3',
-        OPPA_CHARSET_ERROR = 'OPPA4',
-        OPPA_TIMEZONE_ERROR = 'OPPA5',
-        OPPA_QUERY_ERROR = 'OPPA6'
-    ;
+        PARTITION_ENGINE_DEPRECATED_FOR_TABLE = 'HY000';
 }
