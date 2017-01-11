@@ -106,6 +106,32 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
+     * Get resource stats.
+     * @return ?array
+     */
+    final public function getResourceStats(): ?array
+    {
+        $return = null;
+        if ($this->resource->getType() == Resource::TYPE_MYSQL_LINK) {
+            $result = $this->resource->getObject()->query('SHOW SESSION STATUS');
+            while ($row = $result->fetch_assoc()) {
+                $return[strtolower($row['Variable_name'])] = $row['Value'];
+            }
+            $result->free();
+        } elseif ($this->resource->getType() == Resource::TYPE_PGSQL_LINK) {
+            $result = pg_query($this->resource->getObject(),
+                "SELECT * FROM pg_stat_activity WHERE usename = '". $this->config['username'] ."'");
+            $resultArray = pg_fetch_all($result);
+            if (isset($resultArray[0])) {
+                $return = $resultArray[0];
+            }
+            pg_free_result($result);
+        }
+
+        return $return;
+    }
+
+    /**
      * Get batch.
      * @return Oppa\Batch\BatchInterface
      */
