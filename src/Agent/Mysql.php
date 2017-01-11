@@ -84,7 +84,7 @@ final class Mysql extends Agent
     /**
      * Connect.
      * @return void
-     * @throws Oppa\Exception\{Error, ConnectionException, QueryException}
+     * @throws Oppa\Exception\{Error, ConnectionException}
      */
     final public function connect(): void
     {
@@ -108,7 +108,7 @@ final class Mysql extends Agent
         if (isset($this->config['options'])) {
             foreach ($this->config['options'] as $option => $value) {
                 if (!$resource->options($option, $value)) {
-                    throw new Error("Setting '{$option}' option failed!");
+                    throw new ConnectionException("Setting '{$option}' option failed!");
                 }
             }
         }
@@ -135,7 +135,7 @@ final class Mysql extends Agent
         if (isset($this->config['charset'])) {
             $run = $resource->set_charset($this->config['charset']);
             if (!$run) {
-                throw new QueryException(sprintf('Unable to connect to MySQL server at "%s", '.
+                throw new ConnectionException(sprintf('Unable to connect to MySQL server at "%s", '.
                     'invalid or not-supported character set "%s" given!', $this->config['host'], $this->config['charset']),
                         $resource->errno, SqlState::OPPA_CHARSET_ERROR);
             }
@@ -145,7 +145,7 @@ final class Mysql extends Agent
         if (isset($this->config['timezone'])) {
             $run = $resource->query($this->prepare('SET time_zone = ?', [$this->config['timezone']]));
             if (!$run) {
-                throw new QueryException(sprintf('Unable to connect to MySQL server at "%s", '.
+                throw new ConnectionException(sprintf('Unable to connect to MySQL server at "%s", '.
                     'invalid or not-supported timezone "%s" given.', $this->config['host'], $this->config['timezone']),
                         $resource->errno, SqlState::OPPA_TIMEZONE_ERROR);
             }
