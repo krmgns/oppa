@@ -416,9 +416,11 @@ final class Pgsql extends Agent
             } elseif (strpos($errorMessage, 'client_encoding')) {
                 $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
                     'invalid or not-supported character set "%s" given.', $this->config['host'], $this->config['charset']);
+                $return['sql_state'] = SqlState::OPPA_CHARSET_ERROR;
             } elseif (strpos($errorMessage, 'TimeZone')) {
                 $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
                     'invalid or not-supported timezone "%s" given.', $this->config['host'], $this->config['timezone']);
+                $return['sql_state'] = SqlState::OPPA_TIMEZONE_ERROR;
             }
         }
 
