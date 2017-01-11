@@ -66,7 +66,8 @@ final class Pgsql extends Batch
      */
     final protected function start(): bool
     {
-        return !!$this->agent->query('BEGIN');
+        return ($result = pg_query($this->agent->getResource()->getObject(), 'BEGIN'))
+            && (pg_result_status($result) === PGSQL_COMMAND_OK);
     }
 
     /**
@@ -75,7 +76,8 @@ final class Pgsql extends Batch
      */
     final protected function end(): bool
     {
-        return !!$this->agent->query('COMMIT');
+        return ($result = pg_query($this->agent->getResource()->getObject(), 'COMMIT'))
+            && (pg_result_status($result) === PGSQL_COMMAND_OK);
     }
 
     /**
@@ -85,7 +87,7 @@ final class Pgsql extends Batch
     final public function undo(): void
     {
         // mayday mayday
-        $this->agent->query('ROLLBACK');
+        pg_query($this->agent->getResource()->getObject(), 'ROLLBACK');
 
         $this->reset();
     }
