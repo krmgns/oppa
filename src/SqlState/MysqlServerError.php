@@ -28,7 +28,7 @@ namespace Oppa\SqlState;
  * @subpackage Oppa\SqlState
  * @object     Oppa\SqlState\MysqlServerError
  * @author     Kerem Güneş <k-gun@mail.com>
- * @reflink    http://dev.mysql.com/doc/refman/5.7/en/error-messages-client.html
+ * @reflink    http://dev.mysql.com/doc/refman/5.7/en/error-messages-server.html
  */
 abstract class MysqlServerError
 {
