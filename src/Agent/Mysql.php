@@ -134,8 +134,9 @@ final class Mysql extends Agent
         if (isset($this->config['charset'])) {
             $run = $resource->set_charset($this->config['charset']);
             if (!$run) {
-                throw new QueryException(sprintf('Invalid or not-supported character set "%s" given!',
-                    $this->config['charset']), $resource->errno, SqlState::UNKNOWN_CHARACTER_SET);
+                throw new QueryException(sprintf('Unable to connect to MySQL server at "%s", '.
+                    'invalid or not-supported character set "%s" given!', $this->config['host'], $this->config['charset']),
+                        $resource->errno, SqlState::OPPA_CHARSET_ERROR);
             }
         }
 
@@ -143,8 +144,9 @@ final class Mysql extends Agent
         if (isset($this->config['timezone'])) {
             $run = $resource->query($this->prepare('SET time_zone = ?', [$this->config['timezone']]));
             if (!$run) {
-                throw new QueryException(sprintf('Invalid or not-supported timezone "%s" given!',
-                    $this->config['timezone']), $resource->errno, SqlState::UNKNOWN_TIME_ZONE);
+                throw new QueryException(sprintf('Unable to connect to MySQL server at "%s", '.
+                    'invalid or not-supported timezone "%s" given.', $this->config['host'], $this->config['timezone']),
+                        $resource->errno, SqlState::OPPA_TIMEZONE_ERROR);
             }
         }
 
