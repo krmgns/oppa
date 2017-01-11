@@ -27,7 +27,7 @@ use Oppa\SqlState\SqlState;
 use Oppa\Query\{Sql, Result};
 use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource};
 use Oppa\Exception\{Error, QueryException, ConnectionException,
-    InvalidValueException, InvalidConfigException, InvalidResourceException};
+    InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 
 /**
  * @package    Oppa
@@ -194,7 +194,7 @@ final class Pgsql extends Agent
      * @param  int|array $limit     Generally used in internal methods.
      * @param  int       $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\{InvalidValueException, InvalidResourceException, QueryException}
+     * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
     final public function query(string $query, array $params = null, $limit = null,
         $fetchType = null): Result\ResultInterface
@@ -204,7 +204,7 @@ final class Pgsql extends Agent
 
         $query = trim($query);
         if ($query == '') {
-            throw new InvalidValueException('Query cannot be empty!');
+            throw new InvalidQueryException('Query cannot be empty!');
         }
 
         $resource = $this->resource->getObject();
