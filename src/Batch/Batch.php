@@ -183,6 +183,14 @@ abstract class Batch implements BatchInterface
             return $this;
         }
 
+        // check transaction status
+        $resource = $this->agent->getResource()->getObject();
+        $resourceStatus = pg_transaction_status($resource);
+        if ($resourceStatus !== PGSQL_TRANSACTION_IDLE) do {
+            time_nanosleep(0, 100000);
+            $resourceStatus = pg_transaction_status($resource);
+        } while ($resourceStatus === PGSQL_TRANSACTION_ACTIVE);
+
         $startTime = microtime(true);
 
         $this->start(); // begin
