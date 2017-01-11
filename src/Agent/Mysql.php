@@ -422,6 +422,8 @@ final class Mysql extends Agent
                     $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "... %s".',
                         $query[0], $match['line'], $query);
                 }
+            } else {
+                $return['message'] = $resource->error;
             }
         }
 
