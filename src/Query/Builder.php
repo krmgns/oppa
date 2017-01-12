@@ -642,9 +642,9 @@ final class Builder
      * @param  string $mode
      * @return string
      */
-    final public function whereMatchAgainst(string $field, string $param, string $mode = 'IN BOOLEAN MODE'): self
+    final public function whereMatchAgainst(string $field, string $param, string $mode = ''): self
     {
-        return $this->where('MATCH('. $field .') AGAINST(%s '. $mode .')', [$param]);
+        return $this->where('MATCH('. $field .') AGAINST(%s '. ($mode ?: 'IN BOOLEAN MODE') .')', [$param]);
     }
 
     /**
