@@ -417,9 +417,9 @@ final class Mysql extends Agent
             $return['sql_state'] = $resource->sqlstate;
             // dump useless verbose message
             if ($resource->sqlstate == '42000') {
-                preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~', $resource->error, $match);
+                preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~sm', $resource->error, $match);
                 if (isset($match['query'], $match['line'])) {
-                    $query = substr($match['query'], 1, -1);
+                    $query = trim(substr($match['query'], 1, -1));
                     $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "... %s".',
                         $query[0], $match['line'], $query);
                 }
