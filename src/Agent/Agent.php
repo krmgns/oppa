@@ -268,29 +268,29 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * That's it!..
      *
      * Prepare.
-     * @param  string $input  Raw SQL complete/not complete.
-     * @param  array  $params Binding params.
+     * @param  string $input       Raw SQL complete/not complete.
+     * @param  array  $inputParams Binding params.
      * @return string
      * @throws Oppa\Exception\InvalidKeyException
      */
-    final public function prepare(string $input, array $params = null): string
+    final public function prepare(string $input, array $inputParams = null): string
     {
         // any params provided?
-        if (!empty($params)) {
+        if (!empty($inputParams)) {
             // available named word limits: :foo, :foo123, :foo_bar
             preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
             if (!empty($match[1])) {
                 $keys = $values = [];
                 foreach ($match[1] as $key) {
-                    if (!isset($params[$key])) {
+                    if (!isset($inputParams[$key])) {
                         throw new InvalidKeyException("Replacement named '{$key}' key not found in params!");
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
-                    $values[] = $this->escape($params[$key]);
+                    $values[] = $this->escape($inputParams[$key]);
 
                     // remove used params
-                    unset($params[$key]);
+                    unset($inputParams[$key]);
                 }
                 $input = preg_replace($keys, $values, $input, 1);
             }
@@ -299,13 +299,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
             // available operators with type definition: "%s, %d, %f, %F"
             preg_match_all('~\?|%[sdfF]~', $input, $match);
             if (!empty($match[0])) {
-                foreach ($params as $i => $param) {
+                foreach ($inputParams as $i => $inputParam) {
                     if (!isset($match[0][$i])) {
                         throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
                     }
 
                     $key = $match[0][$i];
-                    $value = $this->escape($param, $key);
+                    $value = $this->escape($inputParam, $key);
                     if (false !== ($pos = strpos($input, $key))) {
                         $input = substr_replace($input, $value, $pos, strlen($key));
                     }
@@ -319,13 +319,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
     /**
      * Prepare "WHERE" statement.
      * @param  string $where
-     * @param  array  $params
+     * @param  array  $whereParams
      * @return ?string
      */
-    final public function where(string $where = null, array $params = null): ?string
+    final public function where(string $where = null, array $whereParams = null): ?string
     {
-        if (!empty($params)) {
-            $where = 'WHERE '. $this->prepare($where, $params);
+        if (!empty($whereParams)) {
+            $where = 'WHERE '. $this->prepare($where, $whereParams);
         }
 
         return $where;

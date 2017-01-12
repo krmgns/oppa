@@ -162,12 +162,12 @@ abstract class Batch implements BatchInterface
     /**
      * Queue.
      * @param  string     $query
-     * @param  array|null $params
+     * @param  array|null $queryParams
      * @return self
      */
-    final public function queue(string $query, array $params = null): BatchInterface
+    final public function queue(string $query, array $queryParams = null): BatchInterface
     {
-        $this->queue[] = $this->agent->prepare($query, $params);
+        $this->queue[] = $this->agent->prepare($query, $queryParams);
 
         return $this;
     }
@@ -223,12 +223,12 @@ abstract class Batch implements BatchInterface
     /**
      * Do query.
      * @param  string     $query
-     * @param  array|null $params
+     * @param  array|null $queryParams
      * @return Oppa\Batch\BatchInterface
      */
-    final public function doQuery(string $query, array $params = null): BatchInterface
+    final public function doQuery(string $query, array $queryParams = null): BatchInterface
     {
-        return $this->queue($query, $params)->do();
+        return $this->queue($query, $queryParams)->do();
     }
 
     /**

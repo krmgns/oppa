@@ -197,14 +197,14 @@ final class Mysql extends Agent
 
     /**
      * Yes, "Query" of the S(Q)L...
-     * @param  string     $query     Raw SQL query.
-     * @param  array      $params    Prepare params.
+     * @param  string     $query
+     * @param  array      $queryParams
      * @param  int|array  $limit     Generally used in internal methods.
      * @param  int|string $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
-    final public function query(string $query, array $params = null, $limit = null,
+    final public function query(string $query, array $queryParams = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
         // reset result
@@ -220,9 +220,7 @@ final class Mysql extends Agent
             throw new InvalidResourceException('No valid connection resource to make a query!');
         }
 
-        if (!empty($params)) {
-            $query = $this->prepare($query, $params);
-        }
+        $query = $this->prepare($query, $queryParams);
 
         // log query with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf(
@@ -249,7 +247,7 @@ final class Mysql extends Agent
                 // check user error handler
                 $errorHandler = $this->config['query_error_handler'];
                 if ($errorHandler && is_callable($errorHandler)) {
-                    $errorHandler($e, $query, $params);
+                    $errorHandler($e, $query, $queryParams);
 
                     // no throw
                     return $this->result;
@@ -268,18 +266,16 @@ final class Mysql extends Agent
      * Count.
      * @param  ?string $table
      * @param  string  $query
-     * @param  array   $params
+     * @param  array   $queryParams
      * @return ?int
      */
-    final public function count(?string $table, string $query = null, array $params = null): ?int
+    final public function count(?string $table, string $query = null, array $queryParams = null): ?int
     {
         if ($table) {
             $result = $this->get("SELECT count(*) AS count FROM {$table}");
         } else {
-            if (!empty($params)) {
-                $query = $this->prepare($query, $params);
-            }
-            $result = $this->get("SELECT count(*) AS count FROM ({$query}) AS tmp");
+            $result = $this->get("SELECT count(*) AS count FROM (".
+                $this->prepare($query, $queryParams) .") AS tmp");
         }
 
         return isset($result->count) ? intval($result->count) : null;

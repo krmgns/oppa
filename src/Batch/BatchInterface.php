@@ -52,10 +52,10 @@ interface BatchInterface
     /**
      * Do query.
      * @param  string     $query
-     * @param  array|null $params
+     * @param  array|null $queryParams
      * @return Oppa\Batch\BatchInterface
      */
-    public function doQuery(string $query, array $params = null): BatchInterface;
+    public function doQuery(string $query, array $queryParams = null): BatchInterface;
 
     /**
      * Undo.

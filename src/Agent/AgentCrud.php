@@ -41,13 +41,13 @@ abstract class AgentCrud
      * @param  string       $table
      * @param  string|array $fields
      * @param  string       $where
-     * @param  array        $params
+     * @param  array        $whereParams
      * @param  int|array    $limit
      * @param  int|string   $fetchType
      * @return any
      */
     final public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, $fetchType = null)
+        array $whereParams = null, $limit = null, $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
@@ -57,7 +57,7 @@ abstract class AgentCrud
             'SELECT %s FROM %s %s %s',
                 $this->escapeIdentifier($fields),
                     $this->escapeIdentifier($table),
-                        $this->where($where, $params),
+                        $this->where($where, $whereParams),
                             $this->limit($limit)
         ), null, null, $fetchType)->getData();
     }
@@ -67,12 +67,12 @@ abstract class AgentCrud
      * @param  string       $table
      * @param  string|array $fields
      * @param  string       $where
-     * @param  array        $params
+     * @param  array        $whereParams
      * @param  int|string   $fetchType
      * @return any
      */
     final public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, $fetchType = null)
+        array $whereParams = null, $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
@@ -82,7 +82,7 @@ abstract class AgentCrud
             'SELECT %s FROM %s %s LIMIT 2',
                 $this->escapeIdentifier($fields),
                     $this->escapeIdentifier($table),
-                        $this->where($where, $params)
+                        $this->where($where, $whereParams)
         ), null, null, $fetchType)->getDataItem(0);
     }
 
@@ -118,12 +118,12 @@ abstract class AgentCrud
      * @param  string    $table
      * @param  array     $data
      * @param  string    $where
-     * @param  array     $params
+     * @param  array     $whereParams
      * @param  int|array $limit
      * @return int
      */
-    final public function update(string $table, array $data, string $where = null,
-        array $params = null, $limit = null): int
+    final public function update(string $table, array $data, string $where = null, array $whereParams = null,
+        $limit = null): int
     {
         $set = [];
         foreach ($data as $key => $value) {
@@ -135,7 +135,7 @@ abstract class AgentCrud
             'UPDATE %s SET %s %s %s',
                 $this->escapeIdentifier($table),
                     join(', ', $set),
-                        $this->where($where, $params),
+                        $this->where($where, $whereParams),
                             $this->limit($limit)
         ))->getRowsAffected();
     }
@@ -144,17 +144,17 @@ abstract class AgentCrud
      * Delete.
      * @param  string    $table
      * @param  string    $where
-     * @param  array     $params
+     * @param  array     $whereParams
      * @param  int|array $limit
      * @return int
      */
-    final public function delete(string $table, string $where = null,
-        array $params = null, $limit = null): int
+    final public function delete(string $table, string $where = null, array $whereParams = null,
+        $limit = null): int
     {
         return $this->query(sprintf(
             'DELETE FROM %s %s %s',
                 $this->escapeIdentifier($table),
-                    $this->where($where, $params),
+                    $this->where($where, $whereParams),
                         $this->limit($limit)
         ))->getRowsAffected();
     }
@@ -162,89 +162,89 @@ abstract class AgentCrud
     /**
      * Get.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return object|array|null
      */
-    final public function get(string $query, array $params = null)
+    final public function get(string $query, array $queryParams = null)
     {
-        return $this->query($query, $params, 1)->item(0);
+        return $this->query($query, $queryParams, 1)->item(0);
     }
 
     /**
      * Get array.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return ?array
      */
-    final public function getArray(string $query, array $params = null): ?array
+    final public function getArray(string $query, array $queryParams = null): ?array
     {
-        return $this->query($query, $params, 1)->toArray()[0] ?? null;
+        return $this->query($query, $queryParams, 1)->toArray()[0] ?? null;
     }
 
     /**
      * Get object.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return ?\stdClass
      */
-    final public function getObject(string $query, array $params = null): ?\stdClass
+    final public function getObject(string $query, array $queryParams = null): ?\stdClass
     {
-        return $this->query($query, $params, 1)->toObject()[0] ?? null;
+        return $this->query($query, $queryParams, 1)->toObject()[0] ?? null;
     }
 
     /**
      * Get class.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return object
      */
-    final public function getClass(string $query, array $params = null, string $class)
+    final public function getClass(string $query, array $queryParams = null, string $class)
     {
-        return $this->query($query, $params, 1)->toClass($class)[0] ?? null;
+        return $this->query($query, $queryParams, 1)->toClass($class)[0] ?? null;
     }
 
     /**
      * Get all.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return array
      */
-    final public function getAll(string $query, array $params = null): array
+    final public function getAll(string $query, array $queryParams = null): array
     {
-        return $this->query($query, $params)->getData();
+        return $this->query($query, $queryParams)->getData();
     }
 
     /**
      * Get all array.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return ?array
      */
-    final public function getAllArray(string $query, array $params = null): ?array
+    final public function getAllArray(string $query, array $queryParams = null): ?array
     {
-        return $this->query($query, $params)->toArray();
+        return $this->query($query, $queryParams)->toArray();
     }
 
     /**
      * Get all object.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return ?array
      */
-    final public function getAllObject(string $query, array $params = null): ?array
+    final public function getAllObject(string $query, array $queryParams = null): ?array
     {
-        return $this->query($query, $params)->toObject();
+        return $this->query($query, $queryParams)->toObject();
     }
 
     /**
      * Get all array.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @param  string $class
      * @return ?array
      */
-    final public function getAllClass(string $query, array $params = null, string $class): ?array
+    final public function getAllClass(string $query, array $queryParams = null, string $class): ?array
     {
-        return $this->query($query, $params)->toClass($class);
+        return $this->query($query, $queryParams)->toClass($class);
     }
 }

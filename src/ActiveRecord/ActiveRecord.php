@@ -141,11 +141,11 @@ abstract class ActiveRecord
     /**
      * Find all.
      * @param  any       $query
-     * @param  array     $params
+     * @param  array     $queryParams
      * @param  array|int $limit
      * @return Oppa\ActiveRecord\EntityCollection
      */
-    final public function findAll($query = null, array $params = null, $limit = null): EntityCollection
+    final public function findAll($query = null, array $queryParams = null, $limit = null): EntityCollection
     {
         $queryBuilder = new QueryBuilder($this->db->getLink());
         $queryBuilder->setTable($this->table);
@@ -157,7 +157,7 @@ abstract class ActiveRecord
         }
 
         $isEmptyQuery = empty($query);
-        $isEmptyParams = empty($params);
+        $isEmptyQueryParams = empty($queryParams);
 
         // fetch all rows, oh ohh..
         // e.g: findAll()
@@ -166,15 +166,15 @@ abstract class ActiveRecord
         }
         // fetch all rows by primary key with given params
         // e.g: findAll([1,2,3])
-        elseif (!$isEmptyQuery && $isEmptyParams) {
+        elseif (!$isEmptyQuery && $isEmptyQueryParams) {
             $queryBuilder->where("{$this->table}.{$this->tablePrimary} IN(?)", [$query]);
         }
         // fetch all rows with given params and params
         // e.g: findAll('id IN (?)', [[1,2,3]])
         // e.g: findAll('id IN (?,?,?)', [1,2,3])
-        elseif (!$isEmptyQuery && !$isEmptyParams) {
+        elseif (!$isEmptyQuery && !$isEmptyQueryParams) {
             // now, it is user's responsibility to append table(s) before field(s)
-            $queryBuilder->where($query, $params);
+            $queryBuilder->where($query, $queryParams);
         }
 
         @ [$limitStart, $limitStop] = (array) $limit;
@@ -251,19 +251,19 @@ abstract class ActiveRecord
 
     /**
      * Remove all.
-     * @param  any $params
+     * @param  any $whereParams
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function removeAll($params): int
+    final public function removeAll($whereParams): int
     {
-        $params = [$params];
-        if ($params[0] === null || $params[0] === '') {
+        $whereParams = [$whereParams];
+        if ($whereParams[0] === null || $whereParams[0] === '') {
             throw new InvalidValueException('You need to pass a parameter for delete action!');
         }
 
         $return = $this->db->getLink()->getAgent()
-            ->delete($this->table, "{$this->tablePrimary} IN(?)", $params);
+            ->delete($this->table, "{$this->tablePrimary} IN(?)", $whereParams);
 
         if (method_exists($this, 'onRemove')) {
             $this->onRemove($return);
@@ -275,16 +275,16 @@ abstract class ActiveRecord
     /**
      * Count.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return ?int
      */
-    final public function count(string $query = null, array $params = null): ?int
+    final public function count(string $query = null, array $queryParams = null): ?int
     {
         $queryBuilder = new QueryBuilder($this->db->getLink());
         $queryBuilder->setTable($this->table);
 
-        if ($query || $params) {
-            $queryBuilder->where($query, $params);
+        if ($query || $queryParams) {
+            $queryBuilder->where($query, $queryParams);
         }
 
         return $queryBuilder->count();

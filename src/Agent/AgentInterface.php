@@ -54,35 +54,35 @@ interface AgentInterface
     /**
      * Query.
      * @param  string $query
-     * @param  array  $params
+     * @param  array  $queryParams
      * @return Oppa\Query\Result\ResultInterface
      */
-    public function query(string $query, array $params = null): ResultInterface;
+    public function query(string $query, array $queryParams = null): ResultInterface;
 
     /**
      * Select.
      * @param  string       $table
      * @param  string|array $fields
      * @param  string       $where
-     * @param  array        $params
+     * @param  array        $whereParams
      * @param  int|array    $limit
      * @param  int|string   $fetchType
      * @return any
      */
     public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, $fetchType = null);
+        array $whereParams = null, $limit = null, $fetchType = null);
 
     /**
      * Select one.
      * @param  string       $table
      * @param  string|array $fields
      * @param  string       $where
-     * @param  array        $params
+     * @param  array        $whereParams
      * @param  int|string   $fetchType
      * @return any
      */
     public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, $fetchType = null);
+        array $whereParams = null, $fetchType = null);
 
     /**
      * Insert.
@@ -97,40 +97,40 @@ interface AgentInterface
      * @param  string    $table
      * @param  array     $data
      * @param  string    $where
-     * @param  array     $params
+     * @param  array     $whereParams
      * @param  int|array $limit
      * @return int
      */
     public function update(string $table, array $data, string $where = null,
-        array $params = null, $limit = null): int;
+        array $whereParams = null, $limit = null): int;
 
     /**
      * Delete.
      * @param  string    $table
      * @param  string    $where
-     * @param  array     $params
+     * @param  array     $whereParams
      * @param  int|array $limit
      * @return int
      */
     public function delete(string $table, string $where = null,
-        array $params = null, $limit = null): int;
+        array $whereParams = null, $limit = null): int;
 
     /**
      * Count.
      * @param  ?string $table
      * @param  string  $query
-     * @param  array   $params
+     * @param  array   $queryParams
      * @return ?int
      */
-    public function count(?string $table, string $query = null, array $params = null): ?int;
+    public function count(?string $table, string $query = null, array $queryParams = null): ?int;
 
     /**
      * Prepare.
      * @param  string $input
-     * @param  array  $params
+     * @param  array  $inputParams
      * @return string
      */
-    public function prepare(string $input, array $params = null): string;
+    public function prepare(string $input, array $inputParams = null): string;
 
     /**
      * Escape.
@@ -158,10 +158,10 @@ interface AgentInterface
     /**
      * Where.
      * @param  string $where
-     * @param  array  $params
+     * @param  array  $whereParams
      * @return ?string
      */
-    public function where(string $where = null, array $params = null): ?string;
+    public function where(string $where = null, array $whereParams = null): ?string;
 
     /**
      * Limit.
