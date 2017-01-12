@@ -168,7 +168,9 @@ final class Pgsql extends Agent
                     $this->mapper->setMap($map);
                 }
                 $result->reset();
-            } catch (QueryException $e) {}
+            } catch (QueryException $e) {
+                throw new ConnectionException('Could not retrieve schema info for mapper!', null, null, $e);
+            }
         }
     }
 
