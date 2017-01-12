@@ -177,7 +177,8 @@ final class Mysql extends Agent
                 }
                 $result->reset();
             } catch (QueryException $e) {
-                throw new ConnectionException('Could not retrieve schema info for mapper!', null, null, $e);
+                throw new ConnectionException('Could not retrieve schema info for mapper!',
+                    null, SqlState::OPPA_CONNECTION_ERROR, $e);
             }
         }
     }
