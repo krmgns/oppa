@@ -44,7 +44,7 @@ class SqlException extends \Exception
      * @param ?string     $sqlState
      * @param ?\Throwable $previous
      */
-    final public function __construct(?string $message, ?int $code, ?string $sqlState = null,
+    final public function __construct(?string $message, ?int $code = 0, ?string $sqlState = null,
         ?\Throwable $previous = null)
     {
         // set state
