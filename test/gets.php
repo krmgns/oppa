@@ -10,8 +10,10 @@ $cfg = [
         'username' => 'test',       'password' => '********',
         'charset'  => 'utf8',       'timezone' => '+00:00',
     ],
-    // 'map_result' => true,
-    // 'map_result_bool' => true,
+    'fetch_type' => User::class,
+    'fetch_limit' => 1,
+    'map_result' => true,
+    'map_result_bool' => true,
 ];
 
 $db = new Database($cfg);
@@ -21,7 +23,8 @@ $agent = $db->getLink()->getAgent();
 
 class User {}
 
-$result = $agent->query("select * from users", null, null, User::class);
-pre($result->getData());
+$result = $agent->query("select * from users");
+// $result = $agent->query("select * from users", null, null, User::class);
+prd($result->getData());
 
 

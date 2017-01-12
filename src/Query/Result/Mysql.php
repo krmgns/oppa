@@ -74,7 +74,9 @@ final class Mysql extends Result
         if ($rowsCount > 0) {
             $this->result = $result;
 
-            if ($limit === null) { // set max limit via $config?
+            if ($limit === null) {
+                $limit = $this->fetchLimit;
+            } elseif ($limit === -1) {
                 $limit = ResultInterface::LIMIT;
             }
 

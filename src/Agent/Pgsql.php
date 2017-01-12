@@ -64,7 +64,10 @@ final class Pgsql extends Agent
 
         // assign result object
         $this->result = new Result\Pgsql($this);
-        $this->result->setFetchType($this->config['fetch_type']);
+        isset($this->config['fetch_type']) &&
+            $this->result->setFetchType($this->config['fetch_type']);
+        isset($this->config['fetch_limit']) &&
+            $this->result->setFetchLimit($this->config['fetch_limit']);
 
         // assign logger if config'ed
         if ($this->config['query_log']) {
@@ -149,7 +152,7 @@ final class Pgsql extends Agent
         if ($this->mapper) {
             try {
                 $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, character_maximum_length
-                    FROM information_schema.columns WHERE table_schema = 'public'");
+                    FROM information_schema.columns WHERE table_schema = 'public'", null, -1, 1);
                 if ($result->count()) {
                     $map = [];
                     foreach ($result->getData() as $data) {

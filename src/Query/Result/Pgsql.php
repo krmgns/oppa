@@ -78,6 +78,8 @@ final class Pgsql extends Result
             $this->result = $result;
 
             if ($limit === null) {
+                $limit = $this->fetchLimit;
+            } elseif ($limit === -1) {
                 $limit = ResultInterface::LIMIT;
             }
 

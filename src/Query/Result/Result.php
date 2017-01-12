@@ -51,13 +51,20 @@ abstract class Result implements ResultInterface
      * Fetch type.
      * @var int
      */
-    protected $fetchType;
+    protected $fetchType = ResultInterface::AS_OBJECT;
+
+    /**
+     * Fetch limit.
+     * @var int
+     */
+    protected $fetchLimit = ResultInterface::LIMIT;
 
     /**
      * Fetch object.
      * @var string
      */
-    protected $fetchObject = '\stdClass';
+    protected $fetchObject = 'stdClass';
+
 
     /**
      * Data.
@@ -187,6 +194,25 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Set fetch limit.
+     * @param  int $fetchLimit
+     * @return void
+     */
+    final public function setFetchLimit(int $fetchLimit): void
+    {
+        $this->fetchLimit = $fetchLimit;
+    }
+
+    /**
+     * Get fetch limit.
+     * @return int
+     */
+    final public function getFetchLimit(): int
+    {
+        return $this->fetchLimit;
+    }
+
+    /**
      * Set fetch object.
      * @param  string $fetchObject
      * @return void
@@ -197,6 +223,7 @@ abstract class Result implements ResultInterface
         if (!$fetchObject) {
             throw new InvalidValueException('Fetch object should not be empty!');
         }
+
         $this->fetchObject = $fetchObject;
     }
 
