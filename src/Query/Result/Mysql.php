@@ -46,7 +46,7 @@ final class Mysql extends Result
     /**
      * Process.
      * If query action contains "select", then process returned result.
-     * If query action contains "update/delete", etc then process affected result.
+     * If query action contains "update/delete" etc, then process affected result.
      * @param  Oppa\Resource $result
      * @param  int           $limit
      * @param  int|string    $fetchType
