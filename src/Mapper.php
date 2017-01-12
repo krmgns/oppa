@@ -131,17 +131,17 @@ final class Mapper
         }
 
         // let's do it!
-        foreach ($this->map[$key] as $fieldName => $fieldProperties) {
+        foreach ($this->map[$key] as $fieldName => $fieldProps) {
             foreach ($data as &$dat) {
                 // keep data type
                 $datType = gettype($dat);
                 foreach ($dat as $key => $value) {
                     // match field?
                     if ($key == $fieldName) {
-                        if ($datType == 'array') {
-                            $dat[$key] = $this->cast($value, $fieldProperties);
-                        } elseif ($datType == 'object') {
-                            $dat->{$key} = $this->cast($value, $fieldProperties);
+                        if ($datType == 'object') {
+                            $dat->{$key} = $this->cast($value, $fieldProps);
+                        } elseif ($datType == 'array') {
+                            $dat[$key] = $this->cast($value, $fieldProps);
                         }
                     }
                 }
