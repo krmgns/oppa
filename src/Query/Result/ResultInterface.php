@@ -37,7 +37,7 @@ interface ResultInterface extends \Countable, \IteratorAggregate
      * Fetch limit.
      * @const int
      */
-    public const LIMIT           = 1000000; // 1 million rows..
+    public const LIMIT           = 1000; // rows
 
     /**
      * Fetch types.
