@@ -49,12 +49,12 @@ final class Pgsql extends Result
      * If query action contains "update/delete" etc, then process affected result.
      * @param  Oppa\Resource $result
      * @param  int           $limit
-     * @param  int           $fetchType
+     * @param  int|string    $fetchType
      * @param  string        $query @internal
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\InvalidResourceException
      */
-    final public function process(Resource $result, int $limit = null, int $fetchType = null,
+    final public function process(Resource $result, int $limit = null, $fetchType = null,
         string $query = null): ResultInterface
     {
         $resource = $this->agent->getResource();
@@ -86,7 +86,7 @@ final class Pgsql extends Result
 
             switch ($fetchType) {
                 case Result::AS_OBJECT:
-                    while ($i < $limit && $row = pg_fetch_object($resultObject)) {
+                    while ($i < $limit && $row = pg_fetch_object($resultObject, null, $this->fetchObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;

@@ -54,6 +54,12 @@ abstract class Result implements ResultInterface
     protected $fetchType;
 
     /**
+     * Fetch object.
+     * @var string
+     */
+    protected $fetchObject = '\stdClass';
+
+    /**
      * Data.
      * @var array
      */
@@ -134,22 +140,31 @@ abstract class Result implements ResultInterface
      */
     final public function detectFetchType($fetchType): int
     {
-        // fetch type could be int, but not recommanded
-        if (is_integer($fetchType)) {
-            if (!in_array($fetchType, [1, 2, 3, 4])) {
-                throw new InvalidValueException("Given '{$fetchType}' fetch type is not implemented!");
-            }
+        switch (gettype($fetchType)) {
+            case 'NULL':
+                return ResultInterface::AS_OBJECT;
+            case 'integer':
+                if (in_array($fetchType, [ResultInterface::AS_OBJECT, ResultInterface::AS_ARRAY_ASC,
+                    ResultInterface::AS_ARRAY_NUM, ResultInterface::AS_ARRAY_ASCNUM])) {
+                    return $fetchType;
+                }
+                break;
+            case 'string':
+                //  object, array_asc etc.
+                $fetchTypeConst = 'ResultInterface::AS_'. strtoupper($fetchType);
+                if (defined($fetchTypeConst)) {
+                    return constant($fetchTypeConst);
+                }
+                // user classes
+                if (class_exists($fetchType, false)) {
+                    $this->setFetchObject($fetchType);
 
-            return $fetchType;
+                    return ResultInterface::AS_OBJECT;
+                }
+                break;
         }
 
-        // or could be string as default like 'object', 'array_asc' etc.
-        $fetchTypeConst = 'self::AS_'. strtoupper($fetchType);
-        if (!defined($fetchTypeConst)) {
-            throw new InvalidValueException("Given '{$fetchType}' fetch type is not implemented!");
-        }
-
-        return constant($fetchTypeConst);
+        throw new InvalidValueException("Given '{$fetchType}' fetch type is not implemented!");
     }
 
     /**
@@ -169,6 +184,29 @@ abstract class Result implements ResultInterface
     final public function getFetchType(): int
     {
         return $this->fetchType;
+    }
+
+    /**
+     * Set fetch object.
+     * @param  string $fetchObject
+     * @return void
+     * @throws Oppa\Exception\InvalidValueException
+     */
+    final public function setFetchObject(string $fetchObject): void
+    {
+        if (!$fetchObject) {
+            throw new InvalidValueException('Fetch object should not be empty!');
+        }
+        $this->fetchObject = $fetchObject;
+    }
+
+    /**
+     * Get fetch object.
+     * @return string
+     */
+    final public function getFetchObject(): string
+    {
+        return $this->fetchObject;
     }
 
     /**

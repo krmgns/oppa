@@ -43,11 +43,11 @@ abstract class AgentCrud
      * @param  string       $where
      * @param  array        $params
      * @param  int|array    $limit
-     * @param  int          $fetchType
+     * @param  int|string   $fetchType
      * @return any
      */
     final public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, int $fetchType = null)
+        array $params = null, $limit = null, $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
@@ -68,11 +68,11 @@ abstract class AgentCrud
      * @param  string|array $fields
      * @param  string       $where
      * @param  array        $params
-     * @param  int          $fetchType
+     * @param  int|string   $fetchType
      * @return any
      */
     final public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, int $fetchType = null)
+        array $params = null, $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';

@@ -49,11 +49,11 @@ final class Mysql extends Result
      * If query action contains "update/delete", etc then process affected result.
      * @param  Oppa\Resource $result
      * @param  int           $limit
-     * @param  int           $fetchType
+     * @param  int|string    $fetchType
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\InvalidResourceException
      */
-    final public function process(Resource $result, int $limit = null, int $fetchType = null): ResultInterface
+    final public function process(Resource $result, int $limit = null, $fetchType = null): ResultInterface
     {
         $resource = $this->agent->getResource();
         if ($resource->getType() != Resource::TYPE_MYSQL_LINK) {
@@ -74,16 +74,16 @@ final class Mysql extends Result
         if ($rowsCount > 0) {
             $this->result = $result;
 
-            if ($limit === null) {
+            if ($limit === null) { // set max limit via $config?
                 $limit = ResultInterface::LIMIT;
             }
 
-            $fetchType = ($fetchType == null)
+            $fetchType = ($fetchType === null)
                 ? $this->fetchType : $this->detectFetchType($fetchType);
 
             switch ($fetchType) {
                 case Result::AS_OBJECT:
-                    while ($i < $limit && $row = $resultObject->fetch_object()) {
+                    while ($i < $limit && $row = $resultObject->fetch_object($this->fetchObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;

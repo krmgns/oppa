@@ -64,7 +64,7 @@ final class Pgsql extends Agent
 
         // assign result object
         $this->result = new Result\Pgsql($this);
-        $this->result->setFetchType($this->config['fetch_type'] ?? Result\Result::AS_OBJECT);
+        $this->result->setFetchType($this->config['fetch_type']);
 
         // assign logger if config'ed
         if ($this->config['query_log']) {
@@ -189,10 +189,10 @@ final class Pgsql extends Agent
 
     /**
      * Yes, "Query" of the S(Q)L...
-     * @param  string    $query     Raw SQL query.
-     * @param  array     $params    Prepare params.
-     * @param  int|array $limit     Generally used in internal methods.
-     * @param  int       $fetchType By-pass Result::fetchType.
+     * @param  string     $query     Raw SQL query.
+     * @param  array      $params    Prepare params.
+     * @param  int|array  $limit     Generally used in internal methods.
+     * @param  int|string $fetchType By-pass Result::fetchType.
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */

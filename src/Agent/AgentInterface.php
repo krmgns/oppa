@@ -66,11 +66,11 @@ interface AgentInterface
      * @param  string       $where
      * @param  array        $params
      * @param  int|array    $limit
-     * @param  int          $fetchType
+     * @param  int|string   $fetchType
      * @return any
      */
     public function select(string $table, $fields = null, string $where = null,
-        array $params = null, $limit = null, int $fetchType = null);
+        array $params = null, $limit = null, $fetchType = null);
 
     /**
      * Select one.
@@ -78,11 +78,11 @@ interface AgentInterface
      * @param  string|array $fields
      * @param  string       $where
      * @param  array        $params
-     * @param  int          $fetchType
+     * @param  int|string   $fetchType
      * @return any
      */
     public function selectOne(string $table, $fields = null, string $where = null,
-        array $params = null, int $fetchType = null);
+        array $params = null, $fetchType = null);
 
     /**
      * Insert.
