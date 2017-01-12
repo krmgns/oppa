@@ -25,6 +25,7 @@ namespace Oppa\Query\Result;
 
 use Oppa\Resource;
 use Oppa\Agent\AgentInterface;
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package    Oppa
