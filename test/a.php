@@ -15,11 +15,12 @@ $cfg = [
 $db = new Database($cfg);
 $agent = $db->connect()->getLink()->getAgent();
 
-$s = $agent->prepare('sid = :sid, pid = :pid, a = ?, tid = :tid, b = %d', [
-    'aaa',
-    'pid' => 2,
-    'sid' => 1,
-    '9000',
-    'tid' => 3
-]);
+// $s = $agent->prepare('sid = :sid, pid = :pid, a = ?, tid = :tid, b = %d', [
+//     'aaa',
+//     'pid' => 2,
+//     'sid' => 1,
+//     '9000',
+//     'tid' => 3
+// ]);
+$s = $agent->prepare('select * from %w where id = %i', ['foo', 1]);
 pre($s);

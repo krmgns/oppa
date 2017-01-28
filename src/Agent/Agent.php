@@ -296,8 +296,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
 
             // available indicator: "?"
-            // available operators with type definition: "%s, %d, %f, %F"
-            preg_match_all('~\?|%[sdfF]~', $input, $match);
+            // available operators with type definition: "%s, %i, %f, %w"
+            preg_match_all('~\?|%[sifw]~', $input, $match);
             if (!empty($match[0])) {
                 foreach ($inputParams as $i => $inputParam) {
                     if (!isset($match[0][$i])) {
@@ -305,7 +305,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     }
 
                     $key = $match[0][$i];
-                    $value = $this->escape($inputParam, $key);
+                    $value = $inputParam;
+
+                    // skip words like table name etc.
+                    if ($key != '%w') {
+                        $value = $this->escape($value, strtr($key, ['%i' => '%d']));
+                    }
+
                     if (false !== ($pos = strpos($input, $key))) {
                         $input = substr_replace($input, $value, $pos, strlen($key));
                     }
