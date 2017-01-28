@@ -26,7 +26,7 @@ You can see wiki pages for more doc: https://github.com/k-gun/oppa/wiki
 
 ```php
 // manual
-$autoload = (require('<path to oppa>/src/Autoload.php'))();
+$autoload = require('<path to oppa>/src/Autoload.php');
 $autoload->register();
 ```
 

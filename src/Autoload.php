@@ -87,7 +87,4 @@ final class Autoload
 }
 
 // shorcut for require
-return function(): Autoload
-{
-    return Autoload::init();
-};
+return Autoload::init();
