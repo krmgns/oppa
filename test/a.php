@@ -22,5 +22,5 @@ $agent = $db->connect()->getLink()->getAgent();
 //     '9000',
 //     'tid' => 3
 // ]);
-$s = $agent->prepare('select * from %w where id = %i', ['foo', 1]);
+$s = $agent->prepare('SELECT * FROM %v WHERE id = %i', ['foo', 1]);
 pre($s);
