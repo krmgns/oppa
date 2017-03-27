@@ -823,9 +823,9 @@ final class Builder
             $from = "SELECT 1 FROM {$this->table} WHERE ". join(' ', $where);
         }
 
-        $result = $agent->get("SELECT count(*) AS count FROM ({$from}) AS tmp");
+        $result = (array) $agent->get("SELECT count(*) AS count FROM ({$from}) AS tmp");
 
-        return intval($result->count);
+        return isset($result['count']) ? intval($result['count']) : null;
     }
 
     /**
@@ -848,8 +848,7 @@ final class Builder
             if (isset($this->query['select'])) {
                 // add aggregate statements
                 $aggregate = isset($this->query['aggregate'])
-                    ? ', '. join(', ', $this->query['aggregate'])
-                    : '';
+                    ? ', '. join(', ', $this->query['aggregate']) : '';
 
                 // add select fields
                 $this->queryString .= sprintf('SELECT %s%s FROM %s',
