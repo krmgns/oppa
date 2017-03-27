@@ -273,18 +273,25 @@ final class Mysql extends Agent
      * @param  ?string $table
      * @param  string  $query
      * @param  array   $queryParams
+     * @param  bool    $isSubQuery
      * @return ?int
      */
-    final public function count(?string $table, string $query = null, array $queryParams = null): ?int
+    final public function count(?string $table, string $query = null, array $queryParams = null,
+        bool $isSubQuery = false): ?int
     {
-        if ($table) {
-            $result = $this->get("SELECT count(*) AS count FROM {$table}");
+        if ($query && !$isSubQuery) {
+            $query = sprintf('SELECT count(*) AS count FROM %s WHERE %s', $table,
+                $this->prepare($query, $queryParams));
+        } elseif ($isSubQuery) {
+            $query = sprintf('SELECT count(*) AS count FROM (%s) AS tmp',
+                $this->prepare($query, $queryParams));
         } else {
-            $result = $this->get("SELECT count(*) AS count FROM (".
-                $this->prepare($query, $queryParams) .") AS tmp");
+            $query = sprintf('SELECT count(*) AS count FROM %s', $table);
         }
 
-        return isset($result->count) ? intval($result->count) : null;
+        $result = (array) $this->get($query);
+
+        return isset($result['count']) ? intval($result['count']) : null;
     }
 
     /**
