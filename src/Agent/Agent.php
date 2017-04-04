@@ -282,8 +282,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
             if (!empty($match[1])) {
                 $keys = $values = [];
                 foreach ($match[1] as $key) {
-                    if (!isset($inputParams[$key])) {
-                        throw new InvalidKeyException("Replacement named '{$key}' key not found in params!");
+                    if (!array_key_exists($key, $inputParams)) {
+                        throw new InvalidKeyException("Replacement key '{$key}' not found in params!");
                     }
 
                     $keys[] = sprintf('~:%s~', $key);
@@ -300,7 +300,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             preg_match_all('~\?|%[sifvw]~', $input, $match);
             if (!empty($match[0])) {
                 foreach ($inputParams as $i => $inputParam) {
-                    if (!isset($match[0][$i])) {
+                    if (!array_key_exists($i, $match[0])) {
                         throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
                     }
 
