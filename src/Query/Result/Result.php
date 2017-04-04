@@ -162,8 +162,9 @@ abstract class Result implements ResultInterface
                 if (defined($fetchTypeConst)) {
                     return constant($fetchTypeConst);
                 }
+
                 // user classes
-                if (class_exists($fetchType, false)) {
+                if (class_exists($fetchType)) {
                     $this->setFetchObject($fetchType);
 
                     return ResultInterface::AS_OBJECT;
