@@ -243,7 +243,7 @@ final class Mysql extends Agent
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
-            $error = $this->parseQueryError();
+            $error = $this->parseQueryError($query);
             try {
                 throw new QueryException($error['message'], $error['code'], $error['sql_state']);
             } catch (QueryException $e) {
@@ -414,9 +414,10 @@ final class Mysql extends Agent
 
     /**
      * Parse query error.
+     * @param  string $query
      * @return array
      */
-    final private function parseQueryError(): array
+    final private function parseQueryError(string $query): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         $resource = $this->resource->getObject();
@@ -427,9 +428,8 @@ final class Mysql extends Agent
             if ($resource->sqlstate == '42000') {
                 preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~sm', $resource->error, $match);
                 if (isset($match['query'], $match['line'])) {
-                    $query = trim(substr($match['query'], 1, -1));
-                    $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "... %s".',
-                        $query[0], $match['line'], $query);
+                    $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "%s".',
+                        trim(substr($match['query'], 1, -1)), $match['line'], $query);
                 }
             } else {
                 $return['message'] = $resource->error;

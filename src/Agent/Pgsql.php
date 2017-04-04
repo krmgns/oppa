@@ -238,7 +238,7 @@ final class Pgsql extends Agent
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
-            $error = $this->parseQueryError();
+            $error = $this->parseQueryError($query);
             try {
                 throw new QueryException($error['message'], $error['code'], $error['sql_state']);
             } catch(QueryException $e) {
@@ -432,9 +432,10 @@ final class Pgsql extends Agent
 
     /**
      * Parse query error.
+     * @param  string $query
      * @return array
      */
-    final private function parseQueryError(): array
+    final private function parseQueryError(string $query): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {
@@ -446,10 +447,8 @@ final class Pgsql extends Agent
                 if (isset($error[2])) {
                     preg_match('~(LINE\s+(?<line>\d+):\s+).+~', $error[1], $match2);
                     if (isset($match2['line'])) {
-                        $queryCut = abs(strlen($error[1]) - strlen($error[2]));
-                        $queryStr = trim(substr($error[1], -($queryCut + 2)));
-                        $errorMessage = sprintf('%s, line %d. Query: "... %s"',
-                            ucfirst($match['message']), $match2['line'], $queryStr);
+                        $errorMessage = sprintf('%s, line %d. Query: "%s"',
+                            ucfirst($match['message']), $match2['line'], $query);
                     }
                 } else {
                     $errorMessage = $match['message'];
