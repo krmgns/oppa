@@ -403,15 +403,27 @@ final class Builder
     /**
      * Add "WHERE" statement.
      * @param  string $query
-     * @param  array  $params
+     * @param  any    $queryParams
      * @param  string $op
      * @return self
      */
-    final public function where(string $query, array $params = null, string $op = self::OP_AND): self
+    final public function where(string $query, $queryParams = null, string $op = self::OP_AND): self
     {
-        // prepare if params provided
-        if (!empty($params)) {
-            $query = $this->link->getAgent()->prepare($query, $params);
+
+        // sub-where
+        if ($queryParams instanceof Builder) {
+            // $opr argument is empty, should be exists in query (eg: id = )
+            $query = $this->prepare($query, '', $queryParams);
+
+            return $this->push('where', $query);
+        }
+
+        if ($queryParams !== null) {
+            if (!is_array($queryParams) && !is_scalar($queryParams)) {
+                throw new InvalidValueException('Only array or scalar parameters are accepted!');
+            }
+
+            $query = $this->link->getAgent()->prepare($query, (array) $queryParams);
         }
 
         // add and/or operator
@@ -423,153 +435,145 @@ final class Builder
     }
 
     /**
-     * Shortcut for self.whereNotEqual().
-     */
-    final public function whereNot(string $field, $param, string $op = self::OP_AND): self
-    {
-        return $this->whereNotEqual($field, $param, $op);
-    }
-
-    /**
      * Add "WHERE x = .." statement.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereEqual(string $field, $param, string $op = self::OP_AND): self
+    final public function whereEqual($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' = ?', [$param], $op);
+        return $this->where($this->prepare($field, '=', $param), null, $op);
     }
 
     /**
      * Add "WHERE x != .." statement.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereNotEqual(string $field, $param, string $op = self::OP_AND): self
+    final public function whereNotEqual($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' != ?', [$param], $op);
+        return $this->where($this->prepare($field, '!=', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "IS NULL" queries.
-     * @param  string $field
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  string         $op
      * @return self
      */
-    final public function whereNull(string $field, string $op = self::OP_AND): self
+    final public function whereNull($field, string $op = self::OP_AND): self
     {
-        return $this->where($field .' IS NULL', null, $op);
+        return $this->where($this->field($field) .' IS NULL', null, $op);
     }
 
     /**
      * Add "WHERE" statement for "IS NOT NULL" queries.
-     * @param  string $field
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  string         $op
      * @return self
      */
-    final public function whereNotNull(string $field, string $op = self::OP_AND): self
+    final public function whereNotNull($field, string $op = self::OP_AND): self
     {
-        return $this->where($field .' IS NOT NULL', null, $op);
+        return $this->where($this->field($field) .' IS NOT NULL', null, $op);
     }
 
     /**
      * Add "WHERE" statement for "IN(...)" queries.
-     * @param  string $field
-     * @param  array  $params
-     * @param  string $op
+     * @param  string        $field
+     * @param  array|Builder $param
+     * @param  string        $op
      * @return self
      */
-    final public function whereIn(string $field, array $params, string $op = self::OP_AND): self
+    final public function whereIn(string $field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' IN(?)', [$params], $op);
+        return $this->where($this->prepare($field, 'IN', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "NOT IN(...)" queries.
-     * @param  string $field
-     * @param  array  $params
-     * @param  string $op
+     * @param  string        $field
+     * @param  array|Builder $param
+     * @param  string        $op
      * @return self
      */
-    final public function whereNotIn(string $field, array $params, string $op = self::OP_AND): self
+    final public function whereNotIn(string $field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' NOT IN(?)', [$params], $op);
+        return $this->where($this->prepare($field, 'NOT IN', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "BETWEEN .. AND .." queries.
-     * @param  string $field
-     * @param  array  $params
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  array          $params
+     * @param  string         $op
      * @return self
      */
-    final public function whereBetween(string $field, array $params, string $op = self::OP_AND): self
+    final public function whereBetween($field, array $params, string $op = self::OP_AND): self
     {
-        return $this->where($field .' BETWEEN ? AND ?', $params, $op);
+        return $this->where($this->field($field) .' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
      * Add "WHERE" statement for "NOT BETWEEN .. AND .." queries.
-     * @param  string $field
-     * @param  array  $params
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  array          $params
+     * @param  string         $op
      * @return self
      */
-    final public function whereNotBetween(string $field, array $params, string $op = self::OP_AND): self
+    final public function whereNotBetween($field, array $params, string $op = self::OP_AND): self
     {
-        return $this->where($field .' NOT BETWEEN ? AND ?', $params, $op);
+        return $this->where($this->field($field) .' NOT BETWEEN ? AND ?', $params, $op);
     }
 
     /**
      * Add "WHERE" statement for "foo < 123" queries.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereLessThan(string $field, $param, string $op = self::OP_AND): self
+    final public function whereLessThan($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' < ?', [$param], $op);
+        return $this->where($this->prepare($field, '<', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "foo <= 123" queries.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereLessThanEqual(string $field, $param, string $op = self::OP_AND): self
+    final public function whereLessThanEqual($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' <= ?', [$param], $op);
+        return $this->where($this->prepare($field, '<=', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "foo > 123" queries.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereGreaterThan(string $field, $param, string $op = self::OP_AND): self
+    final public function whereGreaterThan($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' > ?', [$param], $op);
+        return $this->where($this->prepare($field, '>', $param), null, $op);
     }
 
     /**
      * Add "WHERE" statement for "foo >= 123" queries.
-     * @param  string $field
-     * @param  any    $param
-     * @param  string $op
+     * @param  string|Builder $field
+     * @param  any            $param
+     * @param  string         $op
      * @return self
      */
-    final public function whereGreaterThanEqual(string $field, $param, string $op = self::OP_AND): self
+    final public function whereGreaterThanEqual($field, $param, string $op = self::OP_AND): self
     {
-        return $this->where($field .' >= ?', [$param], $op);
+        return $this->where($this->prepare($field, '>=', $param), null, $op);
     }
 
     /**
@@ -656,11 +660,10 @@ final class Builder
      */
     final public function whereExists($query, array $params = null, string $op = self::OP_AND): self
     {
-        // check query if instance of Builder
         if ($query instanceof Builder) {
             $query = $query->toString();
         }
-        // prepare if params provided
+
         if (!empty($params)) {
             $query = $this->link->getAgent()->prepare($query, $params);
         }
@@ -677,11 +680,10 @@ final class Builder
      */
     final public function whereNotExists($query, array $params = null, string $op = self::OP_AND): self
     {
-        // check query if instance of Builder
         if ($query instanceof Builder) {
             $query = $query->toString();
         }
-        // prepare if params provided
+
         if (!empty($params)) {
             $query = $this->link->getAgent()->prepare($query, $params);
         }
@@ -796,12 +798,68 @@ final class Builder
     }
 
     /**
+     * Get array.
+     * @return ?array
+     */
+    final public function getArray(): ?array
+    {
+        return $this->link->getAgent()->getArray($this->toString());
+    }
+
+    /**
+     * Get object.
+     * @return ?\stdClass
+     */
+    final public function getObject(): ?\stdClass
+    {
+        return $this->link->getAgent()->getObject($this->toString());
+    }
+
+    /**
+     * Get class.
+     * @param  string $class
+     * @return object
+     */
+    final public function getClass(string $class)
+    {
+        return $this->link->getAgent()->getClass($this->toString(), null, $class);
+    }
+
+    /**
      * Get all.
      * @return array
      */
     final public function getAll(): array
     {
         return $this->link->getAgent()->getAll($this->toString());
+    }
+
+    /**
+     * Get all array.
+     * @return ?array
+     */
+    final public function getAllArray(): ?array
+    {
+        return $this->link->getAgent()->getAllArray($this->toString());
+    }
+
+    /**
+     * Get all object.
+     * @return ?array
+     */
+    final public function getAllObject(): ?array
+    {
+        return $this->link->getAgent()->getAllObject($this->toString());
+    }
+
+    /**
+     * Get all class.
+     * @param  string $class
+     * @return ?array
+     */
+    final public function getAllClass(string $class): ?array
+    {
+        return $this->link->getAgent()->getAllClass($this->toString(), null, $class);
     }
 
     /**
@@ -964,5 +1022,39 @@ final class Builder
         $this->query[$key] = array_merge($this->query[$key], (array) $value);
 
         return $this;
+    }
+
+    /**
+     * Field.
+     * @param  string|Builder $field
+     * @return string
+     */
+    final private function field($field): string
+    {
+        if ($field instanceof Builder) {
+            $field = '('. $field->toString() .')';
+        }
+
+        return trim($field);
+    }
+
+    /**
+     * Prepare.
+     * @param  string|Builder $field
+     * @param  string         $opr
+     * @param  array|Builder  $param
+     * @return string
+     */
+    final private function prepare($field, string $opr, $param): string
+    {
+        $query[] = $this->field($field);
+        $query[] = $opr;
+        if ($param instanceof Builder) {
+            $query[] = '('. $param->toString() .')';
+        } else {
+            $query[] = $this->link->getAgent()->prepare('(?)', (array) $param);
+        }
+
+        return join(' ', array_filter($query));
     }
 }
