@@ -237,7 +237,7 @@ abstract class AgentCrud
     }
 
     /**
-     * Get all array.
+     * Get all class.
      * @param  string $query
      * @param  array  $queryParams
      * @param  string $class
