@@ -281,6 +281,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
             if (!empty($match[1])) {
                 $keys = $values = [];
+                $match[1] = array_unique($match[1]);
                 foreach ($match[1] as $key) {
                     if (!array_key_exists($key, $inputParams)) {
                         throw new InvalidKeyException("Replacement key '{$key}' not found in params!");
@@ -292,7 +293,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     // remove used params
                     unset($inputParams[$key]);
                 }
-                $input = preg_replace($keys, $values, $input, 1);
+                $input = preg_replace($keys, $values, $input);
             }
 
             // available indicator: "?"
