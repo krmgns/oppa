@@ -93,7 +93,7 @@ abstract class Result implements ResultInterface
     /**
      * Destructor.
      */
-    final public function __destruct()
+    public final function __destruct()
     {
         $this->free();
     }
@@ -102,7 +102,7 @@ abstract class Result implements ResultInterface
      * Get agent.
      * @return Oppa\Agent\AgentInterface
      */
-    final public function getAgent(): AgentInterface
+    public final function getAgent(): AgentInterface
     {
         return $this->agent;
     }
@@ -111,7 +111,7 @@ abstract class Result implements ResultInterface
      * Get result.
      * @return ?Oppa\Resource
      */
-    final public function getResult(): ?Resource
+    public final function getResult(): ?Resource
     {
         return $this->result;
     }
@@ -120,7 +120,7 @@ abstract class Result implements ResultInterface
      * Free.
      * @return void
      */
-    final public function free(): void
+    public final function free(): void
     {
         $this->result && $this->result->free();
     }
@@ -129,7 +129,7 @@ abstract class Result implements ResultInterface
      * Reset.
      * @return void
      */
-    final public function reset(): void
+    public final function reset(): void
     {
         // reset data
         $this->data = [];
@@ -145,7 +145,7 @@ abstract class Result implements ResultInterface
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function detectFetchType($fetchType): int
+    public final function detectFetchType($fetchType): int
     {
         switch (gettype($fetchType)) {
             case 'NULL':
@@ -180,7 +180,7 @@ abstract class Result implements ResultInterface
      * @param  int|string $fetchType
      * @return void
      */
-    final public function setFetchType($fetchType): void
+    public final function setFetchType($fetchType): void
     {
         $this->fetchType = $this->detectFetchType($fetchType);
     }
@@ -189,7 +189,7 @@ abstract class Result implements ResultInterface
      * Get fetch type.
      * @return int
      */
-    final public function getFetchType(): int
+    public final function getFetchType(): int
     {
         return $this->fetchType;
     }
@@ -199,7 +199,7 @@ abstract class Result implements ResultInterface
      * @param  int $fetchLimit
      * @return void
      */
-    final public function setFetchLimit(int $fetchLimit): void
+    public final function setFetchLimit(int $fetchLimit): void
     {
         $this->fetchLimit = $fetchLimit;
     }
@@ -208,7 +208,7 @@ abstract class Result implements ResultInterface
      * Get fetch limit.
      * @return int
      */
-    final public function getFetchLimit(): int
+    public final function getFetchLimit(): int
     {
         return $this->fetchLimit;
     }
@@ -219,7 +219,7 @@ abstract class Result implements ResultInterface
      * @return void
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function setFetchObject(string $fetchObject): void
+    public final function setFetchObject(string $fetchObject): void
     {
         if (!$fetchObject) {
             throw new InvalidValueException('Fetch object should not be empty!');
@@ -232,7 +232,7 @@ abstract class Result implements ResultInterface
      * Get fetch object.
      * @return string
      */
-    final public function getFetchObject(): string
+    public final function getFetchObject(): string
     {
         return $this->fetchObject;
     }
@@ -241,7 +241,7 @@ abstract class Result implements ResultInterface
      * Set id.
      * @param int $id
      */
-    final public function setId(int $id): void
+    public final function setId(int $id): void
     {
         $this->ids[] = $id;
     }
@@ -250,7 +250,7 @@ abstract class Result implements ResultInterface
      * Get id.
      * @return ?int
      */
-    final public function getId(): ?int
+    public final function getId(): ?int
     {
         return (false !== ($id = end($this->ids))) ? $id : null;
     }
@@ -260,7 +260,7 @@ abstract class Result implements ResultInterface
      * @param  array $ids
      * @return void
      */
-    final public function setIds(array $ids): void
+    public final function setIds(array $ids): void
     {
         $this->ids = $ids;
     }
@@ -269,7 +269,7 @@ abstract class Result implements ResultInterface
      * Get ids.
      * @return array
      */
-    final public function getIds(): array
+    public final function getIds(): array
     {
         return $this->ids;
     }
@@ -279,7 +279,7 @@ abstract class Result implements ResultInterface
      * @param  int $rowsCount
      * @return void
      */
-    final public function setRowsCount(int $rowsCount): void
+    public final function setRowsCount(int $rowsCount): void
     {
         $this->rowsCount = $rowsCount;
     }
@@ -288,7 +288,7 @@ abstract class Result implements ResultInterface
      * Get rows count.
      * @return int
      */
-    final public function getRowsCount(): int
+    public final function getRowsCount(): int
     {
         return $this->rowsCount;
     }
@@ -298,7 +298,7 @@ abstract class Result implements ResultInterface
      * @param  int $rowsAffected
      * @return void
      */
-    final public function setRowsAffected(int $rowsAffected): void
+    public final function setRowsAffected(int $rowsAffected): void
     {
         $this->rowsAffected = $rowsAffected;
     }
@@ -307,7 +307,7 @@ abstract class Result implements ResultInterface
      * Get rows affected.
      * @return int
      */
-    final public function getRowsAffected(): int
+    public final function getRowsAffected(): int
     {
         return $this->rowsAffected;
     }
@@ -316,7 +316,7 @@ abstract class Result implements ResultInterface
      * Has data.
      * @return bool
      */
-    final public function hasData(): bool
+    public final function hasData(): bool
     {
         return !empty($this->data);
     }
@@ -325,7 +325,7 @@ abstract class Result implements ResultInterface
      * Get data.
      * @return array
      */
-    final public function getData(): array
+    public final function getData(): array
     {
         return $this->data;
     }
@@ -335,7 +335,7 @@ abstract class Result implements ResultInterface
      * @param  int $i
      * @return any|null
      */
-    final public function getDataItem(int $i)
+    public final function getDataItem(int $i)
     {
         return $this->data[$i] ?? null;
     }
@@ -344,7 +344,7 @@ abstract class Result implements ResultInterface
      * To array.
      * @return ?array
      */
-    final public function toArray(): ?array
+    public final function toArray(): ?array
     {
         $data = null;
         if (!empty($this->data)) {
@@ -365,7 +365,7 @@ abstract class Result implements ResultInterface
      * To object.
      * @return ?array
      */
-    final public function toObject(): ?array
+    public final function toObject(): ?array
     {
         $data = null;
         if (!empty($this->data)) {
@@ -387,7 +387,7 @@ abstract class Result implements ResultInterface
      * @param  string $class
      * @return ?array
      */
-    final public function toClass(string $class): ?array
+    public final function toClass(string $class): ?array
     {
         $data = null;
         if (!empty($this->data)) {
@@ -410,7 +410,7 @@ abstract class Result implements ResultInterface
      * @param  int $i
      * @return any|null
      */
-    final public function item(int $i)
+    public final function item(int $i)
     {
         return $this->data[$i] ?? null;
     }
@@ -419,7 +419,7 @@ abstract class Result implements ResultInterface
      * Item first.
      * @return any|null
      */
-    final public function itemFirst()
+    public final function itemFirst()
     {
         return $this->item(0);
     }
@@ -428,7 +428,7 @@ abstract class Result implements ResultInterface
      * Item last.
      * @return any|null
      */
-    final public function itemLast()
+    public final function itemLast()
     {
         return $this->item(count($this->data) - 1);
     }
@@ -437,7 +437,7 @@ abstract class Result implements ResultInterface
      * Is empty.
      * @return bool
      */
-    final public function isEmpty(): bool
+    public final function isEmpty(): bool
     {
         return empty($this->data);
     }
@@ -446,7 +446,7 @@ abstract class Result implements ResultInterface
      * Count.
      * @return int
      */
-    final public function count(): int
+    public final function count(): int
     {
         return count($this->data);
     }
@@ -455,7 +455,7 @@ abstract class Result implements ResultInterface
      * Get iterator.
      * @return \ArrayIterator
      */
-    final public function getIterator(): \ArrayIterator
+    public final function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }
