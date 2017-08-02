@@ -229,8 +229,8 @@ final class Mysql extends Agent
         $query = $this->prepare($query, $queryParams);
 
         // log query with info level
-        $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New query [%s] via %s addr.', $query, Util::getIp()));
+        $this->logger && $this->logger->log(Logger::INFO,
+            sprintf('New query [%s] via %s addr.', $query, Util::getIp()));
 
         // increase query count, add last query profiler
         if ($this->profiler) {
