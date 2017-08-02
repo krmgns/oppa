@@ -33,7 +33,7 @@ use Oppa\Link\Linker;
 final class Database
 {
     /**
-     * Database info. @wait
+     * Info. @wait
      * @var array
      */
     private $info;
@@ -63,7 +63,7 @@ final class Database
 
     /**
      * Call magic (forwards all non-exists methods to Linker).
-     * @see    Proxy pattern <https://en.wikipedia.org/wiki/Proxy_pattern>
+     * @link   Proxy pattern <https://en.wikipedia.org/wiki/Proxy_pattern>
      * @param  string $method
      * @param  array  $methodArgs
      * @return any

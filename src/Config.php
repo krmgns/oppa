@@ -31,7 +31,7 @@ namespace Oppa;
 final class Config implements \ArrayAccess
 {
     /**
-     * Options stack.
+     * Options.
      * @var array
      */
     private $options = [];
@@ -50,18 +50,18 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * Set an option.
+     * Set.
      * @param  string $key
      * @param  any    $value
      * @return self
      */
-    public function __set(string $key, $value): self
+    public function __set(string $key, $value)
     {
         return $this->set($key, $value);
     }
 
     /**
-     * Get an option.
+     * Get.
      * @param  string $key
      * @return any
      */
@@ -72,28 +72,28 @@ final class Config implements \ArrayAccess
 
 
     /**
-     * Check an option.
+     * Isset.
      * @param  string $key
      * @return bool
      */
-    public function __isset(string $key): bool
+    public function __isset(string $key)
     {
         return isset($this->options[$key]);
     }
 
     /**
-     * Remove an option.
+     * Unset.
      * @param  string $key
      * @return void
      */
-    public function __unset(string $key): void
+    public function __unset(string $key)
     {
         unset($this->options[$key]);
     }
 
 
     /**
-     * Set an option.
+     * Set.
      * @param  string $key
      * @param  any    $value
      * @return self
@@ -106,7 +106,7 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * Get an option.
+     * Get.
      * @param  string $key
      * @param  any    $value
      * @return any
@@ -121,18 +121,18 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * Set an option.
+     * Set.
      * @param  int|string $key
      * @param  any $value
      * @return self
      */
-    public function offsetSet($key, $value): self
+    public function offsetSet($key, $value)
     {
         return $this->set($key, $value);
     }
 
     /**
-     * Get an option.
+     * Get.
      * @param  int|string $key
      * @return any
      */
@@ -142,27 +142,27 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * Check an option.
+     * Check.
      * @param  int|string $key
      * @return bool
      */
-    public function offsetExists($key): bool
+    public function offsetExists($key)
     {
         return $this->__isset($key);
     }
 
     /**
-     * Remove an option.
+     * Remove.
      * @param  any $key
      * @return void
      */
-    public function offsetUnset($key): void
+    public function offsetUnset($key)
     {
         $this->__unset($key);
     }
 
     /**
-     * Get all options as array.
+     * To array.
      * @return array
      */
     public function toArray(): array
