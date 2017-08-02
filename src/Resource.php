@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace Oppa;
 
-use Oppa\Exception\{InvalidValueException, InvalidConfigException};
-
 /**
  * @package Oppa
  * @object  Oppa\Resource
