@@ -163,88 +163,23 @@ abstract class AgentCrud
      * Get.
      * @param  string $query
      * @param  array  $queryParams
+     * @param  string $class
      * @return object|array|null
      */
-    public final function get(string $query, array $queryParams = null)
+    public final function get(string $query, array $queryParams = null, string $class)
     {
-        return $this->query($query, $queryParams, 1)->getDataItem(0);
-    }
-
-    /**
-     * Get array.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @return ?array
-     */
-    public final function getArray(string $query, array $queryParams = null): ?array
-    {
-        return $this->query($query, $queryParams, 1)->toArray()[0] ?? null;
-    }
-
-    /**
-     * Get object.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @return ?\stdClass
-     */
-    public final function getObject(string $query, array $queryParams = null): ?\stdClass
-    {
-        return $this->query($query, $queryParams, 1)->toObject()[0] ?? null;
-    }
-
-    /**
-     * Get class.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @return object
-     */
-    public final function getClass(string $query, array $queryParams = null, string $class)
-    {
-        return $this->query($query, $queryParams, 1)->toClass($class)[0] ?? null;
+        return $this->query($query, $queryParams, 1, $class)->getDataItem(0);
     }
 
     /**
      * Get all.
      * @param  string $query
      * @param  array  $queryParams
+     * @param  string $class
      * @return array
      */
-    public final function getAll(string $query, array $queryParams = null): array
+    public final function getAll(string $query, array $queryParams = null, string $class): array
     {
-        return $this->query($query, $queryParams)->getData();
-    }
-
-    /**
-     * Get all array.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @return ?array
-     */
-    public final function getAllArray(string $query, array $queryParams = null): ?array
-    {
-        return $this->query($query, $queryParams)->toArray();
-    }
-
-    /**
-     * Get all object.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @return ?array
-     */
-    public final function getAllObject(string $query, array $queryParams = null): ?array
-    {
-        return $this->query($query, $queryParams)->toObject();
-    }
-
-    /**
-     * Get all class.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @param  string $class
-     * @return ?array
-     */
-    public final function getAllClass(string $query, array $queryParams = null, string $class): ?array
-    {
-        return $this->query($query, $queryParams)->toClass($class);
+        return $this->query($query, $queryParams, null, $class)->getData();
     }
 }

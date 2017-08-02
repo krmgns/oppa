@@ -790,76 +790,22 @@ final class Builder
 
     /**
      * Get.
+     * @param  string|null $class
      * @return any
      */
-    public function get()
+    public function get(string $class = null)
     {
-        return $this->link->getAgent()->get($this->toString());
-    }
-
-    /**
-     * Get array.
-     * @return ?array
-     */
-    public function getArray(): ?array
-    {
-        return $this->link->getAgent()->getArray($this->toString());
-    }
-
-    /**
-     * Get object.
-     * @return ?\stdClass
-     */
-    public function getObject(): ?\stdClass
-    {
-        return $this->link->getAgent()->getObject($this->toString());
-    }
-
-    /**
-     * Get class.
-     * @param  string $class
-     * @return object
-     */
-    public function getClass(string $class)
-    {
-        return $this->link->getAgent()->getClass($this->toString(), null, $class);
+        return $this->link->getAgent()->get($this->toString(), null, $class);
     }
 
     /**
      * Get all.
+     * @param  string|null $class
      * @return array
      */
-    public function getAll(): array
+    public function getAll(string $class = null): array
     {
-        return $this->link->getAgent()->getAll($this->toString());
-    }
-
-    /**
-     * Get all array.
-     * @return ?array
-     */
-    public function getAllArray(): ?array
-    {
-        return $this->link->getAgent()->getAllArray($this->toString());
-    }
-
-    /**
-     * Get all object.
-     * @return ?array
-     */
-    public function getAllObject(): ?array
-    {
-        return $this->link->getAgent()->getAllObject($this->toString());
-    }
-
-    /**
-     * Get all class.
-     * @param  string $class
-     * @return ?array
-     */
-    public function getAllClass(string $class): ?array
-    {
-        return $this->link->getAgent()->getAllClass($this->toString(), null, $class);
+        return $this->link->getAgent()->getAll($this->toString(), null, $class);
     }
 
     /**
