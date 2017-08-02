@@ -4,7 +4,7 @@ include('_inc.php');
 use Oppa\Database;
 
 $cfg = [
-    'agent'    => 'pgsql',
+    'agent'    => 'mysql',
     'database' => [
         'host'     => 'localhost',  'name'     => 'test',
         'username' => 'test',       'password' => '********',
@@ -23,8 +23,10 @@ $agent = $db->getLink()->getAgent();
 
 class User {}
 
-$result = $agent->query("select * from users");
+// $result = $agent->query("select * from users");
 // $result = $agent->query("select * from users", null, 1, User::class);
-prd($result->getData());
+$result = $agent->get("select * from users", null, User::class);
+$result = $agent->getAll("select * from users", null, User::class);
+pre($result);
 
 
