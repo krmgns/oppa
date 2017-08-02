@@ -81,7 +81,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
     /**
      * Destructor.
      */
-    final public function __destruct()
+    public final function __destruct()
     {
         $this->disconnect();
     }
@@ -91,7 +91,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  string $name
      * @return bool
      */
-    final public function __isset($name): bool
+    public final function __isset($name): bool
     {
         return isset($this->{$name});
     }
@@ -100,7 +100,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get resource.
      * @return Oppa\Resource
      */
-    final public function getResource(): Resource
+    public final function getResource(): Resource
     {
         return $this->resource;
     }
@@ -109,7 +109,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get resource stats.
      * @return ?array
      */
-    final public function getResourceStats(): ?array
+    public final function getResourceStats(): ?array
     {
         $return = null;
         if ($this->resource->getType() == Resource::TYPE_MYSQL_LINK) {
@@ -135,7 +135,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get batch.
      * @return Oppa\Batch\BatchInterface
      */
-    final public function getBatch(): BatchInterface
+    public final function getBatch(): BatchInterface
     {
         return $this->batch;
     }
@@ -144,7 +144,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get result.
      * @return Oppa\Query\Result\ResultInterface
      */
-    final public function getResult(): ResultInterface
+    public final function getResult(): ResultInterface
     {
         return $this->result;
     }
@@ -154,7 +154,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @return Oppa\Logger
      * @throws Oppa\Error
      */
-    final public function getLogger()
+    public final function getLogger()
     {
         if (!$this->logger) {
             throw new Error("Logger is not found, did you set 'query_log' option as 'true'?");
@@ -168,7 +168,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @return Oppa\Mapper
      * @throws Oppa\Error
      */
-    final public function getMapper()
+    public final function getMapper()
     {
         if (!$this->mapper) {
             throw new Error("Mapper is not found, did you set 'map_result' option as 'true'?");
@@ -182,7 +182,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @return Oppa\Profiler
      * @throws Oppa\Error
      */
-    final public function getProfiler()
+    public final function getProfiler()
     {
         if (!$this->profiler) {
             throw new Error("Profiler is not found, did you set 'profile' option as 'true'?");
@@ -195,7 +195,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get config.
      * @return Oppa\Config
      */
-    final public function getConfig(): Config
+    public final function getConfig(): Config
     {
         return $this->config;
     }
@@ -204,7 +204,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Get name.
      * @return string
      */
-    final public function getName(): string
+    public final function getName(): string
     {
         $className = get_called_class();
 
@@ -215,7 +215,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Id.
      * @return ?int
      */
-    final public function id(): ?int
+    public final function id(): ?int
     {
         return $this->result->getId();
     }
@@ -224,7 +224,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Ids.
      * @return array
      */
-    final public function ids(): array
+    public final function ids(): array
     {
         return $this->result->getIds();
     }
@@ -233,7 +233,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Rows count.
      * @return int
      */
-    final public function rowsCount(): int
+    public final function rowsCount(): int
     {
         return $this->result->getRowsCount();
     }
@@ -242,7 +242,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * Rows affected.
      * @return int
      */
-    final public function rowsAffected(): int
+    public final function rowsAffected(): int
     {
         return $this->result->getRowsAffected();
     }
@@ -273,7 +273,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @return string
      * @throws Oppa\Exception\InvalidKeyException
      */
-    final public function prepare(string $input, array $inputParams = null): string
+    public final function prepare(string $input, array $inputParams = null): string
     {
         // any params provided?
         if (!empty($inputParams)) {
@@ -332,7 +332,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  array  $whereParams
      * @return ?string
      */
-    final public function where(string $where = null, array $whereParams = null): ?string
+    public final function where(string $where = null, array $whereParams = null): ?string
     {
         if (!empty($whereParams)) {
             $where = 'WHERE '. $this->prepare($where, $whereParams);
@@ -346,7 +346,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  int|array $limit
      * @return ?string
      */
-    final public function limit($limit): ?string
+    public final function limit($limit): ?string
     {
         if (is_array($limit)) {
             return isset($limit[0], $limit[1])

@@ -42,7 +42,7 @@ final class Pgsql extends Agent
      * @param  Oppa\Config $config
      * @throws \RuntimeException
      */
-    final public function __construct(Config $config)
+    public function __construct(Config $config)
     {
         // we need it like a crazy..
         if (!extension_loaded('pgsql')) {
@@ -89,7 +89,7 @@ final class Pgsql extends Agent
      * @return void
      * @throws Oppa\Exception\ConnectionException
      */
-    final public function connect(): void
+    public function connect(): void
     {
         // no need to get excited
         if ($this->isConnected()) {
@@ -179,7 +179,7 @@ final class Pgsql extends Agent
      * Disconnect.
      * @return void
      */
-    final public function disconnect(): void
+    public function disconnect(): void
     {
         $this->resource && $this->resource->close();
     }
@@ -188,7 +188,7 @@ final class Pgsql extends Agent
      * Check connection.
      * @return bool
      */
-    final public function isConnected(): bool
+    public function isConnected(): bool
     {
         return ($this->resource && pg_connection_status($this->resource->getObject()) === PGSQL_CONNECTION_OK);
     }
@@ -202,7 +202,7 @@ final class Pgsql extends Agent
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
-    final public function query(string $query, array $queryParams = null, $limit = null,
+    public function query(string $query, array $queryParams = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
         // reset result
@@ -270,7 +270,7 @@ final class Pgsql extends Agent
      * @param  array   $queryParams
      * @return ?int
      */
-    final public function count(?string $table, string $query = null, array $queryParams = null): ?int
+    public function count(?string $table, string $query = null, array $queryParams = null): ?int
     {
         if ($table) {
             $result = $this->get("SELECT reltuples::bigint AS count FROM pg_class WHERE oid = '{$table}'::regclass");
@@ -289,7 +289,7 @@ final class Pgsql extends Agent
      * @return any
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function escape($input, string $type = null)
+    public function escape($input, string $type = null)
     {
         $inputType = gettype($input);
 
@@ -334,7 +334,7 @@ final class Pgsql extends Agent
      * @param  bool   $quote
      * @return string
      */
-    final public function escapeString(string $input, bool $quote = true): string
+    public function escapeString(string $input, bool $quote = true): string
     {
         $input = pg_escape_string($this->resource->getObject(), $input);
         if ($quote) {
@@ -349,7 +349,7 @@ final class Pgsql extends Agent
      * @param  string|array $input
      * @return string
      */
-    final public function escapeIdentifier($input): string
+    public function escapeIdentifier($input): string
     {
         if ($input == '*') {
             return $input;
@@ -367,7 +367,7 @@ final class Pgsql extends Agent
      * @param  string $input
      * @return string
      */
-    final public function escapeBytea(string $input): string
+    public function escapeBytea(string $input): string
     {
         return pg_escape_bytea($this->resource->getObject(), $input);
     }
@@ -377,7 +377,7 @@ final class Pgsql extends Agent
      * @param  string $input
      * @return string
      */
-    final public function unescapeBytea(string $input): string
+    public function unescapeBytea(string $input): string
     {
         return pg_unescape_bytea($input);
     }
@@ -386,7 +386,7 @@ final class Pgsql extends Agent
      * Parse connection error.
      * @return array
      */
-    final private function parseConnectionError(): array
+    private function parseConnectionError(): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {
@@ -435,7 +435,7 @@ final class Pgsql extends Agent
      * @param  string $query
      * @return array
      */
-    final private function parseQueryError(string $query): array
+    private function parseQueryError(string $query): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {

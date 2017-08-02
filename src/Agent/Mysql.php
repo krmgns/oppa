@@ -42,7 +42,7 @@ final class Mysql extends Agent
      * @param  Oppa\Config $config
      * @throws \RuntimeException
      */
-    final public function __construct(Config $config)
+    public function __construct(Config $config)
     {
         // we need it like a crazy..
         if (!extension_loaded('mysqli')) {
@@ -89,7 +89,7 @@ final class Mysql extends Agent
      * @return void
      * @throws Oppa\Exception\ConnectionException
      */
-    final public function connect(): void
+    public function connect(): void
     {
         // no need to get excited
         if ($this->isConnected()) {
@@ -187,7 +187,7 @@ final class Mysql extends Agent
      * Disconnect.
      * @return void
      */
-    final public function disconnect(): void
+    public function disconnect(): void
     {
         $this->resource && $this->resource->close();
     }
@@ -196,7 +196,7 @@ final class Mysql extends Agent
      * Check connection.
      * @return bool
      */
-    final public function isConnected(): bool
+    public function isConnected(): bool
     {
         return ($this->resource && $this->resource->getObject()->connect_errno === 0);
     }
@@ -210,7 +210,7 @@ final class Mysql extends Agent
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
-    final public function query(string $query, array $queryParams = null, $limit = null,
+    public function query(string $query, array $queryParams = null, $limit = null,
         $fetchType = null): Result\ResultInterface
     {
         // reset result
@@ -276,7 +276,7 @@ final class Mysql extends Agent
      * @param  bool    $isSubQuery
      * @return ?int
      */
-    final public function count(?string $table, string $query = null, array $queryParams = null,
+    public function count(?string $table, string $query = null, array $queryParams = null,
         bool $isSubQuery = false): ?int
     {
         if ($query && !$isSubQuery) {
@@ -301,7 +301,7 @@ final class Mysql extends Agent
      * @return any
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function escape($input, string $type = null)
+    public function escape($input, string $type = null)
     {
         $inputType = gettype($input);
 
@@ -344,7 +344,7 @@ final class Mysql extends Agent
      * @param  bool   $quote
      * @return string
      */
-    final public function escapeString(string $input, bool $quote = true): string
+    public function escapeString(string $input, bool $quote = true): string
     {
         $input = $this->resource->getObject()->real_escape_string($input);
         if ($quote) {
@@ -359,7 +359,7 @@ final class Mysql extends Agent
      * @param  string|array $input
      * @return string
      */
-    final public function escapeIdentifier($input): string
+    public function escapeIdentifier($input): string
     {
         if ($input == '*') {
             return $input;
@@ -376,7 +376,7 @@ final class Mysql extends Agent
      * Parse connection error.
      * @return array
      */
-    final private function parseConnectionError(): array
+    private function parseConnectionError(): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         if ($error = error_get_last()) {
@@ -417,7 +417,7 @@ final class Mysql extends Agent
      * @param  string $query
      * @return array
      */
-    final private function parseQueryError(string $query): array
+    private function parseQueryError(string $query): array
     {
         $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
         $resource = $this->resource->getObject();

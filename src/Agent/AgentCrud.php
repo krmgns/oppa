@@ -46,7 +46,7 @@ abstract class AgentCrud
      * @param  int|string   $fetchType
      * @return any
      */
-    final public function select(string $table, $fields = null, string $where = null,
+    public final function select(string $table, $fields = null, string $where = null,
         array $whereParams = null, $limit = null, $fetchType = null)
     {
         if ($fields == null) {
@@ -71,7 +71,7 @@ abstract class AgentCrud
      * @param  int|string   $fetchType
      * @return any
      */
-    final public function selectOne(string $table, $fields = null, string $where = null,
+    public final function selectOne(string $table, $fields = null, string $where = null,
         array $whereParams = null, $fetchType = null)
     {
         if ($fields == null) {
@@ -92,7 +92,7 @@ abstract class AgentCrud
      * @param  array  $data
      * @return ?int
      */
-    final public function insert(string $table, array $data): ?int
+    public final function insert(string $table, array $data): ?int
     {
         // simply check is not assoc to prepare multi-insert
         if (!isset($data[0])) {
@@ -122,7 +122,7 @@ abstract class AgentCrud
      * @param  int|array $limit
      * @return int
      */
-    final public function update(string $table, array $data, string $where = null, array $whereParams = null,
+    public final function update(string $table, array $data, string $where = null, array $whereParams = null,
         $limit = null): int
     {
         $set = [];
@@ -148,7 +148,7 @@ abstract class AgentCrud
      * @param  int|array $limit
      * @return int
      */
-    final public function delete(string $table, string $where = null, array $whereParams = null,
+    public final function delete(string $table, string $where = null, array $whereParams = null,
         $limit = null): int
     {
         return $this->query(sprintf(
@@ -165,7 +165,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return object|array|null
      */
-    final public function get(string $query, array $queryParams = null)
+    public final function get(string $query, array $queryParams = null)
     {
         return $this->query($query, $queryParams, 1)->item(0);
     }
@@ -176,7 +176,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return ?array
      */
-    final public function getArray(string $query, array $queryParams = null): ?array
+    public final function getArray(string $query, array $queryParams = null): ?array
     {
         return $this->query($query, $queryParams, 1)->toArray()[0] ?? null;
     }
@@ -187,7 +187,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return ?\stdClass
      */
-    final public function getObject(string $query, array $queryParams = null): ?\stdClass
+    public final function getObject(string $query, array $queryParams = null): ?\stdClass
     {
         return $this->query($query, $queryParams, 1)->toObject()[0] ?? null;
     }
@@ -198,7 +198,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return object
      */
-    final public function getClass(string $query, array $queryParams = null, string $class)
+    public final function getClass(string $query, array $queryParams = null, string $class)
     {
         return $this->query($query, $queryParams, 1)->toClass($class)[0] ?? null;
     }
@@ -209,7 +209,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return array
      */
-    final public function getAll(string $query, array $queryParams = null): array
+    public final function getAll(string $query, array $queryParams = null): array
     {
         return $this->query($query, $queryParams)->getData();
     }
@@ -220,7 +220,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return ?array
      */
-    final public function getAllArray(string $query, array $queryParams = null): ?array
+    public final function getAllArray(string $query, array $queryParams = null): ?array
     {
         return $this->query($query, $queryParams)->toArray();
     }
@@ -231,7 +231,7 @@ abstract class AgentCrud
      * @param  array  $queryParams
      * @return ?array
      */
-    final public function getAllObject(string $query, array $queryParams = null): ?array
+    public final function getAllObject(string $query, array $queryParams = null): ?array
     {
         return $this->query($query, $queryParams)->toObject();
     }
@@ -243,7 +243,7 @@ abstract class AgentCrud
      * @param  string $class
      * @return ?array
      */
-    final public function getAllClass(string $query, array $queryParams = null, string $class): ?array
+    public final function getAllClass(string $query, array $queryParams = null, string $class): ?array
     {
         return $this->query($query, $queryParams)->toClass($class);
     }
