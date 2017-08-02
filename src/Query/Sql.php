@@ -31,6 +31,9 @@ namespace Oppa\Query;
  */
 final class Sql
 {
+    // This object is used for only to prevent escaping contents like
+    // NOW(), COUNT() etc. in agent.escape() methods. Nothing more..
+
     /**
      * Keeps raw SQL string.
      * @var string
@@ -39,29 +42,27 @@ final class Sql
 
     /**
      * Constructor.
-     * This object is used for only to prevent escaping contents like
-     * NOW(), COUNT() etc. in agent.escape() methods. Nothing more..
      * @param string $query
      */
-    final public function __construct(string $query)
+    public function __construct(string $query)
     {
         $this->query = trim($query);
     }
 
     /**
-     * String magic.
+     * Stringer.
      * @return string
      */
-    final public function __toString(): string
+    public function __toString(): string
     {
         return $this->query;
     }
 
     /**
-     * Get SQL string.
+     * To string.
      * @return string
      */
-    final public function toString(): string
+    public function toString(): string
     {
         return $this->query;
     }
@@ -71,7 +72,7 @@ final class Sql
      * @param  string $query
      * @return Oppa\Query\Sql
      */
-    final public static function new(string $query): Sql
+    public static function new(string $query): Sql
     {
         return new Sql($query);
     }
