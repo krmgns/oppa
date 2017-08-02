@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Query\Result;
 
 use Oppa\{Agent, Resource};
-use Oppa\Exception\{InvalidValueException, InvalidResourceException};
+use Oppa\Exception\{InvalidResourceException, InvalidValueException};
 
 /**
  * @package    Oppa
@@ -38,7 +38,7 @@ final class Mysql extends Result
      * Constructor.
      * @param Oppa\Agent\Mysql $agent
      */
-    final public function __construct(Agent\Mysql $agent)
+    public function __construct(Agent\Mysql $agent)
     {
         $this->agent = $agent;
     }
@@ -51,9 +51,9 @@ final class Mysql extends Result
      * @param  int           $limit
      * @param  int|string    $fetchType
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\InvalidResourceException
+     * @throws Oppa\Exception\InvalidResourceException, Oppa\Exception\InvalidValueException
      */
-    final public function process(Resource $result, int $limit = null, $fetchType = null): ResultInterface
+    public function process(Resource $result, int $limit = null, $fetchType = null): ResultInterface
     {
         $resource = $this->agent->getResource();
         if ($resource->getType() != Resource::TYPE_MYSQL_LINK) {

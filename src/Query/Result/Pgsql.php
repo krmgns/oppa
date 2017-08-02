@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Oppa\Query\Result;
 
 use Oppa\{Agent, Resource};
-use Oppa\Exception\{InvalidValueException, InvalidResourceException};
+use Oppa\Exception\{InvalidResourceException, InvalidValueException};
 
 /**
  * @package    Oppa
@@ -38,7 +38,7 @@ final class Pgsql extends Result
      * Constructor.
      * @param Oppa\Agent\Pgsql $agent
      */
-    final public function __construct(Agent\Pgsql $agent)
+    public function __construct(Agent\Pgsql $agent)
     {
         $this->agent = $agent;
     }
@@ -52,9 +52,9 @@ final class Pgsql extends Result
      * @param  int|string    $fetchType
      * @param  string        $query @internal
      * @return Oppa\Query\Result\ResultInterface
-     * @throws Oppa\Exception\InvalidResourceException
+     * @throws Oppa\Exception\InvalidResourceException, Oppa\Exception\InvalidValueException
      */
-    final public function process(Resource $result, int $limit = null, $fetchType = null,
+    public function process(Resource $result, int $limit = null, $fetchType = null,
         string $query = null): ResultInterface
     {
         $resource = $this->agent->getResource();
