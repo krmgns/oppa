@@ -32,7 +32,7 @@ namespace Oppa\Exception;
 class SqlException extends \Exception
 {
     /**
-     * SQL state.
+     * Sql state.
      * @var ?string
      */
     protected $sqlState;
@@ -59,7 +59,7 @@ class SqlException extends \Exception
     }
 
     /**
-     * Get SQL state.
+     * Get sql state.
      * @return ?string
      */
     public final function getSqlState(): ?string
