@@ -69,8 +69,7 @@ abstract class ActiveRecord
     {
         // check for table, primary key
         if (!isset($this->table, $this->tablePrimary)) {
-            throw new InvalidValueException(
-                "You need to specify both 'table' and 'tablePrimary' properties!");
+            throw new InvalidValueException("You need to specify both 'table' and 'tablePrimary' properties!");
         }
 
         $this->db = $db;
@@ -91,7 +90,7 @@ abstract class ActiveRecord
      * @param  array $data
      * @return Oppa\ActiveRecord\Entity
      */
-    final public function entity(array $data = []): Entity
+    public final function entity(array $data = []): Entity
     {
         $entity = new Entity($this, $data);
         if (method_exists($this, 'onEntity')) {
@@ -107,7 +106,7 @@ abstract class ActiveRecord
      * @return Oppa\ActiveRecord\Entity
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function find($param): Entity
+    public final function find($param): Entity
     {
         if ($param === null || $param === '') {
             throw new InvalidValueException('You need to pass a parameter for select action!');
@@ -145,7 +144,7 @@ abstract class ActiveRecord
      * @param  array|int $limit
      * @return Oppa\ActiveRecord\EntityCollection
      */
-    final public function findAll($query = null, array $queryParams = null, $limit = null): EntityCollection
+    public final function findAll($query = null, array $queryParams = null, $limit = null): EntityCollection
     {
         $queryBuilder = new QueryBuilder($this->db->getLink());
         $queryBuilder->setTable($this->table);
@@ -206,7 +205,7 @@ abstract class ActiveRecord
      * @return int  On update: affected rows.
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function save(Entity $entity): ?int
+    public final function save(Entity $entity): ?int
     {
         $data = $entity->toArray();
         if (empty($data)) {
@@ -242,7 +241,7 @@ abstract class ActiveRecord
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function remove(Entity $entity): int
+    public final function remove(Entity $entity): int
     {
         $primaryValue = $entity->getPrimaryValue();
         if ($primaryValue === null) {
@@ -258,7 +257,7 @@ abstract class ActiveRecord
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function removeAll($whereParams): int
+    public final function removeAll($whereParams): int
     {
         $whereParams = [$whereParams];
         if ($whereParams[0] === null || $whereParams[0] === '') {
@@ -281,7 +280,7 @@ abstract class ActiveRecord
      * @param  array  $queryParams
      * @return ?int
      */
-    final public function count(string $query = null, array $queryParams = null): ?int
+    public final function count(string $query = null, array $queryParams = null): ?int
     {
         $queryBuilder = new QueryBuilder($this->db->getLink());
         $queryBuilder->setTable($this->table);
@@ -297,7 +296,7 @@ abstract class ActiveRecord
      * Get table.
      * @return string
      */
-    final public function getTable(): string
+    public final function getTable(): string
     {
         return $this->table;
     }
@@ -306,7 +305,7 @@ abstract class ActiveRecord
      * Get table primary.
      * @return string
      */
-    final public function getTablePrimary(): string
+    public final function getTablePrimary(): string
     {
         return $this->tablePrimary;
     }
@@ -315,7 +314,7 @@ abstract class ActiveRecord
      * Get table info.
      * @return array
      */
-    final public function getTableInfo(): array
+    public final function getTableInfo(): array
     {
         return self::$tableInfo;
     }
@@ -325,7 +324,7 @@ abstract class ActiveRecord
      * @param  Oppa\Database $db
      * @return void
      */
-    final public function setDatabase(Database $db): void
+    public final function setDatabase(Database $db): void
     {
         $this->db = $db;
     }
@@ -334,7 +333,7 @@ abstract class ActiveRecord
      * Get database.
      * @return Oppa\Database
      */
-    final public function getDatabase(): Database
+    public final function getDatabase(): Database
     {
         return $this->db;
     }

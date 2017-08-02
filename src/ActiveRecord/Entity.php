@@ -57,7 +57,7 @@ final class Entity
      * @param Oppa\ActiveRecord\ActiveRecord $activeRecord
      * @param array                          $data
      */
-    final public function __construct(ActiveRecord $activeRecord, array $data = [])
+    public function __construct(ActiveRecord $activeRecord, array $data = [])
     {
         foreach ($data as $key => $value) {
             $this->data[$key] = $value;
@@ -74,7 +74,7 @@ final class Entity
      * @return any
      * @throws \BadMethodCallException
      */
-    final public function __call(string $methodName, array $methodArgs)
+    public function __call(string $methodName, array $methodArgs)
     {
         $methodClosure = $this->getMethod($methodName);
         if ($methodClosure) {
@@ -90,7 +90,7 @@ final class Entity
      * @param  any    $value
      * @return void
      */
-    final public function __set(string $key, $value): void
+    public function __set(string $key, $value): void
     {
         $this->data[$key] = $value;
     }
@@ -101,7 +101,7 @@ final class Entity
      * @return any
      * @throws Oppa\Exception\InvalidKeyException
      */
-    final public function __get(string $key)
+    public function __get(string $key)
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
@@ -121,7 +121,7 @@ final class Entity
      * @param  string $key
      * @return bool
      */
-    final public function __isset(string $key): bool
+    public function __isset(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
@@ -131,7 +131,7 @@ final class Entity
      * @param  string $key
      * @return void
      */
-    final public function __unset(string $key): void
+    public function __unset(string $key): void
     {
         unset($this->data[$key]);
     }
@@ -141,7 +141,7 @@ final class Entity
      * @param  array $data
      * @return void
      */
-    final public function setData(array $data): void
+    public function setData(array $data): void
     {
         $this->data = array_merge($this->data, $data);
     }
@@ -150,7 +150,7 @@ final class Entity
      * Get data.
      * @return array
      */
-    final public function getData(): array
+    public function getData(): array
     {
         return $this->data;
     }
@@ -159,7 +159,7 @@ final class Entity
      * To array.
      * @return array
      */
-    final public function toArray(): array
+    public function toArray(): array
     {
         return $this->data;
     }
@@ -168,7 +168,7 @@ final class Entity
      * To object.
      * @return \stdClass
      */
-    final public function toObject(): \stdClass
+    public function toObject(): \stdClass
     {
         return (object) $this->data;
     }
@@ -177,7 +177,7 @@ final class Entity
      * Is found.
      * @return bool
      */
-    final public function isFound(): bool
+    public function isFound(): bool
     {
         return !empty($this->data);
     }
@@ -186,7 +186,7 @@ final class Entity
      * Is empty.
      * @return bool
      */
-    final public function isEmpty(): bool
+    public function isEmpty(): bool
     {
         return empty($this->data);
     }
@@ -195,7 +195,7 @@ final class Entity
      * Save.
      * @return ?int
      */
-    final public function save(): ?int
+    public function save(): ?int
     {
         return $this->activeRecord->save($this);
     }
@@ -204,7 +204,7 @@ final class Entity
      * Remove.
      * @return int
      */
-    final public function remove(): int
+    public function remove(): int
     {
         return $this->activeRecord->remove($this);
     }
@@ -215,7 +215,7 @@ final class Entity
      * @param  callable $methodClosure
      * @return void
      */
-    final public function addMethod(string $methodName, callable $methodClosure): void
+    public function addMethod(string $methodName, callable $methodClosure): void
     {
         $this->methods[strtolower($methodName)] = $methodClosure->bindTo($this);
     }
@@ -225,7 +225,7 @@ final class Entity
      * @param  string $methodName
      * @return ?callable
      */
-    final public function getMethod(string $methodName): ?callable
+    public function getMethod(string $methodName): ?callable
     {
         return $this->methods[strtolower($methodName)] ?? null;
     }
@@ -234,7 +234,7 @@ final class Entity
      * Get methods.
      * @return array
      */
-    final public function getMethods(): array
+    public function getMethods(): array
     {
         return $this->methods;
     }
@@ -243,7 +243,7 @@ final class Entity
      * Get active record.
      * @return Oppa\ActiveRecord\ActiveRecord
      */
-    final public function getActiveRecord(): ActiveRecord
+    public function getActiveRecord(): ActiveRecord
     {
         return $this->activeRecord;
     }
@@ -252,7 +252,7 @@ final class Entity
      * Has primary value.
      * @return bool
      */
-    final public function hasPrimaryValue(): bool
+    public function hasPrimaryValue(): bool
     {
         return isset($this->data[$this->activeRecord->getTablePrimary()]);
     }
@@ -262,7 +262,7 @@ final class Entity
      * @param  int|string $primaryValue
      * @return void
      */
-    final public function setPrimaryValue($primaryValue): void
+    public function setPrimaryValue($primaryValue): void
     {
         $this->data[$this->activeRecord->getTablePrimary()] = $primaryValue;
     }
@@ -271,7 +271,7 @@ final class Entity
      * Get primary value.
      * @return int|string|null
      */
-    final public function getPrimaryValue()
+    public function getPrimaryValue()
     {
         return $this->data[$this->activeRecord->getTablePrimary()] ?? null;
     }

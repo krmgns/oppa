@@ -40,7 +40,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
     /**
      * Constructor.
      */
-    final public function __construct() {}
+    public function __construct() {}
 
     /**
      * Add.
@@ -48,7 +48,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * @param  array                          $data
      * @return void
      */
-    final public function add(ActiveRecord $activeRecord, array $data = []): void
+    public function add(ActiveRecord $activeRecord, array $data = []): void
     {
         $this->collection[] = new Entity($activeRecord, $data);
     }
@@ -58,7 +58,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * @param  Oppa\ActiveRecord\Entity $entity
      * @return void
      */
-    final public function addEntity(Entity $entity): void
+    public function addEntity(Entity $entity): void
     {
         $this->collection[] = $entity;
     }
@@ -68,7 +68,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * @param  int $i
      * @return void
      */
-    final public function remove(int $i): void
+    public function remove(int $i): void
     {
         unset($this->collection[$i]);
     }
@@ -78,7 +78,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * @param  int $i
      * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function item($i): ?Entity
+    public function item($i): ?Entity
     {
         return $this->collection[$i] ?? null;
     }
@@ -87,7 +87,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Item first.
      * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function itemFirst(): ?Entity
+    public function itemFirst(): ?Entity
     {
         return $this->item(0);
     }
@@ -96,7 +96,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Item last.
      * @return ?Oppa\ActiveRecord\Entity
      */
-    final public function itemLast(): ?Entity
+    public function itemLast(): ?Entity
     {
         return $this->item(count($this->collection) - 1);
     }
@@ -105,7 +105,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Is empty.
      * @return bool
      */
-    final public function isEmpty(): bool
+    public function isEmpty(): bool
     {
         return empty($this->collection);
     }
@@ -114,7 +114,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Count.
      * @return int
      */
-    final public function count(): int
+    public function count(): int
     {
         return count($this->collection);
     }
@@ -123,7 +123,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Get iterator.
      * @return \ArrayIterator
      */
-    final public function getIterator(): \ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->collection);
     }
@@ -132,7 +132,7 @@ final class EntityCollection implements \Countable, \IteratorAggregate
      * Get collection.
      * @return array
      */
-    final public function getCollection(): array
+    public function getCollection(): array
     {
         return $this->collection;
     }
