@@ -37,7 +37,7 @@ final class Mysql extends Batch
      * Constructor.
      * @param Oppa\Agent\Mysql $agent
      */
-    final public function __construct(Agent\Mysql $agent)
+    public function __construct(Agent\Mysql $agent)
     {
         $this->agent = $agent;
     }
@@ -46,7 +46,7 @@ final class Mysql extends Batch
      * Lock.
      * @return bool
      */
-    final public function lock(): bool
+    public function lock(): bool
     {
         return $this->agent->getResource()->getObject()->autocommit(false);
     }
@@ -55,7 +55,7 @@ final class Mysql extends Batch
      * Unlock.
      * @return bool
      */
-    final public function unlock(): bool
+    public function unlock(): bool
     {
         return $this->agent->getResource()->getObject()->autocommit(true);
     }
@@ -64,7 +64,7 @@ final class Mysql extends Batch
      * Start.
      * @return void
      */
-    final protected function start(): void
+    protected function start(): void
     {
         $this->agent->getResource()->getObject()->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
     }
@@ -73,7 +73,7 @@ final class Mysql extends Batch
      * End.
      * @return void
      */
-    final protected function end(): void
+    protected function end(): void
     {
         $this->agent->getResource()->getObject()->commit();
     }
@@ -82,7 +82,7 @@ final class Mysql extends Batch
      * Undo.
      * @return void
      */
-    final public function undo(): void
+    public function undo(): void
     {
         // mayday mayday
         $this->agent->getResource()->getObject()->rollback();

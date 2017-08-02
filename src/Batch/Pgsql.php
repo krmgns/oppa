@@ -37,7 +37,7 @@ final class Pgsql extends Batch
      * Constructor.
      * @param Oppa\Agent\Pgsql $agent
      */
-    final public function __construct(Agent\Pgsql $agent)
+    public function __construct(Agent\Pgsql $agent)
     {
         $this->agent = $agent;
     }
@@ -46,7 +46,7 @@ final class Pgsql extends Batch
      * Lock.
      * @return bool
      */
-    final public function lock(): bool
+    public function lock(): bool
     {
         return true;
     }
@@ -55,7 +55,7 @@ final class Pgsql extends Batch
      * Unlock.
      * @return bool
      */
-    final public function unlock(): bool
+    public function unlock(): bool
     {
         return true;
     }
@@ -64,7 +64,7 @@ final class Pgsql extends Batch
      * Start.
      * @return void
      */
-    final protected function start(): void
+    protected function start(): void
     {
         pg_query($this->agent->getResource()->getObject(), 'BEGIN');
     }
@@ -73,7 +73,7 @@ final class Pgsql extends Batch
      * End.
      * @return void
      */
-    final protected function end(): void
+    protected function end(): void
     {
         pg_query($this->agent->getResource()->getObject(), 'COMMIT');
     }
@@ -82,7 +82,7 @@ final class Pgsql extends Batch
      * Undo.
      * @return void
      */
-    final public function undo(): void
+    public function undo(): void
     {
         // mayday mayday
         pg_query($this->agent->getResource()->getObject(), 'ROLLBACK');

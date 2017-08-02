@@ -63,7 +63,7 @@ abstract class Batch implements BatchInterface
      * Get agent.
      * @return Oppa\Agent\AgentInterface
      */
-    final public function getAgent(): AgentInterface
+    public final function getAgent(): AgentInterface
     {
         return $this->agent;
     }
@@ -72,7 +72,7 @@ abstract class Batch implements BatchInterface
      * Get queue.
      * @return array
      */
-    final public function getQueue(): array
+    public final function getQueue(): array
     {
         return $this->queue;
     }
@@ -82,7 +82,7 @@ abstract class Batch implements BatchInterface
      * @param  int $i
      * @return ?Oppa\Query\Result\ResultInterface
      */
-    final public function getResult(int $i = 0): ?ResultInterface
+    public final function getResult(int $i = 0): ?ResultInterface
     {
         return $this->results[$i] ?? null;
     }
@@ -92,7 +92,7 @@ abstract class Batch implements BatchInterface
      * @param  int $i
      * @return ?int
      */
-    final public function getResultId(int $i): ?int
+    public final function getResultId(int $i): ?int
     {
         return ($result = $this->getResult($i)) ? $result->getId() : null;
     }
@@ -102,7 +102,7 @@ abstract class Batch implements BatchInterface
      * @param  int $i
      * @return array
      */
-    final public function getResultIds(int $i): array
+    public final function getResultIds(int $i): array
     {
         return ($result = $this->getResult($i)) ? $result->getIds() : [];
     }
@@ -111,7 +111,7 @@ abstract class Batch implements BatchInterface
      * Get results.
      * @return array
      */
-    final public function getResults(): array
+    public final function getResults(): array
     {
         return $this->results;
     }
@@ -121,7 +121,7 @@ abstract class Batch implements BatchInterface
      * @param  bool $merge
      * @return array
      */
-    final public function getResultsIds(bool $merge = true): array
+    public final function getResultsIds(bool $merge = true): array
     {
         $return = [];
         if (!empty($this->results)) {
@@ -143,7 +143,7 @@ abstract class Batch implements BatchInterface
      * Get total time.
      * @return float
      */
-    final public function getTotalTime(): float
+    public final function getTotalTime(): float
     {
         return $this->totalTime;
     }
@@ -152,7 +152,7 @@ abstract class Batch implements BatchInterface
      * Reset.
      * @return void
      */
-    final public function reset(): void
+    public final function reset(): void
     {
         $this->queue = [];
         $this->results = [];
@@ -165,7 +165,7 @@ abstract class Batch implements BatchInterface
      * @param  array|null $queryParams
      * @return self
      */
-    final public function queue(string $query, array $queryParams = null): BatchInterface
+    public final function queue(string $query, array $queryParams = null): BatchInterface
     {
         $this->queue[] = $this->agent->prepare($query, $queryParams);
 
@@ -176,7 +176,7 @@ abstract class Batch implements BatchInterface
      * Do.
      * @return Oppa\Batch\BatchInterface
      */
-    final public function do(): BatchInterface
+    public final function do(): BatchInterface
     {
         // no need to get excited
         if (empty($this->queue)) {
@@ -226,7 +226,7 @@ abstract class Batch implements BatchInterface
      * @param  array|null $queryParams
      * @return Oppa\Batch\BatchInterface
      */
-    final public function doQuery(string $query, array $queryParams = null): BatchInterface
+    public final function doQuery(string $query, array $queryParams = null): BatchInterface
     {
         return $this->queue($query, $queryParams)->do();
     }
@@ -235,7 +235,7 @@ abstract class Batch implements BatchInterface
      * Run.
      * @deprecated
      */
-    final public function run(...$args)
+    public final function run(...$args)
     {
         Util::generateDeprecatedMessage($this, 'run()', 'do()');
 
@@ -247,7 +247,7 @@ abstract class Batch implements BatchInterface
      * Run query.
      * @deprecated
      */
-    final public function runQuery(...$args)
+    public final function runQuery(...$args)
     {
         Util::generateDeprecatedMessage($this, 'runQuery()', 'doQuery()');
 
@@ -258,7 +258,7 @@ abstract class Batch implements BatchInterface
      * Cancel.
      * @deprecated
      */
-    final public function cancel(...$args)
+    public final function cancel(...$args)
     {
         Util::generateDeprecatedMessage($this, 'cancel()', 'undo()');
 
