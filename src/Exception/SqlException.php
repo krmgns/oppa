@@ -44,7 +44,7 @@ class SqlException extends \Exception
      * @param ?string     $sqlState
      * @param ?\Throwable $previous
      */
-    final public function __construct(?string $message, ?int $code = 0, ?string $sqlState = null,
+    public final function __construct(?string $message = '', ?int $code = 0, ?string $sqlState = null,
         ?\Throwable $previous = null)
     {
         // set state
@@ -62,7 +62,7 @@ class SqlException extends \Exception
      * Get SQL state.
      * @return ?string
      */
-    final public function getSqlState(): ?string
+    public final function getSqlState(): ?string
     {
         return $this->sqlState;
     }
