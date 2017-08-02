@@ -30,7 +30,7 @@ namespace Oppa\SqlState;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @reflink    https://www.postgresql.org/docs/9.6/static/errcodes-appendix.html
  */
-abstract class Pgsql
+abstract /* static */ class Pgsql
 {
     public const
         /**

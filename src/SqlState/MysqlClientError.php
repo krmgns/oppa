@@ -30,7 +30,7 @@ namespace Oppa\SqlState;
  * @author     Kerem Güneş <k-gun@mail.com>
  * @reflink    http://dev.mysql.com/doc/refman/5.7/en/error-messages-client.html
  */
-abstract class MysqlClientError
+abstract /* static */ class MysqlClientError
 {
     public const
         /**
