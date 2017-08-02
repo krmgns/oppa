@@ -26,10 +26,9 @@ namespace Oppa\Agent;
 use Oppa\Query\Result\ResultInterface;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Agent
- * @object     Oppa\Agent\AgentInterface
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Agent\AgentInterface
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 interface AgentInterface
 {

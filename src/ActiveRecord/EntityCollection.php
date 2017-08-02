@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\ActiveRecord;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\ActiveRecord
- * @object     Oppa\ActiveRecord\EntityCollection
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\ActiveRecord\EntityCollection
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class EntityCollection implements \Countable, \IteratorAggregate
 {

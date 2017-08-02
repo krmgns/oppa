@@ -29,10 +29,9 @@ use Oppa\Query\Builder as QueryBuilder;
 use Oppa\Exception\InvalidValueException;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\ActiveRecord
- * @object     Oppa\ActiveRecord\ActiveRecord
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\ActiveRecord\ActiveRecord
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 abstract class ActiveRecord
 {

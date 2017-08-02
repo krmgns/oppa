@@ -26,10 +26,9 @@ namespace Oppa\Query\Result;
 use Oppa\Resource;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Query\Result
- * @object     Oppa\Query\Result\ResultInterface
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Query\Result\ResultInterface
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 interface ResultInterface extends \Countable, \IteratorAggregate
 {

@@ -27,10 +27,9 @@ use Oppa\Config;
 use Oppa\Agent\{AgentInterface, Mysql, Pgsql};
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Link
- * @object     Oppa\Link\Link
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Link\Link
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Link
 {

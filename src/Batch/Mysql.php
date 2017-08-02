@@ -26,10 +26,9 @@ namespace Oppa\Batch;
 use Oppa\Agent;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Batch
- * @object     Oppa\Batch\Mysql
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Batch\Mysql
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Mysql extends Batch
 {

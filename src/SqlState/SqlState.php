@@ -24,11 +24,10 @@ declare(strict_types=1);
 namespace Oppa\SqlState;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\SqlState
- * @object     Oppa\SqlState\SqlState
- * @author     Kerem Güneş <k-gun@mail.com>
- * @reflink    https://www.postgresql.org/docs/9.6/static/errcodes-appendix.html
+ * @package Oppa
+ * @object  Oppa\SqlState\SqlState
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @link    https://www.postgresql.org/docs/9.6/static/errcodes-appendix.html
  */
 abstract /* static */ class SqlState
 {

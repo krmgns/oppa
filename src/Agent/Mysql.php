@@ -30,10 +30,9 @@ use Oppa\Exception\{QueryException, ConnectionException,
     InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Agent
- * @object     Oppa\Agent\Mysql
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Agent\Mysql
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Mysql extends Agent
 {

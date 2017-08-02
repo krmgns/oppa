@@ -27,10 +27,9 @@ use Oppa\{Util, Config};
 use Oppa\Exception\InvalidConfigException;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Link
- * @object     Oppa\Link\Linker
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Link\Linker
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Linker
 {

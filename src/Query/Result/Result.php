@@ -28,10 +28,9 @@ use Oppa\Agent\AgentInterface;
 use Oppa\Exception\InvalidValueException;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Query\Result
- * @object     Oppa\Query\Result\Result
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Query\Result\Result
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 abstract class Result implements ResultInterface
 {

@@ -28,10 +28,9 @@ use Oppa\Agent\AgentInterface;
 use Oppa\Query\Result\ResultInterface;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Batch
- * @object     Oppa\Batch\Batch
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Batch\Batch
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 abstract class Batch implements BatchInterface
 {

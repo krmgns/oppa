@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Exception
- * @object     Oppa\Exception\InvalidResourceException
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Exception\InvalidResourceException
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class InvalidResourceException extends \InvalidArgumentException
 {}

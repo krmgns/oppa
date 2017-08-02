@@ -28,10 +28,9 @@ use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\InvalidValueException;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Query
- * @object     Oppa\Query\Builder
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Query\Builder
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Builder
 {

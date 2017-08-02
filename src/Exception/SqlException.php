@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\Exception;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Exception
- * @object     Oppa\Exception\SqlException
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Exception\SqlException
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 class SqlException extends \Exception
 {

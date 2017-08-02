@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\Query;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Query
- * @object     Oppa\Query\Sql
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Query\Sql
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Sql
 {

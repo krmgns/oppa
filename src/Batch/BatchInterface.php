@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace Oppa\Batch;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Batch
- * @object     Oppa\Batch\BatchInterface
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Batch\BatchInterface
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 interface BatchInterface
 {

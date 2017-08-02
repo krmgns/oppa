@@ -27,10 +27,9 @@ use Oppa\Util;
 use Oppa\Exception\InvalidKeyException;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\ActiveRecord
- * @object     Oppa\ActiveRecord\Entity
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\ActiveRecord\Entity
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Entity
 {

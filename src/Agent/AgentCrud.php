@@ -29,10 +29,9 @@ use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\{Error, InvalidKeyException};
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Agent
- * @object     Oppa\Agent\AgentCrud
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Agent\AgentCrud
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 abstract class AgentCrud
 {
@@ -46,8 +45,8 @@ abstract class AgentCrud
      * @param  int|string   $fetchType
      * @return any
      */
-    public final function select(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $limit = null, $fetchType = null)
+    public final function select(string $table, $fields = null, string $where = null, array $whereParams = null,
+        $limit = null, $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
@@ -71,8 +70,8 @@ abstract class AgentCrud
      * @param  int|string   $fetchType
      * @return any
      */
-    public final function selectOne(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null)
+    public final function selectOne(string $table, $fields = null, string $where = null, array $whereParams = null,
+        $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
@@ -148,8 +147,7 @@ abstract class AgentCrud
      * @param  int|array $limit
      * @return int
      */
-    public final function delete(string $table, string $where = null, array $whereParams = null,
-        $limit = null): int
+    public final function delete(string $table, string $where = null, array $whereParams = null, $limit = null): int
     {
         return $this->query(sprintf(
             'DELETE FROM %s %s %s',

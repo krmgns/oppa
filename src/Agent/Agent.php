@@ -29,10 +29,9 @@ use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\{Error, InvalidKeyException};
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Agent
- * @object     Oppa\Agent\Agent
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Agent\Agent
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 abstract class Agent extends AgentCrud implements AgentInterface
 {

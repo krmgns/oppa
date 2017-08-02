@@ -27,10 +27,9 @@ use Oppa\{Agent, Resource};
 use Oppa\Exception\{InvalidResourceException, InvalidValueException};
 
 /**
- * @package    Oppa
- * @subpackage Oppa\Query\Result
- * @object     Oppa\Query\Result\Pgsql
- * @author     Kerem Güneş <k-gun@mail.com>
+ * @package Oppa
+ * @object  Oppa\Query\Result\Pgsql
+ * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Pgsql extends Result
 {

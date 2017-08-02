@@ -24,11 +24,10 @@ declare(strict_types=1);
 namespace Oppa\SqlState;
 
 /**
- * @package    Oppa
- * @subpackage Oppa\SqlState
- * @object     Oppa\SqlState\MysqlClientError
- * @author     Kerem Güneş <k-gun@mail.com>
- * @reflink    http://dev.mysql.com/doc/refman/5.7/en/error-messages-client.html
+ * @package Oppa
+ * @object  Oppa\SqlState\MysqlClientError
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @link    http://dev.mysql.com/doc/refman/5.7/en/error-messages-client.html
  */
 abstract /* static */ class MysqlClientError
 {
