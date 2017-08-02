@@ -112,8 +112,8 @@ final class Logger
     {
         if (empty($this->directory)) {
             throw new InvalidConfigException(
-                "Log directory is not defined in given configuration! ".
-                "Define it using 'query_log_directory' key to activate logging.");
+                "Log directory is not defined in given configuration, ".
+                "define it using 'query_log_directory' key to activate logging.");
         }
 
         // provide some performance escaping to call "is_dir" and "mkdir" functions
