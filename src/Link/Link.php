@@ -46,7 +46,7 @@ final class Link
      * @const int
      */
     public const STATUS_CONNECTED      = 1,
-                 STATUS_NOTCONNECTED   = 0;
+                 STATUS_DISCONNECTED   = 0;
 
     /**
      * Link types.
@@ -175,17 +175,16 @@ final class Link
 
     /**
      * Status.
-     * @return int   If agent exists.
-     * @return false If agent not exists.
+     * @return int  If agent exists.
+     * @return null If agent not exists.
      */
-    public function status()
+    public function status(): ?int
     {
         if ($this->agent != null) {
-            return $this->agent->isConnected()
-                ? self::STATUS_CONNECTED : self::STATUS_NOTCONNECTED;
+            return $this->agent->isConnected() ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
         }
 
-        return false;
+        return null;
     }
 
     /**
