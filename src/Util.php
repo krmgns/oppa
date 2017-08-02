@@ -28,7 +28,7 @@ namespace Oppa;
  * @object  Oppa\Util
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-final class Util
+final /* static */ class Util
 {
     /**
      * Array rand.
