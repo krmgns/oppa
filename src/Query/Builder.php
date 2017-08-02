@@ -85,7 +85,7 @@ final class Builder
      * @param Oppa\Link\Link $link
      * @param string $table
      */
-    final public function __construct(Link $link = null, string $table = null)
+    public function __construct(Link $link = null, string $table = null)
     {
         if ($link) {
             $this->setLink($link);
@@ -96,10 +96,10 @@ final class Builder
     }
 
     /**
-     * String magic.
+     * Stringer.
      * @return string
      */
-    final public function __toString(): string
+    public function __toString(): string
     {
         return $this->toString();
     }
@@ -109,7 +109,7 @@ final class Builder
      * @param  Oppa\Link\Link $link
      * @return self
      */
-    final public function setLink(Link $link): self
+    public function setLink(Link $link): self
     {
         $this->link = $link;
 
@@ -120,17 +120,17 @@ final class Builder
      * Get link.
      * @return ?Oppa\Link\Link
      */
-    final public function getLink(): ?Link
+    public function getLink(): ?Link
     {
         return $this->link;
     }
 
     /**
-     * Set target table for query.
+     * Set table.
      * @param  string $table
      * @return self
      */
-    final public function setTable(string $table): self
+    public function setTable(string $table): self
     {
         $this->table = $table;
 
@@ -138,19 +138,19 @@ final class Builder
     }
 
     /**
-     * Get target table.
+     * Get table.
      * @return ?string
      */
-    final public function getTable(): ?string
+    public function getTable(): ?string
     {
         return $this->table;
     }
 
     /**
-     * Reset self vars.
+     * Reset.
      * @return self
      */
-    final public function reset(): self
+    public function reset(): self
     {
         $this->query = [];
         $this->queryString = '';
@@ -159,14 +159,14 @@ final class Builder
     }
 
     /**
-     * Add select statement.
+     * Select.
      * @param  any    $field
      * @param  bool   $reset
      * @param  string $alias (for sub-select)
      * @return self
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function select($field = null, bool $reset = true, string $alias = null): self
+    public function select($field = null, bool $reset = true, string $alias = null): self
     {
         $reset && $this->reset();
 
@@ -192,13 +192,13 @@ final class Builder
     }
 
     /** Shortcut for self.select() with no reset. */
-    final public function selectMore($field, string $alias = null): self
+    public function selectMore($field, string $alias = null): self
     {
         return $this->select($field, false, $alias);
     }
 
     /**
-     * Add select statement but returning JSON string.
+     * Select json.
      * @param  any    $field
      * @param  string $as
      * @param  string $type
@@ -206,7 +206,7 @@ final class Builder
      * @return self
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
+    public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
     {
         if (is_string($field)) {
             // field1, field2 ..
@@ -264,41 +264,41 @@ final class Builder
     }
 
     /** Shortcut for self.selectJson() with no reset. */
-    final public function selectMoreJson($field, string $as, string $type = self::JSON_OBJECT): self
+    public function selectMoreJson($field, string $as, string $type = self::JSON_OBJECT): self
     {
         return $this->selectJson($field, $as, $type, false);
     }
 
     /** Shortcut for self.selectJson() with JSON_OBJECT type. */
-    final public function selectJsonObject($field, string $as, bool $reset = true): self
+    public function selectJsonObject($field, string $as, bool $reset = true): self
     {
         return $this->selectJson($field, $as, self::JSON_OBJECT, $reset);
     }
 
     /** Shortcut for self.selectJson() with JSON_OBJECT type with no reset. */
-    final public function selectMoreJsonObject($field, string $as): self
+    public function selectMoreJsonObject($field, string $as): self
     {
         return $this->selectMoreJson($field, $as, self::JSON_OBJECT);
     }
 
     /** Shortcut for self.selectJson() with JSON_ARRAY type. */
-    final public function selectJsonArray($field, string $as, bool $reset = true): self
+    public function selectJsonArray($field, string $as, bool $reset = true): self
     {
         return $this->selectJson($field, $as, self::JSON_ARRAY, $reset);
     }
 
     /** Shortcut for self.selectJson() with JSON_ARRAY type with no reset. */
-    final public function selectMoreJsonArray($field, string $as): self
+    public function selectMoreJsonArray($field, string $as): self
     {
         return $this->selectMoreJson($field, $as, self::JSON_ARRAY);
     }
 
     /**
-     * Add insert statement.
+     * Insert.
      * @param  array $data
      * @return self
      */
-    final public function insert(array $data): self
+    public function insert(array $data): self
     {
         $this->reset();
         // simply check is not assoc to prepare multi-insert
@@ -310,11 +310,11 @@ final class Builder
     }
 
     /**
-     * Add update statement.
+     * Update.
      * @param  array $data
      * @return self
      */
-    final public function update(array $data): self
+    public function update(array $data): self
     {
         $this->reset();
 
@@ -322,10 +322,10 @@ final class Builder
     }
 
     /**
-     * Add delete statement.
+     * Delete.
      * @return self
      */
-    final public function delete(): self
+    public function delete(): self
     {
         $this->reset();
 
@@ -333,13 +333,13 @@ final class Builder
     }
 
     /**
-     * Add "JOIN" statement with "ON" keyword.
+     * Join.
      * @param  string $table
      * @param  string $on
      * @param  array  $params
      * @return self
      */
-    final public function join(string $table, string $on, array $params = null): self
+    public function join(string $table, string $on, array $params = null): self
     {
         // prepare params safely
         if (!empty($params)) {
@@ -350,13 +350,13 @@ final class Builder
     }
 
     /**
-     * Add "JOIN" statement with "USING" keyword.
+     * Join using.
      * @param  string $table
      * @param  string $using
      * @param  array  $params
      * @return self
      */
-    final public function joinUsing(string $table, string $using, array $params = null): self
+    public function joinUsing(string $table, string $using, array $params = null): self
     {
         // prepare params safely
         if (!empty($params)) {
@@ -367,13 +367,13 @@ final class Builder
     }
 
     /**
-     * Add "LEFT JOIN" statement with "ON" keyword.
+     * Left join.
      * @param  string $table
      * @param  string $on
      * @param  array  $params
      * @return self
      */
-    final public function joinLeft(string $table, string $on, array $params = null): self
+    public function joinLeft(string $table, string $on, array $params = null): self
     {
         // prepare params safely
         if (!empty($params)) {
@@ -384,13 +384,13 @@ final class Builder
     }
 
     /**
-     * Add "LEFT JOIN" statement with "USING" keyword.
+     * Left join using.
      * @param  string $table
      * @param  string $using
      * @param  array  $params
      * @return self
      */
-    final public function joinLeftUsing(string $table, string $using, array $params = null): self
+    public function joinLeftUsing(string $table, string $using, array $params = null): self
     {
         // prepare params safely
         if (!empty($params)) {
@@ -401,13 +401,13 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement.
+     * Where.
      * @param  string $query
      * @param  any    $queryParams
      * @param  string $op
      * @return self
      */
-    final public function where(string $query, $queryParams = null, string $op = self::OP_AND): self
+    public function where(string $query, $queryParams = null, string $op = self::OP_AND): self
     {
 
         // sub-where
@@ -435,155 +435,155 @@ final class Builder
     }
 
     /**
-     * Add "WHERE x = .." statement.
+     * Where equal.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereEqual($field, $param, string $op = self::OP_AND): self
+    public function whereEqual($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '=', $param), null, $op);
     }
 
     /**
-     * Add "WHERE x != .." statement.
+     * Where not equal.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereNotEqual($field, $param, string $op = self::OP_AND): self
+    public function whereNotEqual($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '!=', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "IS NULL" queries.
+     * Where null.
      * @param  string|Builder $field
      * @param  string         $op
      * @return self
      */
-    final public function whereNull($field, string $op = self::OP_AND): self
+    public function whereNull($field, string $op = self::OP_AND): self
     {
         return $this->where($this->field($field) .' IS NULL', null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "IS NOT NULL" queries.
+     * Where not null.
      * @param  string|Builder $field
      * @param  string         $op
      * @return self
      */
-    final public function whereNotNull($field, string $op = self::OP_AND): self
+    public function whereNotNull($field, string $op = self::OP_AND): self
     {
         return $this->where($this->field($field) .' IS NOT NULL', null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "IN(...)" queries.
+     * Where in.
      * @param  string        $field
      * @param  array|Builder $param
      * @param  string        $op
      * @return self
      */
-    final public function whereIn(string $field, $param, string $op = self::OP_AND): self
+    public function whereIn(string $field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, 'IN', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "NOT IN(...)" queries.
+     * Where not in.
      * @param  string        $field
      * @param  array|Builder $param
      * @param  string        $op
      * @return self
      */
-    final public function whereNotIn(string $field, $param, string $op = self::OP_AND): self
+    public function whereNotIn(string $field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, 'NOT IN', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "BETWEEN .. AND .." queries.
+     * Where between.
      * @param  string|Builder $field
      * @param  array          $params
      * @param  string         $op
      * @return self
      */
-    final public function whereBetween($field, array $params, string $op = self::OP_AND): self
+    public function whereBetween($field, array $params, string $op = self::OP_AND): self
     {
         return $this->where($this->field($field) .' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
-     * Add "WHERE" statement for "NOT BETWEEN .. AND .." queries.
+     * Where not between.
      * @param  string|Builder $field
      * @param  array          $params
      * @param  string         $op
      * @return self
      */
-    final public function whereNotBetween($field, array $params, string $op = self::OP_AND): self
+    public function whereNotBetween($field, array $params, string $op = self::OP_AND): self
     {
         return $this->where($this->field($field) .' NOT BETWEEN ? AND ?', $params, $op);
     }
 
     /**
-     * Add "WHERE" statement for "foo < 123" queries.
+     * Where less than.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereLessThan($field, $param, string $op = self::OP_AND): self
+    public function whereLessThan($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '<', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "foo <= 123" queries.
+     * Where less than equal.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereLessThanEqual($field, $param, string $op = self::OP_AND): self
+    public function whereLessThanEqual($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '<=', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "foo > 123" queries.
+     * Where greater than.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereGreaterThan($field, $param, string $op = self::OP_AND): self
+    public function whereGreaterThan($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '>', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "foo >= 123" queries.
+     * Where greater than equal.
      * @param  string|Builder $field
      * @param  any            $param
      * @param  string         $op
      * @return self
      */
-    final public function whereGreaterThanEqual($field, $param, string $op = self::OP_AND): self
+    public function whereGreaterThanEqual($field, $param, string $op = self::OP_AND): self
     {
         return $this->where($this->prepare($field, '>=', $param), null, $op);
     }
 
     /**
-     * Add "WHERE" statement for "LIKE .." queries.
+     * Where like.
      * @param  string $field
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereLike(string $field, $param, string $op = self::OP_AND): self
+    public function whereLike(string $field, $param, string $op = self::OP_AND): self
     {
         $fChar = strval($param[0]);
         $lChar = substr(strval($param), -1);
@@ -604,61 +604,61 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "LIKE %.." queries.
+     * Where like start.
      * @param  string $field
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereLikeStart(string $field, $param, string $op = self::OP_AND): self
+    public function whereLikeStart(string $field, $param, string $op = self::OP_AND): self
     {
         return $this->whereLike($field, $param. '%', $op);
     }
 
     /**
-     * Add "WHERE" statement for "LIKE ..%" queries.
+     * Where like end.
      * @param  string $field
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereLikeEnd(string $field, $param, string $op = self::OP_AND): self
+    public function whereLikeEnd(string $field, $param, string $op = self::OP_AND): self
     {
         return $this->whereLike($field, '%'. $param, $op);
     }
 
     /**
-     * Add "WHERE" statement for "LIKE %..%" queries.
+     * Where like both.
      * @param  string $field
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereLikeBoth(string $field, $param, string $op = self::OP_AND): self
+    public function whereLikeBoth(string $field, $param, string $op = self::OP_AND): self
     {
         return $this->whereLike($field, '%'. $param .'%', $op);
     }
 
     /**
-     * Add "MATCH .. AGAINST" queries.
+     * Where match against.
      * @param  string $field
      * @param  string $param
      * @param  string $mode
      * @return string
      */
-    final public function whereMatchAgainst(string $field, string $param, string $mode = ''): self
+    public function whereMatchAgainst(string $field, string $param, string $mode = ''): self
     {
         return $this->where('MATCH('. $field .') AGAINST(%s '. ($mode ?: 'IN BOOLEAN MODE') .')', [$param]);
     }
 
     /**
-     * Add "WHERE" statement for "EXISTS (...)" queries.
+     * Where exists.
      * @param  any    $query
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereExists($query, array $params = null, string $op = self::OP_AND): self
+    public function whereExists($query, array $params = null, string $op = self::OP_AND): self
     {
         if ($query instanceof Builder) {
             $query = $query->toString();
@@ -672,13 +672,13 @@ final class Builder
     }
 
     /**
-     * Add "WHERE" statement for "NOT EXISTS (...)" queries.
+     * Where not exists.
      * @param  any    $query
      * @param  any    $param
      * @param  string $op
      * @return self
      */
-    final public function whereNotExists($query, array $params = null, string $op = self::OP_AND): self
+    public function whereNotExists($query, array $params = null, string $op = self::OP_AND): self
     {
         if ($query instanceof Builder) {
             $query = $query->toString();
@@ -692,13 +692,13 @@ final class Builder
     }
 
     /**
-     * Add "HAVING" statement.
+     * Having.
      * @param  string $query
      * @param  array  $params
      * @param  string $op
      * @return self
      */
-    final public function having(string $query, array $params = null, string $op = self::OP_AND): self
+    public function having(string $query, array $params = null, string $op = self::OP_AND): self
     {
         // prepare if params provided
         if (!empty($params)) {
@@ -714,23 +714,23 @@ final class Builder
     }
 
     /**
-     * Add "GROUP BY" statement.
+     * Group by.
      * @param  string $field
      * @return self
      */
-    final public function groupBy(string $field): self
+    public function groupBy(string $field): self
     {
         return $this->push('groupBy', $field);
     }
 
     /**
-     * Add "ORDER BY" statement.
+     * Order by.
      * @param  string $field
      * @param  string $op
      * @return self
      * @throws Oppa\Exception\InvalidValueException
      */
-    final public function orderBy(string $field, string $op = null): self
+    public function orderBy(string $field, string $op = null): self
     {
         // check operator is valid
         if ($op == null) {
@@ -747,12 +747,12 @@ final class Builder
     }
 
     /**
-     * Add "LIMIT" statement.
+     * Limit.
      * @param  int      $start
      * @param  int|null $stop
      * @return self
      */
-    final public function limit(int $start, int $stop = null): self
+    public function limit(int $start, int $stop = null): self
     {
         return ($stop === null)
             ? $this->push('limit', $start)
@@ -760,13 +760,13 @@ final class Builder
     }
 
     /**
-     * Add a aggregate statement like "SUM()" etc.
+     * Aggregate.
      * @param  string      $func
      * @param  string      $field
      * @param  string|null $as
      * @return self
      */
-    final public function aggregate(string $func, string $field = '*', string $as = null): self
+    public function aggregate(string $func, string $field = '*', string $as = null): self
     {
         // if alias not provided
         if (empty($as)) {
@@ -783,7 +783,7 @@ final class Builder
      * Run.
      * @return : Oppa\Query\Result\ResultInterface
      */
-    final public function run(): ResultInterface
+    public function run(): ResultInterface
     {
         return $this->link->getAgent()->query($this->toString());
     }
@@ -792,7 +792,7 @@ final class Builder
      * Get.
      * @return any
      */
-    final public function get()
+    public function get()
     {
         return $this->link->getAgent()->get($this->toString());
     }
@@ -801,7 +801,7 @@ final class Builder
      * Get array.
      * @return ?array
      */
-    final public function getArray(): ?array
+    public function getArray(): ?array
     {
         return $this->link->getAgent()->getArray($this->toString());
     }
@@ -810,7 +810,7 @@ final class Builder
      * Get object.
      * @return ?\stdClass
      */
-    final public function getObject(): ?\stdClass
+    public function getObject(): ?\stdClass
     {
         return $this->link->getAgent()->getObject($this->toString());
     }
@@ -820,7 +820,7 @@ final class Builder
      * @param  string $class
      * @return object
      */
-    final public function getClass(string $class)
+    public function getClass(string $class)
     {
         return $this->link->getAgent()->getClass($this->toString(), null, $class);
     }
@@ -829,7 +829,7 @@ final class Builder
      * Get all.
      * @return array
      */
-    final public function getAll(): array
+    public function getAll(): array
     {
         return $this->link->getAgent()->getAll($this->toString());
     }
@@ -838,7 +838,7 @@ final class Builder
      * Get all array.
      * @return ?array
      */
-    final public function getAllArray(): ?array
+    public function getAllArray(): ?array
     {
         return $this->link->getAgent()->getAllArray($this->toString());
     }
@@ -847,7 +847,7 @@ final class Builder
      * Get all object.
      * @return ?array
      */
-    final public function getAllObject(): ?array
+    public function getAllObject(): ?array
     {
         return $this->link->getAgent()->getAllObject($this->toString());
     }
@@ -857,7 +857,7 @@ final class Builder
      * @param  string $class
      * @return ?array
      */
-    final public function getAllClass(string $class): ?array
+    public function getAllClass(string $class): ?array
     {
         return $this->link->getAgent()->getAllClass($this->toString(), null, $class);
     }
@@ -866,7 +866,7 @@ final class Builder
      * Count.
      * @return ?int
      */
-    final public function count(): ?int
+    public function count(): ?int
     {
         $agent = $this->link->getAgent();
 
@@ -887,11 +887,11 @@ final class Builder
     }
 
     /**
-     * Stringify query stack.
+     * To string.
      * @return string
      * @throws \LogicException
      */
-    final public function toString(): string
+    public function toString(): string
     {
         // if any query
         if (!empty($this->query)) {
@@ -1008,12 +1008,12 @@ final class Builder
     }
 
     /**
-     * Push a statement and query into query stack.
+     * Push.
      * @param  string $key
      * @param  any    $value
      * @return self
      */
-    final private function push(string $key, $value): self
+    private function push(string $key, $value): self
     {
         if (!isset($this->query[$key])) {
             $this->query[$key] = [];
@@ -1029,7 +1029,7 @@ final class Builder
      * @param  string|Builder $field
      * @return string
      */
-    final private function field($field): string
+    private function field($field): string
     {
         if ($field instanceof Builder) {
             $field = '('. $field->toString() .')';
@@ -1045,7 +1045,7 @@ final class Builder
      * @param  array|Builder  $param
      * @return string
      */
-    final private function prepare($field, string $opr, $param): string
+    private function prepare($field, string $opr, $param): string
     {
         $query[] = $this->field($field);
         $query[] = $opr;
