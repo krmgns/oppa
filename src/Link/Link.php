@@ -92,7 +92,7 @@ final class Link
      * @param string $host
      * @param array  $config
      */
-    final public function __construct(string $type, string $host, Config $config)
+    public function __construct(string $type, string $host, Config $config)
     {
         $this->type = $type;
         $this->host = $host;
@@ -105,7 +105,7 @@ final class Link
     /**
      * Destructor.
      */
-    final public function __destruct()
+    public function __destruct()
     {
         $this->detachAgent();
     }
@@ -114,7 +114,7 @@ final class Link
      * Get type.
      * @return string
      */
-    final public function getType(): string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -123,7 +123,7 @@ final class Link
      * Get host.
      * @return string
      */
-    final public function getHost(): string
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -132,7 +132,7 @@ final class Link
      * Get agent.
      * @return ?Oppa\Agent\AgentInterface
      */
-    final public function getAgent(): ?AgentInterface
+    public function getAgent(): ?AgentInterface
     {
         return $this->agent;
     }
@@ -141,7 +141,7 @@ final class Link
      * Get agent name.
      * @return ?string
      */
-    final public function getAgentName(): ?string
+    public function getAgentName(): ?string
     {
         return $this->agentName;
     }
@@ -150,7 +150,7 @@ final class Link
      * Get config.
      * @return Oppa\Config
      */
-    final public function getConfig(): Config
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -159,7 +159,7 @@ final class Link
      * Open.
      * @return void
      */
-    final public function open(): void
+    public function open(): void
     {
         $this->agent->connect();
     }
@@ -168,7 +168,7 @@ final class Link
      * Close.
      * @return void
      */
-    final public function close(): void
+    public function close(): void
     {
         $this->agent->disconnect();
     }
@@ -178,7 +178,7 @@ final class Link
      * @return int   If agent exists.
      * @return false If agent not exists.
      */
-    final public function status()
+    public function status()
     {
         if ($this->agent != null) {
             return $this->agent->isConnected()
@@ -193,7 +193,7 @@ final class Link
      * @return void
      * @throws \RuntimeException
      */
-    final private function attachAgent(): void
+    private function attachAgent(): void
     {
         $this->agentName = strtolower((string) $this->config['agent']);
         switch ($this->agentName) {
@@ -212,7 +212,7 @@ final class Link
      * Detach agent.
      * @return void
      */
-    final private function detachAgent(): void
+    private function detachAgent(): void
     {
         $this->agent = null;
         $this->agentName = null;

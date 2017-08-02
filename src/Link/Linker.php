@@ -53,7 +53,7 @@ final class Linker
      * Thus, host will be always set, even user does not pass/provide it.
      * @param Oppa\Config $config
      */
-    final public function __construct(Config $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -64,7 +64,7 @@ final class Linker
      * @return self
      * @throws Oppa\Exception\InvalidConfigException
      */
-    final public function connect(string $host = null): self
+    public function connect(string $host = null): self
     {
         // link is already active?
         if ($host && isset($this->links[$host])) {
@@ -145,7 +145,7 @@ final class Linker
      * @param  string|null $host
      * @return void
      */
-    final public function disconnect(string $host = null): void
+    public function disconnect(string $host = null): void
     {
         // link exists?
         if ($host && isset($this->links[$host])) {
@@ -190,7 +190,7 @@ final class Linker
      * @param  string|null $host
      * @return bool
      */
-    final public function isLinked(string $host = null): bool
+    public function isLinked(string $host = null): bool
     {
         // link exists?
         // e.g: isLinked('localhost')
@@ -236,7 +236,7 @@ final class Linker
      * @param  Oppa\Link\Link $link
      * @return void
      */
-    final public function setLink(string $host, Link $link): void
+    public function setLink(string $host, Link $link): void
     {
         $this->links[$host] = $link;
     }
@@ -246,7 +246,7 @@ final class Linker
      * @param  string|null $host
      * @return ?Oppa\Link\Link
      */
-    final public function getLink(string $host = null): ?Link
+    public function getLink(string $host = null): ?Link
     {
         // link exists?
         // e.g: getLink('localhost')
@@ -286,7 +286,7 @@ final class Linker
      * Get config.
      * @return Oppa\Config
      */
-    final public function getConfig(): Config
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -295,7 +295,7 @@ final class Linker
      * Get links.
      * @return array
      */
-    final public function getLinks(): array
+    public function getLinks(): array
     {
         return $this->links;
     }
