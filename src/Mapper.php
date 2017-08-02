@@ -74,7 +74,7 @@ final class Mapper
      * Constructor.
      * @param array $mapOptions
      */
-    final public function __construct(array $mapOptions = [])
+    public function __construct(array $mapOptions = [])
     {
         $this->setMapOptions($mapOptions);
     }
@@ -84,7 +84,7 @@ final class Mapper
      * @param  array $map
      * @return void
      */
-    final public function setMap(array $map): void
+    public function setMap(array $map): void
     {
         $this->map = $map;
     }
@@ -93,7 +93,7 @@ final class Mapper
      * Get map.
      * @return array
      */
-    final public function getMap(): array
+    public function getMap(): array
     {
         return $this->map;
     }
@@ -103,7 +103,7 @@ final class Mapper
      * @param  array $mapOptions
      * @return void
      */
-    final public function setMapOptions(array $mapOptions): void
+    public function setMapOptions(array $mapOptions): void
     {
         $this->mapOptions = array_merge($this->mapOptions, $mapOptions);
     }
@@ -112,7 +112,7 @@ final class Mapper
      * Get map options.
      * @return array
      */
-    final public function getMapOptions(): array
+    public function getMapOptions(): array
     {
         return $this->mapOptions;
     }
@@ -123,7 +123,7 @@ final class Mapper
      * @param  array  $data
      * @return array
      */
-    final public function map(string $key, array $data): array
+    public function map(string $key, array $data): array
     {
         // no map model for mapping
         if (empty($data) || empty($this->map) || !isset($this->map[$key])) {
@@ -157,7 +157,7 @@ final class Mapper
      * @param  array $properties
      * @return any
      */
-    final public function cast($value, array $properties)
+    public function cast($value, array $properties)
     {
         // nullable?
         if ($properties['nullable'] && $value === null) {

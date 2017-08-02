@@ -36,7 +36,7 @@ final class Util
      * @param  any   $value
      * @return any
      */
-    final public static function arrayRand(array $array, $value = null)
+    public static function arrayRand(array $array, $value = null)
     {
         shuffle($array);
 
@@ -50,7 +50,7 @@ final class Util
      * @param  any        $value
      * @return any
      */
-    final public static function arrayPick(array &$array, $key, $value = null)
+    public static function arrayPick(array &$array, $key, $value = null)
     {
         if (array_key_exists($key, $array)) {
             $value = $array[$key] ?? $value;
@@ -65,7 +65,7 @@ final class Util
      * @param  string $input
      * @return string
      */
-    final public static function upperToSnake(string $input): string
+    public static function upperToSnake(string $input): string
     {
         return preg_replace_callback('~([A-Z])~', function($m) {
             return '_'. strtolower($m[1]);
@@ -76,7 +76,7 @@ final class Util
      * Get IP.
      * @return string
      */
-    final public static function getIp(): string
+    public static function getIp(): string
     {
         $ip = 'unknown';
         if (null != ($ip = ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))) {
@@ -100,7 +100,7 @@ final class Util
      * @param  string          $newStuff
      * @return void
      */
-    final public static function generateDeprecatedMessage($class, string $oldStuff, string $newStuff): void
+    public static function generateDeprecatedMessage($class, string $oldStuff, string $newStuff): void
     {
         if (is_object($class)) {
             $class = get_class($class);

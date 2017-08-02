@@ -30,7 +30,6 @@ use Oppa\Exception\InvalidConfigException;
  * @object  Oppa\Logger
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-
 final class Logger
 {
     /**
@@ -64,14 +63,14 @@ final class Logger
     /**
      * Constructor.
      */
-    final public function __construct() {}
+    public function __construct() {}
 
     /**
      * Set level.
      * @param  int $level
      * @return void
      */
-    final public function setLevel(int $level): void
+    public function setLevel(int $level): void
     {
         $this->level = $level;
     }
@@ -80,7 +79,7 @@ final class Logger
      * Get level.
      * @return int
      */
-    final public function getLevel(): int
+    public function getLevel(): int
     {
         return $this->level;
     }
@@ -90,7 +89,7 @@ final class Logger
      * @param  string $directory
      * @return void
      */
-    final public function setDirectory(string $directory): void
+    public function setDirectory(string $directory): void
     {
         $this->directory = $directory;
     }
@@ -99,7 +98,7 @@ final class Logger
      * Get directory.
      * @return ?string
      */
-    final public function getDirectory(): ?string
+    public function getDirectory(): ?string
     {
         return $this->directory;
     }
@@ -141,7 +140,7 @@ final class Logger
      * @param  string $message
      * @return void|bool
      */
-    final public function log(int $level, string $message)
+    public function log(int $level, string $message)
     {
         // no log command
         if (!$level || ($level & $this->level) == 0) {

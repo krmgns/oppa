@@ -86,7 +86,7 @@ final class Profiler
      * @param  string $query
      * @return void
      */
-    final public function addQuery(string $query): void
+    public function addQuery(string $query): void
     {
         $this->profiles[self::QUERY][++$this->queryCount]['string'] = $query;
     }
@@ -96,7 +96,7 @@ final class Profiler
      * @param  int $i
      * @return ?array
      */
-    final public function getQuery(int $i): ?array
+    public function getQuery(int $i): ?array
     {
         return $this->profiles[self::QUERY][$i] ?? null;
     }
@@ -106,7 +106,7 @@ final class Profiler
      * @param  int $i
      * @return ?string
      */
-    final public function getQueryString(int $i): ?string
+    public function getQueryString(int $i): ?string
     {
         return $this->profiles[self::QUERY][$i]['string'] ?? null;
     }
@@ -115,7 +115,7 @@ final class Profiler
      * Get last query.
      * @return ?array
      */
-    final public function getLastQuery(): ?array
+    public function getLastQuery(): ?array
     {
         return $this->profiles[self::QUERY][$this->queryCount] ?? null;
     }
@@ -124,7 +124,7 @@ final class Profiler
      * Get last query string.
      * @return ?string
      */
-    final public function getLastQueryString(): ?string
+    public function getLastQueryString(): ?string
     {
         return $this->profiles[self::QUERY][$this->queryCount]['string'] ?? null;
     }
@@ -133,7 +133,7 @@ final class Profiler
      * Get query count.
      * @return int
      */
-    final public function getQueryCount(): int
+    public function getQueryCount(): int
     {
         return $this->queryCount;
     }
@@ -144,7 +144,7 @@ final class Profiler
      * @return void
      * @throws Oppa\Exception\InvalidKeyException
      */
-    final public function start(string $key): void
+    public function start(string $key): void
     {
         $startTime = microtime(true);
         switch ($key) {
@@ -173,7 +173,7 @@ final class Profiler
      * @return void
      * @throws Oppa\Exception\InvalidKeyException
      */
-    final public function stop(string $key): void
+    public function stop(string $key): void
     {
         if (!isset($this->profiles[$key])) {
             throw new InvalidKeyException("Could not find a profile with given key '{$key}'!");
@@ -204,7 +204,7 @@ final class Profiler
      * Reset.
      * @return void
      */
-    final public function reset(): void
+    public function reset(): void
     {
         $this->profiles = [];
     }

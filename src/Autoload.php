@@ -39,14 +39,14 @@ final class Autoload
     /**
      * Forbidding idle init & copy actions.
      */
-    final private function __construct() {}
-    final private function __clone() {}
+    private function __construct() {}
+    private function __clone() {}
 
     /**
      * Init.
      * @return self
      */
-    final public static function init(): self
+    public static function init(): self
     {
         if (self::$instance == null) {
             self::$instance = new self();
@@ -60,7 +60,7 @@ final class Autoload
      * @return bool
      * @throws \RuntimeException
      */
-    final public function register(): bool
+    public function register(): bool
     {
         return spl_autoload_register(function(string $objectName) {
             // ensure first namespace separator

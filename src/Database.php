@@ -54,7 +54,7 @@ final class Database
      * Constructor.
      * @param array $config
      */
-    final public function __construct(array $config)
+    public function __construct(array $config)
     {
         $this->linker = new Linker(new Config($config));
         // provide some speed instead using method_exists() each __call() exec
@@ -69,7 +69,7 @@ final class Database
      * @return any
      * @throws \BadMethodCallException
      */
-    final public function __call(string $method, array $methodArgs = [])
+    public function __call(string $method, array $methodArgs = [])
     {
         if (isset($this->linkerMethods[$method])) {
             return call_user_func_array([$this->linker, $method], $methodArgs);
@@ -81,14 +81,14 @@ final class Database
     }
 
     // @wait
-    final public function getInfo()
+    public function getInfo()
     {}
 
     /**
      * Get linker.
      * @return Oppa\Link\Linker
      */
-    final public function getLinker(): Linker
+    public function getLinker(): Linker
     {
         return $this->linker;
     }
@@ -97,7 +97,7 @@ final class Database
      * Get linker methods.
      * @return array
      */
-    final public function getLinkerMethods(): array
+    public function getLinkerMethods(): array
     {
         return $this->linkerMethods;
     }

@@ -40,7 +40,7 @@ final class Config implements \ArrayAccess
      * Constructor.
      * @param array $options
      */
-    final public function __construct(array $options = [])
+    public function __construct(array $options = [])
     {
         if (!empty($options)) {
             foreach ($options as $key => $value) {
@@ -55,7 +55,7 @@ final class Config implements \ArrayAccess
      * @param  any    $value
      * @return self
      */
-    final public function __set(string $key, $value): self
+    public function __set(string $key, $value): self
     {
         return $this->set($key, $value);
     }
@@ -65,7 +65,7 @@ final class Config implements \ArrayAccess
      * @param  string $key
      * @return any
      */
-    final public function __get(string $key)
+    public function __get(string $key)
     {
         return $this->get($key);
     }
@@ -76,7 +76,7 @@ final class Config implements \ArrayAccess
      * @param  string $key
      * @return bool
      */
-    final public function __isset(string $key): bool
+    public function __isset(string $key): bool
     {
         return isset($this->options[$key]);
     }
@@ -86,7 +86,7 @@ final class Config implements \ArrayAccess
      * @param  string $key
      * @return void
      */
-    final public function __unset(string $key): void
+    public function __unset(string $key): void
     {
         unset($this->options[$key]);
     }
@@ -98,7 +98,7 @@ final class Config implements \ArrayAccess
      * @param  any    $value
      * @return self
      */
-    final public function set(string $key, $value): self
+    public function set(string $key, $value): self
     {
         $this->options[$key] = $value;
 
@@ -111,7 +111,7 @@ final class Config implements \ArrayAccess
      * @param  any    $value
      * @return any
      */
-    final public function get(string $key, $value = null)
+    public function get(string $key, $value = null)
     {
         if ($this->__isset($key)) {
             $value = $this->options[$key];
@@ -126,7 +126,7 @@ final class Config implements \ArrayAccess
      * @param  any $value
      * @return self
      */
-    final public function offsetSet($key, $value): self
+    public function offsetSet($key, $value): self
     {
         return $this->set($key, $value);
     }
@@ -136,7 +136,7 @@ final class Config implements \ArrayAccess
      * @param  int|string $key
      * @return any
      */
-    final public function offsetGet($key)
+    public function offsetGet($key)
     {
         return $this->get($key);
     }
@@ -146,7 +146,7 @@ final class Config implements \ArrayAccess
      * @param  int|string $key
      * @return bool
      */
-    final public function offsetExists($key): bool
+    public function offsetExists($key): bool
     {
         return $this->__isset($key);
     }
@@ -156,7 +156,7 @@ final class Config implements \ArrayAccess
      * @param  any $key
      * @return void
      */
-    final public function offsetUnset($key): void
+    public function offsetUnset($key): void
     {
         $this->__unset($key);
     }
@@ -165,7 +165,7 @@ final class Config implements \ArrayAccess
      * Get all options as array.
      * @return array
      */
-    final public function toArray(): array
+    public function toArray(): array
     {
         return $this->options;
     }

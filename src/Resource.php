@@ -59,7 +59,7 @@ final class Resource
      * Constructor.
      * @param $object
      */
-    final public function __construct($object)
+    public function __construct($object)
     {
         switch (gettype($object)) {
             // mysql
@@ -91,7 +91,7 @@ final class Resource
      * Get type.
      * @return int
      */
-    final public function getType(): int
+    public function getType(): int
     {
         return $this->type;
     }
@@ -100,7 +100,7 @@ final class Resource
      * Get object.
      * @return object|resource
      */
-    final public function getObject()
+    public function getObject()
     {
         return $this->object;
     }
@@ -109,7 +109,7 @@ final class Resource
      * Is valid.
      * @return bool
      */
-    final public function isValid(): bool
+    public function isValid(): bool
     {
         return !!($this->type && $this->object);
     }
@@ -118,7 +118,7 @@ final class Resource
      * Close.
      * @return void
      */
-    final public function close(): void
+    public function close(): void
     {
         if ($this->type == self::TYPE_MYSQL_LINK) {
             $this->object->close();
@@ -133,7 +133,7 @@ final class Resource
      * Free.
      * @return void
      */
-    final public function free(): void
+    public function free(): void
     {
         if ($this->type == self::TYPE_MYSQL_RESULT) {
             $this->object->free();
@@ -148,7 +148,7 @@ final class Resource
      * Reset.
      * @return void
      */
-    final private function reset(): void
+    private function reset(): void
     {
         $this->type = 0;
         $this->object = null;
