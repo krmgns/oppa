@@ -284,23 +284,22 @@ final class Pgsql extends Agent
     /**
      * Escape.
      * @param  any    $input
-     * @param  string $type
+     * @param  string $inputFormat
      * @return any
      * @throws Oppa\Exception\InvalidValueException
      */
-    public function escape($input, string $type = null)
+    public function escape($input, string $inputFormat = null)
     {
         $inputType = gettype($input);
 
         // escape strings %s and for all formattable types like %d, %f and %F
-        if ($inputType != 'array' && $type && $type[0] == '%') {
-            if ($type == '%s') {
+        if ($inputType != 'array' && $inputFormat && $inputFormat[0] == '%') {
+            if ($inputFormat == '%s') {
                 return $this->escapeString((string) $input);
-            } elseif ($type == '%b') {
+            } elseif ($inputFormat == '%b') {
                 return $this->escapeBytea((string) $input);
-            } else {
-                return sprintf($type, $input);
             }
+            return sprintf($inputFormat, $input);
         }
 
         switch ($inputType) {
@@ -321,6 +320,7 @@ final class Pgsql extends Agent
                 if ($input instanceof Sql) {
                     return $input->toString();
                 }
+
                 throw new InvalidValueException("Unimplemented '{$inputType}' type encountered!");
         }
 
