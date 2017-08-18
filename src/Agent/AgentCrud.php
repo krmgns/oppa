@@ -82,7 +82,7 @@ abstract class AgentCrud
                 $this->escapeIdentifier($fields),
                     $this->escapeIdentifier($table),
                         $this->where($where, $whereParams)
-        ), null, null, $fetchType)->getDataItem(0);
+        ), null, null, $fetchType)->itemFirst();
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class AgentCrud
      */
     public final function get(string $query, array $queryParams = null, string $class)
     {
-        return $this->query($query, $queryParams, 1, $class)->getDataItem(0);
+        return $this->query($query, $queryParams, 1, $class)->itemFirst();
     }
 
     /**
