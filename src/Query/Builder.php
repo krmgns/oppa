@@ -98,7 +98,7 @@ final class Builder
      * Stringer.
      * @return string
      */
-    public function __toString(): string
+    public function __toString()
     {
         return $this->toString();
     }
@@ -780,7 +780,7 @@ final class Builder
 
     /**
      * Run.
-     * @return : Oppa\Query\Result\ResultInterface
+     * @return Oppa\Query\Result\ResultInterface
      */
     public function run(): ResultInterface
     {
