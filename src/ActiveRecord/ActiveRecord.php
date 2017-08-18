@@ -118,7 +118,7 @@ abstract class ActiveRecord
 
         if (method_exists($this, 'onFind')) {
             $queryBuilder = $this->onFind($queryBuilder);
-            if (!$queryBuilder || !($queryBuilder instanceof QueryBuilder)) {
+            if (!$queryBuilder || !$queryBuilder instanceof QueryBuilder) {
                 throw new InvalidValueException('You should return query builder back from onFind()!');
             }
         }
