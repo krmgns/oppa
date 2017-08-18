@@ -89,7 +89,7 @@ final class Entity
      * @param  any    $value
      * @return void
      */
-    public function __set(string $key, $value): void
+    public function __set(string $key, $value)
     {
         $this->data[$key] = $value;
     }
@@ -120,7 +120,7 @@ final class Entity
      * @param  string $key
      * @return bool
      */
-    public function __isset(string $key): bool
+    public function __isset(string $key)
     {
         return array_key_exists($key, $this->data);
     }
@@ -130,7 +130,7 @@ final class Entity
      * @param  string $key
      * @return void
      */
-    public function __unset(string $key): void
+    public function __unset(string $key)
     {
         unset($this->data[$key]);
     }
