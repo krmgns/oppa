@@ -78,7 +78,7 @@ abstract class AgentCrud
         }
 
         return $this->query(sprintf(
-            'SELECT %s FROM %s %s LIMIT 2',
+            'SELECT %s FROM %s %s LIMIT 1',
                 $this->escapeIdentifier($fields),
                     $this->escapeIdentifier($table),
                         $this->where($where, $whereParams)
