@@ -131,10 +131,20 @@ interface AgentInterface
      * @param  string    $table
      * @param  string    $where
      * @param  array     $whereParams
-     * @param  int|array $limit
      * @return int
      */
     public function delete(string $table, string $where = null,
+        array $whereParams = null): int;
+
+    /**
+     * Delete all.
+     * @param  string    $table
+     * @param  string    $where
+     * @param  array     $whereParams
+     * @param  int|array $limit
+     * @return int
+     */
+    public function deleteAll(string $table, string $where = null,
         array $whereParams = null, $limit = null): int;
 
     /**

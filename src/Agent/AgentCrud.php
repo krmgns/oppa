@@ -147,21 +147,27 @@ abstract class AgentCrud
     }
 
     /**
-     * Delete.
-     * @param  string    $table
-     * @param  string    $where
-     * @param  array     $whereParams
-     * @param  int|array $limit
-     * @return int
+     * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function delete(string $table, string $where = null, array $whereParams = null, $limit = null): int
+    public final function delete(string $table, string $where = null, array $whereParams = null): int
     {
-        return $this->query(sprintf(
+        return $this->deleteAll($table, $where, $whereParams, 1);
+    }
+
+    /**
+     * @inheritDoc Oppa\Agent\AgentInterface
+     */
+    public final function deleteAll(string $table, string $where = null, array $whereParams = null,
+        $limit = null): int
+    {
+        $query = sprintf(
             'DELETE FROM %s %s %s',
-                $this->escapeIdentifier($table),
-                    $this->where($where, $whereParams),
-                        $this->limit($limit)
-        ))->getRowsAffected();
+            $this->escapeIdentifier($table),
+            $this->where($where, $whereParams),
+            $this->limit($limit)
+        );
+
+        return $this->query($query)->getRowsAffected();
     }
 
     /**
