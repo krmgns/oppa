@@ -159,9 +159,9 @@ abstract class AgentCrud
 
     /**
      * Get.
-     * @param  string  $query
-     * @param  ?array  $queryParams
-     * @param  ?string $fetchClass
+     * @param  string $query
+     * @param  array  $queryParams
+     * @param  string $fetchClass
      * @return object|array|null
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
@@ -172,9 +172,9 @@ abstract class AgentCrud
 
     /**
      * Get all.
-     * @param  string  $query
-     * @param  ?array  $queryParams
-     * @param  ?string $fetchClass
+     * @param  string $query
+     * @param  array  $queryParams
+     * @param  string $fetchClass
      * @return array
      * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
