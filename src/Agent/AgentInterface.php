@@ -76,12 +76,12 @@ interface AgentInterface
      * @param  string|array $fields
      * @param  string       $where
      * @param  array        $whereParams
-     * @param  int|array    $limit
      * @param  int|string   $fetchType
-     * @return any
+     * @param  int|array    $limit
+     * @return ?array
      */
     public function selectAll(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $limit = null, $fetchType = null);
+        array $whereParams = null, $fetchType = null, $limit = null): ?array;
 
     /**
      * Insert.

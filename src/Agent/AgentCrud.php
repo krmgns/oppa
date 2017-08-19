@@ -38,10 +38,12 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function select(string $table, $fields = null, string $where = null, array $whereParams = null,
-        $fetchType = null)
+    public final function select(string $table, $fields = null, string $where = null,
+        array $whereParams = null, $fetchType = null)
     {
-        if ($fields == null) $fields = '*';
+        if ($fields == null) {
+            $fields = '*';
+        }
 
         $query = sprintf('SELECT %s FROM %s %s LIMIT 1',
             $this->escapeIdentifier($fields),
@@ -55,10 +57,12 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function selectAll(string $table, $fields = null, string $where = null, array $whereParams = null,
-        $limit = null, $fetchType = null)
+    public final function selectAll(string $table, $fields = null, string $where = null,
+        array $whereParams = null, $fetchType = null, $limit = null): ?array
     {
-        if ($fields == null) $fields = '*';
+        if ($fields == null) {
+            $fields = '*';
+        }
 
         $query = sprintf('SELECT %s FROM %s %s %s',
             $this->escapeIdentifier($fields),
@@ -67,7 +71,9 @@ abstract class AgentCrud
             $this->limit($limit)
         );
 
-        return $this->query($query, null, null, $fetchType)->getData();
+        $return = $this->query($query, null, null, $fetchType)->getData();
+
+        return $return ? $return : null;
     }
 
     /**
