@@ -251,7 +251,9 @@ abstract class Result implements ResultInterface
      */
     public final function getId(): ?int
     {
-        return (false !== ($id = end($this->ids))) ? $id : null;
+        $id = end($this->ids);
+
+        return ($id !== false) ? $id : null;
     }
 
     /**
@@ -261,7 +263,9 @@ abstract class Result implements ResultInterface
      */
     public final function setIds(array $ids): void
     {
-        $this->ids = $ids;
+        foreach ($ids as $id) {
+            $this->ids[] = (int) $id;
+        }
     }
 
     /**
