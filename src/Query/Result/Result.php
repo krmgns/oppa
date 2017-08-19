@@ -340,6 +340,34 @@ abstract class Result implements ResultInterface
     }
 
     /**
+     * Item.
+     * @param  int $i
+     * @return any|null
+     */
+    public final function item(int $i)
+    {
+        return $this->getDataItem($i);
+    }
+
+    /**
+     * Item first.
+     * @return any|null
+     */
+    public final function itemFirst()
+    {
+        return $this->getDataItem(0);
+    }
+
+    /**
+     * Item last.
+     * @return any|null
+     */
+    public final function itemLast()
+    {
+        return $this->getDataItem(count($this->data) - 1);
+    }
+
+    /**
      * To array.
      * @return ?array
      */
@@ -402,34 +430,6 @@ abstract class Result implements ResultInterface
         }
 
         return $data;
-    }
-
-    /**
-     * Item.
-     * @param  int $i
-     * @return any|null
-     */
-    public final function item(int $i)
-    {
-        return $this->getDataItem($i);
-    }
-
-    /**
-     * Item first.
-     * @return any|null
-     */
-    public final function itemFirst()
-    {
-        return $this->getDataItem(0);
-    }
-
-    /**
-     * Item last.
-     * @return any|null
-     */
-    public final function itemLast()
-    {
-        return $this->getDataItem(count($this->data) - 1);
     }
 
     /**
