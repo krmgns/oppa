@@ -290,8 +290,13 @@ final class Pgsql extends Agent
     {
         $inputType = gettype($input);
 
+        // in/not in statements
+        if ($inputType == 'array') {
+            return join(', ', array_map([$this, 'escape'], $input));
+        }
+
         // escape strings %s and for all formattable types like %d, %f and %F
-        if ($inputType != 'array' && $inputFormat && $inputFormat[0] == '%') {
+        if ($inputFormat && $inputFormat[0] == '%') {
             if ($inputFormat == '%s') {
                 return $this->escapeString((string) $input);
             } elseif ($inputFormat == '%b') {
@@ -301,18 +306,16 @@ final class Pgsql extends Agent
         }
 
         switch ($inputType) {
-            case 'string':
-                return $this->escapeString($input);
             case 'NULL':
                 return 'NULL';
+            case 'string':
+                return $this->escapeString($input);
             case 'integer':
                 return $input;
             case 'boolean':
                 return $input ? 'TRUE' : 'FALSE';
             case 'double':
                 return sprintf('%F', $input); // %F = non-locale aware
-            case 'array':
-                return join(', ', array_map([$this, 'escape'], $input)); // in/not in statements
             default:
                 // no escape raws sql inputs like NOW(), ROUND(total) etc.
                 if ($input instanceof Sql) {
