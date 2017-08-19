@@ -326,14 +326,14 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
-     * Prepare "WHERE" statement.
+     * Where.
      * @param  string $where
      * @param  array  $whereParams
      * @return ?string
      */
     public final function where(string $where = null, array $whereParams = null): ?string
     {
-        if (!empty($whereParams)) {
+        if (!empty($where) && !empty($whereParams)) {
             $where = 'WHERE '. $this->prepare($where, $whereParams);
         }
 
@@ -341,7 +341,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
-     * Prepare "LIMIT" statement.
+     * Limit.
      * @param  int|array $limit
      * @return ?string
      */
@@ -353,6 +353,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 : sprintf('LIMIT %d', $limit[0]);
         }
 
-        return ($limit || $limit === 0 || $limit === '0') ? 'LIMIT '. intval($limit) : null;
+        if ($limit || $limit === 0 || $limit === '0') {
+            return 'LIMIT '. intval($limit);
+
+        }
+
+        return null;
     }
 }
