@@ -423,9 +423,8 @@ abstract class Result implements ResultInterface
         $data = null;
         if (!empty($this->data)) {
             $data = $this->data;
-            $class = new $class();
             foreach ($data as &$dat) {
-                $datClass = clone $class;
+                $datClass = new $class();
                 foreach ((array) $dat as $key => $value) {
                     $datClass->{$key} = $value;
                 }
