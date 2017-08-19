@@ -104,7 +104,7 @@ abstract class AgentCrud
     {
         $keys = array_keys((array) @ $data[0]);
         $values = [];
-        foreach ((array) $data as $dat) {
+        foreach ($data as $dat) {
             $values[] = '('. $this->escape(array_values((array) $dat)) .')';
         }
 
@@ -124,30 +124,37 @@ abstract class AgentCrud
     }
 
     /**
-     * Update.
-     * @param  string    $table
-     * @param  array     $data
-     * @param  string    $where
-     * @param  array     $whereParams
-     * @param  int|array $limit
-     * @return int
+     * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function update(string $table, array $data, string $where = null, array $whereParams = null,
-        $limit = null): int
+    public final function update(string $table, array $data, string $where = null,
+        array $whereParams = null): int
     {
-        $set = [];
-        foreach ($data as $key => $value) {
-            $set[] = sprintf('%s = %s',
-                $this->escapeIdentifier($key), $this->escape($value));
+        return $this->updateAll($table, $data, $where, $whereParams, 1);
+    }
+
+    /**
+     * @inheritDoc Oppa\Agent\AgentInterface
+     */
+    public final function updateAll(string $table, array $data, string $where = null,
+        array $whereParams = null, int $limit = null): int
+    {
+        if (empty($data)) {
+            throw new InvalidValueException('Empty data given!');
         }
 
-        return $this->query(sprintf(
-            'UPDATE %s SET %s %s %s',
-                $this->escapeIdentifier($table),
-                    join(', ', $set),
-                        $this->where($where, $whereParams),
-                            $this->limit($limit)
-        ))->getRowsAffected();
+        $set = [];
+        foreach ($data as $key => $value) {
+            $set[] = sprintf('%s = %s', $this->escapeIdentifier($key), $this->escape($value));
+        }
+
+        $query = sprintf('UPDATE %s SET %s %s %s',
+            $this->escapeIdentifier($table),
+            join(', ', $set),
+            $this->where($where, $whereParams),
+            $this->limit($limit)
+        );
+
+        return $this->query($query)->getRowsAffected();
     }
 
     /**

@@ -88,6 +88,7 @@ interface AgentInterface
      * @param  string $table
      * @param  array  $data
      * @return ?int
+     * @throws Oppa\Exception\InvalidValueException
      */
     public function insert(string $table, array $data): ?int;
 
@@ -96,6 +97,7 @@ interface AgentInterface
      * @param  string $table
      * @param  array  $data
      * @return ?array
+     * @throws Oppa\Exception\InvalidValueException
      */
     public function insertAll(string $table, array $data): ?array;
 
@@ -105,11 +107,24 @@ interface AgentInterface
      * @param  array     $data
      * @param  string    $where
      * @param  array     $whereParams
-     * @param  int|array $limit
      * @return int
+     * @throws Oppa\Exception\InvalidValueException
      */
     public function update(string $table, array $data, string $where = null,
-        array $whereParams = null, $limit = null): int;
+        array $whereParams = null): int;
+
+    /**
+     * Update all.
+     * @param  string $table
+     * @param  array  $data
+     * @param  string $where
+     * @param  array  $whereParams
+     * @param  int    $limit
+     * @return int
+     * @throws Oppa\Exception\InvalidValueException
+     */
+    public function updateAll(string $table, array $data, string $where = null,
+        array $whereParams = null, int $limit = null): int;
 
     /**
      * Delete.
