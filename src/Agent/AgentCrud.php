@@ -41,17 +41,9 @@ abstract class AgentCrud
     public final function select(string $table, $fields = null, string $where = null,
         array $whereParams = null, $fetchType = null)
     {
-        if ($fields == null) {
-            $fields = '*';
-        }
+        $return = $this->selectAll($table, $fields, $where, $whereParams, $fetchType, 1);
 
-        $query = sprintf('SELECT %s FROM %s %s LIMIT 1',
-            $this->escapeIdentifier($fields),
-            $this->escapeIdentifier($table),
-            $this->where($where, $whereParams)
-        );
-
-        return $this->query($query, null, null, $fetchType)->getDataItem(0);
+        return $return[0] ?? null;
     }
 
     /**
