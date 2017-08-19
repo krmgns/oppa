@@ -276,12 +276,10 @@ final class Mysql extends Agent
     public function count(?string $table, string $query = null, array $queryParams = null,
         bool $isSubQuery = false): ?int
     {
-        if ($query && !$isSubQuery) {
-            $query = sprintf('SELECT count(*) AS count FROM %s WHERE %s', $table,
-                $this->prepare($query, $queryParams));
-        } elseif ($isSubQuery) {
-            $query = sprintf('SELECT count(*) AS count FROM (%s) AS tmp',
-                $this->prepare($query, $queryParams));
+        if ($table && $query && !$isSubQuery) {
+            $query = sprintf('SELECT count(*) AS count FROM %s WHERE %s', $table, $this->prepare($query, $queryParams));
+        } elseif ($query && $isSubQuery) {
+            $query = sprintf('SELECT count(*) AS count FROM (%s) AS tmp', $this->prepare($query, $queryParams));
         } else {
             $query = sprintf('SELECT count(*) AS count FROM %s', $table);
         }
