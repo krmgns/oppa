@@ -22,14 +22,15 @@ $db->connect();
 
 $agent = $db->getLink()->getAgent();
 
-$result = $agent->select('users', ['id','name']);
-// $result = $agent->selectOne('users', '*', 'old > ?', [50]);
+// $result = $agent->select('users', ['id','name']);
+// $result = $agent->selectAll('users', ['id','name']);
 // $result = $agent->insert('users', ['name' => 'Ferhat', 'old' => 50]);
-// $result = $agent->insert('users', [['name' => 'Ferhat', 'old' => 50],['name' => 'Serhat', 'old' => 60]]);
-// $result = $agent->update('users', ['name' => 'Veli', 'old' => 60], 'id=?', [6]);
-// $result = $agent->delete('users', 'id=?', [6]);
-// $result = $agent->delete('users', 'id in (?,?,?)', [4,5,6]);
+// $result = $agent->insertAll('users', [['name' => 'Ferhat', 'old' => 50],['name' => 'Serhat', 'old' => 60]]);
+// $result = $agent->update('users', ['name' => 'Veli', 'old' => 60], 'id = ?', [4]);
+// $result = $agent->updateAll('users', ['name' => 'Veli', 'old' => 60], 'id > ?', [4]);
+// $result = $agent->delete('users', 'id = ?', [4]);
+// $result = $agent->deleteAll('users', 'id in (?,?)', [5,6]);
 // pre($result);
 
-pre($agent);
+pre($result);
 // pre($db);
