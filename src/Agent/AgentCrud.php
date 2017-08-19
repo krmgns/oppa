@@ -45,11 +45,13 @@ abstract class AgentCrud
             $fields = '*';
         }
 
-        return $this->query(sprintf('SELECT %s FROM %s %s LIMIT 1',
+        $query = sprintf('SELECT %s FROM %s %s LIMIT 1',
             $this->escapeIdentifier($fields),
             $this->escapeIdentifier($table),
             $this->where($where, $whereParams)
-        ), null, null, $fetchType)->itemFirst();
+        );
+
+        return $this->query($query, null, null, $fetchType)->getDataItem(0);
     }
 
     /**
@@ -62,12 +64,14 @@ abstract class AgentCrud
             $fields = '*';
         }
 
-        return $this->query(sprintf('SELECT %s FROM %s %s %s',
+        $query = sprintf('SELECT %s FROM %s %s %s',
             $this->escapeIdentifier($fields),
             $this->escapeIdentifier($table),
             $this->where($where, $whereParams),
             $this->limit($limit)
-        ), null, null, $fetchType)->getData();
+        );
+
+        return $this->query($query, null, null, $fetchType)->getData();
     }
 
     /**
