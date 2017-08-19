@@ -411,7 +411,7 @@ abstract class Result implements ResultInterface
      */
     public final function item(int $i)
     {
-        return $this->data[$i] ?? null;
+        return $this->getDataItem($i);
     }
 
     /**
@@ -420,7 +420,7 @@ abstract class Result implements ResultInterface
      */
     public final function itemFirst()
     {
-        return $this->item(0);
+        return $this->getDataItem(0);
     }
 
     /**
@@ -429,7 +429,7 @@ abstract class Result implements ResultInterface
      */
     public final function itemLast()
     {
-        return $this->item(count($this->data) - 1);
+        return $this->getDataItem(count($this->data) - 1);
     }
 
     /**
