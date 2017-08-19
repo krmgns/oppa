@@ -26,7 +26,7 @@ namespace Oppa\Agent;
 use Oppa\Config;
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
-use Oppa\Exception\{Error, InvalidKeyException};
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package Oppa
@@ -71,30 +71,50 @@ abstract class AgentCrud
     }
 
     /**
-     * Insert.
-     * @param  string $table
-     * @param  array  $data
-     * @return ?int
+     * @inheritDoc Oppa\Agent\AgentInterface
      */
     public final function insert(string $table, array $data): ?int
     {
-        // simply check is not assoc to prepare multi-insert
-        if (!isset($data[0])) {
-            $data = [$data];
+        $keys = array_keys($data);
+        $values = array_values($data);
+
+        if (empty($keys) || empty($values)) {
+            throw new InvalidValueException('Empty keys or/and values given!');
         }
 
-        $keys = array_keys(current($data));
+        $query = sprintf('INSERT INTO %s (%s) VALUES (%s)',
+            $this->escapeIdentifier($table),
+            $this->escapeIdentifier($keys),
+            join(',', $this->escape($values))
+        );
+
+        return $this->query($query)->getId();
+    }
+
+    /**
+     * @inheritDoc Oppa\Agent\AgentInterface
+     */
+    public final function insertAll(string $table, array $data): ?array
+    {
+        $keys = array_keys((array) @ $data[0]);
         $values = [];
-        foreach ($data as $dat) {
-            $values[] = '('. $this->escape(array_values($dat)) .')';
+        foreach ((array) $data as $dat) {
+            $values[] = '('. $this->escape(array_values((array) $dat)) .')';
         }
 
-        return $this->query(sprintf(
-            'INSERT INTO %s (%s) VALUES %s',
-                $this->escapeIdentifier($table),
-                    $this->escapeIdentifier($keys),
-                        join(',', $values)
-        ))->getId();
+        if (empty($keys) || empty($values)) {
+            throw new InvalidValueException('Empty keys or/and values given!');
+        }
+
+        $query = sprintf('INSERT INTO %s (%s) VALUES %s',
+            $this->escapeIdentifier($table),
+            $this->escapeIdentifier($keys),
+            join(',', $values)
+        );
+
+        $return = $this->query($query)->getIds();
+
+        return $return ? $return : null;
     }
 
     /**

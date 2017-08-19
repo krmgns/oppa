@@ -92,6 +92,14 @@ interface AgentInterface
     public function insert(string $table, array $data): ?int;
 
     /**
+     * Insert all.
+     * @param  string $table
+     * @param  array  $data
+     * @return ?array
+     */
+    public function insertAll(string $table, array $data): ?array;
+
+    /**
      * Update.
      * @param  string    $table
      * @param  array     $data
