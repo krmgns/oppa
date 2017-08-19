@@ -41,9 +41,7 @@ abstract class AgentCrud
     public final function select(string $table, $fields = null, string $where = null, array $whereParams = null,
         $fetchType = null)
     {
-        if ($fields == null) {
-            $fields = '*';
-        }
+        if ($fields == null) $fields = '*';
 
         $query = sprintf('SELECT %s FROM %s %s LIMIT 1',
             $this->escapeIdentifier($fields),
@@ -60,9 +58,7 @@ abstract class AgentCrud
     public final function selectAll(string $table, $fields = null, string $where = null, array $whereParams = null,
         $limit = null, $fetchType = null)
     {
-        if ($fields == null) {
-            $fields = '*';
-        }
+        if ($fields == null) $fields = '*';
 
         $query = sprintf('SELECT %s FROM %s %s %s',
             $this->escapeIdentifier($fields),
