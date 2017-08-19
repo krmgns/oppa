@@ -81,20 +81,9 @@ abstract class AgentCrud
      */
     public final function insert(string $table, array $data): ?int
     {
-        $keys = array_keys($data);
-        $values = array_values($data);
+        $return = $this->insertAll($table, [$data]);
 
-        if (empty($keys) || empty($values)) {
-            throw new InvalidValueException('Empty keys or/and values given!');
-        }
-
-        $query = sprintf('INSERT INTO %s (%s) VALUES (%s)',
-            $this->escapeIdentifier($table),
-            $this->escapeIdentifier($keys),
-            join(',', $this->escape($values))
-        );
-
-        return $this->query($query)->getId();
+        return $return[0] ?? null;
     }
 
     /**
