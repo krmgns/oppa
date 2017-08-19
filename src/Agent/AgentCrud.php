@@ -159,25 +159,27 @@ abstract class AgentCrud
 
     /**
      * Get.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @param  string $class
+     * @param  string  $query
+     * @param  ?array  $queryParams
+     * @param  ?string $fetchClass
      * @return object|array|null
+     * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
-    public final function get(string $query, array $queryParams = null, string $class)
+    public final function get(string $query, array $queryParams = null, string $fetchClass = null)
     {
-        return $this->query($query, $queryParams, 1, $class)->itemFirst();
+        return $this->query($query, $queryParams, 1, $fetchClass)->itemFirst();
     }
 
     /**
      * Get all.
-     * @param  string $query
-     * @param  array  $queryParams
-     * @param  string $class
+     * @param  string  $query
+     * @param  ?array  $queryParams
+     * @param  ?string $fetchClass
      * @return array
+     * @throws Oppa\Exception\{InvalidQueryException, InvalidResourceException, QueryException}
      */
-    public final function getAll(string $query, array $queryParams = null, string $class): array
+    public final function getAll(string $query, array $queryParams = null, string $fetchClass = null): array
     {
-        return $this->query($query, $queryParams, null, $class)->getData();
+        return $this->query($query, $queryParams, null, $fetchClass)->getData();
     }
 }
