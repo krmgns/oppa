@@ -64,24 +64,24 @@ interface AgentInterface
      * @param  string|array $fields
      * @param  string       $where
      * @param  array        $whereParams
-     * @param  int|array    $limit
      * @param  int|string   $fetchType
      * @return any
      */
     public function select(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $limit = null, $fetchType = null);
+        array $whereParams = null, $fetchType = null);
 
     /**
-     * Select one.
+     * Select all.
      * @param  string       $table
      * @param  string|array $fields
      * @param  string       $where
      * @param  array        $whereParams
+     * @param  int|array    $limit
      * @param  int|string   $fetchType
      * @return any
      */
-    public function selectOne(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null);
+    public function selectAll(string $table, $fields = null, string $where = null,
+        array $whereParams = null, $limit = null, $fetchType = null);
 
     /**
      * Insert.

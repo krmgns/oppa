@@ -36,53 +36,38 @@ use Oppa\Exception\{Error, InvalidKeyException};
 abstract class AgentCrud
 {
     /**
-     * Select.
-     * @param  string       $table
-     * @param  string|array $fields
-     * @param  string       $where
-     * @param  array        $whereParams
-     * @param  int|array    $limit
-     * @param  int|string   $fetchType
-     * @return any
+     * @inheritDoc Oppa\Agent\AgentInterface
      */
     public final function select(string $table, $fields = null, string $where = null, array $whereParams = null,
-        $limit = null, $fetchType = null)
-    {
-        if ($fields == null) {
-            $fields = '*';
-        }
-
-        return $this->query(sprintf(
-            'SELECT %s FROM %s %s %s',
-                $this->escapeIdentifier($fields),
-                    $this->escapeIdentifier($table),
-                        $this->where($where, $whereParams),
-                            $this->limit($limit)
-        ), null, null, $fetchType)->getData();
-    }
-
-    /**
-     * Select one.
-     * @param  string       $table
-     * @param  string|array $fields
-     * @param  string       $where
-     * @param  array        $whereParams
-     * @param  int|string   $fetchType
-     * @return any
-     */
-    public final function selectOne(string $table, $fields = null, string $where = null, array $whereParams = null,
         $fetchType = null)
     {
         if ($fields == null) {
             $fields = '*';
         }
 
-        return $this->query(sprintf(
-            'SELECT %s FROM %s %s LIMIT 1',
-                $this->escapeIdentifier($fields),
-                    $this->escapeIdentifier($table),
-                        $this->where($where, $whereParams)
+        return $this->query(sprintf('SELECT %s FROM %s %s LIMIT 1',
+            $this->escapeIdentifier($fields),
+            $this->escapeIdentifier($table),
+            $this->where($where, $whereParams)
         ), null, null, $fetchType)->itemFirst();
+    }
+
+    /**
+     * @inheritDoc Oppa\Agent\AgentInterface
+     */
+    public final function selectAll(string $table, $fields = null, string $where = null, array $whereParams = null,
+        $limit = null, $fetchType = null)
+    {
+        if ($fields == null) {
+            $fields = '*';
+        }
+
+        return $this->query(sprintf('SELECT %s FROM %s %s %s',
+            $this->escapeIdentifier($fields),
+            $this->escapeIdentifier($table),
+            $this->where($where, $whereParams),
+            $this->limit($limit)
+        ), null, null, $fetchType)->getData();
     }
 
     /**
