@@ -135,7 +135,7 @@ final class Pgsql extends Result
                     $ids = [$id];
                     // multiple inserts
                     if ($rowsAffected > 1) {
-                        $ids = range($id - $rowsAffected + 1, $id);
+                        $ids = range(($id - $rowsAffected) + 1, $id);
                     }
                     $this->setIds($ids);
                 }

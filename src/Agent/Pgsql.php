@@ -240,7 +240,7 @@ final class Pgsql extends Agent
             $error = $this->parseQueryError($query);
             try {
                 throw new QueryException($error['message'], $error['code'], $error['sql_state']);
-            } catch(QueryException $e) {
+            } catch (QueryException $e) {
                 // log query error with fail level
                 $this->logger && $this->logger->log(Logger::FAIL, $e->getMessage());
 
@@ -257,9 +257,7 @@ final class Pgsql extends Agent
             }
         }
 
-        $result = new Resource($result);
-
-        return $this->result->process($result, $limit, $fetchType, $query);
+        return $this->result->process(new Resource($result), $limit, $fetchType, $query);
     }
 
     /**

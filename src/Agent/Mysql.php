@@ -262,9 +262,7 @@ final class Mysql extends Agent
             }
         }
 
-        $result = new Resource($result);
-
-        return $this->result->process($result, $limit, $fetchType);
+        return $this->result->process(new Resource($result), $limit, $fetchType);
     }
 
     /**
