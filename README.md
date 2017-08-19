@@ -83,24 +83,29 @@ foreach ($users as $user) {
 
 // or shorcut methods
 
-// get all users
-$result = $agent->select('users');
-// get all users if old greater than 50
-$result = $agent->select('users', '*', 'old > ?', [50]);
 // get one user
-$result = $agent->selectOne('users');
+$result = $agent->select('users');
 // get one users if old greater than 50
-$result = $agent->selectOne('users', '*', 'old > ?', [50]);
+$result = $agent->select('users', '*', 'old > ?', [50]);
+// get many users
+$result = $agent->selectAll('users');
+// get many users if old greater than 50
+$result = $agent->selectAll('users', '*', 'old > ?', [50]);
 
 // insert a user
-$result = $agent->insert('user', ['name' => 'Ali', 'old' => 30]);
-dump $result; // int: last_insert_id
+$result = $agent->insert('user', ['name' => 'Ali', 'old' => 30]); // int: last insert id
+// insert many users
+$result = $agent->insertAll('user', [['name' => 'Ali', 'old' => 30], ...]); // int[]: last insert ids
+
 // update a user
-$result = $agent->update('user', ['old' => 30], 'id = ?', [123]);
-dump $result; // int: affected_rows
+$result = $agent->update('user', ['old' => 30], 'id = ?', [123]); // int: affected rows
+// update many users
+$result = $agent->updateAll('user', ['old' => 30], 'id > ?', [123]); // int: affected rows
+
 // delete a user
-$result = $agent->delete('user', 'id = ?', [123]);
-dump $result; // int: affected_rows
+$result = $agent->delete('user', 'id = ?', [123]); // int: affected rows
+// delete many users
+$result = $agent->deleteAll('user', 'id > ?', [123]); // int: affected rows
 ```
 
 ### Query Builder
