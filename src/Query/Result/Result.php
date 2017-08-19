@@ -157,7 +157,7 @@ abstract class Result implements ResultInterface
                 break;
             case 'string':
                 //  object, array_asc etc.
-                $fetchTypeConst = 'ResultInterface::AS_'. strtoupper($fetchType);
+                $fetchTypeConst = 'Oppa\Query\Result\ResultInterface::AS_'. strtoupper($fetchType);
                 if (defined($fetchTypeConst)) {
                     return constant($fetchTypeConst);
                 }
