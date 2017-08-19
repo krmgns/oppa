@@ -90,7 +90,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  string $name
      * @return bool
      */
-    public final function __isset($name): bool
+    public final function __isset($name)
     {
         return isset($this->{$name});
     }
