@@ -274,49 +274,53 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function prepare(string $input, array $inputParams = null): string
     {
-        // any params provided?
         if (!empty($inputParams)) {
             // available named word limits: :foo, :foo123, :foo_bar
-            preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
-            if (!empty($match[1])) {
-                $keys = $values = [];
-                $match[1] = array_unique($match[1]);
-                foreach ($match[1] as $key) {
-                    if (!array_key_exists($key, $inputParams)) {
-                        throw new InvalidKeyException("Replacement key '{$key}' not found in params!");
+            if (false !== strpos($input, ':')) {
+                preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
+                if (!empty($match[1])) {
+                    $keys = $values = [];
+                    $match[1] = array_unique($match[1]);
+                    foreach ($match[1] as $key) {
+                        if (!array_key_exists($key, $inputParams)) {
+                            throw new InvalidKeyException("Replacement key '{$key}' not found in params!");
+                        }
+
+                        $keys[] = sprintf('~:%s~', $key);
+                        $values[] = $this->escape($inputParams[$key]);
+
+                        // remove used params
+                        unset($inputParams[$key]);
                     }
-
-                    $keys[] = sprintf('~:%s~', $key);
-                    $values[] = $this->escape($inputParams[$key]);
-
-                    // remove used params
-                    unset($inputParams[$key]);
+                    $input = preg_replace($keys, $values, $input);
                 }
-                $input = preg_replace($keys, $values, $input);
             }
 
             // available indicator: "?"
             // available operators with type definition: "%s, %i, %f, %v, %n"
-            preg_match_all('~\?|%[sifvn]~', $input, $match);
-            if (!empty($match[0])) {
-                foreach ($inputParams as $i => $inputParam) {
-                    if (!array_key_exists($i, $match[0])) {
-                        throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
-                    }
+            if (false !== strpbrk($input, '?%')) {
+                preg_match_all('~\?|%[sifvn]~', $input, $match);
+                if (!empty($match[0])) {
+                    foreach ($inputParams as $i => $inputParam) {
+                        if (!array_key_exists($i, $match[0])) {
+                            throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
+                        }
 
-                    $key = $match[0][$i];
-                    $value = $inputParam;
+                        $key = $match[0][$i];
+                        $value = $inputParam;
 
-                    if ($key == '%v') { // skip values (raws, sub-statement etc)
-                        // pass
-                    } elseif ($key == '%n') { // escape ids/names
-                        $value = $this->escapeIdentifier($value);
-                    } else {
-                        $value = $this->escape($value, strtr($key, ['%i' => '%d']));
-                    }
+                        if ($key == '%v') {
+                            // pass (values. raws, sub-query etc)
+                        } elseif ($key == '%n') {
+                            // identifiers (names)
+                            $value = $this->escapeIdentifier($value);
+                        } else {
+                            $value = $this->escape($value, strtr($key, ['%i' => '%d']));
+                        }
 
-                    if (false !== ($pos = strpos($input, $key))) {
-                        $input = substr_replace($input, $value, $pos, strlen($key));
+                        if (false !== ($pos = strpos($input, $key))) {
+                            $input = substr_replace($input, $value, $pos, strlen($key));
+                        }
                     }
                 }
             }
