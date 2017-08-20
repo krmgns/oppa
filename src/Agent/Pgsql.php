@@ -262,17 +262,19 @@ final class Pgsql extends Agent
 
     /**
      * Count.
-     * @param  ?string $table
-     * @param  string  $query
-     * @param  array   $queryParams
+     * @param  string $table
+     * @param  string $where
+     * @param  array  $whereParams
      * @return ?int
      */
-    public function count(?string $table, string $query = null, array $queryParams = null): ?int
+    public function count(string $table, string $where = null, array $whereParams = null): ?int
     {
-        if ($table) {
-            $query = sprintf("SELECT reltuples::bigint AS count FROM pg_class WHERE oid = '%s'::regclass", $table);
+        if ($where != null) {
+            $query = $this->prepare('SELECT count(*) AS count FROM %n %v',
+                [$table, $this->where($where, $whereParams)]);
         } else {
-            $query = sprintf("SELECT count(*) AS count FROM (%s) AS tmp", $this->prepare($query, $queryParams));
+            $query = $this->prepare('SELECT reltuples::bigint AS count FROM pg_class '.
+                'WHERE oid = \'%n\'::regclass', [$table]);
         }
 
         $result = (array) $this->get($query);
