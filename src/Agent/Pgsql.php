@@ -360,6 +360,10 @@ final class Pgsql extends Agent
             return join(', ', array_map([$this, 'escapeIdentifier'], $input));
         }
 
+        if (is_string($input) && strpos($input, '.')) {
+            return join('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
+        }
+
         return pg_escape_identifier($this->resource->getObject(), trim($input, '"'));
     }
 
