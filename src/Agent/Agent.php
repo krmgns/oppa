@@ -335,6 +335,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
     {
         if (!empty($where) && !empty($whereParams)) {
             $where = 'WHERE '. $this->prepare($where, $whereParams);
+        } elseif (!empty($where)) {
+            $where = 'WHERE '. $where;
         }
 
         return $where;
