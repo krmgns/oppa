@@ -133,7 +133,7 @@ final class Pgsql extends Agent
             $resourceStatus = pg_connection_status($resource);
         }
 
-        if (!$resource || !($resourceStatus === PGSQL_CONNECTION_OK)) {
+        if (!$resource || $resourceStatus !== PGSQL_CONNECTION_OK) {
             $error = $this->parseConnectionError();
             throw new ConnectionException($error['message'], $error['code'], $error['sql_state']);
         }
