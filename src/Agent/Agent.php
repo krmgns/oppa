@@ -118,9 +118,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
             $result->free();
         } elseif ($this->resource->getType() == Resource::TYPE_PGSQL_LINK) {
-            $result = pg_query($$this->resource->getObject(), sprintf("
+            $result = pg_query($this->resource->getObject(), sprintf("
                 SELECT * FROM pg_stat_activity WHERE usename = '%s'",
-                    pg_escape_string($$this->resource->getObject(), $this->config['username'])
+                    pg_escape_string($this->resource->getObject(), $this->config['username'])
             ));
             $resultArray = pg_fetch_all($result);
             if (isset($resultArray[0])) {
