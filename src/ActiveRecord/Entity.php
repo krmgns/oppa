@@ -58,12 +58,10 @@ final class Entity
      */
     public function __construct(ActiveRecord $activeRecord, array $data = [])
     {
-        foreach ($data as $key => $value) {
-            $this->data[$key] = $value;
-        }
-
         // set owner active record
         $this->activeRecord = $activeRecord;
+
+        $this->setData($data);
     }
 
     /**
@@ -142,7 +140,9 @@ final class Entity
      */
     public function setData(array $data): void
     {
-        $this->data = array_merge($this->data, $data);
+        foreach ($data as $key => $value) {
+            $this->data[$key] = $value;
+        }
     }
 
     /**
