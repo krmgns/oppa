@@ -28,7 +28,6 @@ namespace Oppa;
  * @object  Oppa\Resource
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-
 final class Resource
 {
     /**
