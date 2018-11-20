@@ -153,7 +153,7 @@ final class Config implements \ArrayAccess
 
     /**
      * Remove.
-     * @param  any $key
+     * @param  int|string $key
      * @return void
      */
     public function offsetUnset($key)
