@@ -220,8 +220,8 @@ abstract class Result implements ResultInterface
      */
     public final function setFetchObject(string $fetchObject): void
     {
-        if (empty($fetchObject)) {
-            throw new InvalidValueException('Fetch object should not be empty!');
+        if (!class_exists($fetchObject)) {
+            throw new InvalidValueException("Fetch object class '{$fetchObject}' not found!");
         }
 
         $this->fetchObject = $fetchObject;
