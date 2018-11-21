@@ -207,5 +207,6 @@ final class Profiler
     public function reset(): void
     {
         $this->profiles = [];
+        $this->queryCount = 0;
     }
 }
