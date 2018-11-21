@@ -55,7 +55,7 @@ final class Resource
 
     /**
      * Constructor.
-     * @param  $object|resource
+     * @param  object|resource $object
      * @throws Oppa\Exception\InvalidResourceException
      */
     public function __construct($object)
