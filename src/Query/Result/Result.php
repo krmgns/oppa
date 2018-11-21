@@ -220,7 +220,7 @@ abstract class Result implements ResultInterface
      */
     public final function setFetchObject(string $fetchObject): void
     {
-        if (!$fetchObject) {
+        if (empty($fetchObject)) {
             throw new InvalidValueException('Fetch object should not be empty!');
         }
 
