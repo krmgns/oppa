@@ -62,7 +62,7 @@ final class Autoload
      */
     public function register(): bool
     {
-        return spl_autoload_register(function(string $objectName) {
+        return spl_autoload_register(function($objectName) {
             // ensure first namespace separator
             if ($objectName[0] != '\\') {
                 $objectName = '\\'. $objectName;
