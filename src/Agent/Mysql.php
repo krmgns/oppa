@@ -221,7 +221,7 @@ final class Mysql extends Agent
         }
 
         $resource = $this->resource->getObject();
-        if (!$resource) {
+        if ($resource == null) {
             throw new InvalidResourceException('No valid connection resource to make a query!');
         }
 
