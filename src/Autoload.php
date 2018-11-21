@@ -74,14 +74,15 @@ final class Autoload
             }
 
             $objectFile = strtr(sprintf('%s/%s.php', __dir__, $objectName), [
-                '\\' => '/', __namespace__ => '',
+                '\\' => '/',
+                __namespace__ => ''
             ]);
 
             if (!is_file($objectFile)) {
-                throw new \RuntimeException("Class file not found. file: `{$objectFile}`");
+                throw new \RuntimeException("Object file '{$objectFile}' not found!");
             }
 
-            require($objectFile);
+            require $objectFile;
         });
     }
 }
