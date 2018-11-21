@@ -4,7 +4,7 @@
     "homepage": "http://github.com/k-gun/oppa",
     "description": "Oppa: Database abstraction, query building and active record implementation with PHP.",
     "keywords": ["mysql", "pgsql", "abstraction layer", "database", "active record"],
-    "license": "GPL-3.0",
+    "license": "MIT",
     "authors": [
         {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
     ],
