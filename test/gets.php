@@ -1,4 +1,4 @@
-<?php namespace App\Lib\Database;
+<?php //namespace App\Lib\Database;
 include('_inc.php');
 
 use Oppa\Database;
@@ -38,8 +38,18 @@ class User {
 // $result = $agent->query("select * from users", null, 1, User::class);
 // pre($result);
 
-$result = $agent->get("select * from users", null, User::class);
+// $result = $agent->get("select * from users", null, User::class);
 // $result = $agent->getAll("select * from users", null, User::class);
+
+// error
+// $agent->getResult()->setFetchObject("Foo\Bar");
+// no error
+$agent->getResult()->setFetchObject("User");
+$agent->getResult()->setFetchObject(User::class);
+
+$result = $agent->get("select * from users");
+// $result = $agent->getAll("select * from users");
+
 pre($result);
 
 
