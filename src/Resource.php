@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace Oppa;
 
+use Oppa\Exception\InvalidResourceException;
+
 /**
  * @package Oppa
  * @object  Oppa\Resource
@@ -34,17 +36,16 @@ final class Resource
      * Types.
      * @const int
      */
-    public const TYPE_UNKNOWN      = 0,
-                 TYPE_MYSQL_LINK   = 1,
+    public const TYPE_MYSQL_LINK   = 1,
                  TYPE_MYSQL_RESULT = 2,
                  TYPE_PGSQL_LINK   = 3,
                  TYPE_PGSQL_RESULT = 4;
 
     /**
      * Type.
-     * @var int
+     * @var ?int
      */
-    private $type = 0; // unknown
+    private $type;
 
     /**
      * Object.
@@ -54,7 +55,8 @@ final class Resource
 
     /**
      * Constructor.
-     * @param $object
+     * @param  $object|resource
+     * @throws Oppa\Exception\InvalidResourceException
      */
     public function __construct($object)
     {
@@ -78,7 +80,7 @@ final class Resource
                 break;
             // unknown
             default:
-                return;
+                throw new InvalidResourceException('Unknown resource type!');
         }
 
         $this->object = $object;
@@ -86,9 +88,9 @@ final class Resource
 
     /**
      * Get type.
-     * @return int
+     * @return ?int
      */
-    public function getType(): int
+    public function getType(): ?int
     {
         return $this->type;
     }
@@ -147,7 +149,7 @@ final class Resource
      */
     private function reset(): void
     {
-        $this->type = 0;
+        $this->type = null;
         $this->object = null;
     }
 }
