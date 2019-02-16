@@ -731,7 +731,7 @@ final class Builder
      */
     public function id($id, string $op = self::OP_AND): self
     {
-        return $this->where('`id` = ?', $id, $op);
+        return $this->where('id = ?', $id, $op);
     }
 
     /**
