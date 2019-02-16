@@ -804,7 +804,7 @@ final class Builder
     /**
      * Get.
      * @param  string|null $class
-     * @return any
+     * @return array|object|null
      */
     public function get(string $class = null)
     {
@@ -819,6 +819,42 @@ final class Builder
     public function getAll(string $class = null): array
     {
         return $this->link->getAgent()->getAll($this->toString(), null, $class);
+    }
+
+    /**
+     * Get array.
+     * @return ?array
+     */
+    public function getArray(): ?array
+    {
+        return $this->get('array');
+    }
+
+    /**
+     * Get array all.
+     * @return array
+     */
+    public function getArrayAll(): array
+    {
+        return $this->getAll('array');
+    }
+
+    /**
+     * Get object.
+     * @return ?object
+     */
+    public function getObject()
+    {
+        return $this->get('object');
+    }
+
+    /**
+     * Get object all.
+     * @return array
+     */
+    public function getObjectAll(): array
+    {
+        return $this->getAll('object');
     }
 
     /**
