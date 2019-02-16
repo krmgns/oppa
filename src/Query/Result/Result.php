@@ -28,7 +28,7 @@ namespace Oppa\Query\Result;
 
 use Oppa\Resource;
 use Oppa\Agent\AgentInterface;
-use Oppa\Exception\InvalidValueException;
+use Oppa\Exception\{InvalidValueException, MethodException};
 
 /**
  * @package Oppa
@@ -324,26 +324,23 @@ abstract class Result implements ResultInterface
      */
     public final function hasData(): bool
     {
-        return !empty($this->data);
+        return !!$this->data;
     }
 
     /**
      * Get data.
-     * @return array
+     * @param  int|null $i
+     * @return any
      */
-    public final function getData(): array
+    public final function getData(int $i = null)
     {
+        if ($i !== null) {
+            if ($i < 0) {
+                $i = count($this->data) + $i; // reverse
+            }
+            return $this->data[$i] ?? null;
+        }
         return $this->data;
-    }
-
-    /**
-     * Get data item.
-     * @param  int $i
-     * @return any|null
-     */
-    public final function getDataItem(int $i)
-    {
-        return $this->data[$i] ?? null;
     }
 
     /**
@@ -353,7 +350,16 @@ abstract class Result implements ResultInterface
      */
     public final function item(int $i)
     {
-        return $this->getDataItem($i);
+        return $this->getData($i);
+    }
+
+    /**
+     * Items.
+     * @return array
+     */
+    public final function items(): array
+    {
+        return $this->getData();
     }
 
     /**
@@ -362,7 +368,7 @@ abstract class Result implements ResultInterface
      */
     public final function itemFirst()
     {
-        return $this->getDataItem(0);
+        return $this->getData(0);
     }
 
     /**
@@ -371,7 +377,7 @@ abstract class Result implements ResultInterface
      */
     public final function itemLast()
     {
-        return $this->getDataItem(count($this->data) - 1);
+        return $this->getData(-1);
     }
 
     /**
@@ -439,28 +445,51 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Is empty.
-     * @return bool
+     * @inheritDoc \ArrayAccess
      */
-    public final function isEmpty(): bool
+    public final function offsetExists($offset)
     {
-        return empty($this->data);
+        return isset($this->data[$offset]);
     }
 
     /**
-     * Count.
-     * @return int
+     * @inheritDoc \ArrayAccess
      */
-    public final function count(): int
+    public final function offsetGet($offset)
+    {
+        return $this->data[$offset] ?? null;
+    }
+
+    /**
+     * @inheritDoc \ArrayAccess
+     * @throws Oppa\Exception\MethodException
+     */
+    public final function offsetSet($offset, $value)
+    {
+        throw new MethodException(sprintf('Set not allowed on read-only Result object'));
+    }
+
+    /**
+     * @inheritDoc \ArrayAccess
+     * @throws Oppa\Exception\MethodException
+     */
+    public final function offsetUnset($offset)
+    {
+        throw new MethodException(sprintf('Unset not allowed on read-only Result object'));
+    }
+
+    /**
+     * @inheritDoc \Countable
+     */
+    public final function count()
     {
         return count($this->data);
     }
 
     /**
-     * Get iterator.
-     * @return \ArrayIterator
+     * @inheritDoc \IteratorAggregate
      */
-    public final function getIterator(): \ArrayIterator
+    public final function getIterator()
     {
         return new \ArrayIterator($this->data);
     }
