@@ -33,7 +33,7 @@ use Oppa\Resource;
  * @object  Oppa\Query\Result\ResultInterface
  * @author  Kerem Güneş <k-gun@mail.com>
  */
-interface ResultInterface extends \Countable, \IteratorAggregate
+interface ResultInterface extends \Countable, \IteratorAggregate, \ArrayAccess
 {
     /**
      * Fetch limit.
