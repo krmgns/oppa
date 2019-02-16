@@ -159,6 +159,10 @@ abstract class Result implements ResultInterface
                 }
                 break;
             case 'string':
+                // shorthands
+                if ($fetchType == 'array') return ResultInterface::AS_ARRAY_ASC;
+                if ($fetchType == 'object') return ResultInterface::AS_OBJECT;
+
                 //  object, array_asc etc.
                 $fetchTypeConst = 'Oppa\Query\Result\ResultInterface::AS_'. strtoupper($fetchType);
                 if (defined($fetchTypeConst)) {
