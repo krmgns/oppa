@@ -317,7 +317,8 @@ final class Mysql extends Agent
             case 'integer':
                 return $input;
             case 'boolean':
-                return (int) $input; // 1/0, afaik true/false not supported yet in mysql
+                // return (int) $input; // 1/0, afaik true/false not supported yet in mysql
+                return $input ? 'TRUE' : 'FALSE';
             case 'double':
                 return sprintf('%F', $input); // %F = non-locale aware
             default:
