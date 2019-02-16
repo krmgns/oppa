@@ -403,6 +403,17 @@ final class Builder
     }
 
     /**
+     * Id (shortcut for where id = ?).
+     * @param  int|string $id
+     * @param  string     $op
+     * @return self
+     */
+    public function id($id, string $op = self::OP_AND): self
+    {
+        return $this->where('id = ?', $id, $op);
+    }
+
+    /**
      * Where.
      * @param  string $query
      * @param  any    $queryParams
@@ -411,7 +422,6 @@ final class Builder
      */
     public function where(string $query, $queryParams = null, string $op = self::OP_AND): self
     {
-
         // sub-where
         if ($queryParams instanceof Builder) {
             // $opr argument is empty, should be exists in query (eg: id = )
@@ -422,14 +432,15 @@ final class Builder
 
         if ($queryParams !== null) {
             if (!is_array($queryParams) && !is_scalar($queryParams)) {
-                throw new InvalidValueException('Only array or scalar parameters are accepted!');
+                throw new InvalidValueException(sprintf('Only array or scalar parameters are accepted'.
+                    ', %s given!', gettype($queryParams)));
             }
 
             $query = $this->link->getAgent()->prepare($query, (array) $queryParams);
         }
 
         // add and/or operator
-        if (isset($this->query['where']) && !empty($this->query['where'])) {
+        if (!empty($this->query['where'])) {
             $query = sprintf('%s %s', $op, $query);
         }
 
@@ -708,7 +719,7 @@ final class Builder
         }
 
         // add and/or operator
-        if (isset($this->query['having']) && !empty($this->query['having'])) {
+        if (!empty($this->query['having'])) {
             $query = sprintf('%s %s', $op, $query);
         }
 
@@ -1000,6 +1011,10 @@ final class Builder
         if ($param instanceof Builder) {
             $query[] = '('. $param->toString() .')';
         } else {
+            if ($param && !is_array($param) && !is_scalar($param)) {
+                throw new InvalidValueException(sprintf('Only array or scalar parameters are accepted'.
+                    ', %s given!', gettype($param)));
+            }
             $query[] = $this->link->getAgent()->prepare('(?)', (array) $param);
         }
 
