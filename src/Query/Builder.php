@@ -173,7 +173,7 @@ final class Builder
         $reset && $this->reset();
 
         // handle other query object
-        if ($field instanceof $this) {
+        if ($field instanceof Builder) {
             if (empty($alias)) {
                 throw new InvalidValueException('Alias is required!');
             }
@@ -403,17 +403,6 @@ final class Builder
     }
 
     /**
-     * Id (shortcut for where id = ?).
-     * @param  int|string $id
-     * @param  string     $op
-     * @return self
-     */
-    public function id($id, string $op = self::OP_AND): self
-    {
-        return $this->where('id = ?', $id, $op);
-    }
-
-    /**
      * Where.
      * @param  string $query
      * @param  any    $queryParams
@@ -502,6 +491,9 @@ final class Builder
      */
     public function whereIn(string $field, $param, string $op = self::OP_AND): self
     {
+        if (is_array($param)) {
+            $param = [$param];
+        }
         return $this->where($this->prepare($field, 'IN', $param), null, $op);
     }
 
@@ -514,6 +506,9 @@ final class Builder
      */
     public function whereNotIn(string $field, $param, string $op = self::OP_AND): self
     {
+        if (is_array($param)) {
+            $param = [$param];
+        }
         return $this->where($this->prepare($field, 'NOT IN', $param), null, $op);
     }
 
@@ -526,7 +521,7 @@ final class Builder
      */
     public function whereBetween($field, array $params, string $op = self::OP_AND): self
     {
-        return $this->where($this->field($field) .' BETWEEN ? AND ?', $params, $op);
+        return $this->where($this->field($field) .' BETWEEN (? AND ?)', $params, $op);
     }
 
     /**
@@ -538,7 +533,7 @@ final class Builder
      */
     public function whereNotBetween($field, array $params, string $op = self::OP_AND): self
     {
-        return $this->where($this->field($field) .' NOT BETWEEN ? AND ?', $params, $op);
+        return $this->where($this->field($field) .' NOT BETWEEN (? AND ?)', $params, $op);
     }
 
     /**
@@ -705,6 +700,41 @@ final class Builder
     }
 
     /**
+     * Where id.
+     * @param  string     $idField
+     * @param  int|string $idParam
+     * @param  string     $op
+     * @return self
+     */
+    public function whereId(string $idField, $idParam, string $op = self::OP_AND): self
+    {
+        return $this->where($this->prepare($idField, '=', $idParam), null, $op);
+    }
+
+    /**
+     * Where ids.
+     * @param  string            $idField
+     * @param  array[int|string] $idParams
+     * @param  string            $op
+     * @return self
+     */
+    public function whereIds(string $idField, array $idParams, string $op = self::OP_AND): self
+    {
+        return $this->where($this->prepare($idField, 'IN', $idParams), null, $op);
+    }
+
+    /**
+     * Id (shortcut for where id = ?).
+     * @param  int|string $id
+     * @param  string     $op
+     * @return self
+     */
+    public function id($id, string $op = self::OP_AND): self
+    {
+        return $this->where('`id` = ?', $id, $op);
+    }
+
+    /**
      * Having.
      * @param  string $query
      * @param  array  $params
@@ -733,7 +763,7 @@ final class Builder
      */
     public function groupBy(string $field): self
     {
-        return $this->push('groupBy', $field);
+        return $this->push('groupBy', $this->field($field));
     }
 
     /**
@@ -747,7 +777,7 @@ final class Builder
     {
         // check operator is valid
         if ($op == null) {
-            return $this->push('orderBy', $field);
+            return $this->push('orderBy', $this->field($field));
         }
 
         $op = strtoupper($op);
@@ -755,7 +785,7 @@ final class Builder
             throw new InvalidValueException('Only available ops: ASC, DESC');
         }
 
-        return $this->push('orderBy', $field .' '. $op);
+        return $this->push('orderBy', $this->field($field) .' '. $op);
 
     }
 
@@ -774,22 +804,32 @@ final class Builder
 
     /**
      * Aggregate.
-     * @param  string      $func
+     * @param  string      $fn
      * @param  string      $field
      * @param  string|null $as
      * @return self
+     * @throws Oppa\Exception\InvalidValueException
      */
-    public function aggregate(string $func, string $field = '*', string $as = null): self
+    public function aggregate(string $fn, string $field = '*', string $as = null): self
     {
-        // if alias not provided
-        if (empty($as)) {
-            $as = ($field && $field != '*')
-                // aggregate('count', 'id') count_id
-                // aggregate('count', 'u.id') count_uid
-                ? preg_replace('~[^\w]~', '', $func .'_'. $field) : $func;
+        static $fns = ['count', 'sum', 'avg', 'min', 'max'];
+
+        $fn = strtolower($fn);
+        if (!in_array($fn, $fns)) {
+            throw new InvalidValueException(sprintf('Invalid function %s given, %s are supported only!',
+                $fn, join(',', $fns)));
         }
 
-        return $this->push('select', sprintf('%s(%s) AS %s', $func, $field, $as));
+        $field = $field ?: '*';
+
+        // if alias not provided
+        if ($as == '') {
+            // aggregate('count', 'x') count_x
+            // aggregate('count', 'u.x') count_ux
+            $as = ($field && $field != '*') ? preg_replace('~[^\w]~', '', $fn .'_'. $field) : $fn;
+        }
+
+        return $this->push('select', sprintf('%s(%s) AS %s', $fn, $field, $as));
     }
 
     /**
@@ -1047,8 +1087,8 @@ final class Builder
         if ($param instanceof Builder) {
             $query[] = '('. $param->toString() .')';
         } else {
-            if ($param && !is_array($param) && !is_scalar($param)) {
-                throw new InvalidValueException(sprintf('Only array or scalar parameters are accepted'.
+            if ($param && !is_scalar($param) && !is_array($param)) {
+                throw new InvalidValueException(sprintf('Only scalar or array parameters are accepted'.
                     ', %s given!', gettype($param)));
             }
             $query[] = $this->link->getAgent()->prepare('(?)', (array) $param);
