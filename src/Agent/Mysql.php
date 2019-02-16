@@ -377,7 +377,7 @@ final class Mysql extends Agent
      */
     private function parseConnectionError(): array
     {
-        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        $return = ['sql_state' => null, 'code' => null, 'message' => 'Unknown error.'];
         if ($error = error_get_last()) {
             $errorMessage = preg_replace('~mysqli::real_connect\(\): +\(.+\): +~', '', $error['message']);
             preg_match('~\((?<sql_state>[0-9A-Z]+)/(?<code>\d+)\)~', $error['message'], $match);
@@ -418,20 +418,29 @@ final class Mysql extends Agent
      */
     private function parseQueryError(string $query): array
     {
-        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        $return = ['sql_state' => null, 'code' => null, 'message' => 'Unknown error.'];
         $resource = $this->resource->getObject();
-        if ($resource->errno) {
-            $return['code'] = $resource->errno;
-            $return['sql_state'] = $resource->sqlstate;
+
+        if (isset($resource->error_list[0])) {
+            [$errno, $sqlstate, $error] = array_values($resource->error_list[0]);
+        } else {
+            [$errno, $sqlstate, $error] = [$resource->errno, $resource->sqlstate, $resource->error];
+        }
+
+        if ($errno) {
+            $return['sql_state'] = $sqlstate;
+            $return['code'] = $errno;
             // dump useless verbose message
-            if ($resource->sqlstate == '42000') {
-                preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~sm', $resource->error, $match);
+            if ($errno == 1064) {
+                preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~sm', $error, $match);
                 if (isset($match['query'], $match['line'])) {
                     $return['message'] = sprintf('Syntax error at or near "%s", line %d. Query: "%s".',
-                        trim(substr($match['query'], 1, -1)), $match['line'], $query);
+                        trim(substr($match['query'], 1, (int) ceil(strlen($match['query']) / 2))), $match['line'], $query);
+                } else {
+                    $return['message'] = $error;
                 }
             } else {
-                $return['message'] = $resource->error;
+                $return['message'] = $error;
             }
         }
 

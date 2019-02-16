@@ -398,8 +398,10 @@ final class Pgsql extends Agent
      */
     private function parseConnectionError(): array
     {
-        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        $return = ['sql_state' => null, 'code' => null, 'message' => 'Unknown error.'];
         if ($error = error_get_last()) {
+            $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
+
             $errorMessage = strstr($error['message'], "\n", true);
             if ($errorMessage === false) {
                 $errorMessage = $error['message'];
@@ -412,7 +414,6 @@ final class Pgsql extends Agent
             $errorMessage = implode(',', $errorMessage);
 
             $return['message'] = $errorMessage .'.';
-            $return['sql_state'] = SqlState::OPPA_CONNECTION_ERROR;
 
             if (strpos($errorMessage, 'to address')) {
                 $return['message'] = sprintf('Unable to connect to PostgreSQL server at "%s", '.
@@ -447,12 +448,13 @@ final class Pgsql extends Agent
      */
     private function parseQueryError(string $query): array
     {
-        $return = ['message' => 'Unknown error.', 'code' => null, 'sql_state' => null];
+        $return = ['sql_state' => null, 'code' => null, 'message' => 'Unknown error.'];
         if ($error = error_get_last()) {
             $error = explode("\n", $error['message']);
             // search for sql state
             preg_match('~ERROR:\s+(?<sql_state>[0-9A-Z]+?):\s+(?<message>.+)~', $error[0], $match);
             if (isset($match['sql_state'], $match['message'])) {
+                $return['sql_state'] = $match['sql_state'];
                 // line & query details etc.
                 if (isset($error[2])) {
                     preg_match('~(LINE\s+(?<line>\d+):\s+).+~', $error[1], $match2);
@@ -464,7 +466,6 @@ final class Pgsql extends Agent
                     $errorMessage = $match['message'];
                 }
                 $return['message'] = $errorMessage .'.';
-                $return['sql_state'] = $match['sql_state'];
             }
         }
 
