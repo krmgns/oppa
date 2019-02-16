@@ -61,7 +61,6 @@ dump $agent->rowsCount();
 // raw queries
 $result = $agent->query('select * from `users`');
 if ($result->hasData())
-// if (!$result->isEmpty())
 // if ($result->count() > 0)
    foreach ($result as $user)
       dump $user->name;
@@ -245,7 +244,7 @@ foreach ($users as $user) {
 }
 
 $users = $users->findAll([-1,null,'foo']);
-dump $users->isEmpty(); // true
+dump $users->hasData(); // false
 
 // insert a user
 $user = $users->entity();
