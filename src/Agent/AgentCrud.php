@@ -175,7 +175,7 @@ abstract class AgentCrud
      */
     public final function get(string $query, array $queryParams = null, string $fetchClass = null)
     {
-        return $this->query($query, $queryParams, 1, $fetchClass)->getDataItem(0);
+        return $this->query($query, $queryParams, 1, $fetchClass)->getData(0);
     }
 
     /**
