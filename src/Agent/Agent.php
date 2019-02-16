@@ -279,9 +279,15 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function prepare(string $input, array $inputParams = null): string
     {
+        $hasColon = strpos($input, ':') !== false;
+        $hasFormat = strpbrk($input, '?%') !== false;
+        if (($hasColon || $hasFormat) && ($inputParams === null || $inputParams === [])) {
+            $inputParams = [null]; // fix missing replacement
+        }
+
         if (!empty($inputParams)) {
             // available named word limits: :foo, :foo123, :foo_bar
-            if (false !== strpos($input, ':')) {
+            if ($hasColon) {
                 preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
                 if (!empty($match[1])) {
                     $keys = $values = [];
@@ -303,7 +309,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
             // available indicator: "?"
             // available operators with type definition: "%s, %i, %f, %v, %n"
-            if (false !== strpbrk($input, '?%')) {
+            if ($hasFormat) {
                 preg_match_all('~\?|%[sifvn]~', $input, $match);
                 if (!empty($match[0])) {
                     foreach ($inputParams as $i => $inputParam) {
