@@ -720,7 +720,7 @@ final class Builder
      */
     public function whereIds(string $idField, array $idParams, string $op = self::OP_AND): self
     {
-        return $this->where($this->prepare($idField, 'IN', $idParams), null, $op);
+        return $this->where($this->prepare($idField, 'IN', [$idParams]), null, $op);
     }
 
     /**
