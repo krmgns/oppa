@@ -424,9 +424,9 @@ final class Builder
                 throw new InvalidValueException(sprintf('Only array or scalar parameters are accepted'.
                     ', %s given!', gettype($queryParams)));
             }
-
-            $query = $this->link->getAgent()->prepare($query, (array) $queryParams);
         }
+
+        $query = $this->link->getAgent()->prepare($query, (array) $queryParams);
 
         // add and/or operator
         if (!empty($this->query['where'])) {
