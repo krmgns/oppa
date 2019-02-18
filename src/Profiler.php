@@ -116,11 +116,13 @@ final class Profiler
 
     /**
      * Get last query.
-     * @return ?array
+     * @param  string|null $key
+     * @return array|float|string|null
      */
-    public function getLastQuery(): ?array
+    public function getLastQuery(string $key = null)
     {
-        return $this->profiles[self::QUERY][$this->queryCount] ?? null;
+        return $key ? $this->profiles[self::QUERY][$this->queryCount][$key] ?? null
+            : $this->profiles[self::QUERY][$this->queryCount] ?? null;
     }
 
     /**
@@ -129,7 +131,7 @@ final class Profiler
      */
     public function getLastQueryString(): ?string
     {
-        return $this->profiles[self::QUERY][$this->queryCount]['string'] ?? null;
+        return $this->getLastQuery('string');
     }
 
     /**
