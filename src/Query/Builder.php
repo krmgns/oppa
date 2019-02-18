@@ -77,24 +77,14 @@ final class Builder
     private $query = [];
 
     /**
-     * Query string.
-     * @var string
-     */
-    private $queryString = '';
-
-    /**
      * Constructor.
-     * @param Oppa\Link\Link $link
-     * @param string $table
+     * @param Oppa\Link\Link|null $link
+     * @param string|null         $table
      */
     public function __construct(Link $link = null, string $table = null)
     {
-        if ($link) {
-            $this->setLink($link);
-        }
-        if ($table) {
-            $this->setTable($table);
-        }
+        $link && $this->setLink($link);
+        $table && $this->setTable($table);
     }
 
     /**
@@ -155,7 +145,6 @@ final class Builder
     public function reset(): self
     {
         $this->query = [];
-        $this->queryString = '';
 
         return $this;
     }
@@ -167,7 +156,7 @@ final class Builder
      */
     public function has(string $key): bool
     {
-        return isset($this->query[$key]);
+        return !empty($this->query[$key]);
     }
 
     /**
@@ -819,15 +808,16 @@ final class Builder
 
     /**
      * Limit.
-     * @param  int      $start
-     * @param  int|null $stop
+     * @param  int      $limit
+     * @param  int|null $offset
      * @return self
      */
-    public function limit(int $start, int $stop = null): self
+    public function limit(int $limit, int $offset = null): self
     {
-        return ($stop === null)
-            ? $this->push('limit', $start)
-            : $this->push('limit', $start)->push('limit', $stop);
+        $this->query['limit'] = ($offset === null)
+            ? [abs($limit)] : [abs($limit), abs($offset)];
+
+        return $this;
     }
 
     /**
@@ -952,123 +942,144 @@ final class Builder
     /**
      * To string.
      * @return string
-     * @throws \LogicException
      */
     public function toString(): string
     {
-        // if any query
         if (!empty($this->query)) {
-            if (empty($this->table)) {
-                throw new \LogicException(
-                    "Table is not defined yet! Call 'setTable()' to set target table first.");
-            }
-
-            $this->queryString = '';
-
-            // prepare for "SELECT" statement
             if (isset($this->query['select'])) {
-                $aggregate = isset($this->query['aggregate'])
-                    ? ', '. join(', ', $this->query['aggregate']) : '';
-
-                $from = trim($this->query['from'] ?? $this->table);
-
-                // add select fields
-                $this->queryString .= sprintf('SELECT %s%s FROM %s',
-                    join(', ', $this->query['select']), $aggregate, $from);
-
-                // add join statements
-                if (isset($this->query['join'])) {
-                    foreach ($this->query['join'] as $value) {
-                        $this->queryString .= sprintf(' %s', $value);
-                    }
-                }
-
-                // add where statement
-                if (isset($this->query['where'])) {
-                    $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
-                }
-
-                // add group by statement
-                if (isset($this->query['groupBy'])) {
-                    $this->queryString .= sprintf(' GROUP BY %s', join(', ', $this->query['groupBy']));
-                }
-
-                // add having statement
-                if (isset($this->query['having'])) {
-                    $this->queryString .= sprintf(' HAVING (%s)', join(' ', $this->query['having']));
-                }
-
-                // add order by statement
-                if (isset($this->query['orderBy'])) {
-                    $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
-                }
-
-                // add limit statement
-                if (isset($this->query['limit'])) {
-                    $this->queryString .= isset($this->query['limit'][1])
-                        ? sprintf(' LIMIT %d OFFSET %d', $this->query['limit'][1], $this->query['limit'][0])
-                        : sprintf(' LIMIT %d', $this->query['limit'][0]);
-                }
-            }
-            // prepare for "INSERT" statement
-            elseif (isset($this->query['insert'])) {
-                $agent = $this->link->getAgent();
-                if ($data = ($this->query['insert'] ?? null)) {
-                    $keys = $agent->escapeIdentifier(array_keys(current($data)));
-                    $values = [];
-                    foreach ($data as $d) {
-                        $values[] = '('. $agent->escape(array_values($d)) .')';
-                    }
-
-                    $this->queryString = sprintf(
-                        "INSERT INTO {$this->table} ({$keys}) VALUES %s", join(', ', $values));
-                }
-            }
-            // prepare for "UPDATE" statement
-            elseif (isset($this->query['update'])) {
-                $agent = $this->link->getAgent();
-                if ($data = ($this->query['update'] ?? null)) {
-                    // prepare "SET" data
-                    $set = [];
-                    foreach ($data as $key => $value) {
-                        $set[] = sprintf('%s = %s', $agent->escapeIdentifier($key), $agent->escape($value));
-                    }
-                    // check again
-                    if (!empty($set)) {
-                        $this->queryString = sprintf(
-                            "UPDATE {$this->table} SET %s", join(', ', $set));
-
-                        // add criterias
-                        if (isset($this->query['where'])) {
-                            $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
-                        }
-                        if (isset($this->query['orderBy'])) {
-                            $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
-                        }
-                        if (isset($this->query['limit'][0])) {
-                            $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
-                        }
-                    }
-                }
-            }
-            // prepare for "DELETE" statement
-            elseif (isset($this->query['delete'])) {
-                $this->queryString = "DELETE FROM {$this->table}";
-
-                // add criterias
-                if (isset($this->query['where'])) {
-                    $this->queryString .= sprintf(' WHERE (%s)', join(' ', $this->query['where']));
-                }
-                if (isset($this->query['orderBy'])) {
-                    $this->queryString .= sprintf(' ORDER BY %s', join(', ', $this->query['orderBy']));
-                }
-                if (isset($this->query['limit'][0])) {
-                    $this->queryString .= sprintf(' LIMIT %d', $this->query['limit'][0]);
-                }
+                $string = $this->toQueryString('select');
+            } elseif (isset($this->query['insert'])) {
+                $string = $this->toQueryString('insert');
+            } elseif (isset($this->query['update'])) {
+                $string = $this->toQueryString('update');
+            } elseif (isset($this->query['delete'])) {
+                $string = $this->toQueryString('delete');
             }
         }
 
-        return trim($this->queryString);
+        return trim($string ?? '');
+    }
+
+    /**
+     * To query string.
+     * @return ?string
+     * @throws Oppa\Query\BuilderException
+     */
+    public function toQueryString(string $key, ...$options): ?string
+    {
+        if ($this->table == null) {
+            throw new BuilderException(
+                "Table is not defined yet! Call 'setTable()' to set target table first.");
+        }
+
+        switch ($key) {
+            case 'select':
+                $string = sprintf('SELECT %s%s FROM %s',
+                    join(', ', $this->query['select']),
+                    $this->toQueryString('aggregate'),
+                    $this->toQueryString('from')
+                );
+
+                $string = trim(
+                    $string
+                    . $this->toQueryString('join')
+                    . $this->toQueryString('where')
+                    . $this->toQueryString('groupBy')
+                    . $this->toQueryString('having')
+                    . $this->toQueryString('orderBy')
+                    . $this->toQueryString('limit')
+                );
+                break;
+            case 'from':
+                $string = $this->query['from'] ?? $this->table;
+                break;
+            case 'insert':
+                if ($this->has('insert')) {
+                    $data = $this->query['insert'];
+                    $agent = $this->link->getAgent();
+
+                    $keys = join(', ', array_keys($data[0]));
+                    $values = [];
+                    foreach ($data as $dat) {
+                        $values[] = '('. $agent->escape(array_values($dat)) .')';
+                    }
+
+                    $string = "INSERT INTO {$this->table} ({$keys}) VALUES ". join(', ', $values);
+                }
+                break;
+            case 'update':
+                if ($this->has('update')) {
+                    $data = $this->query['update'];
+                    $agent = $this->link->getAgent();
+
+                    $set = [];
+                    foreach ($data as $key => $value) {
+                        $set[] = sprintf('%s = %s', $key, $agent->escape($value));
+                    }
+
+                    $string = trim(
+                        "UPDATE {$this->table} SET ". join(', ', $set)
+                        . $this->toQueryString('where')
+                        . $this->toQueryString('orderBy')
+                        . $this->toQueryString('limit')
+                    );
+                }
+                break;
+            case 'delete':
+                if ($this->has('delete')) {
+                    $string = trim(
+                        "DELETE FROM {$this->table}"
+                        . $this->toQueryString('where')
+                        . $this->toQueryString('orderBy')
+                        . $this->toQueryString('limit')
+                    );
+                }
+                break;
+            case 'where':
+                if ($this->has('where')) {
+                    $string = ' WHERE ('. join(' ', $this->query['where']) .')';
+                }
+                break;
+            case 'groupBy':
+                if ($this->has('groupBy')) {
+                    $string = ' GROUP BY '. join(', ', $this->query['groupBy']);
+                }
+                break;
+            case 'orderBy':
+                if ($this->has('orderBy')) {
+                    $string = ' ORDER BY '. join(', ', $this->query['orderBy']);
+                }
+                break;
+            case 'limit':
+                if ($this->has('limit')) {
+                    $string = isset($this->query['limit'][1])
+                        ? ' LIMIT '. $this->query['limit'][0] .' OFFSET '. $this->query['limit'][1]
+                        : ' LIMIT '. $this->query['limit'][0];
+                }
+                break;
+            case 'join':
+                if ($this->has('join')) {
+                    $string = '';
+                    foreach ($this->query['join'] as $join) {
+                        $string .= ' '. $join;
+                    }
+                }
+                break;
+            case 'having':
+                if ($this->has('having')) {
+                    $string = ' HAVING ('. join(' ', $this->query['having']). ')';
+                }
+                break;
+            case 'aggregate':
+                if ($this->has('aggregate')) {
+                    $string = ', '. join(', ', $this->query['aggregate']);
+                }
+                break;
+            default:
+                throw new BuilderException("Unknown key '{$key}' given");
+        }
+
+        return $string ?? null;
     }
 
     /**
