@@ -161,6 +161,16 @@ final class Builder
     }
 
     /**
+     * Has.
+     * @param  string $key
+     * @return bool
+     */
+    public function has(string $key): bool
+    {
+        return isset($this->query[$key]);
+    }
+
+    /**
      * Select.
      * @param  any    $field
      * @param  bool   $reset
@@ -293,6 +303,24 @@ final class Builder
     public function selectMoreJsonArray($field, string $as): self
     {
         return $this->selectMoreJson($field, $as, self::JSON_ARRAY);
+    }
+
+    /**
+     * From
+     * @param  string|Builder $field
+     * @param  string|null    $as
+     * @return [type]
+     */
+    public function from($field, string $as = null): self
+    {
+        $from = $this->field($field);
+        if ($as) {
+            $from = sprintf('(%s) AS %s', $from, $as);
+        }
+
+        $this->query['from'] = $from;
+
+        return $this;
     }
 
     /**
@@ -939,13 +967,14 @@ final class Builder
 
             // prepare for "SELECT" statement
             if (isset($this->query['select'])) {
-                // add aggregate statements
                 $aggregate = isset($this->query['aggregate'])
                     ? ', '. join(', ', $this->query['aggregate']) : '';
 
+                $from = trim($this->query['from'] ?? $this->table);
+
                 // add select fields
                 $this->queryString .= sprintf('SELECT %s%s FROM %s',
-                    join(', ', $this->query['select']), $aggregate, $this->table);
+                    join(', ', $this->query['select']), $aggregate, $from);
 
                 // add join statements
                 if (isset($this->query['join'])) {
