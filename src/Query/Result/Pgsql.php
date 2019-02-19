@@ -115,8 +115,8 @@ final class Pgsql extends Result
                     throw new InvalidValueException("Could not implement given '{$fetchType}' fetch type!");
             }
 
-            // map result data
-            if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
+            // map result data if mapper exists
+            if ($mapper =@ $this->agent->getMapper()) {
                 $fieldTable = pg_field_table($resultObject, 0);
                 if ($fieldTable) {
                     $this->data = $mapper->map($fieldTable, $this->data);

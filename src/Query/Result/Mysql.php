@@ -112,8 +112,8 @@ final class Mysql extends Result
                     throw new InvalidValueException("Could not implement given '{$fetchType}' fetch type!");
             }
 
-            // map result data
-            if (isset($this->agent->mapper) && $mapper = $this->agent->getMapper()) {
+            // map result data if mapper exists
+            if ($mapper =@ $this->agent->getMapper()) {
                 $field = $resultObject->fetch_field();
                 if (isset($field->orgtable)) {
                     $this->data = $mapper->map($field->orgtable, $this->data);
