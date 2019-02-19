@@ -34,6 +34,12 @@ namespace Oppa;
 final class Cache
 {
     /**
+     * Ttl.
+     * @const int
+     */
+    public const TTL = 3600;
+
+    /**
      * Directory.
      * @var string
      */
@@ -60,18 +66,18 @@ final class Cache
 
     /**
      * Read.
-     * @param  string $file
-     * @param  any    &$contents
-     * @param  bool   $json
-     * @param  int    $ttl
+     * @param  string   $file
+     * @param  any      &$contents
+     * @param  bool     $json
+     * @param  int|null $ttl
      * @return bool
      */
-    public function read(string $file, &$contents = null, bool $json = true, int $ttl = 3600): bool
+    public function read(string $file, &$contents = null, bool $json = true, int $ttl = null): bool
     {
         $this->checkDirectory() && $ok = $this->checkFile($file);
 
         if ($ok) { // file exists
-            if (filemtime($file) < time() - $ttl) {
+            if (filemtime($file) < time() - ($ttl ?? self::TTL)) {
                 $contents = null;
 
                 unlink($file); // do gc
