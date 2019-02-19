@@ -128,23 +128,19 @@ final class Mapper
      */
     public function map(string $key, array $data): array
     {
-        // no map model for mapping
-        if (empty($data) || empty($this->map) || !isset($this->map[$key])) {
+        $fields = $this->map[$key] ?? null;
+        if (empty($fields) || empty($data)) {
             return $data;
         }
 
-        // let's do it!
-        foreach ($this->map[$key] as $fieldName => $fieldProps) {
+        foreach ($fields as $fieldName => $fieldProperties) {
             foreach ($data as &$dat) {
-                // keep data type
-                $datType = gettype($dat);
-                foreach ($dat as $key => $value) {
-                    // match field?
-                    if ($key == $fieldName) {
-                        if ($datType == 'object') {
-                            $dat->{$key} = $this->cast($value, $fieldProps);
-                        } elseif ($datType == 'array') {
-                            $dat[$key] = $this->cast($value, $fieldProps);
+                foreach ($dat as $name => $value) {
+                    if ($name == $fieldName) { // match field?
+                        if (is_array($dat)) {
+                            $dat[$name] = $this->cast($value, $fieldProperties);
+                        } elseif (is_object($dat)) {
+                            $dat->{$name} = $this->cast($value, $fieldProperties);
                         }
                     }
                 }
