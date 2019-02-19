@@ -152,8 +152,12 @@ final class Pgsql extends Agent
 
         // fill mapper map for once
         if ($this->mapper) {
-            $cache = new Cache();
-            $cache->read('mapper.map', $map);
+            $map = $cache = null;
+            if ($this->config['map_result_cache']) {
+                $cache = new Cache();
+                $cache->read('mapper.map', $map, true, $this->config['map_result_cache_ttl']);
+            }
+
             if (!$map) {
                 try {
                     $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, character_maximum_length
@@ -172,7 +176,7 @@ final class Pgsql extends Agent
                             $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
                         }
 
-                        $cache->write('mapper.map', $map);
+                        $cache && $cache->write('mapper.map', $map);
                     }
                     $result->reset();
                 } catch (QueryException $e) {
