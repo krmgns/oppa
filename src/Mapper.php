@@ -121,7 +121,7 @@ final class Mapper
     }
 
     /**
-     * Map given data by key.
+     * Map (given data by key).
      * @param  string $key Table name actually, @see Oppa\Query\Result\Mysql:process()
      * @param  array  $data
      * @return array
@@ -155,22 +155,24 @@ final class Mapper
     }
 
     /**
-     * Simply type-cast by data type.
-     * @param  any   $value
-     * @param  array $properties
-     * @return any
+     * Cast (type-cast by data type).
+     * @param  scalar|null $value
+     * @param  array       $properties
+     * @return scalar|null
      */
     public function cast($value, array $properties)
     {
         // nullable?
-        if ($properties['nullable'] && $value === null) {
+        if ($value === null && $properties['nullable']) {
             return $value;
         }
+
+        $type = strtolower($properties['type']);
 
         // 1.000.000 iters
         // regexp-------7.442563
         // switch-------2.709796
-        switch ($type = strtolower($properties['type'])) {
+        switch ($type) {
             case self::DATA_TYPE_INT:
             case self::DATA_TYPE_BIGINT:
             case self::DATA_TYPE_SMALLINT:
@@ -178,31 +180,33 @@ final class Mapper
             case self::DATA_TYPE_INTEGER:
             case self::DATA_TYPE_SERIAL:
             case self::DATA_TYPE_BIGSERIAL:
-                $value = (int) $value;
-                break;
+                return (int) $value;
             case self::DATA_TYPE_FLOAT:
             case self::DATA_TYPE_DOUBLE:
             case self::DATA_TYPE_DOUBLEP:
             case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_REAL:
             case self::DATA_TYPE_NUMERIC:
-                $value = (float) $value;
-                break;
+                return (float) $value;
             case self::DATA_TYPE_BOOLEAN:
-                $value = ($value == 't');
-                break;
-            default:
-                if ($this->mapOptions['bool'] && $properties['length'] === 1) {
-                    if (self::DATA_TYPE_TINYINT) {
-                        $value = (int) $value;
-                        // @important
-                        if ($value === 0 || $value === 1) $value = (bool) $value;
-                    } elseif ($type == self::DATA_TYPE_BIT) {
-                        $value = (string) $value;
-                        // @important
-                        if ($value === '0' || $value === '1') $value = (bool) $value;
-                    }
+                return ($value === 't') ? true : false;
+        }
+
+        if ($this->mapOptions['bool'] && $properties['length'] === 1) {
+            if ($type == self::DATA_TYPE_TINYINT) {
+                $value = (int) $value;
+                if ($value === 0 || $value === 1) { // @important
+                    $value = (bool) $value;
                 }
+            } elseif ($type == self::DATA_TYPE_BIT) {
+                $value = (string) $value;
+                if ($value === '0' || $value === '1') {
+                    $value = (bool) $value; // @important
+                }
+            }
+        } elseif ($type == self::DATA_TYPE_TINYINT) {
+            // regular cast
+            $value = (int) $value;
         }
 
         return $value;
