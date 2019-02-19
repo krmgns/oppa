@@ -26,10 +26,10 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\{Config, Resource};
+use Oppa\{Config, Resource, Logger, Mapper, Profiler};
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
-use Oppa\Exception\{Error, InvalidKeyException};
+use Oppa\Exception\InvalidValueException;
 
 /**
  * @package Oppa
@@ -86,16 +86,6 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public final function __destruct()
     {
         $this->disconnect();
-    }
-
-    /**
-     * Isset (needed to prevent exception thrown).
-     * @param  string $name
-     * @return bool
-     */
-    public final function __isset($name)
-    {
-        return isset($this->{$name});
     }
 
     /**
@@ -158,13 +148,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Get logger.
-     * @return Oppa\Logger
-     * @throws Oppa\Error
+     * @return ?Oppa\Logger
      */
-    public final function getLogger()
+    public final function getLogger(): ?Logger
     {
         if (!$this->logger) {
-            throw new Error("Logger is not found, did you set 'query_log' option as 'true'?");
+            trigger_error("Logger is not found, did you set 'query_log' option as 'true'?");
         }
 
         return $this->logger;
@@ -172,13 +161,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Get mapper.
-     * @return Oppa\Mapper
-     * @throws Oppa\Error
+     * @return ?Oppa\Mapper
      */
-    public final function getMapper()
+    public final function getMapper(): ?Mapper
     {
         if (!$this->mapper) {
-            throw new Error("Mapper is not found, did you set 'map_result' option as 'true'?");
+            trigger_error("Mapper is not found, did you set 'map_result' option as 'true'?");
         }
 
         return $this->mapper;
@@ -186,13 +174,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Get profiler.
-     * @return Oppa\Profiler
-     * @throws Oppa\Error
+     * @return ?Oppa\Profiler
      */
-    public final function getProfiler()
+    public final function getProfiler(): ?Profiler
     {
         if (!$this->profiler) {
-            throw new Error("Profiler is not found, did you set 'profile' option as 'true'?");
+            trigger_error("Profiler is not found, did you set 'profile' option as 'true'?");
         }
 
         return $this->profiler;
@@ -464,7 +451,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  string $input       Raw SQL complete/not complete.
      * @param  array  $inputParams Binding params.
      * @return string
-     * @throws Oppa\Exception\InvalidKeyException
+     * @throws Oppa\Exception\InvalidValueException
      */
     public final function prepare(string $input, array $inputParams = null): string
     {
@@ -483,7 +470,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     $match[1] = array_unique($match[1]);
                     foreach ($match[1] as $key) {
                         if (!array_key_exists($key, $inputParams)) {
-                            throw new InvalidKeyException("Replacement key '{$key}' not found in params!");
+                            throw new InvalidValueException("Replacement key '{$key}' not found in params!");
                         }
 
                         $keys[] = sprintf('~:%s~', $key);
@@ -503,7 +490,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 if (!empty($match[0])) {
                     foreach ($inputParams as $i => $inputParam) {
                         if (!array_key_exists($i, $match[0])) {
-                            throw new InvalidKeyException("Replacement index '{$i}' key not found in input!");
+                            throw new InvalidValueException("Replacement index '{$i}' key not found in input!");
                         }
 
                         $key = $match[0][$i];
