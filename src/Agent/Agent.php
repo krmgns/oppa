@@ -243,16 +243,28 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Where.
-     * @param  string $where
-     * @param  array  $whereParams
+     * @param  string|array $where
+     * @param  array        $whereParams
+     * @param  string|null  $op
      * @return ?string
      */
-    public final function where(string $where = null, array $whereParams = null): ?string
+    public final function where($where = null, array $whereParams = null, string $op = null): ?string
     {
-        if ($where && $whereParams) {
-            $where = 'WHERE '. $this->prepare($where, $whereParams);
-        } elseif ($where) {
-            $where = 'WHERE '. $where;
+        if ($where != null) {
+            $whereType = gettype($where);
+            if ($whereType == 'array') {
+                $op = strtoupper($op ?: 'AND');
+                if (!in_array($op, ['AND', 'OR'])) {
+                    throw new InvalidValueException("Invalid operator '{$op}' given");
+                }
+                $where = join(' '. $op .' ', $where);
+            } elseif ($whereType != 'string') {
+                throw new InvalidValueException("Invalid where type '{$whereType}' given");
+            }
+
+            $where = ($whereParams != null) ? 'WHERE ('. $this->prepare($where, $whereParams) .')'
+                : 'WHERE ('. $where .')';
+
         }
 
         return $where;
@@ -266,13 +278,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public final function limit($limit): ?string
     {
         if (is_array($limit)) {
-            return isset($limit[0], $limit[1])
-                ? sprintf('LIMIT %d OFFSET %d', $limit[0], $limit[1])
-                : sprintf('LIMIT %d', $limit[0]);
+            @ [$limit, $offset] = array_map('abs', $limit);
+
+            return ($offset !== null) ? 'LIMIT '. $limit .' OFFSET '. $offset : 'LIMIT '. $limit;
         }
 
         if ($limit || $limit === 0 || $limit === '0') {
-            return 'LIMIT '. intval($limit);
+            return 'LIMIT '. abs($limit);
 
         }
 
