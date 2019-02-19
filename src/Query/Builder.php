@@ -28,7 +28,6 @@ namespace Oppa\Query;
 
 use Oppa\Link\Link;
 use Oppa\Query\Result\ResultInterface;
-use Oppa\Exception\InvalidValueException;
 
 /**
  * @package Oppa
@@ -165,7 +164,7 @@ final class Builder
      * @param  bool   $reset
      * @param  string $alias (for sub-select)
      * @return self
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Query\BuilderException
      */
     public function select($field = null, bool $reset = true, string $alias = null): self
     {
@@ -174,7 +173,7 @@ final class Builder
         // handle other query object
         if ($field instanceof Builder) {
             if (empty($alias)) {
-                throw new InvalidValueException('Alias is required!');
+                throw new BuilderException('Alias is required!');
             }
             return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $alias));
         }
@@ -205,7 +204,7 @@ final class Builder
      * @param  string $type
      * @param  bool   $reset
      * @return self
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Query\BuilderException
      */
     public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
     {
@@ -261,7 +260,7 @@ final class Builder
             return $this->select([$query], $reset);
         }
 
-        throw new InvalidValueException('Given JSON type is not implemented.');
+        throw new BuilderException('Given JSON type is not implemented.');
     }
 
     /** Shortcut for self.selectJson() with no reset. */
@@ -438,7 +437,7 @@ final class Builder
 
         if ($queryParams !== null) {
             if (!is_array($queryParams) && !is_scalar($queryParams)) {
-                throw new InvalidValueException(sprintf('Only array or scalar parameters are accepted'.
+                throw new BuilderException(sprintf('Only array or scalar parameters are accepted'.
                     ', %s given!', gettype($queryParams)));
             }
         }
@@ -603,29 +602,29 @@ final class Builder
 
     /**
      * Where like.
-     * @param  string $field
-     * @param  any    $param
+     * @param  string        $field
+     * @param  string        $format
+     * @param  string|scalar $param
      * @param  string $op
      * @return self
      */
-    public function whereLike(string $field, $param, string $op = self::OP_AND): self
+    public function whereLike(string $field, string $format, $param, string $op = self::OP_AND): self
     {
-        $fChar = strval($param[0]);
-        $lChar = substr(strval($param), -1);
-        // both appended
-        if ($fChar == '%' && $lChar == '%') {
-            $param = $fChar . addcslashes(substr($param, 1, -1), '%_') . $lChar;
+        if (!is_scalar($param)) {
+            throw new BuilderException(sprintf('Only string or scalar parameters are accepted'.
+                ', %s given!', gettype($param)));
         }
-        // left appended
-        elseif ($fChar == '%') {
-            $param = $fChar . addcslashes(substr($param, 1), '%_');
-        }
-        // right appended
-        elseif ($lChar == '%') {
-            $param = addcslashes(substr($param, 0, -1), '%_') . $lChar;
-        } // else no willcards
 
-        return $this->where($field .' LIKE ?', [$param], $op);
+        // 'foo%'  Anything starts with "foo"
+        // '%foo'  Anything ends with "foo"
+        // '%foo%' Anything have "foo" in any position
+        // 'f_o%'  Anything have "o" in the second position
+        // 'f_%_%' Anything starts with "f" and are at least 3 characters in length
+        // 'f%o'   Anything starts with "f" and ends with "o"
+
+        @ [$start, $end] = explode('-', $format);
+
+        return $this->where($field. " LIKE '". sprintf('%s%%sl%s', $end, $start) ."'", $param, $op);
     }
 
     /**
@@ -637,7 +636,7 @@ final class Builder
      */
     public function whereLikeStart(string $field, $param, string $op = self::OP_AND): self
     {
-        return $this->whereLike($field, $param. '%', $op);
+        return $this->whereLike($field, '%-', $param, $op);
     }
 
     /**
@@ -649,7 +648,7 @@ final class Builder
      */
     public function whereLikeEnd(string $field, $param, string $op = self::OP_AND): self
     {
-        return $this->whereLike($field, '%'. $param, $op);
+        return $this->whereLike($field, '-%', $param, $op);
     }
 
     /**
@@ -661,7 +660,7 @@ final class Builder
      */
     public function whereLikeBoth(string $field, $param, string $op = self::OP_AND): self
     {
-        return $this->whereLike($field, '%'. $param .'%', $op);
+        return $this->whereLike($field, '%-%', $param, $op);
     }
 
     /**
@@ -673,7 +672,7 @@ final class Builder
      */
     public function whereMatchAgainst(string $field, string $param, string $mode = ''): self
     {
-        return $this->where('MATCH ('. $field .') AGAINST (%s '. ($mode ?: 'IN BOOLEAN MODE') .')', [$param]);
+        return $this->where('match('. $field .') against(%s '. ($mode ?: 'IN BOOLEAN MODE') .')', [$param]);
     }
 
     /**
@@ -788,7 +787,7 @@ final class Builder
      * @param  string $field
      * @param  string $op
      * @return self
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Query\BuilderException
      */
     public function orderBy(string $field, string $op = null): self
     {
@@ -799,7 +798,7 @@ final class Builder
 
         $op = strtoupper($op);
         if ($op != self::OP_ASC && $op != self::OP_DESC) {
-            throw new InvalidValueException('Only available ops: ASC, DESC');
+            throw new BuilderException('Only available ops: ASC, DESC');
         }
 
         return $this->push('orderBy', $this->field($field) .' '. $op);
@@ -842,7 +841,7 @@ final class Builder
      * @param  string      $field
      * @param  string|null $as
      * @return self
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Query\BuilderException
      */
     public function aggregate(string $fn, string $field = '*', string $as = null): self
     {
@@ -850,7 +849,7 @@ final class Builder
 
         $fn = strtolower($fn);
         if (!in_array($fn, $fns)) {
-            throw new InvalidValueException(sprintf('Invalid function %s given, %s are supported only!',
+            throw new BuilderException(sprintf('Invalid function %s given, %s are supported only!',
                 $fn, join(',', $fns)));
         }
 
@@ -1144,7 +1143,7 @@ final class Builder
             $query[] = '('. $param->toString() .')';
         } else {
             if ($param && !is_scalar($param) && !is_array($param)) {
-                throw new InvalidValueException(sprintf('Only scalar or array parameters are accepted'.
+                throw new BuilderException(sprintf('Only scalar or array parameters are accepted'.
                     ', %s given!', gettype($param)));
             }
             $query[] = $this->link->getAgent()->prepare('(?)', (array) $param);
