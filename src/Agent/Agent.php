@@ -382,12 +382,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
         }
 
         if (is_string($input) && strpos($input, '.')) {
-            return join('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
+            return implode('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
         }
 
         $resourceType = $this->resource->getType();
         if ($resourceType == Resource::TYPE_MYSQL_LINK) {
-            $input = '`'. trim($input, '`') .'`';
+            $input = '`'. str_replace('`', '``', trim($input, '`')) .'`';
         } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
             $input = pg_escape_identifier($this->resource->getObject(), trim($input, '"'));
         } else {
