@@ -114,16 +114,19 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public final function getResourceStats(): ?array
     {
         $return = null;
-        if ($this->resource->getType() == Resource::TYPE_MYSQL_LINK) {
-            $result = $this->resource->getObject()->query('SHOW SESSION STATUS');
+
+        $resourceType = $this->resource->getType();
+        $resourceObject = $this->resource->getObject();
+        if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+            $result = $resourceObject->query('SHOW SESSION STATUS');
             while ($row = $result->fetch_assoc()) {
                 $return[strtolower($row['Variable_name'])] = $row['Value'];
             }
             $result->free();
-        } elseif ($this->resource->getType() == Resource::TYPE_PGSQL_LINK) {
-            $result = pg_query($this->resource->getObject(), sprintf("
-                SELECT * FROM pg_stat_activity WHERE usename = '%s'",
-                    pg_escape_string($this->resource->getObject(), $this->config['username'])
+        } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+            $result = pg_query($resourceObject, sprintf(
+                "SELECT * FROM pg_stat_activity WHERE usename = '%s'",
+                    pg_escape_string($resourceObject, $this->config['username'])
             ));
             $resultArray = pg_fetch_all($result);
             if (isset($resultArray[0])) {
@@ -252,6 +255,192 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
+     * Where.
+     * @param  string $where
+     * @param  array  $whereParams
+     * @return ?string
+     */
+    public final function where(string $where = null, array $whereParams = null): ?string
+    {
+        if (!empty($where) && !empty($whereParams)) {
+            $where = 'WHERE '. $this->prepare($where, $whereParams);
+        } elseif (!empty($where)) {
+            $where = 'WHERE '. $where;
+        }
+
+        return $where;
+    }
+
+    /**
+     * Limit.
+     * @param  int|array $limit
+     * @return ?string
+     */
+    public final function limit($limit): ?string
+    {
+        if (is_array($limit)) {
+            return isset($limit[0], $limit[1])
+                ? sprintf('LIMIT %d OFFSET %d', $limit[0], $limit[1])
+                : sprintf('LIMIT %d', $limit[0]);
+        }
+
+        if ($limit || $limit === 0 || $limit === '0') {
+            return 'LIMIT '. intval($limit);
+
+        }
+
+        return null;
+    }
+
+    /**
+     * Escape.
+     * @param  any    $input
+     * @param  string $inputFormat
+     * @return any
+     * @throws Oppa\Exception\InvalidValueException
+     */
+    public function escape($input, string $inputFormat = null)
+    {
+        $inputType = gettype($input);
+
+        // in/not in statements
+        if ($inputType == 'array') {
+            return join(', ', array_map([$this, 'escape'], $input));
+        }
+
+        // escape strings %s and for all formattable types like %d, %f and %F
+        if ($inputFormat && $inputFormat[0] == '%') {
+            if ($inputFormat == '%s') {
+                return $this->escapeString((string) $input);
+            } elseif ($inputFormat == '%sl') {
+                return $this->escapeLikeString((string) $input);
+            } elseif ($inputFormat == '%b') {
+                return $this->escapeBytea((string) $input);
+            }
+            return sprintf($inputFormat, $input);
+        }
+
+        switch ($inputType) {
+            case 'NULL':
+                return 'NULL';
+            case 'string':
+                return $this->escapeString($input);
+            case 'integer':
+                return $input;
+            case 'boolean':
+                return $input ? 'TRUE' : 'FALSE';
+            case 'double':
+                return sprintf('%F', $input); // %F = non-locale aware
+            default:
+                // no escape raws sql inputs like NOW(), ROUND(total) etc.
+                if ($input instanceof Sql) {
+                    return $input->toString();
+                }
+
+                throw new InvalidValueException("Unimplemented '{$inputType}' type encountered!");
+        }
+
+        return $input;
+    }
+
+    /**
+     * Escape string.
+     * @param  string $input
+     * @param  bool   $quote
+     * @return string
+     * @throws Oppa\Agent\AgentException
+     */
+    public function escapeString(string $input, bool $quote = true): string
+    {
+        $resourceType = $this->resource->getType();
+        if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+            $input = $this->resource->getObject()->real_escape_string($input);
+        } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+            $input = pg_escape_string($this->resource->getObject(), $input);
+        } else {
+            throw new AgentException('Cannot escape input, available for Mysql and Pgsql only!');
+        }
+
+        if ($quote) {
+            $input = "'{$input}'";
+        }
+
+        return $input;
+    }
+
+    /**
+     * Escape like string.
+     * @param  string $input
+     * @return string
+     */
+    public function escapeLikeString(string $input): string
+    {
+        return addcslashes($this->escapeString($input, false), '%_');
+    }
+
+    /**
+     * Escape identifier.
+     * @param  string|array $input
+     * @return string
+     * @throws Oppa\Agent\AgentException
+     */
+    public function escapeIdentifier($input): string
+    {
+        if ($input == '*') {
+            return $input;
+        }
+
+        if (is_array($input)) {
+            return join(', ', array_map([$this, 'escapeIdentifier'], $input));
+        }
+
+        if (is_string($input) && strpos($input, '.')) {
+            return join('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
+        }
+
+        $resourceType = $this->resource->getType();
+        if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+            $input = '`'. trim($input, '`') .'`';
+        } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+            $input = pg_escape_identifier($this->resource->getObject(), trim($input, '"'));
+        } else {
+            throw new AgentException('Cannot escape identifier, available for Mysql and Pgsql only!');
+        }
+
+        return $input;
+    }
+
+    /**
+     * Escape bytea.
+     * @param  string $input
+     * @return string
+     * @throws Oppa\Agent\AgentException
+     */
+    public function escapeBytea(string $input): string
+    {
+        if ($this->resource->getType() != Resource::TYPE_PGSQL_LINK) {
+            throw new AgentException('escapeBytea() available for only Pgsql!');
+        }
+
+        return pg_escape_bytea($this->resource->getObject(), $input);
+    }
+
+    /**
+     * Unescape bytea.
+     * @param  string $input
+     * @return string
+     * @throws Oppa\Agent\AgentException
+     */
+    public function unescapeBytea(string $input): string
+    {
+        if ($this->resource->getType() != Resource::TYPE_PGSQL_LINK) {
+            throw new AgentException('unescapeBytea() available for only Pgsql!');
+        }
+
+        return pg_unescape_bytea($input);
+    }
+
+    /**
      * Why not using prepared statements? Yeah! This is the matter...
      *
      * Fuck! Cos i cannot do this, with ie. mysqli preparing;
@@ -308,9 +497,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
 
             // available indicator: "?"
-            // available operators with type definition: "%s, %i, %f, %v, %n"
+            // available operators with type definition: "%s, %i, %f, %v, %n, %sl"
             if ($hasFormat) {
-                preg_match_all('~\?|%[sifvn]~', $input, $match);
+                preg_match_all('~\?|%sl|%[sifvn]~', $input, $match);
                 if (!empty($match[0])) {
                     foreach ($inputParams as $i => $inputParam) {
                         if (!array_key_exists($i, $match[0])) {
@@ -338,43 +527,5 @@ abstract class Agent extends AgentCrud implements AgentInterface
         }
 
         return $input;
-    }
-
-    /**
-     * Where.
-     * @param  string $where
-     * @param  array  $whereParams
-     * @return ?string
-     */
-    public final function where(string $where = null, array $whereParams = null): ?string
-    {
-        if (!empty($where) && !empty($whereParams)) {
-            $where = 'WHERE '. $this->prepare($where, $whereParams);
-        } elseif (!empty($where)) {
-            $where = 'WHERE '. $where;
-        }
-
-        return $where;
-    }
-
-    /**
-     * Limit.
-     * @param  int|array $limit
-     * @return ?string
-     */
-    public final function limit($limit): ?string
-    {
-        if (is_array($limit)) {
-            return isset($limit[0], $limit[1])
-                ? sprintf('LIMIT %d OFFSET %d', $limit[0], $limit[1])
-                : sprintf('LIMIT %d', $limit[0]);
-        }
-
-        if ($limit || $limit === 0 || $limit === '0') {
-            return 'LIMIT '. intval($limit);
-
-        }
-
-        return null;
     }
 }
