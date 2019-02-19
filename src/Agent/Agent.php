@@ -249,9 +249,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function where(string $where = null, array $whereParams = null): ?string
     {
-        if (!empty($where) && !empty($whereParams)) {
+        if ($where && $whereParams) {
             $where = 'WHERE '. $this->prepare($where, $whereParams);
-        } elseif (!empty($where)) {
+        } elseif ($where) {
             $where = 'WHERE '. $where;
         }
 
@@ -461,7 +461,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             $inputParams = [null]; // fix missing replacement
         }
 
-        if (!empty($inputParams)) {
+        if ($inputParams) {
             // available named word limits: :foo, :foo123, :foo_bar
             if ($hasColon) {
                 preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
