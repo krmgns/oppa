@@ -821,6 +821,22 @@ final class Builder
     }
 
     /**
+     * Offset.
+     * @param  int $offset
+     * @return self
+     */
+    public function offset(int $offset): self
+    {
+        if (!isset($this->query['limit'][0])) {
+            throw new BuilderException('Limit not set yet, call Builder::limit() first');
+        }
+
+        $this->query['limit'][1] = abs($offset);
+
+        return $this;
+    }
+
+    /**
      * Aggregate.
      * @param  string      $fn
      * @param  string      $field
