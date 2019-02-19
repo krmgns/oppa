@@ -28,7 +28,7 @@ namespace Oppa\Agent;
 
 use Oppa\SqlState\SqlState;
 use Oppa\Query\{Sql, Result};
-use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource};
+use Oppa\{Util, Config, Logger, Mapper, Profiler, Batch, Resource, Cache};
 use Oppa\Exception\{QueryException, ConnectionException,
     InvalidValueException, InvalidConfigException, InvalidQueryException, InvalidResourceException};
 
@@ -152,28 +152,37 @@ final class Pgsql extends Agent
 
         // fill mapper map for once
         if ($this->mapper) {
-            try {
-                $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, character_maximum_length
-                    FROM information_schema.columns WHERE table_schema = 'public'", null, -1, 1);
-                if ($result->count()) {
-                    $map = [];
-                    foreach ($result->getData() as $data) {
-                        $length = null;
-                        // detect length (used for only bool's)
-                        if ($data->data_type == Mapper::DATA_TYPE_BIT) {
-                            $length = (int) $data->character_maximum_length;
+            $cache = new Cache();
+            $cache->read('mapper.map', $map);
+            if (!$map) {
+                try {
+                    $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, character_maximum_length
+                        FROM information_schema.columns WHERE table_schema = 'public'", null, -1, 2);
+                    if ($result->count()) {
+                        $map = [];
+                        foreach ($result->getData() as $data) {
+                            $data = (object) array_change_key_case($data); // normalize key cases
+                            $length = null;
+                            // detect length (used for only bool's)
+                            if ($data->data_type == Mapper::DATA_TYPE_BIT) {
+                                $length = (int) $data->character_maximum_length;
+                            }
+                            $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
+                            $map[$data->table_name][$data->column_name]['length'] = $length;
+                            $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
                         }
-                        $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
-                        $map[$data->table_name][$data->column_name]['length'] = $length;
-                        $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
+
+                        $cache->write('mapper.map', $map);
                     }
-                    $this->mapper->setMap($map);
+                    $result->reset();
+                } catch (QueryException $e) {
+                    throw new ConnectionException('Could not retrieve schema info for mapper!', null,
+                        SqlState::OPPA_CONNECTION_ERROR, $e);
                 }
-                $result->reset();
-            } catch (QueryException $e) {
-                throw new ConnectionException('Could not retrieve schema info for mapper!',
-                    null, SqlState::OPPA_CONNECTION_ERROR, $e);
             }
+
+            // set map
+            $this->mapper->setMap($map);
         }
     }
 
