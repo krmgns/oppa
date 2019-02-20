@@ -253,7 +253,7 @@ final class Mysql extends Agent
 
         // query & query profile
         $this->profiler && $this->profiler->start(Profiler::QUERY);
-        $result = $resource->query($query);
+        $result =@ $resource->query($query);
         $this->profiler && $this->profiler->stop(Profiler::QUERY);
 
         if (!$result) {
