@@ -233,11 +233,13 @@ final class Pgsql extends Agent
             throw new InvalidResourceException('No valid connection resource to make a query!');
         }
 
-        $query = $this->prepare($query, $queryParams);
+        if ($queryParams != null) {
+            $query = $this->prepare($query, $queryParams);
+        }
 
         // log query with info level
-        $this->logger && $this->logger->log(Logger::INFO, sprintf(
-            'New query [%s] via %s addr.', $query, Util::getIp()));
+        $this->logger && $this->logger->log(Logger::INFO, sprintf('New query [%s] via %s addr.',
+            $query, Util::getIp()));
 
         // increase query count, add last query profiler
         if ($this->profiler) {
