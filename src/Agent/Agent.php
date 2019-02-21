@@ -385,15 +385,19 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function escapeIdentifier($input): string
     {
+        $inputType = gettype($input);
+        if ($inputType == 'array') {
+            return join(', ', array_map([$this, 'escapeIdentifier'], $input));
+        } elseif ($inputType != 'string') {
+            throw new AgentException(sprintf('Array or string identifiers accepted only, %s given!', $inputType));
+        }
+
+        $input = trim($input);
         if ($input == '*') {
             return $input;
         }
 
-        if (is_array($input)) {
-            return join(', ', array_map([$this, 'escapeIdentifier'], $input));
-        }
-
-        if (is_string($input) && strpos($input, '.')) {
+        if (strpos($input, '.')) {
             return implode('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
         }
 
