@@ -85,21 +85,21 @@ final class Database
 
     /**
      * Get info.
-     * @return ?array
+     * @param  string|null $key
+     * @return any
      */
-    public function getInfo(): ?array
+    public function getInfo(string $key = null)
     {
         if ($this->info == null) {
-            $agent = $this->linker->getLink()->getAgent();
-            $resource = $agent->getResource();
+            $resource = $this->linker->getLink()->getAgent()->getResource();
             $resourceType = $resource->getType();
 
             $serverVersion = $clientVersion = null;
 
             if ($resourceType == Resource::TYPE_MYSQL_LINK) {
                 $object = $resource->getObject();
-                foreach (get_class_vars(get_class($object)) as $key => $_) {
-                    $this->info[$key] = $object->{$key};
+                foreach (get_class_vars(get_class($object)) as $var => $_) {
+                    $this->info[$var] = $object->{$var};
                 }
                 $serverVersion = preg_replace('~\s*([^ ]+).*~', '\1', $object->server_info);
                 $clientVersion = preg_replace('~(?:[a-z]+\s+)?([^ ]+).*~i', '\1', $object->client_info);
@@ -113,7 +113,7 @@ final class Database
             $this->info['clientVersion'] = $clientVersion;
         }
 
-        return $this->info;
+        return ($key == null) ? $this->info : $this->info[$key] ?? null;
     }
 
     /**
