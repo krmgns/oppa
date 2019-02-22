@@ -224,7 +224,7 @@ final class Builder
 
             $serverVersion = $this->link->getDatabase()->getInfo('serverVersion');
 
-            if (!version_compare($serverVersion, $serverVersionMin)) {
+            if (version_compare($serverVersion, $serverVersionMin) == -1) {
                 throw new BuilderException(sprintf('JSON not supported by %s/v%s, minimum v%s required',
                     $server, $serverVersion, $serverVersionMin));
             }
