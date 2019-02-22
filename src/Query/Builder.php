@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Query;
 
+use Oppa\Resource;
 use Oppa\Link\Link;
 use Oppa\Query\Result\ResultInterface;
 
@@ -49,13 +50,6 @@ final class Builder
      */
     public const OP_ASC      = 'ASC',
                  OP_DESC     = 'DESC';
-
-    /**
-     * Select type for JSON returns.
-     * @const string
-     */
-    public const JSON_ARRAY  = 'array',
-                 JSON_OBJECT = 'object';
 
     /**
      * Link.
@@ -160,22 +154,22 @@ final class Builder
 
     /**
      * Select.
-     * @param  any    $field
-     * @param  bool   $reset
-     * @param  string $alias (for sub-select)
+     * @param  string|array|Builder $field
+     * @param  string               $as (for sub-selects)
+     * @param  bool                 $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function select($field = null, bool $reset = true, string $alias = null): self
+    public function select($field = null, string $as = null, bool $reset = true): self
     {
         $reset && $this->reset();
 
         // handle other query object
         if ($field instanceof Builder) {
-            if (empty($alias)) {
+            if (empty($as)) {
                 throw new BuilderException('Alias is required!');
             }
-            return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $alias));
+            return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $as));
         }
 
         // handle json select
@@ -186,111 +180,87 @@ final class Builder
         // pass for aggregate method, e.g select().aggregate('count', 'id')
         if (empty($field)) {
             $field = ['1'];
+        } else {
+            $field = trim($field, ', ');
         }
 
-        return $this->push('select', trim($field, ', '));
+        return $this->push('select', $field);
     }
 
-    /** Shortcut for self.select() with no reset. */
-    public function selectMore($field, string $alias = null): self
+    /**
+     * Select more.
+     * @param  string|array|Builder $field
+     * @param  string|null          $as
+     * @return self
+     */
+    public function selectMore($field, string $as = null): self
     {
-        return $this->select($field, false, $alias);
+        return $this->select($field, $as, false);
     }
 
     /**
      * Select json.
-     * @param  any    $field
+     * @param  string $field
      * @param  string $as
      * @param  string $type
      * @param  bool   $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function selectJson($field, string $as, string $type = self::JSON_OBJECT, bool $reset = true): self
+    public function selectJson(string $field, string $as, string $type = 'object', bool $reset = true): self
     {
-        if (is_string($field)) {
-            // field1, field2 ..
-            $field = array_map('trim', explode(',', $field));
+        static $agent, $resourceType, $server, $serverVersion, $serverVersionMin, $jsonObject, $jsonArray;
+        if ($agent == null) {
+            $agent = $this->link->getAgent();
+            $resourceType = $agent->getResource()->getType();
+
+            if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+                $server = 'MySQL'; $serverVersionMin = '5.7.8';
+                $jsonObject = 'json_object'; $jsonArray = 'json_array';
+            } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+                $server = 'PostgreSQL'; $serverVersionMin = '9.4';
+                $jsonObject = 'json_build_object'; $jsonArray = 'json_build_array';
+            }
+
+            $serverVersion = $this->link->getDatabase()->getInfo('serverVersion');
+
+            if (!version_compare($serverVersion, $serverVersionMin)) {
+                throw new BuilderException(sprintf('JSON not supported by %s/v%s, minimum v%s required',
+                    $server, $serverVersion, $serverVersionMin));
+            }
         }
 
         $query = [];
-        // json object
-        if ($type == self::JSON_OBJECT) {
-            foreach ($field as $field) {
-                $key = $field;
-                // handle "a.field foo" or "a.field as foo"
-                $tmp = preg_split('~[\s\.](?:as|)~i', $key, -1, PREG_SPLIT_NO_EMPTY);
-                if (isset($tmp[2])) {
-                    $key = $tmp[2];
-                    $field = substr($field, 0, strpos($field, ' '));
-                } elseif (isset($tmp[1])) {
-                    $key = $tmp[1];
-                }
-                // generate sub-concat escaping quots
-                $query[] = sprintf("'\"%s\":\"', REPLACE(%s, '\"', '\\\\\"'), '\",'", $key, $field);
+        foreach ($this->split('\s*,\s*', $field) as $tmp) {
+            $tmp = $this->split('\s*:\s*', $tmp);
+            if (!isset($tmp[0], $tmp[1])) {
+                throw new BuilderException('Both field name and value should be given!');
             }
-
-            // generate concat
-            $query = sprintf('CONCAT("{", %s, "}") AS %s', join(', ', $query), $as);
-            // yes, ugly but preferable instead of too many concat call or group_concat limit
-            // so it's working! tnx: http://www.thomasfrank.se/mysql_to_json.html
-            $query = str_replace(',\', "}")', '\'"}")', $query);
-
-            return $this->select([$query], $reset);
+            $query[] = $agent->escape($tmp[0]);
+            $query[] = $agent->escapeIdentifier($tmp[1]);
         }
 
-        // json array
-        if ($type == self::JSON_ARRAY) {
-            foreach ($field as $field) {
-                $key = $field;
-                // handle "a.field foo" or "a.field as foo"
-                if ($pos = strpos($field, ' ')) {
-                    $key = substr($field, 0, $pos);
-                }
-                // generate sub-concat escaping quots
-                $query[] = sprintf("'\"', REPLACE(%s, '\"', '\\\\\"'), '\",'", $key, $field);
-            }
-
-            // generate concat
-            $query = sprintf('CONCAT("[", %s, "]") AS %s', join(', ', $query), $as);
-            // yes, ugly but preferable instead of too many concat call or group_concat limit
-            // so it's working! tnx: http://www.thomasfrank.se/mysql_to_json.html
-            $query = str_replace(',\', "]")', '\'"]")', $query);
-
-            return $this->select([$query], $reset);
+        if ($type == 'object') {
+            $query = sprintf('%s(%s) AS %s', $jsonObject, join(', ', $query), $as);
+        } elseif ($type == 'array') {
+            $query = sprintf('%s(%s) AS %s', $jsonArray, join(', ', $query), $as);
+        } else {
+            throw new BuilderException("Given JSON type '{$type}' is not implemented!");
         }
 
-        throw new BuilderException('Given JSON type is not implemented.');
+        return $this->select($query, $as, $reset);
     }
 
-    /** Shortcut for self.selectJson() with no reset. */
-    public function selectMoreJson($field, string $as, string $type = self::JSON_OBJECT): self
+    /**
+     * Select more json.
+     * @param  string $field
+     * @param  string $as
+     * @param  string $type
+     * @return self
+     */
+    public function selectMoreJson(string $field, string $as, string $type = 'object'): self
     {
         return $this->selectJson($field, $as, $type, false);
-    }
-
-    /** Shortcut for self.selectJson() with JSON_OBJECT type. */
-    public function selectJsonObject($field, string $as, bool $reset = true): self
-    {
-        return $this->selectJson($field, $as, self::JSON_OBJECT, $reset);
-    }
-
-    /** Shortcut for self.selectJson() with JSON_OBJECT type with no reset. */
-    public function selectMoreJsonObject($field, string $as): self
-    {
-        return $this->selectMoreJson($field, $as, self::JSON_OBJECT);
-    }
-
-    /** Shortcut for self.selectJson() with JSON_ARRAY type. */
-    public function selectJsonArray($field, string $as, bool $reset = true): self
-    {
-        return $this->selectJson($field, $as, self::JSON_ARRAY, $reset);
-    }
-
-    /** Shortcut for self.selectJson() with JSON_ARRAY type with no reset. */
-    public function selectMoreJsonArray($field, string $as): self
-    {
-        return $this->selectMoreJson($field, $as, self::JSON_ARRAY);
     }
 
     /**
@@ -302,7 +272,7 @@ final class Builder
     public function from($field, string $as = null): self
     {
         $from = $this->field($field);
-        if ($as) {
+        if ($as != null) {
             $from = sprintf('(%s) AS %s', $from, $as);
         }
 
@@ -855,7 +825,7 @@ final class Builder
 
         $field = $field ?: '*';
 
-        // if alias not provided
+        // if as not provided
         if ($as == '') {
             // aggregate('count', 'x') count_x
             // aggregate('count', 'u.x') count_ux
@@ -1150,5 +1120,16 @@ final class Builder
         }
 
         return join(' ', array_filter($query));
+    }
+
+    /**
+     * Split.
+     * @param  string $pattern
+     * @param  string $input
+     * @return array
+     */
+    private function split(string $pattern, string $input): array
+    {
+        return (array) preg_split('~'. trim($pattern, '~') .'~', $input, -1, PREG_SPLIT_NO_EMPTY);
     }
 }
