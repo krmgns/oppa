@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Link;
 
-use Oppa\{Util, Config};
+use Oppa\{Util, Database, Config};
 use Oppa\Exception\InvalidConfigException;
 
 /**
@@ -36,6 +36,18 @@ use Oppa\Exception\InvalidConfigException;
  */
 final class Linker
 {
+    /**
+     * Link trait.
+     * @object Oppa\Link\LinkTrait
+     */
+    use LinkTrait;
+
+    /**
+     * Database.
+     * @var Oppa\Database
+     */
+    protected $database;
+
     /**
      * Config.
      * @var Oppa\Config
@@ -50,13 +62,15 @@ final class Linker
 
     /**
      * Constructor.
-     * @note  For all methods in this object, "$host" parameter is important, cos
-     * it is used as a key to prevent to create new links in excessive way.
-     * Thus, host will be always set, even user does not pass/provide it.
-     * @param Oppa\Config $config
+     * @param Oppa\Database $database
+     * @param Oppa\Config   $config
+     * @note  For all methods in this object, config `host` parameter is important,
+     * cos it is used as a key to prevent to create new links in excessive way. Thus,
+     * host will be always set, even user does not pass/provide it.
      */
-    public function __construct(Config $config)
+    public function __construct(Database $database, Config $config)
     {
+        $this->database = $database;
         $this->config = $config;
     }
 
@@ -133,7 +147,7 @@ final class Linker
 
         // create a new link if not exists
         if (!isset($this->links[$host])) {
-            $link = new Link($type, $host, new Config($config));
+            $link = new Link($this->database, new Config($config), $type, $host);
             $link->open();
             // add link to links stack
             $this->setLink($host, $link);

@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Link;
 
-use Oppa\Config;
+use Oppa\{Database, Config};
 use Oppa\Agent\{AgentInterface, Mysql, Pgsql};
 
 /**
@@ -59,6 +59,24 @@ final class Link
                  TYPE_SLAVE            = 'slave';
 
     /**
+     * Link trait.
+     * @object Oppa\Link\LinkTrait
+     */
+    use LinkTrait;
+
+    /**
+     * Database.
+     * @var Oppa\Database
+     */
+    protected $database;
+
+    /**
+     * Config.
+     * @var Oppa\Config
+     */
+    protected $config;
+
+    /**
      * Type.
      * @var string
      */
@@ -83,22 +101,18 @@ final class Link
     protected $agentName;
 
     /**
-     * Config.
-     * @var Oppa\Config
-     */
-    protected $config;
-
-    /**
      * Constructor.
-     * @param string $type
-     * @param string $host
-     * @param array  $config
+     * @param Oppa\Database $database
+     * @param Oppa\Config   $config
+     * @param string        $type
+     * @param string        $host
      */
-    public function __construct(string $type, string $host, Config $config)
+    public function __construct(Database $database, Config $config, string $type, string $host)
     {
+        $this->database = $database;
+        $this->config = $config;
         $this->type = $type;
         $this->host = $host;
-        $this->config = $config;
 
         // attach agent
         $this->attachAgent();
@@ -149,15 +163,6 @@ final class Link
     }
 
     /**
-     * Get config.
-     * @return Oppa\Config
-     */
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
-    /**
      * Open.
      * @return void
      */
@@ -205,7 +210,7 @@ final class Link
                 $this->agent = new Pgsql($this->config);
                 break;
             default:
-                throw new \RuntimeException("Sorry, but '{$this->agentName}' agent not implemented!");
+                throw new LinkException("Sorry, but '{$this->agentName}' agent not implemented!");
         }
     }
 

@@ -59,7 +59,7 @@ final class Database
      */
     public function __construct(array $config)
     {
-        $this->linker = new Linker(new Config($config));
+        $this->linker = new Linker($this, new Config($config));
         // provide some speed instead using method_exists() each __call() exec
         $this->linkerMethods = array_fill_keys(get_class_methods($this->linker), true);
     }
@@ -67,20 +67,19 @@ final class Database
     /**
      * Call magic (forwards all non-exists methods to Linker).
      * @link   Proxy pattern <https://en.wikipedia.org/wiki/Proxy_pattern>
-     * @param  string $method
-     * @param  array  $methodArgs
+     * @param  string     $method
+     * @param  array|null $methodArgs
      * @return any
-     * @throws \BadMethodCallException
+     * @throws Oppa\OppaException
      */
-    public function __call(string $method, array $methodArgs = [])
+    public function __call(string $method, array $methodArgs = null)
     {
-        if (isset($this->linkerMethods[$method])) {
-            return call_user_func_array([$this->linker, $method], $methodArgs);
+        if (!isset($this->linkerMethods[$method])) {
+            throw new OppaException(sprintf("No method such '%s()' on '%s' or '%s' objects!",
+                $method, Database::class, Linker::class));
         }
 
-        throw new \BadMethodCallException(sprintf(
-            "No method such '%s()' on '%s' or '%s' objects!",
-                $method, Database::class, Linker::class));
+        return call_user_func_array([$this->linker, $method], $methodArgs);
     }
 
     /**
