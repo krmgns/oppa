@@ -83,9 +83,38 @@ final class Database
                 $method, Database::class, Linker::class));
     }
 
-    // @wait
-    public function getInfo()
-    {}
+    /**
+     * Get info.
+     * @return ?array
+     */
+    public function getInfo(): ?array
+    {
+        if ($this->info == null) {
+            $agent = $this->linker->getLink()->getAgent();
+            $resource = $agent->getResource();
+            $resourceType = $resource->getType();
+
+            $serverVersion = $clientVersion = null;
+
+            if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+                $object = $resource->getObject();
+                foreach (get_class_vars(get_class($object)) as $key => $_) {
+                    $this->info[$key] = $object->{$key};
+                }
+                $serverVersion = preg_replace('~\s*([^ ]+).*~', '\1', $object->server_info);
+                $clientVersion = preg_replace('~(?:[a-z]+\s+)?([^ ]+).*~i', '\1', $object->client_info);
+            } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+                $this->info = pg_version($resource->getObject());
+                $serverVersion = preg_replace('~\s*([^ ]+).*~', '\1', $this->info['server']);
+                $clientVersion = preg_replace('~\s*([^ ]+).*~', '\1', $this->info['client']);
+            }
+
+            $this->info['serverVersion'] = $serverVersion;
+            $this->info['clientVersion'] = $clientVersion;
+        }
+
+        return $this->info;
+    }
 
     /**
      * Get linker.
