@@ -363,16 +363,12 @@ final class Pgsql extends Agent
             if (isset($match['sql_state'], $match['message'])) {
                 $return['sql_state'] = $match['sql_state'];
                 // line & query details etc.
-                if (isset($error[2])) {
-                    preg_match('~(LINE\s+(?<line>\d+):\s+).+~', $error[1], $match2);
-                    if (isset($match2['line'])) {
-                        $errorMessage = sprintf('%s, line %d. Query: "%s"',
-                            ucfirst($match['message']), $match2['line'], $query);
-                    }
+                if (count($error) == 3 && preg_match('~(LINE\s+(?<line>\d+):\s+).+~', $error[1], $match2)) {
+                    $return['message'] = sprintf('%s, line %d. Query: "%s".', ucfirst($match['message']),
+                        $match2['line'], $query);
                 } else {
-                    $errorMessage = $match['message'];
+                    $return['message'] = $match['message'] .'.';
                 }
-                $return['message'] = $errorMessage .'.';
             }
         }
 
