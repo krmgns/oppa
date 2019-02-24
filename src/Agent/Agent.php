@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
-use Oppa\{Config, Resource, Logger, Mapper, Profiler};
+use Oppa\{Util, Config, Resource, Logger, Mapper, Profiler};
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
 use Oppa\Exception\InvalidValueException;
@@ -400,6 +400,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
         $input = trim($input);
         if ($input == '*') {
             return $input;
+        }
+
+        // multiple fields
+        if (strpos($input, ',')) {
+            return $this->escapeIdentifier(Util::split('\s*,\s*~', $input));
         }
 
         // aliases
