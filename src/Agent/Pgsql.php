@@ -289,12 +289,14 @@ final class Pgsql extends Agent
     public function count(string $table, $where = null, array $whereParams = null, string $op = null): ?int
     {
         if ($where != null) {
-            $result = (object) $this->get('SELECT count(*) AS count FROM %n %v', [$table,
+            $query = $this->prepare('SELECT count(*) AS count FROM %n %v', [$table,
                 $this->where($where, $whereParams)]);
         } else {
-            $result = (object) $this->get('SELECT reltuples::bigint AS count FROM pg_class WHERE '.
+            $query = $this->prepare('SELECT reltuples::bigint AS count FROM pg_class WHERE '.
                 'oid = \'%n\'::regclass', [$table]);
         }
+
+        $result = (object) $this->get($query);
 
         return isset($result->count) ? intval($result->count) : null;
     }
