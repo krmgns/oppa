@@ -133,9 +133,6 @@ final class Mysql extends Agent
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
 
-        // assign resource
-        $this->resource = new Resource($resource);
-
         // set charset for connection
         if (isset($this->config['charset'])) {
             $run = $resource->set_charset($this->config['charset']);
@@ -148,13 +145,16 @@ final class Mysql extends Agent
 
         // set timezone for connection
         if (isset($this->config['timezone'])) {
-            $run = $resource->query($this->prepare('SET time_zone = ?', [$this->config['timezone']]));
+            $run = $resource->query('SET time_zone = \''. $resource->real_escape_string($this->config['timezone']) .'\'');
             if (!$run) {
                 throw new ConnectionException(sprintf('Unable to connect to MySQL server at "%s", '.
                     'invalid or not-supported timezone "%s" given.', $this->config['host'], $this->config['timezone']),
                         $resource->errno, SqlState::OPPA_TIMEZONE_ERROR);
             }
         }
+
+        // assign resource
+        $this->resource = new Resource($resource);
 
         // fill mapper map for once
         if ($this->mapper) {
