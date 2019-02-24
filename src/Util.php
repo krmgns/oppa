@@ -97,6 +97,17 @@ final /* static */ class Util
     }
 
     /**
+     * Split.
+     * @param  string $pattern
+     * @param  string $input
+     * @return array
+     */
+    public static function split(string $pattern, string $input): array
+    {
+        return (array) preg_split('~'. trim($pattern, '~') .'~', $input, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
      * Generate deprecated message.
      * @param  string|object   $class
      * @param  string          $oldStuff
