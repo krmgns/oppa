@@ -402,6 +402,16 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return $input;
         }
 
+        // aliases
+        if (strpos($input, ' ')) {
+            return preg_replace_callback('~([^\s]+)\s+(AS\s+)?(\w+)~i', function ($_) {
+                return $this->escapeIdentifier($_[1]) . (
+                    ($as = trim($_[2])) ? ' '. strtoupper($as) .' ' : ' '
+                ) . $this->escapeIdentifier($_[3]);
+            }, $input);
+        }
+
+        // dots
         if (strpos($input, '.')) {
             return implode('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
         }
