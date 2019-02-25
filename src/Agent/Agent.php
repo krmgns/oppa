@@ -29,7 +29,6 @@ namespace Oppa\Agent;
 use Oppa\{Util, Config, Resource, Logger, Mapper, Profiler};
 use Oppa\Batch\BatchInterface;
 use Oppa\Query\Result\ResultInterface;
-use Oppa\Exception\InvalidValueException;
 
 /**
  * @package Oppa
@@ -200,9 +199,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function getName(): string
     {
-        $className = get_called_class();
+        $name = static::class;
 
-        return strtolower(substr($className, strrpos($className, '\\') + 1));
+        return strtolower(substr($name, strrpos($name, '\\') + 1));
     }
 
     /**
@@ -247,6 +246,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  array        $whereParams
      * @param  string|null  $op
      * @return ?string
+     * @throws Oppa\Agent\AgentException
      */
     public final function where($where = null, array $whereParams = null, string $op = null): ?string
     {
@@ -255,11 +255,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
             if ($whereType == 'array') {
                 $op = strtoupper($op ?: 'AND');
                 if (!in_array($op, ['AND', 'OR'])) {
-                    throw new InvalidValueException("Invalid operator '{$op}' given");
+                    throw new AgentException("Invalid operator '{$op}' given");
                 }
                 $where = join(' '. $op .' ', $where);
             } elseif ($whereType != 'string') {
-                throw new InvalidValueException("Invalid where type '{$whereType}' given");
+                throw new AgentException("Invalid where type '{$whereType}' given");
             }
 
             $where = ($whereParams != null) ? 'WHERE ('. $this->prepare($where, $whereParams) .')'
@@ -296,7 +296,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * @param  any    $input
      * @param  string $inputFormat
      * @return any
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Agent\AgentException
      */
     public function escape($input, string $inputFormat = null)
     {
@@ -314,7 +314,10 @@ abstract class Agent extends AgentCrud implements AgentInterface
             } elseif ($inputFormat == '%sl') {
                 return $this->escapeLikeString((string) $input);
             } elseif ($inputFormat == '%b') {
-                return $this->escapeBytea((string) $input);
+                if (!is_bool($input)) {
+                    throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
+                }
+                return $input ? 'TRUE' : 'FALSE';
             }
             return sprintf($inputFormat, $input);
         }
@@ -336,7 +339,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     return $input->toString();
                 }
 
-                throw new InvalidValueException("Unimplemented '{$inputType}' type encountered!");
+                throw new AgentException("Unimplemented '{$inputType}' type encountered!");
         }
 
         return $input;
@@ -398,13 +401,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
         }
 
         $input = trim($input);
-        if ($input == '*') {
+        if ($input == '' || $input == '*') {
             return $input;
         }
 
         // multiple fields
         if (strpos($input, ',')) {
-            return $this->escapeIdentifier(Util::split('\s*,\s*~', $input));
+            return $this->escapeIdentifier(Util::split('\s*,\s*', $input));
         }
 
         // aliases
@@ -485,56 +488,65 @@ abstract class Agent extends AgentCrud implements AgentInterface
      *
      * Prepare.
      * @param  string $input       Raw SQL complete/not complete.
-     * @param  array  $inputParams Binding params.
+     * @param  array  $inputParams Binding parameters.
      * @return string
-     * @throws Oppa\Exception\InvalidValueException
+     * @throws Oppa\Agent\AgentException
      */
     public final function prepare(string $input, array $inputParams = null): string
     {
         $hasColon = strpos($input, ':') !== false;
         $hasFormat = strpbrk($input, '?%') !== false;
-        if (($hasColon || $hasFormat) && ($inputParams === null || $inputParams === [])) {
-            $inputParams = [null]; // fix missing replacement
+        if (($hasColon || $hasFormat) && $inputParams == null) {
+            // $inputParams = [null]; // fix missing replacement
+            throw new AgentException('Found prepare operators but no parameters given to prepare');
         }
 
-        if ($inputParams) {
+        if ($inputParams != null) {
             // available named word limits: :foo, :foo123, :foo_bar
             if ($hasColon) {
                 preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
-                if (!empty($match[1])) {
+                $operators = $match[1] ?? null;
+                if ($operators != null) {
                     $keys = $values = [];
-                    $match[1] = array_unique($match[1]);
-                    foreach ($match[1] as $key) {
+                    $operators = array_unique($operators);
+                    foreach ($operators as $key) {
                         if (!array_key_exists($key, $inputParams)) {
-                            throw new InvalidValueException("Replacement key '{$key}' not found in params!");
+                            throw new AgentException("Replacement key '{$key}' not found in parameters!");
                         }
 
                         $keys[] = sprintf('~:%s~', $key);
                         $values[] = $this->escape($inputParams[$key]);
 
-                        // remove used params
+                        // remove used parameters
                         unset($inputParams[$key]);
                     }
                     $input = preg_replace($keys, $values, $input);
                 }
             }
 
-            // available indicator: "?"
-            // available operators with type definition: "%s, %i, %f, %v, %n, %sl"
+            // available indicator: "??, ?"
+            // available operators with type definition: "%sl, %s, %i, %f, %v, %n"
             if ($hasFormat) {
-                preg_match_all('~\?|%sl|%[sifvn]~', $input, $match);
-                if (!empty($match[0])) {
+                preg_match_all('~\?\?|\?|%sl|%[sifvnb]~', $input, $match);
+                $operators = $match[0] ?? null;
+                if ($operators != null) {
+                    $inputParams = array_values($inputParams);
+                    if (($operatorsCount = count($operators)) != ($inputParamsCount = count($inputParams))) {
+                        throw new AgentException("Operators count not match with parameters count, (operators count: ".
+                            "{$operatorsCount}, parameters count: {$inputParamsCount})!");
+                    }
+
                     foreach ($inputParams as $i => $inputParam) {
-                        if (!array_key_exists($i, $match[0])) {
-                            throw new InvalidValueException("Replacement index '{$i}' key not found in input!");
+                        if (!array_key_exists($i, $operators)) {
+                            throw new AgentException("Replacement index '{$i}' key not found in input!");
                         }
 
-                        $key = $match[0][$i];
+                        $key = $operators[$i];
                         $value = $inputParam;
 
                         if ($key == '%v') {
                             // pass (values. raws, sub-query etc)
-                        } elseif ($key == '%n') {
+                        } elseif ($key == '%n' || $key == '??') {
                             // identifiers (names)
                             $value = $this->escapeIdentifier($value);
                         } else {
