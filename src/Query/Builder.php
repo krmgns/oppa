@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Query;
 
-use Oppa\{Util, Resource};
+use Oppa\Util;
 use Oppa\Link\Link;
 use Oppa\Agent\AgentInterface;
 use Oppa\Query\Result\ResultInterface;
@@ -188,7 +188,7 @@ final class Builder
                 throw new BuilderException('Alias required!');
             }
 
-            return $this->push('select', sprintf('(%s) AS %s', $field->toString(), $as));
+            return $this->push('select', '('. $field->toString() .') AS '. $as);
         }
 
         if ($field === '1') {
@@ -200,6 +200,10 @@ final class Builder
             $field = '1'; // pass for aggregate method, e.g select().aggregate('count', 'id')
         } else {
             $field = trim($field, ', ');
+        }
+
+        if ($as != null) {
+            $field = $field .' AS '. $as;
         }
 
         return $this->push('select', $field);
@@ -219,30 +223,28 @@ final class Builder
 
     /**
      * Select json.
-     * @param  string $field
-     * @param  string $as
-     * @param  string $type
-     * @param  bool   $reset
+     * @param  string|array $field
+     * @param  string       $as
+     * @param  string       $type
+     * @param  bool         $esc
+     * @param  bool         $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function selectJson(string $field, string $as, string $type = 'object', bool $reset = true): self
+    public function selectJson($field, string $as, string $type = 'object', bool $esc = true, bool $reset = true): self
     {
-        static $resourceType, $server, $serverVersion, $serverVersionMin, $jsonObject, $jsonArray;
+        static $server, $serverVersion, $serverVersionMin, $jsonObject, $jsonArray;
 
-        if ($resourceType == null) {
-            $resourceType = $this->agent->getResource()->getType();
-
-            if ($resourceType == Resource::TYPE_MYSQL_LINK) {
+        if ($server == null) {
+            if ($this->agent->isMysql()) {
                 $server = 'MySQL'; $serverVersionMin = '5.7.8';
                 $jsonObject = 'json_object'; $jsonArray = 'json_array';
-            } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
+            } elseif ($this->agent->isPgsql()) {
                 $server = 'PostgreSQL'; $serverVersionMin = '9.4';
                 $jsonObject = 'json_build_object'; $jsonArray = 'json_build_array';
             }
 
             $serverVersion = $this->link->getDatabase()->getInfo('serverVersion');
-
             if (version_compare($serverVersion, $serverVersionMin) == -1) {
                 throw new BuilderException(sprintf('JSON not supported by %s/v%s, minimum v%s required',
                     $server, $serverVersion, $serverVersionMin));
@@ -250,13 +252,43 @@ final class Builder
         }
 
         $json = [];
-        foreach (Util::split('\s*,\s*', $field) as $tmp) {
-            $tmp = Util::split('\s*:\s*', $tmp);
-            if (!isset($tmp[0], $tmp[1])) {
-                throw new BuilderException('Both field name and value should be given!');
+        if (is_string($field)) {
+            foreach (Util::split('\s*,\s*', $field) as $field) {
+                if ($type == 'object') {
+                    @ [$key, $value] = Util::split('\s*:\s*', $field);
+                    if (!isset($key, $value)) {
+                        throw new BuilderException('Field name and value must be given fo JSON objects!');
+                    }
+                    $json[] = $this->agent->quote(trim($key));
+                    if ($esc || strpos($value, '.')) {
+                        $value = $this->agent->escapeIdentifier($value);
+                    }
+                    $json[] = $value;
+                } elseif ($type == 'array') {
+                    if (!isset($key)) {
+                        throw new BuilderException('Field value must be given fo JSON arrays!');
+                    }
+                    $json[] = $this->agent->quote(trim($key));
+                }
             }
-            $json[] = $this->agent->escape(trim($tmp[0], '"'));
-            $json[] = $this->agent->escapeIdentifier($tmp[1]);
+        } elseif (is_array($field)) {
+            foreach ($field as $key => $value) {
+                $keyType = gettype($key);
+                if ($type == 'object') {
+                    if ($keyType != 'string') {
+                        throw new BuilderException(sprintf('Field name must be string, %s given !', $keyType));
+                    }
+                    $json[] = $this->agent->quote($key) .', '. ($esc ? $this->agent->quoteField($value) : $value);
+                } elseif ($type == 'array') {
+                    if ($keyType != 'integer') {
+                        throw new BuilderException(sprintf('Field name must be int, %s given !', $keyType));
+                    }
+                    $json[] = $esc ? $this->agent->quoteField($value) : $value;
+                }
+            }
+        } else {
+            throw new BuilderException(sprintf('String and array fields accepted only, %s given',
+                gettype($field)));
         }
 
         if ($type == 'object') {
@@ -267,19 +299,20 @@ final class Builder
             throw new BuilderException("Given JSON type '{$type}' is not implemented!");
         }
 
-        return $this->select($json, $as, false, $reset);
+        return $this->select($json, null, false, $reset);
     }
 
     /**
-     * Select more json.
-     * @param  string $field
-     * @param  string $as
-     * @param  string $type
+     * Select json more.
+     * @param  string|array $field
+     * @param  string       $as
+     * @param  string       $type
+     * @param  bool         $esc
      * @return self
      */
-    public function selectMoreJson(string $field, string $as, string $type = 'object'): self
+    public function selectJsonMore($field, string $as, string $type = 'object', bool $esc = true): self
     {
-        return $this->selectJson($field, $as, $type, false);
+        return $this->selectJson($field, $as, $type, $esc, false);
     }
 
     /**
@@ -663,40 +696,6 @@ final class Builder
     }
 
     /**
-     * Where match against.
-     * @param  string|array|Builder $field
-     * @param  array                $params
-     * @param  bool                 $isPhrase
-     * @param  string               $mode
-     * @return self
-     */
-    public function whereMatchAgainst($field, array $params, bool $isPhrase = false, string $mode = ''): self
-    {
-        $against = [];
-        foreach ($params as $param) {
-            $param = (string) $param;
-            $operator = '';
-            if (strpbrk($param[0], '+-*~')) {
-                $operator = $param[0];
-                $param = substr($param, 1); // bump operator
-            }
-
-            $param = $this->agent->escapeString($param, false);
-            if ($isPhrase) {
-                $param = '"'. trim($param, '\\"') .'"';
-            }
-
-            // add operator if exists
-            $against[] = $operator . $param;
-        }
-
-        $against = join(' ', $against);
-        $mode = $mode ?: 'IN BOOLEAN MODE';
-
-        return $this->where("match(". $this->field($field) .") against('{$against}' {$mode})");
-    }
-
-    /**
      * Where exists.
      * @param  any    $query
      * @param  any    $param
@@ -784,6 +783,41 @@ final class Builder
     public function ids($ids, string $op = self::OP_AND): self
     {
         return $this->whereIds('id', [$ids], $op);
+    }
+
+    /**
+     * Where match against.
+     * @param  string|array|Builder $field
+     * @param  array                $params
+     * @param  bool                 $isPhrase
+     * @param  string               $mode
+     * @return self
+     */
+    public function whereMatchAgainst($field, array $params, bool $isPhrase = false, string $mode = ''): self
+    {
+        // pre($this->agent->getName());
+        $against = [];
+        foreach ($params as $param) {
+            $param = (string) $param;
+            $operator = '';
+            if (strpbrk($param[0], '+-*~')) {
+                $operator = $param[0];
+                $param = substr($param, 1); // bump operator
+            }
+
+            $param = $this->agent->escapeString($param, false);
+            if ($isPhrase) {
+                $param = '"'. trim($param, '\\"') .'"';
+            }
+
+            // add operator if exists
+            $against[] = $operator . $param;
+        }
+
+        $against = join(' ', $against);
+        $mode = $mode ?: 'IN BOOLEAN MODE';
+
+        return $this->where("match(". $this->field($field) .") against('{$against}' {$mode})");
     }
 
     /**
