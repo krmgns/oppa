@@ -100,11 +100,16 @@ final /* static */ class Util
      * Split.
      * @param  string $pattern
      * @param  string $input
+     * @param  int    $flags
      * @return array
      */
-    public static function split(string $pattern, string $input): array
+    public static function split(string $pattern, string $input, int $flags = 0): array
     {
-        return (array) preg_split('~'. trim($pattern, '~') .'~', $input, -1, PREG_SPLIT_NO_EMPTY);
+        if ($pattern[0] != '~') {
+            $pattern = '~'. trim($pattern, '~') .'~'; // make re pattern
+        }
+
+        return (array) preg_split($pattern, $input, -1, $flags += PREG_SPLIT_NO_EMPTY);
     }
 
     /**
