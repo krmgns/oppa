@@ -255,6 +255,7 @@ final class Builder
         if (is_string($field)) {
             foreach (Util::split('\s*,\s*', $field) as $field) {
                 if ($type == 'object') {
+                    // eg: selectJson(''id: id'')
                     @ [$key, $value] = Util::split('\s*:\s*', $field);
                     if (!isset($key, $value)) {
                         throw new BuilderException('Field name and value must be given fo JSON objects!');
@@ -265,25 +266,30 @@ final class Builder
                     }
                     $json[] = $value;
                 } elseif ($type == 'array') {
-                    if (!isset($key)) {
-                        throw new BuilderException('Field value must be given fo JSON arrays!');
+                    // eg: selectJson('1, 2')
+                    $value = $field;
+                    if ($esc || strpos($value, '.')) {
+                        $value = $this->agent->escapeIdentifier($value);
                     }
-                    $json[] = $this->agent->quote(trim($key));
+                    $json[] = $value;
                 }
             }
         } elseif (is_array($field)) {
             foreach ($field as $key => $value) {
                 $keyType = gettype($key);
                 if ($type == 'object') {
+                    // eg: selectJson(['id' => 'id'])
                     if ($keyType != 'string') {
                         throw new BuilderException(sprintf('Field name must be string, %s given !', $keyType));
                     }
-                    $json[] = $this->agent->quote($key) .', '. ($esc ? $this->agent->quoteField($value) : $value);
+                    $json[] = $this->agent->quote($key) .', '. ($esc || strpos($value, '.')
+                        ? $this->agent->quoteField($value) : $value);
                 } elseif ($type == 'array') {
+                    // eg: selectJson(['1', '2'])
                     if ($keyType != 'integer') {
                         throw new BuilderException(sprintf('Field name must be int, %s given !', $keyType));
                     }
-                    $json[] = $esc ? $this->agent->quoteField($value) : $value;
+                    $json[] = $esc || strpos($value, '.') ? $this->agent->quoteField($value) : $value;
                 }
             }
         } else {
