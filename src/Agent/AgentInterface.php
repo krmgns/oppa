@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace Oppa\Agent;
 
+use Oppa\Config;
 use Oppa\Query\Result\ResultInterface;
 
 /**
@@ -35,6 +36,14 @@ use Oppa\Query\Result\ResultInterface;
  */
 interface AgentInterface
 {
+    /**
+     * Init.
+     * @param  Oppa\Config $config
+     * @return void
+     * @throws Oppa\Agent\AgentException
+     */
+    public function init(Config $config): void;
+
     /**
      * Connect.
      * @return void

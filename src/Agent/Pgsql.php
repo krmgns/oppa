@@ -40,15 +40,13 @@ use Oppa\Exception\{QueryException, ConnectionException,
 final class Pgsql extends Agent
 {
     /**
-     * Constructor.
-     * @param  Oppa\Config $config
-     * @throws \RuntimeException
+     * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public function __construct(Config $config)
+    public function init(Config $config): void
     {
         // we need it like a crazy..
         if (!extension_loaded('pgsql')) {
-            throw new \RuntimeException('PgSQL extension is not loaded!');
+            throw new AgentException('PgSQL extension is not loaded!');
         }
 
         $this->config = $config;

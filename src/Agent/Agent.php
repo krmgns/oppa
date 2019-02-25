@@ -38,6 +38,12 @@ use Oppa\Query\Result\ResultInterface;
 abstract class Agent extends AgentCrud implements AgentInterface
 {
     /**
+     * Name.
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Resource.
      * @var Resource
      */
@@ -80,11 +86,40 @@ abstract class Agent extends AgentCrud implements AgentInterface
     protected $config;
 
     /**
+     * Constructor.
+     * @param  Oppa\Config $config
+     */
+    public final function __construct(Config $config)
+    {
+        $this->init($config);
+
+        $this->name = strtolower(substr(static::class, strrpos(static::class, '\\') + 1));
+    }
+
+    /**
      * Destructor.
      */
     public final function __destruct()
     {
         $this->disconnect();
+    }
+
+    /**
+     * Is mysql.
+     * @return bool
+     */
+    public final function isMysql(): bool
+    {
+        return $this->name == 'mysql';
+    }
+
+    /**
+     * Is pgsql.
+     * @return bool
+     */
+    public final function isPgsql(): bool
+    {
+        return $this->name == 'pgsql';
     }
 
     /**
@@ -199,9 +234,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function getName(): string
     {
-        $name = static::class;
-
-        return strtolower(substr($name, strrpos($name, '\\') + 1));
+        return $this->name;
     }
 
     /**
@@ -292,6 +325,53 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
+     * Quote.
+     * @param  string $input
+     * @return string
+     */
+    public function quote(string $input): string
+    {
+        return $input = "'". $this->unquote($input) ."'";
+    }
+
+    /**
+     * Unquote.
+     * @param  string $input
+     * @return string
+     */
+    public function unquote(string $input): string
+    {
+        return trim($input, "\x22\x27"); // ' and "
+    }
+
+    /**
+     * Quote field.
+     * @param  string $input
+     * @return string
+     * @throws Oppa\Agent\AgentException
+     */
+    public function quoteField(string $input): string
+    {
+        if ($this->isMysql()) {
+            return '`'. str_replace('`', '``', $this->unquoteField($input)) .'`';
+        } elseif ($this->isPgsql()) {
+            return '"'. str_replace('"', '""', $this->unquoteField($input)) .'"';
+        }
+
+        throw new AgentException('Cannot escape identifier, available for Mysql and Pgsql only!');
+    }
+
+    /**
+     * Unquote field.
+     * @param  string $input
+     * @return string
+     */
+    public function unquoteField(string $input): string
+    {
+        return trim($input, "\x22\x60"); // ' and `
+    }
+
+    /**
      * Escape.
      * @param  any    $input
      * @param  string $inputFormat
@@ -355,16 +435,17 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public function escapeString(string $input, bool $quote = true): string
     {
         $resourceType = $this->resource->getType();
+        $resourceObject = $this->resource->getObject();
         if ($resourceType == Resource::TYPE_MYSQL_LINK) {
-            $input = $this->resource->getObject()->real_escape_string($input);
+            $input = $resourceObject->real_escape_string($input);
         } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
-            $input = pg_escape_string($this->resource->getObject(), $input);
+            $input = pg_escape_string($resourceObject, $input);
         } else {
-            throw new AgentException('Cannot escape input, available for Mysql and Pgsql only!');
+            throw new AgentException('Cannot escape input, available for Mysql and Pgsql links only!');
         }
 
         if ($quote) {
-            $input = "'{$input}'";
+            $input = $this->quote($input);
         }
 
         return $input;
@@ -424,16 +505,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return implode('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
         }
 
-        $resourceType = $this->resource->getType();
-        if ($resourceType == Resource::TYPE_MYSQL_LINK) {
-            $input = '`'. str_replace('`', '``', trim($input, '`')) .'`';
-        } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
-            $input = pg_escape_identifier($this->resource->getObject(), trim($input, '"'));
-        } else {
-            throw new AgentException('Cannot escape identifier, available for Mysql and Pgsql only!');
-        }
-
-        return $input;
+        return $this->quoteField($input);
     }
 
     /**
