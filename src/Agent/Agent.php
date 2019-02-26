@@ -481,9 +481,18 @@ abstract class Agent extends AgentCrud implements AgentInterface
             throw new AgentException("Array or string identifiers accepted only, {$inputType} given!");
         }
 
-        $input = trim($input);
+        $input = trim($input, ' .,');
         if ($input == '' || $input == '*') {
             return $input;
+        }
+
+        // function, or parentheses wrap
+        if (strpos($input, '(') !== false) {
+            return preg_replace_callback('~[`"]?(.*?)\((.+)\)[`"]?((,)(.+)|)~', function ($match) {
+                return trim($match[1]) .'('. $this->escapeIdentifier($match[2]) .')' . (
+                    strlen($more = trim($match[3])) > 1 ? ', '. $this->escapeIdentifier(substr($more, 1)) : ''
+                );
+            }, $input);
         }
 
         // multiple fields
@@ -493,10 +502,10 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         // aliases
         if (strpos($input, ' ')) {
-            return preg_replace_callback('~([^\s]+)\s+(AS\s+)?(\w+)~i', function ($_) {
-                return $this->escapeIdentifier($_[1]) . (
-                    ($as = trim($_[2])) ? ' '. strtoupper($as) .' ' : ' '
-                ) . $this->escapeIdentifier($_[3]);
+            return preg_replace_callback('~([^\s]+)\s+(AS\s+)?(\w+)~i', function ($match) {
+                return $this->escapeIdentifier($match[1]) . (
+                    ($as = trim($match[2])) ? ' '. strtoupper($as) .' ' : ' '
+                ) . $this->escapeIdentifier($match[3]);
             }, $input);
         }
 
