@@ -171,14 +171,13 @@ final class Builder
 
     /**
      * Select.
-     * @param  string|Builder $field
-     * @param  string         $as
-     * @param  bool           $esc
-     * @param  bool           $reset
+     * @param  string|array|Builder $field
+     * @param  string               $as
+     * @param  bool                 $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function select($field = null, string $as = null, bool $esc = true, bool $reset = true): self
+    public function select($field, string $as = null, bool $reset = true): self
     {
         $reset && $this->reset();
 
@@ -191,17 +190,14 @@ final class Builder
             return $this->push('select', '('. $field->toString() .') AS '. $as);
         }
 
-        if ($field === '1') {
-            return $this->push('select', $field);
+        // handle trivial selects
+        if ($field === '1' || $field === 1) {
+            return $this->push('select', '1');
+        } elseif ($field === true) {
+            return $this->push('select', 'TRUE');
         }
 
-        $field = $this->field($field, $esc);
-        if ($field == '') {
-            $field = '1'; // pass for aggregate method, e.g select().aggregate('count', 'id')
-        } else {
-            $field = trim($field, ', ');
-        }
-
+        $field = $this->field($field);
         if ($as != null) {
             $field = $field .' AS '. $as;
         }
@@ -213,12 +209,11 @@ final class Builder
      * Select more.
      * @param  string|Builder $field
      * @param  string|null    $as
-     * @param  bool           $esc
      * @return self
      */
-    public function selectMore($field, string $as = null, bool $esc = true): self
+    public function selectMore($field, string $as = null): self
     {
-        return $this->select($field, $as, $esc, false);
+        return $this->select($field, $as, false);
     }
 
     /**
@@ -449,20 +444,20 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function where($query, $queryParams = null, string $op = self::OP_AND): self
+    public function where($query, $queryParams = null, string $op = ''): self
     {
         // sub-where
-        if ($queryParams instanceof Builder) {
+        if ($queryParams != null && $queryParams instanceof Builder) {
             // $opr argument is empty, should be exists in query (eg: id = )
             $query = $this->prepare($query, '', $queryParams);
 
             return $this->push('where', $query);
         }
 
-        if ($query && is_array($query)) {
+        if (is_array($query)) {
             $queryParams = (array) $queryParams;
             if ($queryParams == null) {
-                throw new BuilderException('Both query and parameters required');
+                throw new BuilderException('Both query and query params required');
             }
 
             $isSequential = isset($query[0]);
@@ -481,18 +476,14 @@ final class Builder
 
         if ($queryParams !== null) {
             if (!is_array($queryParams) && !is_scalar($queryParams)) {
-                throw new BuilderException(sprintf('Array or scalar parameters are accepted only, %s given',
+                throw new BuilderException(sprintf('Array or scalar params are accepted only, %s given',
                     gettype($queryParams)));
             }
         }
 
-        if ($op == '') {
-            throw new BuilderException('No OR/AND op given');
-        }
-
         $query = $this->agent->prepare($query, (array) $queryParams);
 
-        return $this->push('where', [[$query, $op]]);
+        return $this->push('where', [[$query, $op ?: self::OP_AND]]);
     }
 
     /**
@@ -502,7 +493,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereEqual($field, $param, string $op = self::OP_AND): self
+    public function whereEqual($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' = ?', $param, $op);
     }
@@ -514,7 +505,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereNotEqual($field, $param, string $op = self::OP_AND): self
+    public function whereNotEqual($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' != ?', $param, $op);
     }
@@ -525,7 +516,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereNull($field, string $op = self::OP_AND): self
+    public function whereNull($field, string $op = ''): self
     {
         return $this->where($this->field($field) .' IS NULL', null, $op);
     }
@@ -536,7 +527,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereNotNull($field, string $op = self::OP_AND): self
+    public function whereNotNull($field, string $op = ''): self
     {
         return $this->where($this->field($field) .' IS NOT NULL', null, $op);
     }
@@ -548,7 +539,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereIn($field, $param, string $op = self::OP_AND): self
+    public function whereIn($field, $param, string $op = ''): self
     {
         if (is_array($param)) {
             $param = [$param];
@@ -564,7 +555,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereNotIn($field, $param, string $op = self::OP_AND): self
+    public function whereNotIn($field, $param, string $op = ''): self
     {
         if (is_array($param)) {
             $param = [$param];
@@ -580,7 +571,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereBetween($field, array $params, string $op = self::OP_AND): self
+    public function whereBetween($field, array $params, string $op = ''): self
     {
         return $this->where($this->field($field) .' BETWEEN (? AND ?)', $params, $op);
     }
@@ -592,7 +583,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereNotBetween($field, array $params, string $op = self::OP_AND): self
+    public function whereNotBetween($field, array $params, string $op = ''): self
     {
         return $this->where($this->field($field) .' NOT BETWEEN (? AND ?)', $params, $op);
     }
@@ -604,7 +595,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereLessThan($field, $param, string $op = self::OP_AND): self
+    public function whereLessThan($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' < ?', $param, $op);
     }
@@ -616,7 +607,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereLessThanEqual($field, $param, string $op = self::OP_AND): self
+    public function whereLessThanEqual($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' <= ?', $param, $op);
     }
@@ -628,7 +619,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereGreaterThan($field, $param, string $op = self::OP_AND): self
+    public function whereGreaterThan($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' > ?', $param, $op);
     }
@@ -640,7 +631,7 @@ final class Builder
      * @param  string               $op
      * @return self
      */
-    public function whereGreaterThanEqual($field, $param, string $op = self::OP_AND): self
+    public function whereGreaterThanEqual($field, $param, string $op = ''): self
     {
         return $this->where($this->field($field) .' >= ?', $param, $op);
     }
@@ -648,57 +639,100 @@ final class Builder
     /**
      * Where like.
      * @param  string|array|Builder $field
-     * @param  string               $format
-     * @param  string|null          $param
+     * @param  string|array         $params
+     * @param  bool                 $ilike
      * @param  string               $op
      * @return self
      */
-    public function whereLike($field, string $format = '', string $param = null, string $op = self::OP_AND): self
+    public function whereLike($field, $params, bool $ilike = false, string $op = ''): self
     {
-        @ [$start, $end] = explode('-', $format);
+        // @note to me..
         // 'foo%'  Anything starts with "foo"
         // '%foo'  Anything ends with "foo"
         // '%foo%' Anything have "foo" in any position
         // 'f_o%'  Anything have "o" in the second position
         // 'f_%_%' Anything starts with "f" and are at least 3 characters in length
         // 'f%o'   Anything starts with "f" and ends with "o"
-        return $this->where($this->field($field) ." LIKE '{$end}%sl{$start}'", $param, $op);
+
+        $params = (array) $params;
+        switch (count($params)) {
+            case 1: // none, eg: 'apple', ['apple']
+                [$start, $search, $end] = ['', $params[0], ''];
+                break;
+            case 2: // start/end, eg: ['apple', '%'], ['%', 'apple']
+                if ($params[0] == '%') {
+                    [$start, $search, $end] = ['%', $params[1], ''];
+                } elseif ($params[1] == '%') {
+                    [$start, $search, $end] = ['', $params[0], '%'];
+                }
+                break;
+            case 3: // both, eg: ['%', 'apple', '%']
+                [$start, $search, $end] = $params;
+                break;
+        }
+
+        $search = trim((string) ($search ?? ''));
+        if ($search == '') {
+            throw new BuilderException('Like search cannot be empty!');
+        }
+
+        $fields = $this->agent->escapeIdentifier($field, false);
+        $search = $end . $this->agent->escape($search, '%sl', false) . $start;
+
+        if ($ilike) {
+            foreach ($fields as $field) {
+                if ($this->agent->isMysql()) {
+                    $this->where("lower({$field}) LIKE lower('{$search}')", null, 'OR');
+                } elseif ($this->agent->isPgsql()) {
+                    $this->where("{$field} ILIKE '{$search}'", null, 'OR');
+                }
+            }
+        } else {
+            foreach ($fields as $field) {
+                $this->where("{$field} LIKE '{$search}'", null, 'OR');
+            }
+        }
+
+        return $this;
     }
 
     /**
      * Where like start.
      * @param  string|array|Builder $field
-     * @param  string               $param
+     * @param  string               $search
+     * @param  bool                 $ilike
      * @param  string               $op
      * @return self
      */
-    public function whereLikeStart($field, string $param, string $op = self::OP_AND): self
+    public function whereLikeStart($field, string $search, bool $ilike = false, string $op = ''): self
     {
-        return $this->whereLike($field, '%-', $param, $op);
+        return $this->whereLike($field, ['%', $search, ''], $ilike, $op);
     }
 
     /**
      * Where like end.
      * @param  string|array|Builder $field
-     * @param  string               $param
+     * @param  string               $search
+     * @param  bool                 $ilike
      * @param  string               $op
      * @return self
      */
-    public function whereLikeEnd($field, string $param, string $op = self::OP_AND): self
+    public function whereLikeEnd($field, string $search, bool $ilike = false, string $op = ''): self
     {
-        return $this->whereLike($field, '-%', $param, $op);
+        return $this->whereLike($field, ['', $search, '%'], $ilike, $op);
     }
 
     /**
      * Where like both.
      * @param  string|array|Builder $field
-     * @param  string               $param
+     * @param  string               $search
+     * @param  bool                 $ilike
      * @param  string               $op
      * @return self
      */
-    public function whereLikeBoth($field, string $param, string $op = self::OP_AND): self
+    public function whereLikeBoth($field, string $search, bool $ilike = false, string $op = ''): self
     {
-        return $this->whereLike($field, '%-%', $param, $op);
+        return $this->whereLike($field, ['%', $search, '%'], $ilike, $op);
     }
 
     /**
@@ -708,7 +742,7 @@ final class Builder
      * @param  string $op
      * @return self
      */
-    public function whereExists($query, array $params = null, string $op = self::OP_AND): self
+    public function whereExists($query, array $params = null, string $op = ''): self
     {
         if ($query instanceof Builder) {
             $query = $query->toString();
@@ -728,7 +762,7 @@ final class Builder
      * @param  string $op
      * @return self
      */
-    public function whereNotExists($query, array $params = null, string $op = self::OP_AND): self
+    public function whereNotExists($query, array $params = null, string $op = ''): self
     {
         if ($query instanceof Builder) {
             $query = $query->toString();
@@ -748,12 +782,8 @@ final class Builder
      * @param  string     $op
      * @return self
      */
-    public function whereId(string $field, $id, string $op = self::OP_AND): self
+    public function whereId(string $field, $id, string $op = ''): self
     {
-        if (is_array($id)) {
-            $id = array_shift($id);
-        }
-
         return $this->where('?? = ?', [$field, $id], $op);
     }
 
@@ -764,7 +794,7 @@ final class Builder
      * @param  string            $op
      * @return self
      */
-    public function whereIds(string $field, array $ids, string $op = self::OP_AND): self
+    public function whereIds(string $field, array $ids, string $op = ''): self
     {
         return $this->where('?? IN (?)', [$field, $ids], $op);
     }
@@ -775,18 +805,18 @@ final class Builder
      * @param  string     $op
      * @return self
      */
-    public function id($id, string $op = self::OP_AND): self
+    public function id($id, string $op = ''): self
     {
         return $this->whereId('id', $id, $op);
     }
 
     /**
      * Ids (alias of whereIds()).
-     * @param  int|string $ids
-     * @param  string     $op
+     * @param  array[int|string] $ids
+     * @param  string            $op
      * @return self
      */
-    public function ids($ids, string $op = self::OP_AND): self
+    public function ids($ids, string $op = ''): self
     {
         return $this->whereIds('id', [$ids], $op);
     }
@@ -795,35 +825,81 @@ final class Builder
      * Where match against.
      * @param  string|array|Builder $field
      * @param  array                $params
-     * @param  bool                 $isPhrase
      * @param  string               $mode
+     * @param  string               $op
+     * @param  bool                 $phrase
      * @return self
      */
-    public function whereMatchAgainst($field, array $params, bool $isPhrase = false, string $mode = ''): self
+    public function search($field, array $params, string $mode = '', string $op = '', bool $phrase = false): self
     {
-        // pre($this->agent->getName());
-        $against = [];
-        foreach ($params as $param) {
-            $param = (string) $param;
-            $operator = '';
-            if (strpbrk($param[0], '+-*~')) {
-                $operator = $param[0];
-                $param = substr($param, 1); // bump operator
-            }
-
-            $param = $this->agent->escapeString($param, false);
-            if ($isPhrase) {
-                $param = '"'. trim($param, '\\"') .'"';
-            }
-
-            // add operator if exists
-            $against[] = $operator . $param;
+        if ($params == null) {
+            throw new BuilderException('Search params cannot be empty!');
         }
 
-        $against = join(' ', $against);
-        $mode = $mode ?: 'IN BOOLEAN MODE';
+        $field = $this->field($field);
+        $query = '';
+        $search = [];
+        if ($this->agent->isMysql()) {
+            // eg: ['+apple', '~banana', ...]
+            foreach ($params as $param) {
+                if ($param == null) {
+                    throw new BuilderException('Search param cannot be empty!');
+                }
 
-        return $this->where("match(". $this->field($field) .") against('{$against}' {$mode})");
+                $param = $this->agent->escapeString($param, false);
+
+                $opr = '';
+                // handle operators
+                if (in_array($param[0], ['+', '-', '*', '~'])) {
+                    $opr = $param[0];
+                    $param = substr($param, 1);
+                }
+                // wrap phrases with ""
+                if ($phrase) {
+                    $param = '"'. trim($param, '\"') .'"';
+                }
+
+                $search[] = $opr . $param;
+            }
+
+            $search = join(' ', $search);
+            $query = "match({$field}) against('{$search}' ". ($mode ?: 'IN BOOLEAN MODE') .")";
+        } elseif ($this->agent->isPgsql()) {
+            // eg: ['apple', '!banana', ...], ['apple', '&' or '|', 'banana', ...]
+            foreach ($params as $param) {
+                if ($param == null) {
+                    throw new BuilderException('Search param cannot be empty!');
+                }
+
+                // operators
+                if ($param == '&' || $param == '|') {
+                    $search[] = $param;
+                    continue;
+                }
+
+                $paramType = gettype($param);
+                if ($paramType == 'array') {
+                    $tmp = [];
+                    foreach ($param as $para) {
+                        $tmp[] = $this->agent->escapeString($para, false);
+                    }
+                    $param = '('. join(' ', $tmp) .')';
+                } elseif ($paramType == 'string') {
+                    $param = $this->agent->escapeString($param, false);
+                } else {
+                    throw new BuilderException(sprintf('Array or string params are accepted only, '.
+                        '%s given!', $paramType));
+                }
+
+                $search[] = ($param == ' ') ? ' ' : trim($param);
+            }
+
+            $search = join(' ', $search);
+            $query = ($mode == '') ? "to_tsvector({$field}) @@ to_tsquery('{$search}')"
+                : "to_tsvector('{$mode}', {$field}) @@ to_tsquery('{$mode}', '{$search}')";
+        }
+
+        return $this->push('where', [[$query, $op ?: 'AND']]);
     }
 
     /**
@@ -833,7 +909,7 @@ final class Builder
      * @param  string $op
      * @return self
      */
-    public function having(string $query, array $params = null, string $op = self::OP_AND): self
+    public function having(string $query, array $params = null, string $op = ''): self
     {
         if ($params != null) {
             $query = $this->agent->prepare($query, $params);
@@ -1140,7 +1216,7 @@ final class Builder
                         }
                     }
 
-                    $string = preg_replace('~ (OR|AND) \( ([`"])~i', ' \1 (\2', join(' ', $ws)); // :(
+                    $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
                     $string = $string . str_repeat(')', $wsp); // close parentheses
                     $string = " WHERE (\n\t{$string}\n)";
                 }
@@ -1207,41 +1283,25 @@ final class Builder
     /**
      * Field.
      * @param  string|array|Builder $field
-     * @param  bool                 $esc
-     * @return string
+     * @param  bool                 $join
+     * @return string|array
      */
-    private function field($field, bool $esc = true): string
+    private function field($field, bool $join = true)
     {
         if ($field instanceof Builder) {
             return '('. $field->toString() .')';
         }
 
-        // eg: ['??', 'id'], ['%n', 'id']
-        if (is_array($field)) {
-            @ [$field, $fieldName] = $field;
-            if ($field == '' || $fieldName == '') {
-                throw new BuilderException('Both field and field name required!');
-            }
-            $field = $this->agent->prepare($field, [$fieldName]);
-        }
-
         if (is_string($field)) {
-            $field = trim($field);
-            $fieldSearch = substr($field, 0, 2);
-            if ($fieldSearch == '%n' || $fieldSearch == '??') {
-                $field = '%n'. substr($field, 2);
-                $esc = false;
-            }
-
-            if ($esc) {
-                $field = $this->agent->escapeIdentifier($field);
-            }
-
-            return $field;
+            $field = Util::split('\s*,\s*', trim($field));
         }
 
-        throw new BuilderException(sprintf('String, array or Builder type fields are accepted only, %s given',
-            gettype($field)));
+        if (is_array($field)) {
+            return $this->agent->escapeIdentifier($field, $join);
+        }
+
+        throw new BuilderException(sprintf('String, array or Builder type fields are accepted only,'.
+            ' %s given', gettype($field)));
     }
 
     /**
@@ -1259,7 +1319,7 @@ final class Builder
             $query[] = '('. $param->toString() .')';
         } else {
             if ($param && !is_array($param) && !is_scalar($param)) {
-                throw new BuilderException(sprintf('Scalar or array parameters are accepted only'.
+                throw new BuilderException(sprintf('Scalar or array params are accepted only'.
                     ', %s given!', gettype($param)));
             }
 
