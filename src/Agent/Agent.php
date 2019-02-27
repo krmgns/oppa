@@ -331,7 +331,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function quote(string $input): string
     {
-        return $input = "'". $this->unquote($input) ."'";
+        return "'". $this->unquote($input) ."'";
     }
 
     /**
@@ -341,7 +341,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function unquote(string $input): string
     {
-        return trim($input, "\x22\x27"); // ' and "
+        return trim($input, "'");
     }
 
     /**
@@ -352,13 +352,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function quoteField(string $input): string
     {
+        $input = $this->unquoteField($input);
         if ($this->isMysql()) {
-            return '`'. str_replace('`', '``', $this->unquoteField($input)) .'`';
+            return '`'. str_replace('`', '``', $input) .'`';
         } elseif ($this->isPgsql()) {
-            return '"'. str_replace('"', '""', $this->unquoteField($input)) .'"';
+            return '"'. str_replace('"', '""', $input) .'"';
         }
-
-        throw new AgentException('Cannot escape identifier, available for Mysql and Pgsql only!');
     }
 
     /**
@@ -368,17 +367,18 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function unquoteField(string $input): string
     {
-        return trim($input, "\x22\x60"); // ' and `
+        return trim($input, '"`');
     }
 
     /**
      * Escape.
      * @param  any    $input
      * @param  string $inputFormat
+     * @param  bool   $quote
      * @return any
      * @throws Oppa\Agent\AgentException
      */
-    public function escape($input, string $inputFormat = null)
+    public function escape($input, string $inputFormat = null, bool $quote = true)
     {
         $inputType = gettype($input);
 
@@ -390,9 +390,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
         // escape strings %s and for all formattable types like %d, %f and %F
         if ($inputFormat && $inputFormat[0] == '%') {
             if ($inputFormat == '%s') {
-                return $this->escapeString((string) $input);
+                return $this->escapeString((string) $input, $quote);
             } elseif ($inputFormat == '%sl') {
-                return $this->escapeLikeString((string) $input);
+                return $this->escapeLikeString((string) $input, $quote);
             } elseif ($inputFormat == '%b') {
                 if (!is_bool($input)) {
                     throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
@@ -406,7 +406,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             case 'NULL':
                 return 'NULL';
             case 'string':
-                return $this->escapeString($input);
+                return $this->escapeString($input, $quote);
             case 'integer':
                 return $input;
             case 'boolean':
@@ -437,11 +437,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
         $resourceType = $this->resource->getType();
         $resourceObject = $this->resource->getObject();
         if ($resourceType == Resource::TYPE_MYSQL_LINK) {
-            $input = $resourceObject->real_escape_string($input);
+            $input = $resourceObject->escape_string($input);
         } elseif ($resourceType == Resource::TYPE_PGSQL_LINK) {
             $input = pg_escape_string($resourceObject, $input);
-        } else {
-            throw new AgentException('Cannot escape input, available for Mysql and Pgsql links only!');
         }
 
         if ($quote) {
@@ -454,11 +452,17 @@ abstract class Agent extends AgentCrud implements AgentInterface
     /**
      * Escape like string.
      * @param  string $input
+     * @param  bool   $quote
+     * @param  bool   $escape
      * @return string
      */
-    public function escapeLikeString(string $input): string
+    public function escapeLikeString(string $input, bool $quote = true, bool $escape = true): string
     {
-        return addcslashes($this->escapeString($input, false), '%_');
+        if ($escape) {
+            $input = $this->escapeString($input, $quote);
+        }
+
+        return addcslashes($input, '%_');
     }
 
     /**
@@ -475,10 +479,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
             $input = array_map([$this, 'escapeIdentifier'], $input);
 
             return $join ? join(', ', $input) : $input;
-        }
-
-        if ($inputType != 'string') {
-            throw new AgentException("Array or string identifiers accepted only, {$inputType} given!");
+        } elseif ($inputType != 'string') {
+            throw new AgentException(sprintf('String and array identifiers accepted only, %s given!',
+                $inputType));
         }
 
         $input = trim($input, ' .,');
@@ -486,18 +489,14 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return $input;
         }
 
-        // function, or parentheses wrap
+        // functions, parentheses etc are not allowed
         if (strpos($input, '(') !== false) {
-            return preg_replace_callback('~[`"]?(.*?)\((.+)\)[`"]?((,)(.+)|)~', function ($match) {
-                return trim($match[1]) .'('. $this->escapeIdentifier($match[2]) .')' . (
-                    strlen($more = trim($match[3])) > 1 ? ', '. $this->escapeIdentifier(substr($more, 1)) : ''
-                );
-            }, $input);
+            throw new AgentException('Found parentheses in input, complex identifiers not allowed!');
         }
 
         // multiple fields
         if (strpos($input, ',')) {
-            return $this->escapeIdentifier(Util::split('\s*,\s*', $input));
+            return $this->escapeIdentifier(Util::split('\s*,\s*', $input), $join);
         }
 
         // aliases
@@ -575,68 +574,61 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function prepare(string $input, array $inputParams = null): string
     {
-        $hasColon = strpos($input, ':') !== false;
-        $hasFormat = strpbrk($input, '?%') !== false;
-        if (($hasColon || $hasFormat) && $inputParams == null) {
-            // $inputParams = [null]; // fix missing replacement
-            throw new AgentException('Found prepare operators but no parameters given to prepare');
+        if (empty($inputParams) || strpbrk($input, ':?%') === false) {
+            return $input;
         }
 
-        if ($inputParams != null) {
-            // available named word limits: :foo, :foo123, :foo_bar
-            if ($hasColon) {
-                preg_match_all('~(?<!:):([a-zA-Z0-9_]+)~', $input, $match);
-                $operators = $match[1] ?? null;
-                if ($operators != null) {
-                    $keys = $values = [];
-                    $operators = array_unique($operators);
-                    foreach ($operators as $key) {
-                        if (!array_key_exists($key, $inputParams)) {
-                            throw new AgentException("Replacement key '{$key}' not found in parameters!");
-                        }
-
-                        $keys[] = sprintf('~:%s~', $key);
-                        $values[] = $this->escape($inputParams[$key]);
-
-                        // remove used parameters
-                        unset($inputParams[$key]);
+        // available named word limits: :foo, :foo123, :foo_bar
+        if (preg_match_all('~(?<!:):(\w+)~', $input, $match)) {
+            $operators = $match[1] ?? null;
+            if ($operators != null) {
+                $keys = $values = [];
+                $operators = array_unique($operators);
+                foreach ($operators as $key) {
+                    if (!array_key_exists($key, $inputParams)) {
+                        throw new AgentException("Replacement key '{$key}' not found in parameters!");
                     }
-                    $input = preg_replace($keys, $values, $input);
+
+                    $keys[] = sprintf('~:%s~', $key);
+                    $values[] = $this->escape($inputParams[$key]);
+
+                    // remove used parameters
+                    unset($inputParams[$key]);
                 }
+                $input = preg_replace($keys, $values, $input);
             }
+        }
 
-            // available indicator: "??, ?"
-            // available operators with type definition: "%sl, %s, %i, %f, %v, %n"
-            if ($hasFormat) {
-                preg_match_all('~\?\?|\?|%sl|%[sifvnb]~', $input, $match);
-                $operators = $match[0] ?? null;
-                if ($operators != null) {
-                    $inputParams = array_values($inputParams);
-                    if (($operatorsCount = count($operators)) != ($inputParamsCount = count($inputParams))) {
-                        throw new AgentException("Operators count not match with parameters count, (operators count: ".
-                            "{$operatorsCount}, parameters count: {$inputParamsCount})!");
+        // available indicator: "??, ?"
+        // available operators with type definition: "%sl, %s, %i, %f, %F, %v, %n"
+        if (preg_match_all('~\?\?|\?|%sl|%[sifFbvn]~', $input, $match)) {
+            $operators = $match[0] ?? null;
+            if ($operators != null) {
+                $inputParams = array_values($inputParams);
+                if (($operatorsCount = count($operators)) != ($inputParamsCount = count($inputParams))) {
+                    throw new AgentException("Operators count not match with parameters count, (operators count: ".
+                        "{$operatorsCount}, parameters count: {$inputParamsCount})!");
+                }
+
+                foreach ($inputParams as $i => $inputParam) {
+                    if (!array_key_exists($i, $operators)) {
+                        throw new AgentException("Replacement index '{$i}' key not found in input!");
                     }
 
-                    foreach ($inputParams as $i => $inputParam) {
-                        if (!array_key_exists($i, $operators)) {
-                            throw new AgentException("Replacement index '{$i}' key not found in input!");
-                        }
+                    $key = $operators[$i];
+                    $value = $inputParam;
 
-                        $key = $operators[$i];
-                        $value = $inputParam;
+                    if ($key == '%v') {
+                        // pass (values. raws, sub-query etc)
+                    } elseif ($key == '%n' || $key == '??') {
+                        // identifiers (names)
+                        $value = $this->escapeIdentifier($value);
+                    } else {
+                        $value = $this->escape($value, strtr($key, ['%i' => '%d']));
+                    }
 
-                        if ($key == '%v') {
-                            // pass (values. raws, sub-query etc)
-                        } elseif ($key == '%n' || $key == '??') {
-                            // identifiers (names)
-                            $value = $this->escapeIdentifier($value);
-                        } else {
-                            $value = $this->escape($value, strtr($key, ['%i' => '%d']));
-                        }
-
-                        if (false !== ($pos = strpos($input, $key))) {
-                            $input = substr_replace($input, $value, $pos, strlen($key));
-                        }
+                    if (false !== ($pos = strpos($input, $key))) {
+                        $input = substr_replace($input, $value, $pos, strlen($key));
                     }
                 }
             }
