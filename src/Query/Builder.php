@@ -39,6 +39,12 @@ use Oppa\Query\Result\ResultInterface;
 final class Builder
 {
     /**
+     * Builder trait.
+     * @object Oppa\Query\BuilderTrait
+     */
+    use BuilderTrait;
+
+    /**
      * And/or operators.
      * @const string
      */
