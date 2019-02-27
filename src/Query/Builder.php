@@ -505,7 +505,12 @@ final class Builder
 
         $query = $this->agent->prepare($query, (array) $queryParams);
 
-        return $this->push('where', [[$query, $op ?: self::OP_AND]]);
+        $op = $op ? strtoupper($op) : self::OP_AND;
+        if ($op != self::OP_OR && $op != self::OP_AND) {
+            throw new BuilderException('Available ops: OR, AND');
+        }
+
+        return $this->push('where', [[$query, $op]]);
     }
 
     /**
@@ -1250,7 +1255,7 @@ final class Builder
                         $nxOp = strtoupper($nx[1] ?? '');
                         $ws[] = $where;
                         if ($nx) {
-                            $ws[] = $op = strtoupper($op);
+                            $ws[] = $op;
                         }
                         if ($op != $nxOp && $nxOp && $nxn) {
                             $ws[] = '(';
