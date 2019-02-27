@@ -903,6 +903,19 @@ final class Builder
     }
 
     /**
+     * Search like (alias of whereLike()).
+     * @param  string|array|Builder $field
+     * @param  string|array         $params
+     * @param  bool                 $ilike
+     * @param  string               $op
+     * @return self
+     */
+    public function searchLike($field, $params, bool $ilike = false, string $op = ''): self
+    {
+        return $this->whereLike($field, $params, $ilike, $op);
+    }
+
+    /**
      * Having.
      * @param  string $query
      * @param  array  $params
