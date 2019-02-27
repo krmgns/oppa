@@ -636,4 +636,55 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         return $input;
     }
+
+    /**
+     * Prepare identifier.
+     * @param  string       $input
+     * @param  string|array $inputParam
+     * @return string
+     */
+    public final function prepareIdentifier(string $input, $inputParam): string
+    {
+        if (empty($inputParam)) {
+            if (strpos($input, '%n') !== false) {
+                throw new AgentException('Found %n operator but no replacement parameter given!');
+            } elseif (strpos($input, '??') !== false) {
+                throw new AgentException('Found ?? operator but no replacement parameter given!');
+            }
+        } else {
+            $input = $this->prepare($input, (array) $inputParam);
+
+            // eg: '??=?', ['a.id',1], '??=??', ['a.id','b.id']
+            // eg: 'a.id=?, a.b=?', [1,2], 'a.id=??, a.b=?', ['b.id',2]
+            if (strpos($input, '=')) {
+                $input = implode(', ', array_map(function ($input) {
+                    $input = trim($input);
+                    if ($input != '') {
+                        $input = explode('=', $input);
+                        $input = $this->escapeIdentifier($input[0]) .' = '. $input[1];
+                        return $input;
+                    }
+                }, explode(',', $input)));
+            }
+
+            return $input;
+        }
+
+        // eg: a.id=b.id
+        if (strpos($input, '=')) {
+            $input = implode(', ', array_map(function ($input) {
+                $input = trim($input);
+                if ($input != '') {
+                    $input = explode('=', $input);
+                    $input = $this->escapeIdentifier($input[0]) .' = '. $this->escapeIdentifier($input[1]);
+                    return $input;
+                }
+            }, explode(',', $input)));
+        } else {
+            // eg: a.id
+            $input = $this->escapeIdentifier($input);
+        }
+
+        return $input;
+    }
 }
