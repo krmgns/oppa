@@ -650,9 +650,10 @@ final class Builder
      * @param  string|array         $arguments
      * @param  bool                 $ilike
      * @param  string               $op
+     * @param  bool                 $not
      * @return self
      */
-    public function whereLike($field, $arguments, bool $ilike = false, string $op = ''): self
+    public function whereLike($field, $arguments, bool $ilike = false, string $op = '', bool $not = false): self
     {
         // @note to me..
         // 'foo%'  Anything starts with "foo"
@@ -684,24 +685,38 @@ final class Builder
             throw new BuilderException('Like search cannot be empty!');
         }
 
+        $not = $not ? ' NOT ' : ' ';
         $fields = $this->agent->escapeIdentifier($field, false);
         $search = $end . $this->agent->escape($search, '%sl', false) . $start;
 
         if ($ilike) {
             foreach ($fields as $field) {
                 if ($this->agent->isMysql()) {
-                    $this->where("lower({$field}) LIKE lower('{$search}')", null, 'OR');
+                    $this->where("lower({$field}){$not}LIKE lower('{$search}')", null, 'OR');
                 } elseif ($this->agent->isPgsql()) {
-                    $this->where("{$field} ILIKE '{$search}'", null, 'OR');
+                    $this->where("{$field}{$not}ILIKE '{$search}'", null, 'OR');
                 }
             }
         } else {
             foreach ($fields as $field) {
-                $this->where("{$field} LIKE '{$search}'", null, 'OR');
+                $this->where("{$field}{$not}LIKE '{$search}'", null, 'OR');
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Where not like.
+     * @param  string|array|Builder $field
+     * @param  string|array         $arguments
+     * @param  bool                 $ilike
+     * @param  string               $op
+     * @return self
+     */
+    public function whereNotLike($field, $arguments, bool $ilike = false, string $op = ''): self
+    {
+        return $this->whereLike($field, $arguments, $ilike, $op, true);
     }
 
     /**
@@ -805,28 +820,6 @@ final class Builder
     public function whereIds(string $field, array $ids, string $op = ''): self
     {
         return $this->where('?? IN (?)', [$field, $ids], $op);
-    }
-
-    /**
-     * Id (alias of whereId()).
-     * @param  int|string $id
-     * @param  string     $op
-     * @return self
-     */
-    public function id($id, string $op = ''): self
-    {
-        return $this->whereId('id', $id, $op);
-    }
-
-    /**
-     * Ids (alias of whereIds()).
-     * @param  array[int|string] $ids
-     * @param  string            $op
-     * @return self
-     */
-    public function ids($ids, string $op = ''): self
-    {
-        return $this->whereIds('id', [$ids], $op);
     }
 
     /**
@@ -978,7 +971,6 @@ final class Builder
         }
 
         return $this->push('orderBy', $this->field($field) .' '. $op);
-
     }
 
     /**
