@@ -325,17 +325,16 @@ final class Builder
     /**
      * From
      * @param  string|Builder $field
-     * @param  string|null    $as
+     * @param  string         $as
      * @return self
      */
-    public function from($field, string $as = null): self
+    public function from($field, string $as): self
     {
-        $from = $this->field($field);
-        if ($as != null) {
-            $from = sprintf('(%s) AS %s', $from, $as);
+        if (is_string($field) && strpos($field, '(') === false) {
+            $field = $this->field($field);
         }
 
-        $this->query['from'] = $from;
+        $this->query['from'] = sprintf('(%s) AS %s', $field, $as);
 
         return $this;
     }
@@ -848,7 +847,7 @@ final class Builder
             throw new BuilderException('Search arguments cannot be empty!');
         }
 
-        if (strpos($field, '(') === false) {
+        if (is_string($field) && strpos($field, '(') === false) {
             $field = $this->field($field);
         }
 
@@ -1179,11 +1178,10 @@ final class Builder
                 "Table is not defined yet! Call 'setTable()' to set target table first.");
         }
 
-        $n = $t = '';
+        $n = $t = $nt = ''; $ns = ' ';
         if ($pretty) {
-            $n = "\n"; $t = "\t";
+            $n = "\n"; $t = "\t"; $nt = "\n\t"; $ns = $n;
         }
-        $ns = ($n ?: ' ');
 
         switch ($key) {
             case 'select':
@@ -1204,7 +1202,17 @@ final class Builder
                 );
                 break;
             case 'from':
-                $string = $this->query['from'] ?? $this->table;
+                if ($this->has('from')) {
+                    if ($pretty) {
+                        $from = substr($this->query['from'], 1, -1); // trim parentheses
+                        $from = '('. $nt . $t . implode($nt . $t, explode($n, $from)) . $nt .')';
+                    } else {
+                        $from = $this->query['from'];
+                    }
+                    $string = $from;
+                } else {
+                    $string = $this->table;
+                }
                 break;
             case 'insert':
                 if ($this->has('insert')) {
@@ -1216,7 +1224,7 @@ final class Builder
                         $values[] = '('. $this->agent->escape(array_values($dat)) .')';
                     }
 
-                    $string = "INSERT INTO {$this->table} {$n}{$t}({$keys}) {$n}{$t}VALUES ".
+                    $string = "INSERT INTO {$this->table} {$nt}({$keys}) {$nt}VALUES ".
                         join(', ', $values);
                 }
                 break;
@@ -1230,7 +1238,7 @@ final class Builder
                     }
 
                     $string = trim(
-                        "UPDATE {$this->table} SET {$n}{$t}". join(', ', $set)
+                        "UPDATE {$this->table} SET {$nt}". join(', ', $set)
                         . $this->toQueryString('where', $pretty)
                         . $this->toQueryString('orderBy', $pretty)
                         . $this->toQueryString('limit', $pretty)
@@ -1268,7 +1276,7 @@ final class Builder
 
                     $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
                     $string = $string . str_repeat(')', $wsp); // close parentheses
-                    $string = $ns . 'WHERE ('. $n . $t . $string . $n . ')';
+                    $string = $ns . 'WHERE ('. $nt . $string . $n . ')';
                 }
                 break;
             case 'groupBy':
