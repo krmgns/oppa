@@ -848,7 +848,10 @@ final class Builder
             throw new BuilderException('Search arguments cannot be empty!');
         }
 
-        $field = $this->field($field);
+        if (strpos($field, '(') === false) {
+            $field = $this->field($field);
+        }
+
         $query = '';
         $search = [];
         if ($this->agent->isMysql()) {
