@@ -1215,8 +1215,11 @@ final class Builder
 
         switch ($key) {
             case 'select':
+                $select = $pretty ? $nt . join(', '. $nt, $this->query['select'])
+                    : join(', ', $this->query['select']);
+
                 $string = sprintf("SELECT %s%s {$n}{$t}FROM %s",
-                    join(', ', $this->query['select']),
+                    $select,
                     $this->toQueryString('aggregate', $pretty),
                     $this->toQueryString('from', $pretty)
                 );
