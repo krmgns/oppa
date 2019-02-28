@@ -227,13 +227,15 @@ final class Builder
      * @param  string|array $field
      * @param  string       $as
      * @param  string       $type
-     * @param  bool         $esc
+     * @param  bool         $escapeField
      * @param  bool         $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function selectJson($field, string $as, string $type = 'object', bool $esc = true, bool $reset = true): self
+    public function selectJson($field, string $as, string $type = 'object', bool $escapeField = true, bool $reset = true): self
     {
+        $reset && $this->reset();
+
         static $server, $serverVersion, $serverVersionMin, $jsonObject, $jsonArray;
 
         if ($server == null) {
@@ -256,20 +258,20 @@ final class Builder
         if (is_string($field)) {
             foreach (Util::split('\s*,\s*', $field) as $field) {
                 if ($type == 'object') {
-                    // eg: selectJson(''id: id'')
+                    // eg: selectJson('id: id, ...')
                     @ [$key, $value] = Util::split('\s*:\s*', $field);
                     if (!isset($key, $value)) {
                         throw new BuilderException('Field name and value must be given fo JSON objects!');
                     }
                     $json[] = $this->agent->quote(trim($key));
-                    if ($esc || strpos($value, '.')) {
+                    if ($escapeField || strpos($value, '.')) {
                         $value = $this->agent->escapeIdentifier($value);
                     }
                     $json[] = $value;
                 } elseif ($type == 'array') {
-                    // eg: selectJson('1, 2')
+                    // eg: selectJson('1, 2, ...')
                     $value = $field;
-                    if ($esc || strpos($value, '.')) {
+                    if ($escapeField || strpos($value, '.')) {
                         $value = $this->agent->escapeIdentifier($value);
                     }
                     $json[] = $value;
@@ -279,18 +281,18 @@ final class Builder
             foreach ($field as $key => $value) {
                 $keyType = gettype($key);
                 if ($type == 'object') {
-                    // eg: selectJson(['id' => 'id'])
+                    // eg: selectJson(['id' => 'id', ...])
                     if ($keyType != 'string') {
                         throw new BuilderException(sprintf('Field name must be string, %s given !', $keyType));
                     }
-                    $json[] = $this->agent->quote($key) .', '. ($esc || strpos($value, '.')
+                    $json[] = $this->agent->quote($key) .', '. ($escapeField || strpos($value, '.')
                         ? $this->agent->quoteField($value) : $value);
                 } elseif ($type == 'array') {
-                    // eg: selectJson(['1', '2'])
+                    // eg: selectJson(['1', '2', ...])
                     if ($keyType != 'integer') {
                         throw new BuilderException(sprintf('Field name must be int, %s given !', $keyType));
                     }
-                    $json[] = $esc || strpos($value, '.') ? $this->agent->quoteField($value) : $value;
+                    $json[] = $escapeField || strpos($value, '.') ? $this->agent->quoteField($value) : $value;
                 }
             }
         } else {
@@ -306,7 +308,7 @@ final class Builder
             throw new BuilderException("Given JSON type '{$type}' is not implemented!");
         }
 
-        return $this->select($json, null, false, $reset);
+        return $this->push('select', $json);
     }
 
     /**
@@ -314,12 +316,12 @@ final class Builder
      * @param  string|array $field
      * @param  string       $as
      * @param  string       $type
-     * @param  bool         $esc
+     * @param  bool         $escapeField
      * @return self
      */
-    public function selectJsonMore($field, string $as, string $type = 'object', bool $esc = true): self
+    public function selectJsonMore($field, string $as, string $type = 'object', bool $escapeField = true): self
     {
-        return $this->selectJson($field, $as, $type, $esc, false);
+        return $this->selectJson($field, $as, $type, $escapeField, false);
     }
 
     /**
@@ -1210,7 +1212,7 @@ final class Builder
 
         $n = $t = $nt = ''; $ns = ' ';
         if ($pretty) {
-            $n = "\n"; $t = "\t"; $nt = "\n\t"; $ns = $n;
+            $n = "\n"; $t = "  "; $nt = $n.$t; $ns = $n;
         }
 
         switch ($key) {
