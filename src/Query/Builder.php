@@ -997,6 +997,26 @@ final class Builder
     }
 
     /**
+     * Order by asc.
+     * @param  string|array|Builder $field
+     * @return self
+     */
+    public function orderByAsc($field): self
+    {
+        return $this->orderBy($field, 'ASC');
+    }
+
+    /**
+     * Order by desc.
+     * @param  string|array|Builder $field
+     * @return self
+     */
+    public function orderByDesc($field): self
+    {
+        return $this->orderBy($field, 'DESC');
+    }
+
+    /**
      * Limit.
      * @param  int      $limit
      * @param  int|null $offset

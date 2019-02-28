@@ -258,6 +258,24 @@ trait BuilderTrait
     }
 
     /**
+     * Order asc.
+     * @aliasOf orderByAsc()
+     */
+    public function orderAsc(): self
+    {
+        return $this->orderByAsc(...func_get_args());
+    }
+
+    /**
+     * Order desc.
+     * @aliasOf orderByDesc()
+     */
+    public function orderDesc(): self
+    {
+        return $this->orderByDesc(...func_get_args());
+    }
+
+    /**
      * Is.
      * @aliasOf whereEqual()
      */
