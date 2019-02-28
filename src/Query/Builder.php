@@ -193,7 +193,7 @@ final class Builder
                 throw new BuilderException('Alias required!');
             }
 
-            return $this->push('select', '('. $field->toString() .') AS '. $as);
+            return $this->push('select', '('. $field->toString() .') AS '. $this->agent->quoteField($as));
         }
 
         // handle trivial selects
@@ -205,7 +205,7 @@ final class Builder
 
         $field = $this->field($field);
         if ($as != null) {
-            $field = $field .' AS '. $as;
+            $field = $field .' AS '. $this->agent->quoteField($as);
         }
 
         return $this->push('select', $field);
@@ -299,9 +299,9 @@ final class Builder
         }
 
         if ($type == 'object') {
-            $json = sprintf('%s(%s) AS %s', $jsonObject, join(', ', $json), $as);
+            $json = sprintf('%s(%s) AS %s', $jsonObject, join(', ', $json), $this->agent->quoteField($as));
         } elseif ($type == 'array') {
-            $json = sprintf('%s(%s) AS %s', $jsonArray, join(', ', $json), $as);
+            $json = sprintf('%s(%s) AS %s', $jsonArray, join(', ', $json), $this->agent->quoteField($as));
         } else {
             throw new BuilderException("Given JSON type '{$type}' is not implemented!");
         }
@@ -334,7 +334,7 @@ final class Builder
             $field = $this->field($field);
         }
 
-        $this->query['from'] = sprintf('(%s) AS %s', $field, $as);
+        $this->query['from'] = sprintf('(%s) AS %s', $field, $this->agent->quoteField($as));
 
         return $this;
     }
@@ -380,82 +380,92 @@ final class Builder
 
     /**
      * Join.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $on
      * @param  any|null $onParams
      * @param  string   $type
      * @return self
      */
-    public function join(string $table, string $on, $onParams = null, string $type = ''): self
+    public function join(string $to, string $as, string $on, $onParams = null, string $type = ''): self
     {
-        $on = $this->agent->prepareIdentifier($on, $onParams);
-
-        return $this->push('join', sprintf('%sJOIN %s ON (%s)',
-            $type ? strtoupper($type) .' ' : '', $this->field($table), $on));
+        return $this->push('join', sprintf('%sJOIN %s AS %s ON (%s)',
+            $type ? strtoupper($type) .' ' : '',
+            $this->field($to),
+            $this->agent->quoteField($as),
+            $this->agent->prepareIdentifier($on, $onParams))
+        );
     }
 
     /**
      * Join left.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $on
      * @param  any|null $onParams
      * @return self
      */
-    public function joinLeft(string $table, string $on, $onParams = null): self
+    public function joinLeft(string $to, string $as, string $on, $onParams = null): self
     {
-        return $this->join($table, $on, $onParams, 'LEFT');
+        return $this->join($to, $as, $on, $onParams, 'LEFT');
     }
 
     /**
      * Right right.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $on
      * @param  any|null $onParams
      * @return self
      */
-    public function joinRight(string $table, string $on, $onParams = null): self
+    public function joinRight(string $to, string $as, string $on, $onParams = null): self
     {
-        return $this->join($table, $on, $onParams, 'RIGHT');
+        return $this->join($to, $as, $on, $onParams, 'RIGHT');
     }
 
     /**
      * Join using.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $using
      * @param  any|null $usingParams
      * @param  string   $type
      * @return self
      */
-    public function joinUsing(string $table, string $using, $usingParams = null, string $type = ''): self
+    public function joinUsing(string $to, string $as, string $using, $usingParams = null, string $type = ''): self
     {
-        $using = $this->agent->prepareIdentifier($using, $usingParams);
-
-        return $this->push('join', sprintf('%sJOIN %s USING (%s)',
-            $type ? strtoupper($type) .' ' : '', $this->field($table), $using));
+        return $this->push('join', sprintf('%sJOIN %s AS %s USING (%s)',
+            $type ? strtoupper($type) .' ' : '',
+            $this->field($to),
+            $this->agent->quoteField($as),
+            $this->agent->prepareIdentifier($using, $usingParams))
+        );
     }
 
     /**
      * Join left using.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $using
      * @param  any|null $usingParams
      * @return self
      */
-    public function joinLeftUsing(string $table, string $using, $usingParams = null): self
+    public function joinLeftUsing(string $to, string $as, string $using, $usingParams = null): self
     {
-        return $this->joinUsing($table, $using, $usingParams, 'LEFT');
+        return $this->joinUsing($to, $as, $using, $usingParams, 'LEFT');
     }
 
     /**
      * Join right using.
-     * @param  string   $table
+     * @param  string   $to
+     * @param  string   $as
      * @param  string   $using
      * @param  any|null $usingParams
      * @return self
      */
-    public function joinRightUsing(string $table, string $using, $usingParams = null): self
+    public function joinRightUsing(string $to, string $as, string $using, $usingParams = null): self
     {
-        return $this->joinUsing($table, $using, $usingParams, 'RIGHT');
+        return $this->joinUsing($to, $as, $using, $usingParams, 'RIGHT');
     }
 
     /**
@@ -1037,13 +1047,13 @@ final class Builder
         $field = $field ?: '*';
 
         // if as not provided
-        if ($as == '') {
+        if ($as == null) {
             // aggregate('count', 'x') count_x
             // aggregate('count', 'u.x') count_ux
             $as = ($field && $field != '*') ? preg_replace('~[^\w]~', '', $fn .'_'. $field) : $fn;
         }
 
-        return $this->push('select', sprintf('%s(%s) AS %s', $fn, $field, $as));
+        return $this->push('select', sprintf('%s(%s) AS %s', $fn, $field, $this->agent->quoteField($as)));
     }
 
     /**
