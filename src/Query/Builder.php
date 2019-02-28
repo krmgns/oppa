@@ -1204,8 +1204,8 @@ final class Builder
             case 'from':
                 if ($this->has('from')) {
                     if ($pretty) {
-                        $from = substr($this->query['from'], 1, -1); // trim parentheses
-                        $from = '('. $nt . $t . implode($nt . $t, explode($n, $from)) . $nt .')';
+                        $from = preg_split('~^\((.+)\)+\s*(?:AS\s+(.+))~s', $this->query['from'], 2, 3);
+                        $from = '('. $nt . $t . implode($nt . $t, explode($n, $from[0])) . $nt .') AS '. $from[1];
                     } else {
                         $from = $this->query['from'];
                     }
