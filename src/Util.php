@@ -82,34 +82,42 @@ final /* static */ class Util
     public static function getIp(): string
     {
         $ip = 'unknown';
-        if (null != ($ip = ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))) {
+        if ('' != ($ip = ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))) {
             if (false !== strpos($ip, ',')) {
                 $ip = trim((string) end(explode(',', $ip)));
             }
         }
         // all ok
-        elseif (null != ($ip = ($_SERVER['HTTP_CLIENT_IP'] ?? ''))) {}
-        elseif (null != ($ip = ($_SERVER['HTTP_X_REAL_IP'] ?? ''))) {}
-        elseif (null != ($ip = ($_SERVER['REMOTE_ADDR_REAL'] ?? ''))) {}
-        elseif (null != ($ip = ($_SERVER['REMOTE_ADDR'] ?? ''))) {}
+        elseif ('' != ($ip = ($_SERVER['HTTP_CLIENT_IP'] ?? ''))) {}
+        elseif ('' != ($ip = ($_SERVER['HTTP_X_REAL_IP'] ?? ''))) {}
+        elseif ('' != ($ip = ($_SERVER['REMOTE_ADDR_REAL'] ?? ''))) {}
+        elseif ('' != ($ip = ($_SERVER['REMOTE_ADDR'] ?? ''))) {}
 
         return $ip;
     }
 
     /**
      * Split.
-     * @param  string $pattern
-     * @param  string $input
-     * @param  int    $flags
+     * @param  string   $pattern
+     * @param  string   $input
+     * @param  int|null $size
+     * @param  int      $flags
      * @return array
      */
-    public static function split(string $pattern, string $input, int $flags = 0): array
+    public static function split(string $pattern, string $input, int $size = null, int $flags = 0): array
     {
         if ($pattern[0] != '~') {
-            $pattern = '~'. trim($pattern, '~') .'~'; // make re pattern
+            $pattern = '~\s*'. trim($pattern, '~') .'\s*~'; // make re pattern
         }
 
-        return (array) preg_split($pattern, $input, -1, $flags += PREG_SPLIT_NO_EMPTY);
+        $ret = (array) preg_split($pattern, $input, ($size = $size ?? -1), $flags += PREG_SPLIT_NO_EMPTY);
+
+        // prevent "undefined index ..."
+        if ($size != -1 && sizeof($ret) < $size) {
+            $ret = array_pad($ret, $size, null);
+        }
+
+        return $ret;
     }
 
     /**
