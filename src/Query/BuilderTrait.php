@@ -52,7 +52,7 @@ trait BuilderTrait
 
     /**
      * Equal.
-     * @aliasOf whereEqual()
+     * @alias of whereEqual()
      */
     public function equal(...$arguments): self
     {
@@ -61,7 +61,7 @@ trait BuilderTrait
 
     /**
      * Not equal.
-     * @aliasOf whereNotEqual()
+     * @alias of whereNotEqual()
      */
     public function notEqual(...$arguments): self
     {
@@ -70,7 +70,7 @@ trait BuilderTrait
 
     /**
      * Null.
-     * @aliasOf whereNull()
+     * @alias of whereNull()
      */
     public function null(...$arguments): self
     {
@@ -79,7 +79,7 @@ trait BuilderTrait
 
     /**
      * Not nuull.
-     * @aliasOf whereNotNull()
+     * @alias of whereNotNull()
      */
     public function notNull(...$arguments): self
     {
@@ -88,7 +88,7 @@ trait BuilderTrait
 
     /**
      * In.
-     * @aliasOf whereIn()
+     * @alias of whereIn()
      */
     public function in(...$arguments): self
     {
@@ -97,7 +97,7 @@ trait BuilderTrait
 
     /**
      * Not in.
-     * @aliasOf whereNotIn()
+     * @alias of whereNotIn()
      */
     public function notIn(...$arguments): self
     {
@@ -106,7 +106,7 @@ trait BuilderTrait
 
     /**
      * Between.
-     * @aliasOf whereBetween()
+     * @alias of whereBetween()
      */
     public function between(...$arguments): self
     {
@@ -115,7 +115,7 @@ trait BuilderTrait
 
     /**
      * Not between.
-     * @aliasOf whereNotBetween()
+     * @alias of whereNotBetween()
      */
     public function notBetween(...$arguments): self
     {
@@ -124,7 +124,7 @@ trait BuilderTrait
 
     /**
      * Less than.
-     * @aliasOf whereLessThan()
+     * @alias of whereLessThan()
      */
     public function lessThan(...$arguments): self
     {
@@ -133,7 +133,7 @@ trait BuilderTrait
 
     /**
      * Less than equal.
-     * @aliasOf whereLessThanEqual()
+     * @alias of whereLessThanEqual()
      */
     public function lessThanEqual(...$arguments): self
     {
@@ -142,7 +142,7 @@ trait BuilderTrait
 
     /**
      * Greater than.
-     * @aliasOf whereGreaterThan()
+     * @alias of whereGreaterThan()
      */
     public function greaterThan(...$arguments): self
     {
@@ -151,7 +151,7 @@ trait BuilderTrait
 
     /**
      * Greater than equal.
-     * @aliasOf whereGreaterThanEqual()
+     * @alias of whereGreaterThanEqual()
      */
     public function greaterThanEqual(...$arguments): self
     {
@@ -160,7 +160,7 @@ trait BuilderTrait
 
     /**
      * Like.
-     * @aliasOf whereLike()
+     * @alias of whereLike()
      */
     public function like(...$arguments): self
     {
@@ -169,7 +169,7 @@ trait BuilderTrait
 
     /**
      * Not like.
-     * @aliasOf whereNotLike()
+     * @alias of whereNotLike()
      */
     public function notLike(...$arguments): self
     {
@@ -178,7 +178,7 @@ trait BuilderTrait
 
     /**
      * Like start.
-     * @aliasOf whereLikeStart()
+     * @alias of whereLikeStart()
      */
     public function likeStart(...$arguments): self
     {
@@ -187,7 +187,7 @@ trait BuilderTrait
 
     /**
      * Like end.
-     * @aliasOf whereLikeEnd()
+     * @alias of whereLikeEnd()
      */
     public function likeEnd(...$arguments): self
     {
@@ -196,7 +196,7 @@ trait BuilderTrait
 
     /**
      * Like both.
-     * @aliasOf whereLikeBoth()
+     * @alias of whereLikeBoth()
      */
     public function likeBoth(...$arguments): self
     {
@@ -205,7 +205,7 @@ trait BuilderTrait
 
     /**
      * Exists.
-     * @aliasOf whereExists()
+     * @alias of whereExists()
      */
     public function exists(...$arguments): self
     {
@@ -214,7 +214,7 @@ trait BuilderTrait
 
     /**
      * Not exists.
-     * @aliasOf whereNotExists()
+     * @alias of whereNotExists()
      */
     public function notExists(...$arguments): self
     {
@@ -223,7 +223,7 @@ trait BuilderTrait
 
     /**
      * Group.
-     * @aliasOf groupBy()
+     * @alias of groupBy()
      */
     public function group(...$arguments): self
     {
@@ -232,7 +232,7 @@ trait BuilderTrait
 
     /**
      * Order.
-     * @aliasOf orderBy()
+     * @alias of orderBy()
      */
     public function order(...$arguments): self
     {
@@ -241,7 +241,7 @@ trait BuilderTrait
 
     /**
      * Order asc.
-     * @aliasOf orderByAsc()
+     * @alias of orderByAsc()
      */
     public function orderAsc(...$arguments): self
     {
@@ -250,7 +250,7 @@ trait BuilderTrait
 
     /**
      * Order desc.
-     * @aliasOf orderByDesc()
+     * @alias of orderByDesc()
      */
     public function orderDesc(...$arguments): self
     {
@@ -259,7 +259,7 @@ trait BuilderTrait
 
     /**
      * Asc.
-     * @aliasOf orderByAsc()
+     * @alias of orderByAsc()
      */
     public function asc(...$arguments): self
     {
@@ -268,7 +268,7 @@ trait BuilderTrait
 
     /**
      * Desc.
-     * @aliasOf orderByDesc()
+     * @alias of orderByDesc()
      */
     public function desc(...$arguments): self
     {
@@ -277,7 +277,7 @@ trait BuilderTrait
 
     /**
      * Sort.
-     * @aliasOf orderBy()
+     * @alias of orderBy()
      */
     public function sort(...$arguments): self
     {
@@ -286,7 +286,7 @@ trait BuilderTrait
 
     /**
      * Is.
-     * @aliasOf whereEqual()
+     * @alias of whereEqual()
      */
     public function is(...$arguments): self
     {
@@ -295,7 +295,7 @@ trait BuilderTrait
 
     /**
      * Is not.
-     * @aliasOf whereNotEqual()
+     * @alias of whereNotEqual()
      */
     public function isNot(...$arguments): self
     {
@@ -304,7 +304,7 @@ trait BuilderTrait
 
     /**
      * Is equal.
-     * @aliasOf whereEqual()
+     * @alias of whereEqual()
      */
     public function isEqual(...$arguments): self
     {
@@ -313,7 +313,7 @@ trait BuilderTrait
 
     /**
      * Is not equal.
-     * @aliasOf whereNotEqual()
+     * @alias of whereNotEqual()
      */
     public function isNotEqual(...$arguments): self
     {
@@ -322,7 +322,7 @@ trait BuilderTrait
 
     /**
      * Is null.
-     * @aliasOf whereNull()
+     * @alias of whereNull()
      */
     public function isNull(...$arguments): self
     {
@@ -331,7 +331,7 @@ trait BuilderTrait
 
     /**
      * Is not null.
-     * @aliasOf whereNotNull()
+     * @alias of whereNotNull()
      */
     public function isNotNull(...$arguments): self
     {
@@ -340,7 +340,7 @@ trait BuilderTrait
 
     /**
      * Is in.
-     * @aliasOf whereIn().
+     * @alias of whereIn().
      */
     public function isIn(...$arguments): self
     {
@@ -349,7 +349,7 @@ trait BuilderTrait
 
     /**
      * Is not in.
-     * @aliasOf whereNotIn().
+     * @alias of whereNotIn().
      */
     public function isNotIn(...$arguments): self
     {
@@ -358,7 +358,7 @@ trait BuilderTrait
 
     /**
      * Is between.
-     * @aliasOf whereBetween().
+     * @alias of whereBetween().
      */
     public function isBetween(...$arguments): self
     {
@@ -367,7 +367,7 @@ trait BuilderTrait
 
     /**
      * Is not between.
-     * @aliasOf whereNotBetween()
+     * @alias of whereNotBetween()
      */
     public function isNotBetween(...$arguments): self
     {
@@ -376,7 +376,7 @@ trait BuilderTrait
 
     /**
      * Eq.
-     * @aliasOf whereEqual()
+     * @alias of whereEqual()
      */
     public function eq(...$arguments): self
     {
@@ -385,7 +385,7 @@ trait BuilderTrait
 
     /**
      * Neq.
-     * @aliasOf whereNotEqual()
+     * @alias of whereNotEqual()
      */
     public function neq(...$arguments): self
     {
@@ -394,7 +394,7 @@ trait BuilderTrait
 
     /**
      * Lt.
-     * @aliasOf whereLessThan()
+     * @alias of whereLessThan()
      */
     public function lt(...$arguments): self
     {
@@ -403,7 +403,7 @@ trait BuilderTrait
 
     /**
      * Lte.
-     * @aliasOf whereLessThanEqual()
+     * @alias of whereLessThanEqual()
      */
     public function lte(...$arguments): self
     {
@@ -412,7 +412,7 @@ trait BuilderTrait
 
     /**
      * Gt.
-     * @aliasOf whereGreaterThan()
+     * @alias of whereGreaterThan()
      */
     public function gt(...$arguments): self
     {
@@ -421,7 +421,7 @@ trait BuilderTrait
 
     /**
      * Gte.
-     * @aliasOf whereGreaterThanEqual()
+     * @alias of whereGreaterThanEqual()
      */
     public function gte(...$arguments): self
     {
@@ -430,7 +430,7 @@ trait BuilderTrait
 
     /**
      * Esc.
-     * @aliasOf agent.escape()
+     * @alias of agent.escape()
      */
     public function esc(...$arguments)
     {
@@ -439,7 +439,7 @@ trait BuilderTrait
 
     /**
      * Esc id.
-     * @aliasOf agent.escapeIdentifier()
+     * @alias of agent.escapeIdentifier()
      */
     public function escId(...$arguments)
     {
@@ -448,7 +448,7 @@ trait BuilderTrait
 
     /**
      * Esc field.
-     * @aliasOf agent.escapeIdentifier()
+     * @alias of agent.escapeIdentifier()
      */
     public function escField(...$arguments)
     {
@@ -457,7 +457,7 @@ trait BuilderTrait
 
     /**
      * Id.
-     * @aliasOf identifier()
+     * @alias of identifier()
      */
     public function id(string $name): Identifier
     {
@@ -466,7 +466,7 @@ trait BuilderTrait
 
     /**
      * Field.
-     * @aliasOf identifier()
+     * @alias of identifier()
      */
     public function field(string $name): Identifier
     {
