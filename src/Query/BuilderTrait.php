@@ -258,6 +258,33 @@ trait BuilderTrait
     }
 
     /**
+     * Asc.
+     * @aliasOf orderByAsc()
+     */
+    public function asc(): self
+    {
+        return $this->orderByAsc(...func_get_args());
+    }
+
+    /**
+     * Desc.
+     * @aliasOf orderByDesc()
+     */
+    public function desc(): self
+    {
+        return $this->orderByDesc(...func_get_args());
+    }
+
+    /**
+     * Sort.
+     * @aliasOf orderBy()
+     */
+    public function sort(): self
+    {
+        return $this->orderBy(...func_get_args());
+    }
+
+    /**
      * Is.
      * @aliasOf whereEqual()
      */
@@ -399,6 +426,24 @@ trait BuilderTrait
     public function gte(): self
     {
         return $this->whereGreaterThanEqual(...func_get_args());
+    }
+
+    /**
+     * Esc.
+     * @aliasOf agent.escape()
+     */
+    public function esc()
+    {
+        $this->agent->escape(...func_get_args());
+    }
+
+    /**
+     * Esc id.
+     * @aliasOf agent.escapeIdentifier()
+     */
+    public function escId()
+    {
+        $this->agent->escapeIdentifier(...func_get_args());
     }
 
     /**
