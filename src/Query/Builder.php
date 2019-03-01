@@ -1331,6 +1331,7 @@ final class Builder
      */
     public function toString(bool $pretty = true): string
     {
+        $string = '';
         if (!empty($this->query)) {
             if (isset($this->query['select'])) {
                 $string = $this->toQueryString('select', $pretty);
@@ -1343,7 +1344,11 @@ final class Builder
             }
         }
 
-        return trim($string ?? '');
+        if ($string != '' && $this->isSub) {
+            $string .= "\n\t";
+        }
+
+        return $string;
     }
 
     /**
@@ -1360,14 +1365,15 @@ final class Builder
                 "Table is not defined yet! Call 'setTable()' to set target table first.");
         }
 
-        $n = $t = $nt = ''; $ns = ' ';
+        $s = ''; $n = $t = $nt = ''; $ns = ' ';
         if ($pretty) {
-            $n = "\n"; $t = "  "; $nt = $n.$t; $ns = $n;
+            $s = "\t"; $n = "\n"; $t = "\t"; $nt = $n.$t; $ns = $n;
             if ($this->isSub) {
-                $t = $t.$t; $ns = $ns.$ns;
+                $ns = $nt.$t; $t = $t.$t;
             }
         }
 
+        $string = '';
         switch ($key) {
             case 'select':
                 $select = $pretty ? $n . $t . join(', '. $n . $t, $this->query['select'])
@@ -1464,6 +1470,9 @@ final class Builder
 
                     $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
                     $string = $string . str_repeat(')', $wsp); // close parentheses
+                    if ($this->isSub) {
+                        $n = $n.$t; $nt = $n.$s;
+                    }
                     $string = $ns . 'WHERE ('. $nt . $string . $n . ')';
                 }
                 break;
@@ -1506,7 +1515,7 @@ final class Builder
                 throw new BuilderException("Unknown key '{$key}' given");
         }
 
-        return $string ?? null;
+        return $string ?: null;
     }
 
     /**
