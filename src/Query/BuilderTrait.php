@@ -222,24 +222,6 @@ trait BuilderTrait
     }
 
     /**
-     * Id.
-     * @aliasOf whereId()
-     */
-    public function id(): self
-    {
-        return $this->whereId('id', ...func_get_args());
-    }
-
-    /**
-     * Ids.
-     * @aliasOf whereIds()
-     */
-    public function ids(): self
-    {
-        return $this->whereIds('id', ...func_get_args());
-    }
-
-    /**
      * Group.
      * @aliasOf groupBy()
      */
@@ -419,4 +401,41 @@ trait BuilderTrait
         return $this->whereGreaterThanEqual(...func_get_args());
     }
 
+    /**
+     * Id.
+     * @aliasOf identifier()
+     */
+    public function id(string $name): Identifier
+    {
+        return $this->identifier($name);
+    }
+
+    /**
+     * Field.
+     * @aliasOf identifier()
+     */
+    public function field(string $name): Identifier
+    {
+        return $this->identifier($name);
+    }
+
+    /**
+     * Identifier.
+     * @param  string $name
+     * @return Oppa\Query\Identifier
+     */
+    public function identifier(string $name): Identifier
+    {
+        return new Identifier($name);
+    }
+
+    /**
+     * Sql.
+     * @param  string $content
+     * @return Oppa\Query\Sql
+     */
+    public function sql(string $content): Sql
+    {
+        return new Sql($content);
+    }
 }
