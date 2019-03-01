@@ -447,6 +447,15 @@ trait BuilderTrait
     }
 
     /**
+     * Esc field.
+     * @aliasOf agent.escapeIdentifier()
+     */
+    public function escField(...$arguments)
+    {
+        $this->agent->escapeIdentifier(...$arguments);
+    }
+
+    /**
      * Id.
      * @aliasOf identifier()
      */

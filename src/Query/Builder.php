@@ -276,21 +276,25 @@ final class Builder
                     $valueType = gettype($value);
                     if ($valueType == 'array') {
                         // eg: 'bar' => ['baz' => ['a', ['b' => ['c:d'], ...]]]
-                        $json[] = is_string($key) ? $this->agent->quote($key) .', '. $toJson($value)
+                        $json[] = is_string($key) ? $this->agent->quote(trim($key)) .', '. $toJson($value)
                             : $toJson($value);
                     } elseif ($keyType == 'integer') {
-                        // eg: ['uid: u.id']
-                        if ($valueType == 'string' && strpos($value, ':')) {
-                            @ [$key, $value] = Util::split('\s*:\s*', $value, 2);
-                            if (!isset($key, $value)) {
-                                throw new BuilderException('Field name and value must be given fo JSON objects!');
-                            }
+                        // eg: ['uid: u.id' or 'uid' => ' u.id', 'user' => ['id: u.id' or 'id' => 'u.id', ...], ...]
+                        if ($valueType == 'string' && strpbrk($value, ',:')) {
+                            if (strpos($value, ',')) {
+                                $json[] = $toJson(Util::split('\s*,\s*', $value));
+                            } elseif (strpos($value, ':')) {
+                                @ [$key, $value] = Util::split('\s*:\s*', $value, 2);
+                                if (!isset($key, $value)) {
+                                    throw new BuilderException('Field name and value must be given fo JSON objects!');
+                                }
 
-                            if (!isset($json[0])) {
-                                $json[0] = $fnJsonObject; // tick
-                            }
+                                if (!isset($json[0])) {
+                                    $json[0] = $fnJsonObject; // tick
+                                }
 
-                            $json[] = $this->agent->quote($key) .', '. $toField($value);
+                                $json[] = $this->agent->quote(trim($key)) .', '. $toField($value);
+                            }
                         } else {
                             // eg: ['u.id', 'u.name', 1, 2, 3, ..]
                             if ($valueType == 'integer') {
@@ -309,7 +313,7 @@ final class Builder
                             $json[0] = $fnJsonObject; // tick
                         }
 
-                        $json[] = $this->agent->quote($key) .', '. $toField($value);
+                        $json[] = $this->agent->quote(trim($key)) .', '. $toField($value);
                     }
                 }
 
@@ -353,7 +357,7 @@ final class Builder
                         throw new BuilderException("Field name must be string, {$keyType} given!");
                     }
 
-                    $key = $this->agent->quote($key);
+                    $key = $this->agent->quote(trim($key));
                     if (is_array($value)) {
                         $jsonJoin = true;
                         $json[$keyIndex][$key] = $toJson($value);
@@ -1570,6 +1574,8 @@ final class Builder
     {
         if ($field instanceof Builder) {
             return '('. $field->toString() .')';
+        } elseif ($field instanceof Sql) {
+            return $this->agent->escapeIdentifier($field);
         }
 
         if (is_string($field)) {
