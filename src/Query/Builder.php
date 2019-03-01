@@ -352,19 +352,30 @@ final class Builder
             foreach ($field as $key => $value) {
                 $keyType = gettype($key);
                 if ($type == 'object') {
-                    // eg: ['id' => 'id', ...]
-                    if ($keyType != 'string') {
+                    // eg: ['id' => 'id', ... or 0 => 'id: id, ...', ...]
+                    if ($keyType == 'integer') {
+                        $value = Util::split('\s*,\s*', $value);
+                    } elseif ($keyType != 'string') {
                         throw new BuilderException("Field name must be string, {$keyType} given!");
                     }
 
-                    $key = $this->agent->quote(trim($key));
                     if (is_array($value)) {
+                        if ($keyType == 'string') {
+                            // eg: ['id' => 'id', ...]
+                            $key = $this->agent->quote(trim($key));
+                            $json[$keyIndex][$key] = $toJson($value);
+                        } else {
+                            // eg: [0 => 'id: id, ...', ...]
+                            $value = $toJson($value);
+                            $value = preg_replace('~json(?:_build)?_(?:object|array)\((.+)\)$~', '\1', $value); // :(
+                            $json[$keyIndex][] = [$value];
+                        }
                         $jsonJoin = true;
-                        $json[$keyIndex][$key] = $toJson($value);
                         continue;
                     } elseif (is_string($value)) {
-                        $jsonJoin = true;
+                        $key = $this->agent->quote(trim($key));
                         $json[$keyIndex][$key] = $toJson(Util::split('\s*,\s*', $value));
+                        $jsonJoin = true;
                         continue;
                     }
 
@@ -389,7 +400,7 @@ final class Builder
         if ($jsonJoin) {
             $jsonJoin = [];
             foreach ($json[0] as $key => $value) {
-                $jsonJoin[] = $key .', '. $value;
+                $jsonJoin[] = is_array($value) ? join(', ', $value) : $key .', '. $value;
             }
             $json = $jsonJoin;
         }
