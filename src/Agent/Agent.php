@@ -28,6 +28,7 @@ namespace Oppa\Agent;
 
 use Oppa\{Util, Config, Resource, Logger, Mapper, Profiler};
 use Oppa\Batch\BatchInterface;
+use Oppa\Query\Sql;
 use Oppa\Query\Result\ResultInterface;
 
 /**
@@ -474,14 +475,17 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function escapeIdentifier($input, bool $join = true)
     {
-        $inputType = gettype($input);
-        if ($inputType == 'array') {
+        if (is_array($input)) {
             $input = array_map([$this, 'escapeIdentifier'], $input);
 
             return $join ? join(', ', $input) : $input;
-        } elseif ($inputType != 'string') {
-            throw new AgentException(sprintf('String and array identifiers accepted only, %s given!',
-                $inputType));
+        } elseif ($input instanceof Sql) {
+            $input = $input->toString();
+        }
+
+        if (!is_string($input)) {
+            throw new AgentException(sprintf('String, array and Query\Sql type identifiers accepted only, %s given!',
+                gettype($input)));
         }
 
         $input = trim($input, ' .,');
