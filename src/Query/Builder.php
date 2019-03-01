@@ -282,9 +282,9 @@ final class Builder
                         // eg: ['uid: u.id' or 'uid' => ' u.id', 'user' => ['id: u.id' or 'id' => 'u.id', ...], ...]
                         if ($valueType == 'string' && strpbrk($value, ',:')) {
                             if (strpos($value, ',')) {
-                                $json[] = $toJson(Util::split('\s*,\s*', $value));
+                                $json[] = $toJson(Util::split(',', $value));
                             } elseif (strpos($value, ':')) {
-                                @ [$key, $value] = Util::split('\s*:\s*', $value, 2);
+                                @ [$key, $value] = Util::split(':', $value, 2);
                                 if (!isset($key, $value)) {
                                     throw new BuilderException('Field name and value must be given fo JSON objects!');
                                 }
@@ -333,10 +333,10 @@ final class Builder
         $json = [];
         $jsonJoin = false;
         if (is_string($field)) {
-            foreach (Util::split('\s*,\s*', $field) as $field) {
+            foreach (Util::split(',', $field) as $field) {
                 if ($type == 'object') {
                     // eg: 'id: id, ...'
-                    @ [$key, $value] = Util::split('\s*:\s*', $field);
+                    [$key, $value] = Util::split(':', $field, 2);
                     if (!isset($key, $value)) {
                         throw new BuilderException('Field name and value must be given fo JSON objects!');
                     }
@@ -354,7 +354,7 @@ final class Builder
                 if ($type == 'object') {
                     // eg: ['id' => 'id', ... or 0 => 'id: id, ...', ...]
                     if ($keyType == 'integer') {
-                        $value = Util::split('\s*,\s*', $value);
+                        $value = Util::split(',', $value);
                     } elseif ($keyType != 'string') {
                         throw new BuilderException("Field name must be string, {$keyType} given!");
                     }
@@ -374,7 +374,7 @@ final class Builder
                         continue;
                     } elseif (is_string($value)) {
                         $key = $this->agent->quote(trim($key));
-                        $json[$keyIndex][$key] = $toJson(Util::split('\s*,\s*', $value));
+                        $json[$keyIndex][$key] = $toJson(Util::split(',', $value));
                         $jsonJoin = true;
                         continue;
                     }
@@ -581,7 +581,7 @@ final class Builder
         }
 
         // sub-where
-        if ($queryParams != null && $queryParams instanceof Builder) {
+        if ($queryParams instanceof Builder) {
             // $opr argument is empty, should be exists in query (eg: id = )
             $query = $this->prepare($query, '', $queryParams);
 
@@ -624,13 +624,13 @@ final class Builder
         }
 
         if ($queryParams !== null) {
-            if (!is_array($queryParams) && !is_scalar($queryParams)) {
-                throw new BuilderException(sprintf('Array or scalar params are accepted only, %s given!',
+            if (!is_array($queryParams) && !is_scalar($queryParams) && !($queryParams instanceof Sql)) {
+                throw new BuilderException(sprintf('Array, scalar and Query\Sql params are accepted only, %s given!',
                     gettype($queryParams)));
             }
         }
 
-        $query = $this->agent->prepare($query, (array) $queryParams);
+        $query = $this->agent->prepare($query, $queryParams);
 
         $op = $op ? strtoupper($op) : self::OP_AND;
         if ($op != self::OP_OR && $op != self::OP_AND) {
@@ -1590,7 +1590,7 @@ final class Builder
         }
 
         if (is_string($field)) {
-            $field = Util::split('\s*,\s*', trim($field));
+            $field = Util::split(',', trim($field));
         }
 
         if (is_array($field)) {
