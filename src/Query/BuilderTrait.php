@@ -54,396 +54,396 @@ trait BuilderTrait
      * Equal.
      * @aliasOf whereEqual()
      */
-    public function equal(): self
+    public function equal(...$arguments): self
     {
-        return $this->whereEqual(...func_get_args());
+        return $this->whereEqual(...$arguments);
     }
 
     /**
      * Not equal.
      * @aliasOf whereNotEqual()
      */
-    public function notEqual(): self
+    public function notEqual(...$arguments): self
     {
-        return $this->whereNotEqual(...func_get_args());
+        return $this->whereNotEqual(...$arguments);
     }
 
     /**
      * Null.
      * @aliasOf whereNull()
      */
-    public function null(): self
+    public function null(...$arguments): self
     {
-        return $this->whereNull(...func_get_args());
+        return $this->whereNull(...$arguments);
     }
 
     /**
      * Not nuull.
      * @aliasOf whereNotNull()
      */
-    public function notNull(): self
+    public function notNull(...$arguments): self
     {
-        return $this->whereNotNull(...func_get_args());
+        return $this->whereNotNull(...$arguments);
     }
 
     /**
      * In.
      * @aliasOf whereIn()
      */
-    public function in(): self
+    public function in(...$arguments): self
     {
-        return $this->whereIn(...func_get_args());
+        return $this->whereIn(...$arguments);
     }
 
     /**
      * Not in.
      * @aliasOf whereNotIn()
      */
-    public function notIn(): self
+    public function notIn(...$arguments): self
     {
-        return $this->whereNotIn(...func_get_args());
+        return $this->whereNotIn(...$arguments);
     }
 
     /**
      * Between.
      * @aliasOf whereBetween()
      */
-    public function between(): self
+    public function between(...$arguments): self
     {
-        return $this->whereBetween(...func_get_args());
+        return $this->whereBetween(...$arguments);
     }
 
     /**
      * Not between.
      * @aliasOf whereNotBetween()
      */
-    public function notBetween(): self
+    public function notBetween(...$arguments): self
     {
-        return $this->whereNotBetween(...func_get_args());
+        return $this->whereNotBetween(...$arguments);
     }
 
     /**
      * Less than.
      * @aliasOf whereLessThan()
      */
-    public function lessThan(): self
+    public function lessThan(...$arguments): self
     {
-        return $this->whereLessThan(...func_get_args());
+        return $this->whereLessThan(...$arguments);
     }
 
     /**
      * Less than equal.
      * @aliasOf whereLessThanEqual()
      */
-    public function lessThanEqual(): self
+    public function lessThanEqual(...$arguments): self
     {
-        return $this->whereLessThanEqual(...func_get_args());
+        return $this->whereLessThanEqual(...$arguments);
     }
 
     /**
      * Greater than.
      * @aliasOf whereGreaterThan()
      */
-    public function greaterThan(): self
+    public function greaterThan(...$arguments): self
     {
-        return $this->whereGreaterThan(...func_get_args());
+        return $this->whereGreaterThan(...$arguments);
     }
 
     /**
      * Greater than equal.
      * @aliasOf whereGreaterThanEqual()
      */
-    public function greaterThanEqual(): self
+    public function greaterThanEqual(...$arguments): self
     {
-        return $this->whereGreaterThanEqual(...func_get_args());
+        return $this->whereGreaterThanEqual(...$arguments);
     }
 
     /**
      * Like.
      * @aliasOf whereLike()
      */
-    public function like(): self
+    public function like(...$arguments): self
     {
-        return $this->whereLike(...func_get_args());
+        return $this->whereLike(...$arguments);
     }
 
     /**
      * Not like.
      * @aliasOf whereNotLike()
      */
-    public function notLike(): self
+    public function notLike(...$arguments): self
     {
-        return $this->whereNotLike(...func_get_args());
+        return $this->whereNotLike(...$arguments);
     }
 
     /**
      * Like start.
      * @aliasOf whereLikeStart()
      */
-    public function likeStart(): self
+    public function likeStart(...$arguments): self
     {
-        return $this->whereLikeStart(...func_get_args());
+        return $this->whereLikeStart(...$arguments);
     }
 
     /**
      * Like end.
      * @aliasOf whereLikeEnd()
      */
-    public function likeEnd(): self
+    public function likeEnd(...$arguments): self
     {
-        return $this->whereLikeEnd(...func_get_args());
+        return $this->whereLikeEnd(...$arguments);
     }
 
     /**
      * Like both.
      * @aliasOf whereLikeBoth()
      */
-    public function likeBoth(): self
+    public function likeBoth(...$arguments): self
     {
-        return $this->whereLikeBoth(...func_get_args());
+        return $this->whereLikeBoth(...$arguments);
     }
 
     /**
      * Exists.
      * @aliasOf whereExists()
      */
-    public function exists(): self
+    public function exists(...$arguments): self
     {
-        return $this->whereExists(...func_get_args());
+        return $this->whereExists(...$arguments);
     }
 
     /**
      * Not exists.
      * @aliasOf whereNotExists()
      */
-    public function notExists(): self
+    public function notExists(...$arguments): self
     {
-        return $this->whereNotExists(...func_get_args());
+        return $this->whereNotExists(...$arguments);
     }
 
     /**
      * Group.
      * @aliasOf groupBy()
      */
-    public function group(): self
+    public function group(...$arguments): self
     {
-        return $this->groupBy(...func_get_args());
+        return $this->groupBy(...$arguments);
     }
 
     /**
      * Order.
      * @aliasOf orderBy()
      */
-    public function order(): self
+    public function order(...$arguments): self
     {
-        return $this->orderBy(...func_get_args());
+        return $this->orderBy(...$arguments);
     }
 
     /**
      * Order asc.
      * @aliasOf orderByAsc()
      */
-    public function orderAsc(): self
+    public function orderAsc(...$arguments): self
     {
-        return $this->orderByAsc(...func_get_args());
+        return $this->orderByAsc(...$arguments);
     }
 
     /**
      * Order desc.
      * @aliasOf orderByDesc()
      */
-    public function orderDesc(): self
+    public function orderDesc(...$arguments): self
     {
-        return $this->orderByDesc(...func_get_args());
+        return $this->orderByDesc(...$arguments);
     }
 
     /**
      * Asc.
      * @aliasOf orderByAsc()
      */
-    public function asc(): self
+    public function asc(...$arguments): self
     {
-        return $this->orderByAsc(...func_get_args());
+        return $this->orderByAsc(...$arguments);
     }
 
     /**
      * Desc.
      * @aliasOf orderByDesc()
      */
-    public function desc(): self
+    public function desc(...$arguments): self
     {
-        return $this->orderByDesc(...func_get_args());
+        return $this->orderByDesc(...$arguments);
     }
 
     /**
      * Sort.
      * @aliasOf orderBy()
      */
-    public function sort(): self
+    public function sort(...$arguments): self
     {
-        return $this->orderBy(...func_get_args());
+        return $this->orderBy(...$arguments);
     }
 
     /**
      * Is.
      * @aliasOf whereEqual()
      */
-    public function is(): self
+    public function is(...$arguments): self
     {
-        return $this->whereEqual(...func_get_args());
+        return $this->whereEqual(...$arguments);
     }
 
     /**
      * Is not.
      * @aliasOf whereNotEqual()
      */
-    public function isNot(): self
+    public function isNot(...$arguments): self
     {
-        return $this->whereNotEqual(...func_get_args());
+        return $this->whereNotEqual(...$arguments);
     }
 
     /**
      * Is equal.
      * @aliasOf whereEqual()
      */
-    public function isEqual(): self
+    public function isEqual(...$arguments): self
     {
-        return $this->whereEqual(...func_get_args());
+        return $this->whereEqual(...$arguments);
     }
 
     /**
      * Is not equal.
      * @aliasOf whereNotEqual()
      */
-    public function isNotEqual(): self
+    public function isNotEqual(...$arguments): self
     {
-        return $this->whereNotEqual(...func_get_args());
+        return $this->whereNotEqual(...$arguments);
     }
 
     /**
      * Is null.
      * @aliasOf whereNull()
      */
-    public function isNull(): self
+    public function isNull(...$arguments): self
     {
-        return $this->whereNull(...func_get_args());
+        return $this->whereNull(...$arguments);
     }
 
     /**
      * Is not null.
      * @aliasOf whereNotNull()
      */
-    public function isNotNull(): self
+    public function isNotNull(...$arguments): self
     {
-        return $this->whereNotNull(...func_get_args());
+        return $this->whereNotNull(...$arguments);
     }
 
     /**
      * Is in.
      * @aliasOf whereIn().
      */
-    public function isIn(): self
+    public function isIn(...$arguments): self
     {
-        return $this->whereIn(...func_get_args());
+        return $this->whereIn(...$arguments);
     }
 
     /**
      * Is not in.
      * @aliasOf whereNotIn().
      */
-    public function isNotIn(): self
+    public function isNotIn(...$arguments): self
     {
-        return $this->whereNotIn(...func_get_args());
+        return $this->whereNotIn(...$arguments);
     }
 
     /**
      * Is between.
      * @aliasOf whereBetween().
      */
-    public function isBetween(): self
+    public function isBetween(...$arguments): self
     {
-        return $this->whereBetween(...func_get_args());
+        return $this->whereBetween(...$arguments);
     }
 
     /**
      * Is not between.
      * @aliasOf whereNotBetween()
      */
-    public function isNotBetween(): self
+    public function isNotBetween(...$arguments): self
     {
-        return $this->whereNotBetween(...func_get_args());
+        return $this->whereNotBetween(...$arguments);
     }
 
     /**
-     * E.
+     * Eq.
      * @aliasOf whereEqual()
      */
-    public function e(): self
+    public function eq(...$arguments): self
     {
-        return $this->whereEqual(...func_get_args());
+        return $this->whereEqual(...$arguments);
     }
 
     /**
-     * Ne.
+     * Neq.
      * @aliasOf whereNotEqual()
      */
-    public function ne(): self
+    public function neq(...$arguments): self
     {
-        return $this->whereNotEqual(...func_get_args());
+        return $this->whereNotEqual(...$arguments);
     }
 
     /**
      * Lt.
      * @aliasOf whereLessThan()
      */
-    public function lt(): self
+    public function lt(...$arguments): self
     {
-        return $this->whereLessThan(...func_get_args());
+        return $this->whereLessThan(...$arguments);
     }
 
     /**
      * Lte.
      * @aliasOf whereLessThanEqual()
      */
-    public function lte(): self
+    public function lte(...$arguments): self
     {
-        return $this->whereLessThanEqual(...func_get_args());
+        return $this->whereLessThanEqual(...$arguments);
     }
 
     /**
      * Gt.
      * @aliasOf whereGreaterThan()
      */
-    public function gt(): self
+    public function gt(...$arguments): self
     {
-        return $this->whereGreaterThan(...func_get_args());
+        return $this->whereGreaterThan(...$arguments);
     }
 
     /**
      * Gte.
      * @aliasOf whereGreaterThanEqual()
      */
-    public function gte(): self
+    public function gte(...$arguments): self
     {
-        return $this->whereGreaterThanEqual(...func_get_args());
+        return $this->whereGreaterThanEqual(...$arguments);
     }
 
     /**
      * Esc.
      * @aliasOf agent.escape()
      */
-    public function esc()
+    public function esc(...$arguments)
     {
-        $this->agent->escape(...func_get_args());
+        $this->agent->escape(...$arguments);
     }
 
     /**
      * Esc id.
      * @aliasOf agent.escapeIdentifier()
      */
-    public function escId()
+    public function escId(...$arguments)
     {
-        $this->agent->escapeIdentifier(...func_get_args());
+        $this->agent->escapeIdentifier(...$arguments);
     }
 
     /**
