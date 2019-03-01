@@ -83,14 +83,22 @@ final class Builder
     private $query = [];
 
     /**
+     * Is sub.
+     * @var bool
+     */
+    private $isSub = false;
+
+    /**
      * Constructor.
      * @param Oppa\Link\Link|null $link
      * @param string|null         $table
+     * @param bool                $isSub
      */
-    public function __construct(Link $link = null, string $table = null)
+    public function __construct(Link $link = null, string $table = null, bool $isSub = false)
     {
         $link && $this->setLink($link);
         $table && $this->setTable($table);
+        $this->isSub = $isSub;
     }
 
     /**
@@ -172,7 +180,7 @@ final class Builder
      */
     public function has(string $key): bool
     {
-        return !empty($this->query[$key]);
+        return isset($this->query[$key]);
     }
 
     /**
@@ -203,7 +211,7 @@ final class Builder
             return $this->push('select', 'TRUE');
         }
 
-        $field = $this->field($field);
+        $field = $this->prepareField($field);
         if ($as != null) {
             $field = $field .' AS '. $this->agent->quoteField($as);
         }
@@ -234,17 +242,21 @@ final class Builder
      */
     public function selectJson($field, string $as, string $type = 'object', bool $escapeField = true, bool $reset = true): self
     {
+        if (!in_array($type, ['object', 'array'])) {
+            throw new BuilderException("Given JSON type '{$type}' is not implemented!");
+        }
+
         $reset && $this->reset();
 
-        static $server, $serverVersion, $serverVersionMin, $jsonObject, $jsonArray;
+        static $server, $serverVersion, $serverVersionMin, $fnJsonObject, $fnJsonArray, $toField, $toJson;
 
         if ($server == null) {
             if ($this->agent->isMysql()) {
                 $server = 'MySQL'; $serverVersionMin = '5.7.8';
-                $jsonObject = 'json_object'; $jsonArray = 'json_array';
+                $fnJsonObject = 'json_object'; $fnJsonArray = 'json_array';
             } elseif ($this->agent->isPgsql()) {
                 $server = 'PostgreSQL'; $serverVersionMin = '9.4';
-                $jsonObject = 'json_build_object'; $jsonArray = 'json_build_array';
+                $fnJsonObject = 'json_build_object'; $fnJsonArray = 'json_build_array';
             }
 
             $serverVersion = $this->link->getDatabase()->getInfo('serverVersion');
@@ -252,63 +264,133 @@ final class Builder
                 throw new BuilderException(sprintf('JSON not supported by %s/v%s, minimum v%s required',
                     $server, $serverVersion, $serverVersionMin));
             }
+
+            $toField = function ($field) use ($escapeField) {
+                return $escapeField || strpos($field, '.') ? $this->agent->escapeIdentifier($field) : $field;
+            };
+
+            $toJson = function ($values) use (&$toJson, &$toField, $escapeField, $fnJsonArray, $fnJsonObject) {
+                $json = [];
+                foreach ($values as $key => $value) {
+                    $keyType = gettype($key);
+                    $valueType = gettype($value);
+                    if ($valueType == 'array') {
+                        // eg: 'bar' => ['baz' => ['a', ['b' => ['c:d'], ...]]]
+                        $json[] = is_string($key) ? $this->agent->quote($key) .', '. $toJson($value)
+                            : $toJson($value);
+                    } elseif ($keyType == 'integer') {
+                        // eg: ['uid: u.id']
+                        if ($valueType == 'string' && strpos($value, ':')) {
+                            @ [$key, $value] = Util::split('\s*:\s*', $value, 2);
+                            if (!isset($key, $value)) {
+                                throw new BuilderException('Field name and value must be given fo JSON objects!');
+                            }
+
+                            if (!isset($json[0])) {
+                                $json[0] = $fnJsonObject; // tick
+                            }
+
+                            $json[] = $this->agent->quote($key) .', '. $toField($value);
+                        } else {
+                            // eg: ['u.id', 'u.name', 1, 2, 3, ..]
+                            if ($valueType == 'integer') {
+                                $value = $toField($value);
+                            }
+
+                            if (!isset($json[0])) {
+                                $json[0] = $fnJsonArray; // tick
+                            }
+
+                            $json[] = $value;
+                        }
+                    } elseif ($keyType == 'string') {
+                        // eg: ['uid' => 'u.id']
+                        if (!isset($json[0])) {
+                            $json[0] = $fnJsonObject; // tick
+                        }
+
+                        $json[] = $this->agent->quote($key) .', '. $toField($value);
+                    }
+                }
+
+                if ($json) {
+                    $fn = array_shift($json);
+                    $json = $fn ? $fn .'('. join(', ', $json) .')' : '';
+                    if (substr($json, -2) == '()') { // .. :(
+                        $json = substr($json, 0, -2);
+                    }
+                    return $json;
+                }
+
+                return null;
+            };
         }
 
         $json = [];
+        $jsonJoin = false;
         if (is_string($field)) {
             foreach (Util::split('\s*,\s*', $field) as $field) {
                 if ($type == 'object') {
-                    // eg: selectJson('id: id, ...')
+                    // eg: 'id: id, ...'
                     @ [$key, $value] = Util::split('\s*:\s*', $field);
                     if (!isset($key, $value)) {
                         throw new BuilderException('Field name and value must be given fo JSON objects!');
                     }
                     $json[] = $this->agent->quote(trim($key));
-                    if ($escapeField || strpos($value, '.')) {
-                        $value = $this->agent->escapeIdentifier($value);
-                    }
-                    $json[] = $value;
+                    $json[] = $toField($value);
                 } elseif ($type == 'array') {
-                    // eg: selectJson('1, 2, ...')
-                    $value = $field;
-                    if ($escapeField || strpos($value, '.')) {
-                        $value = $this->agent->escapeIdentifier($value);
-                    }
-                    $json[] = $value;
+                    // eg: 'id, ...'
+                    $json[] = $toField($field);
                 }
             }
         } elseif (is_array($field)) {
+            $keyIndex = 0;
             foreach ($field as $key => $value) {
                 $keyType = gettype($key);
                 if ($type == 'object') {
-                    // eg: selectJson(['id' => 'id', ...])
+                    // eg: ['id' => 'id', ...]
                     if ($keyType != 'string') {
-                        throw new BuilderException(sprintf('Field name must be string, %s given !', $keyType));
+                        throw new BuilderException("Field name must be string, {$keyType} given!");
                     }
-                    $json[] = $this->agent->quote($key) .', '. ($escapeField || strpos($value, '.')
-                        ? $this->agent->quoteField($value) : $value);
+
+                    $key = $this->agent->quote($key);
+                    if (is_array($value)) {
+                        $jsonJoin = true;
+                        $json[$keyIndex][$key] = $toJson($value);
+                        continue;
+                    } elseif (is_string($value)) {
+                        $jsonJoin = true;
+                        $json[$keyIndex][$key] = $toJson(Util::split('\s*,\s*', $value));
+                        continue;
+                    }
+
+                    $json[] = $key .', '. $toField($value);
                 } elseif ($type == 'array') {
-                    // eg: selectJson(['1', '2', ...])
+                    // eg: ['id', 'name', ...]
                     if ($keyType != 'integer') {
-                        throw new BuilderException(sprintf('Field name must be int, %s given !', $keyType));
+                        throw new BuilderException("Field name must be int, {$keyType} given!");
                     }
-                    $json[] = $escapeField || strpos($value, '.') ? $this->agent->quoteField($value) : $value;
+                    $json[] = $toField($value);
                 }
+                $keyIndex++;
             }
         } else {
-            throw new BuilderException(sprintf('String and array fields accepted only, %s given',
+            throw new BuilderException(sprintf('String and array fields accepted only, %s given!',
                 gettype($field)));
         }
 
-        if ($type == 'object') {
-            $json = sprintf('%s(%s) AS %s', $jsonObject, join(', ', $json), $this->agent->quoteField($as));
-        } elseif ($type == 'array') {
-            $json = sprintf('%s(%s) AS %s', $jsonArray, join(', ', $json), $this->agent->quoteField($as));
-        } else {
-            throw new BuilderException("Given JSON type '{$type}' is not implemented!");
+        $as = $this->agent->quoteField($as);
+        $fn = ($type == 'object') ? $fnJsonObject : $fnJsonArray;
+
+        if ($jsonJoin) {
+            $jsonJoin = [];
+            foreach ($json[0] as $key => $value) {
+                $jsonJoin[] = $key .', '. $value;
+            }
+            $json = $jsonJoin;
         }
 
-        return $this->push('select', $json);
+        return $this->push('select', sprintf('%s(%s) AS %s', $fn, join(', ', $json), $as));
     }
 
     /**
@@ -333,7 +415,7 @@ final class Builder
     public function from($field, string $as): self
     {
         if (is_string($field) && strpos($field, '(') === false) {
-            $field = $this->field($field);
+            $field = $this->prepareField($field);
         }
 
         $this->query['from'] = sprintf('(%s) AS %s', $field, $this->agent->quoteField($as));
@@ -393,7 +475,7 @@ final class Builder
     {
         return $this->push('join', sprintf('%sJOIN %s AS %s ON (%s)',
             $type ? strtoupper($type) .' ' : '',
-            $this->field($to),
+            $this->prepareField($to),
             $this->agent->quoteField($as),
             $this->agent->prepareIdentifier($on, $onParams))
         );
@@ -438,7 +520,7 @@ final class Builder
     {
         return $this->push('join', sprintf('%sJOIN %s AS %s USING (%s)',
             $type ? strtoupper($type) .' ' : '',
-            $this->field($to),
+            $this->prepareField($to),
             $this->agent->quoteField($as),
             $this->agent->prepareIdentifier($using, $usingParams))
         );
@@ -479,6 +561,10 @@ final class Builder
      */
     public function where($query, $queryParams = null, string $op = ''): self
     {
+        if ($query == '') {
+            throw new BuilderException('Query required!');
+        }
+
         // sub-where
         if ($queryParams != null && $queryParams instanceof Builder) {
             // $opr argument is empty, should be exists in query (eg: id = )
@@ -488,28 +574,43 @@ final class Builder
         }
 
         if (is_array($query)) {
-            $queryParams = (array) $queryParams;
-            if ($queryParams == null) {
-                throw new BuilderException('Both query and query params required');
+            // eg: [['id' => ...], ...]
+            foreach ($query as $field => $params) {
+                // eg: ['id' => [1, '=', '?', 'or/and']], ['a.id' => [id('b.id'), ...]]
+                if (is_array($params)) {
+                    @ [$params, $operator, $escapeOperator, $op] = (array) $params;
+                    if ($operator == null) {
+                        $operator = '='; // @default=equal
+                    }
+                    $query = '?? '. $operator .' '. ($params instanceof Sql ? '??' : $escapeOperator ?: '?');
+                    $queryParams = [$field, $params];
+                } else {
+                    // eg: ['id' => 1]
+                    $query = '?? = '. ($params instanceof Sql ? '??' : '?');
+                    $queryParams = [$field, $params];
+                }
+
+                $op = $op ? strtoupper($op) : self::OP_AND;
+                if ($op != self::OP_OR && $op != self::OP_AND) {
+                    throw new BuilderException('Available ops: OR, AND');
+                }
+
+                $query = $this->agent->prepare($query, $queryParams);
+
+                $this->push('where', [[$query, $op]]);
             }
 
-            $isSequential = isset($query[0]);
-            // eg: where(['id', '='], 1)
-            // eg: where(['id', '=', '%i'], 1)
-            if ($isSequential) {
-                @ [$field, $operator, $escaper] = $query;
-                $query = sprintf('%s %s %s', $this->field($field), $operator, $escaper ?: '?');
-            }
+            return $this;
         }
 
         if (!is_string($query)) {
-            throw new BuilderException(sprintf('String, array or Builder type queries are accepted only, %s given',
+            throw new BuilderException(sprintf('String, array or Builder type queries are accepted only, %s given!',
                 gettype($query)));
         }
 
         if ($queryParams !== null) {
             if (!is_array($queryParams) && !is_scalar($queryParams)) {
-                throw new BuilderException(sprintf('Array or scalar params are accepted only, %s given',
+                throw new BuilderException(sprintf('Array or scalar params are accepted only, %s given!',
                     gettype($queryParams)));
             }
         }
@@ -525,6 +626,54 @@ final class Builder
     }
 
     /**
+     * Or.
+     * @param  any ...$arguments
+     * @return self
+     */
+    public function or(...$arguments): self
+    {
+        $op = self::OP_OR;
+
+        if (empty($arguments)) {
+            // just update last where op
+            if ($this->has('where')) {
+                $this->query['where'][count($this->query['where']) - 1][1] = $op;
+            }
+
+            return $this;
+        }
+
+        $query = $arguments[0] ?? null;
+        $queryParams = $arguments[1] ?? null;
+
+        return $this->where($query, $queryParams, $op);
+    }
+
+    /**
+     * And.
+     * @param  any ...$arguments
+     * @return self
+     */
+    public function and(...$arguments): self
+    {
+        $op = self::OP_AND;
+
+        if (empty($arguments)) {
+            // just update last where op
+            if ($this->has('where')) {
+                $this->query['where'][count($this->query['where']) - 1][1] = $op;
+            }
+
+            return $this;
+        }
+
+        $query = $arguments[0] ?? null;
+        $queryParams = $arguments[1] ?? null;
+
+        return $this->where($query, $queryParams, $op);
+    }
+
+    /**
      * Where equal.
      * @param  string|array|Builder $field
      * @param  any                  $param
@@ -533,7 +682,7 @@ final class Builder
      */
     public function whereEqual($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' = ?', $param, $op);
+        return $this->where($this->prepareField($field) .' = ?', $param, $op);
     }
 
     /**
@@ -545,7 +694,7 @@ final class Builder
      */
     public function whereNotEqual($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' != ?', $param, $op);
+        return $this->where($this->prepareField($field) .' != ?', $param, $op);
     }
 
     /**
@@ -556,7 +705,7 @@ final class Builder
      */
     public function whereNull($field, string $op = ''): self
     {
-        return $this->where($this->field($field) .' IS NULL', null, $op);
+        return $this->where($this->prepareField($field) .' IS NULL', null, $op);
     }
 
     /**
@@ -567,7 +716,7 @@ final class Builder
      */
     public function whereNotNull($field, string $op = ''): self
     {
-        return $this->where($this->field($field) .' IS NOT NULL', null, $op);
+        return $this->where($this->prepareField($field) .' IS NOT NULL', null, $op);
     }
 
     /**
@@ -579,7 +728,7 @@ final class Builder
      */
     public function whereIn($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' IN (?)', $param, $op);
+        return $this->where($this->prepareField($field) .' IN (?)', $param, $op);
     }
 
     /**
@@ -591,7 +740,7 @@ final class Builder
      */
     public function whereNotIn($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' NOT IN (?)', $param, $op);
+        return $this->where($this->prepareField($field) .' NOT IN (?)', $param, $op);
     }
 
     /**
@@ -603,7 +752,7 @@ final class Builder
      */
     public function whereBetween($field, array $params, string $op = ''): self
     {
-        return $this->where($this->field($field) .' BETWEEN (? AND ?)', $params, $op);
+        return $this->where($this->prepareField($field) .' BETWEEN (? AND ?)', $params, $op);
     }
 
     /**
@@ -615,7 +764,7 @@ final class Builder
      */
     public function whereNotBetween($field, array $params, string $op = ''): self
     {
-        return $this->where($this->field($field) .' NOT BETWEEN (? AND ?)', $params, $op);
+        return $this->where($this->prepareField($field) .' NOT BETWEEN (? AND ?)', $params, $op);
     }
 
     /**
@@ -627,7 +776,7 @@ final class Builder
      */
     public function whereLessThan($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' < ?', $param, $op);
+        return $this->where($this->prepareField($field) .' < ?', $param, $op);
     }
 
     /**
@@ -639,7 +788,7 @@ final class Builder
      */
     public function whereLessThanEqual($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' <= ?', $param, $op);
+        return $this->where($this->prepareField($field) .' <= ?', $param, $op);
     }
 
     /**
@@ -651,7 +800,7 @@ final class Builder
      */
     public function whereGreaterThan($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' > ?', $param, $op);
+        return $this->where($this->prepareField($field) .' > ?', $param, $op);
     }
 
     /**
@@ -663,7 +812,7 @@ final class Builder
      */
     public function whereGreaterThanEqual($field, $param, string $op = ''): self
     {
-        return $this->where($this->field($field) .' >= ?', $param, $op);
+        return $this->where($this->prepareField($field) .' >= ?', $param, $op);
     }
 
     /**
@@ -707,6 +856,7 @@ final class Builder
             throw new BuilderException('Like search cannot be empty!');
         }
 
+        $op = self::OP_OR;
         $not = $not ? ' NOT ' : ' ';
         $fields = $this->agent->escapeIdentifier($field, false);
         $search = $end . $this->agent->escape($search, '%sl', false) . $start;
@@ -714,14 +864,14 @@ final class Builder
         if ($ilike) {
             foreach ($fields as $field) {
                 if ($this->agent->isMysql()) {
-                    $this->where("lower({$field}){$not}LIKE lower('{$search}')", null, 'OR');
+                    $this->where("lower({$field}){$not}LIKE lower('{$search}')", null, $op);
                 } elseif ($this->agent->isPgsql()) {
-                    $this->where("{$field}{$not}ILIKE '{$search}'", null, 'OR');
+                    $this->where("{$field}{$not}ILIKE '{$search}'", null, $op);
                 }
             }
         } else {
             foreach ($fields as $field) {
-                $this->where("{$field}{$not}LIKE '{$search}'", null, 'OR');
+                $this->where("{$field}{$not}LIKE '{$search}'", null, $op);
             }
         }
 
@@ -860,7 +1010,7 @@ final class Builder
         }
 
         if (is_string($field) && strpos($field, '(') === false) {
-            $field = $this->field($field);
+            $field = $this->prepareField($field);
         }
 
         $query = '';
@@ -925,7 +1075,7 @@ final class Builder
                 : "to_tsvector('{$mode}', {$field}) @@ to_tsquery('{$mode}', '{$search}')";
         }
 
-        return $this->push('where', [[$query, $op ?: 'AND']]);
+        return $this->push('where', [[$query, $op ?: self::OP_AND]]);
     }
 
     /**
@@ -973,7 +1123,7 @@ final class Builder
      */
     public function groupBy($field): self
     {
-        return $this->push('groupBy', $this->field($field));
+        return $this->push('groupBy', $this->prepareField($field));
     }
 
     /**
@@ -987,7 +1137,7 @@ final class Builder
     {
         // check operator is valid
         if ($op == null) {
-            return $this->push('orderBy', $this->field($field));
+            return $this->push('orderBy', $this->prepareField($field));
         }
 
         $op = strtoupper($op);
@@ -995,7 +1145,7 @@ final class Builder
             throw new BuilderException('Available ops: ASC, DESC');
         }
 
-        return $this->push('orderBy', $this->field($field) .' '. $op);
+        return $this->push('orderBy', $this->prepareField($field) .' '. $op);
     }
 
     /**
@@ -1213,11 +1363,14 @@ final class Builder
         $n = $t = $nt = ''; $ns = ' ';
         if ($pretty) {
             $n = "\n"; $t = "  "; $nt = $n.$t; $ns = $n;
+            if ($this->isSub) {
+                $t = $t.$t; $ns = $ns.$ns;
+            }
         }
 
         switch ($key) {
             case 'select':
-                $select = $pretty ? $nt . join(', '. $nt, $this->query['select'])
+                $select = $pretty ? $n . $t . join(', '. $n . $t, $this->query['select'])
                     : join(', ', $this->query['select']);
 
                 $string = sprintf("SELECT %s%s {$n}{$t}FROM %s",
@@ -1374,12 +1527,37 @@ final class Builder
     }
 
     /**
-     * Field.
+     * Prepare.
+     * @param  string|array|Builder $field
+     * @param  string               $opr
+     * @param  array|Builder        $params
+     * @return string
+     */
+    private function prepare($field, string $opr, $params): string
+    {
+        $query[] = $this->prepareField($field);
+        $query[] = $opr;
+        if ($params instanceof Builder) {
+            $query[] = '('. $params->toString() .')';
+        } else {
+            if ($params && !is_array($params) && !is_scalar($params)) {
+                throw new BuilderException(sprintf('Scalar or array params are accepted only'.
+                    ', %s given!', gettype($params)));
+            }
+
+            $query[] = $this->agent->prepare('(?)', (array) $params);
+        }
+
+        return join(' ', array_filter($query));
+    }
+
+    /**
+     * Prepare field.
      * @param  string|array|Builder $field
      * @param  bool                 $join
      * @return string|array
      */
-    private function field($field, bool $join = true)
+    private function prepareField($field, bool $join = true)
     {
         if ($field instanceof Builder) {
             return '('. $field->toString() .')';
@@ -1395,30 +1573,5 @@ final class Builder
 
         throw new BuilderException(sprintf('String, array or Builder type fields are accepted only,'.
             ' %s given', gettype($field)));
-    }
-
-    /**
-     * Prepare.
-     * @param  string|array|Builder $field
-     * @param  string               $opr
-     * @param  array|Builder        $params
-     * @return string
-     */
-    private function prepare($field, string $opr, $params): string
-    {
-        $query[] = $this->field($field);
-        $query[] = $opr;
-        if ($params instanceof Builder) {
-            $query[] = '('. $params->toString() .')';
-        } else {
-            if ($params && !is_array($params) && !is_scalar($params)) {
-                throw new BuilderException(sprintf('Scalar or array params are accepted only'.
-                    ', %s given!', gettype($params)));
-            }
-
-            $query[] = $this->agent->prepare('(?)', (array) $params);
-        }
-
-        return join(' ', array_filter($query));
     }
 }
