@@ -354,7 +354,7 @@ abstract class Result implements ResultInterface
      */
     public final function item(int $i)
     {
-        return $this->getData($i);
+        return $this->data[$i] ?? null;
     }
 
     /**
@@ -363,7 +363,7 @@ abstract class Result implements ResultInterface
      */
     public final function items(): array
     {
-        return $this->getData();
+        return $this->data;
     }
 
     /**
