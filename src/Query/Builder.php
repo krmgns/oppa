@@ -743,7 +743,12 @@ final class Builder
      */
     public function whereIn($field, $param, string $op = ''): self
     {
-        return $this->where($this->prepareField($field) .' IN (?)', $param, $op);
+        $ops = ['?'];
+        if (is_array($param)) {
+            $ops = array_fill(0, count($param), '?');
+        }
+
+        return $this->where($this->prepareField($field) .' IN ('. join(', ', $ops) .')', $param, $op);
     }
 
     /**
@@ -755,7 +760,12 @@ final class Builder
      */
     public function whereNotIn($field, $param, string $op = ''): self
     {
-        return $this->where($this->prepareField($field) .' NOT IN (?)', $param, $op);
+        $ops = ['?'];
+        if (is_array($param)) {
+            $ops = array_fill(0, count($param), '?');
+        }
+
+        return $this->where($this->prepareField($field) .' NOT IN ('. join(', ', $ops) .')', $param, $op);
     }
 
     /**
@@ -767,7 +777,7 @@ final class Builder
      */
     public function whereBetween($field, array $params, string $op = ''): self
     {
-        return $this->where($this->prepareField($field) .' BETWEEN (? AND ?)', $params, $op);
+        return $this->where($this->prepareField($field) .' BETWEEN ? AND ?', $params, $op);
     }
 
     /**
@@ -779,7 +789,7 @@ final class Builder
      */
     public function whereNotBetween($field, array $params, string $op = ''): self
     {
-        return $this->where($this->prepareField($field) .' NOT BETWEEN (? AND ?)', $params, $op);
+        return $this->where($this->prepareField($field) .' NOT BETWEEN ? AND ?', $params, $op);
     }
 
     /**
