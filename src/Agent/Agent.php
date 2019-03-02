@@ -28,7 +28,7 @@ namespace Oppa\Agent;
 
 use Oppa\{Util, Config, Resource, Logger, Mapper, Profiler};
 use Oppa\Batch\BatchInterface;
-use Oppa\Query\Sql;
+use Oppa\Query\{Sql, Identifier};
 use Oppa\Query\Result\ResultInterface;
 
 /**
@@ -354,6 +354,12 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public function quoteField(string $input): string
     {
         $input = $this->unquoteField($input);
+
+        // nope.. quote all
+        // if (ctype_lower($input)) {
+        //     return $input;
+        // }
+
         if ($this->isMysql()) {
             return '`'. str_replace('`', '``', $input) .'`';
         } elseif ($this->isPgsql()) {
@@ -468,8 +474,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
     /**
      * Escape identifier.
-     * @param  string|array $input
-     * @param  bool         $join
+     * @param  string|array|Oppa\Query\Identifier $input
+     * @param  bool                               $join
      * @return string|array
      * @throws Oppa\Agent\AgentException
      */
@@ -479,7 +485,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             $input = array_map([$this, 'escapeIdentifier'], $input);
 
             return $join ? join(', ', $input) : $input;
-        } elseif ($input instanceof Sql) {
+        } elseif ($input instanceof Identifier) {
             $input = $input->toString();
         }
 
@@ -589,7 +595,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             if (is_string($inputParams)) {
                 $inputParams = ($inputParams[0] == '@') ? $this->escapeIdentifier($inputParams)
                     : $this->escape($inputParams);
-            } elseif ($inputParams instanceof Sql) {
+            } elseif ($inputParams instanceof Identifier) {
                 $inputParams = $this->escapeIdentifier($inputParams);
             }
 
@@ -647,7 +653,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
 
             return sprintf('%s %s %s', $this->escapeIdentifier($field), $operator,
-                ($inputParams instanceof Sql) ? $this->escapeIdentifier($inputParams)
+                ($inputParams instanceof Identifier) ? $this->escapeIdentifier($inputParams)
                     : $this->escape($inputParams));
         } */
 

@@ -28,9 +28,42 @@ namespace Oppa\Query;
 
 /**
  * @package Oppa
- * @object  Oppa\Query\Sql
+ * @object  Oppa\Query\RawSql
  * @author  Kerem Güneş <k-gun@mail.com>
  * @note    Used to prevent escaping contents like NOW(), COUNT() etc. in agent.escape() methods.
  */
-class Sql extends RawSql
-{}
+abstract class RawSql
+{
+    /**
+     * Contents.
+     * @var string
+     */
+    protected $contents;
+
+    /**
+     * Constructor.
+     * @param string $contents
+     */
+    public function __construct(string $contents)
+    {
+        $this->contents = trim($contents);
+    }
+
+    /**
+     * String magic.
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * To string.
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->contents;
+    }
+}

@@ -485,11 +485,11 @@ trait BuilderTrait
 
     /**
      * Sql.
-     * @param  string $content
+     * @param  string $input
      * @return Oppa\Query\Sql
      */
-    public function sql(string $content): Sql
+    public function sql(string $input): Sql
     {
-        return new Sql($content);
+        return new Sql($input);
     }
 }

@@ -196,7 +196,7 @@ final class Builder
         $reset && $this->reset();
 
         // handle other query object
-        if ($field instanceof Builder) {
+        if ($field instanceof Builder || $field instanceof Sql) {
             if ($as == null) {
                 throw new BuilderException('Alias required!');
             }
@@ -597,11 +597,11 @@ final class Builder
                     if ($operator == null) {
                         $operator = '='; // @default=equal
                     }
-                    $query = '?? '. $operator .' '. ($params instanceof Sql ? '??' : $escapeOperator ?: '?');
+                    $query = '?? '. $operator .' '. ($params instanceof Identifier ? '??' : $escapeOperator ?: '?');
                     $queryParams = [$field, $params];
                 } else {
                     // eg: ['id' => 1]
-                    $query = '?? = '. ($params instanceof Sql ? '??' : '?');
+                    $query = '?? = '. ($params instanceof Identifier ? '??' : '?');
                     $queryParams = [$field, $params];
                 }
 
@@ -624,8 +624,8 @@ final class Builder
         }
 
         if ($queryParams !== null) {
-            if (!is_array($queryParams) && !is_scalar($queryParams) && !($queryParams instanceof Sql)) {
-                throw new BuilderException(sprintf('Array, scalar and Query\Sql params are accepted only, %s given!',
+            if (!is_array($queryParams) && !is_scalar($queryParams) && !($queryParams instanceof Identifier)) {
+                throw new BuilderException(sprintf('Array, scalar and Query\Identifier params are accepted only, %s given!',
                     gettype($queryParams)));
             }
         }
@@ -1593,9 +1593,9 @@ final class Builder
      */
     private function prepareField($field, bool $join = true)
     {
-        if ($field instanceof Builder) {
+        if ($field instanceof Builder || $field instanceof Sql) {
             return '('. $field->toString() .')';
-        } elseif ($field instanceof Sql) {
+        } elseif ($field instanceof Identifier) {
             return $this->agent->escapeIdentifier($field);
         }
 
