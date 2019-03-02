@@ -162,23 +162,26 @@ final class Mysql extends Agent
                 $cache->read('mapper.map', $map, true, $this->config['map_result_cache_ttl']);
             }
 
-            if (!$map) {
+            if ($map == null) {
                 try {
-                    $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, numeric_precision, column_type FROM information_schema.columns WHERE table_schema = '{$name}'", null, -1, 2);
+                    $result = $this->query("SELECT table_name, column_name, data_type, is_nullable, numeric_precision, character_maximum_length FROM information_schema.columns WHERE table_schema = '{$name}'", null, -1, 2);
                     if ($result->count()) {
                         $map = [];
-                        foreach ($result->getData() as $data) {
-                            $data = (object) array_change_key_case($data); // normalize key cases
+                        foreach ($result->items() as $item) {
+                            $item = (object) array_change_key_case($item); // normalize key cases
+
                             $length = null;
-                            // detect length (used for only bool's)
-                            if ($data->data_type == Mapper::DATA_TYPE_BIT) {
-                                $length = (int) $data->numeric_precision;
-                            } elseif (substr($data->data_type, -3) == Mapper::DATA_TYPE_INT) {
-                                $length = sscanf($data->column_type, $data->data_type .'(%d)')[0] ?? null;
+                            if ($item->data_type == 'bit') { // for only bools
+                                $length = (int) $item->numeric_precision;
+                            } elseif (substr($item->data_type, -4) == 'char') { // for extra (char) crop
+                                $length = (int) $item->character_maximum_length;
                             }
-                            $map[$data->table_name][$data->column_name]['type'] = $data->data_type;
-                            $map[$data->table_name][$data->column_name]['length'] = $length;
-                            $map[$data->table_name][$data->column_name]['nullable'] = ($data->is_nullable == 'YES');
+
+                            $map[$item->table_name][$item->column_name] = [
+                                /* type */ Mapper::normalizeType($item->data_type, $length),
+                                /* length */ $length,
+                                /* nullable */ ($item->is_nullable == 'YES'),
+                            ];
                         }
 
                         $cache && $cache->write('mapper.map', $map);

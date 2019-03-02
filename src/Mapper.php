@@ -38,7 +38,7 @@ final class Mapper
      * @const string
      */
     public const
-        // int
+        // ints
         DATA_TYPE_INT        = 'int',
         DATA_TYPE_BIGINT     = 'bigint',
         DATA_TYPE_TINYINT    = 'tinyint',
@@ -47,11 +47,11 @@ final class Mapper
         DATA_TYPE_INTEGER    = 'integer',
         DATA_TYPE_SERIAL     = 'serial',
         DATA_TYPE_BIGSERIAL  = 'bigserial',
-        // float
+        // floats
         DATA_TYPE_FLOAT      = 'float',
+        DATA_TYPE_DECIMAL    = 'decimal',
         DATA_TYPE_DOUBLE     = 'double',
         DATA_TYPE_DOUBLEP    = 'double precision',
-        DATA_TYPE_DECIMAL    = 'decimal',
         DATA_TYPE_REAL       = 'real',
         DATA_TYPE_NUMERIC    = 'numeric',
         // boolean
@@ -158,53 +158,63 @@ final class Mapper
      */
     public function cast($value, array $properties)
     {
+        [$type, $length, $nullable] = $properties;
+
         // nullable?
-        if ($value === null && $properties['nullable']) {
+        if ($value === null && $nullable) {
             return $value;
         }
 
-        $type = strtolower($properties['type']);
+        // int, float, bool
+        switch ($type) {
+            case 'int': return (int) $value;
+            case 'float': return (float) $value;
+            case 'bool': return ($value === 't') ? true : false;
+        }
 
-        // 1.000.000 iters
-        // regexp-------7.442563
-        // switch-------2.709796
+        // bit
+        if ($this->mapOptions['bool'] && $type == 'bit' && $length == 1) {
+            // bool cast
+            $value = (string) $value;
+            if ($value === '0' || $value === '1') { // @important
+                return (bool) $value;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Normalize type.
+     * @param  string $type
+     * @return string
+     */
+    public static function normalizeType(string $type): string
+    {
         switch ($type) {
             case self::DATA_TYPE_INT:
             case self::DATA_TYPE_BIGINT:
+            case self::DATA_TYPE_TINYINT:
             case self::DATA_TYPE_SMALLINT:
             case self::DATA_TYPE_MEDIUMINT:
             case self::DATA_TYPE_INTEGER:
             case self::DATA_TYPE_SERIAL:
             case self::DATA_TYPE_BIGSERIAL:
-                return (int) $value;
+                return 'int';
             case self::DATA_TYPE_FLOAT:
+            case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_DOUBLE:
             case self::DATA_TYPE_DOUBLEP:
-            case self::DATA_TYPE_DECIMAL:
             case self::DATA_TYPE_REAL:
             case self::DATA_TYPE_NUMERIC:
-                return (float) $value;
+                return 'float';
             case self::DATA_TYPE_BOOLEAN:
-                return ($value === 't') ? true : false;
+                return 'bool';
+            case self::DATA_TYPE_BIT:
+                return 'bit';
         }
 
-        if ($this->mapOptions['bool'] && $properties['length'] === 1) {
-            if ($type == self::DATA_TYPE_TINYINT) {
-                $value = (int) $value;
-                if ($value === 0 || $value === 1) { // @important
-                    $value = (bool) $value;
-                }
-            } elseif ($type == self::DATA_TYPE_BIT) {
-                $value = (string) $value;
-                if ($value === '0' || $value === '1') {
-                    $value = (bool) $value; // @important
-                }
-            }
-        } elseif ($type == self::DATA_TYPE_TINYINT) {
-            // regular cast
-            $value = (int) $value;
-        }
-
-        return $value;
+        // all others
+        return 'string';
     }
 }
