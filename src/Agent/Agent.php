@@ -342,7 +342,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function unquote(string $input): string
     {
-        return trim($input, "'");
+        return trim($input, "'\\");
     }
 
     /**
@@ -368,7 +368,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function unquoteField(string $input): string
     {
-        return trim($input, ' `"');
+        return trim($input, ' `"\\');
     }
 
     /**
@@ -598,10 +598,16 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     gettype($inputParams)));
             }
 
-            [$field, $operator, $replaceOperator] = Util::split('~^@([^\s]+)\s*([!]?=[<>]?)?\s*(.+)?~',
+            [$field, $operator, $replaceOperator] = Util::split('~^@([\w\.]+)\s*([!]?=[<>]?)?\s*(.*)~',
                 $input, $size=3, $splitFlags);
             if ($operator == null) {
                 $operator = '='; // @default=equal
+            }
+            if ($replaceOperator != null) {
+                $replaceOperator = trim((string) $replaceOperator);
+                if ($replaceOperator == '%s') {
+                    $inputParams = (string) (is_bool($inputParams) ? (int) $inputParams : $inputParams); // save for bools
+                }
             }
 
             $field = $this->escapeIdentifier($field);
@@ -609,18 +615,25 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 return sprintf('%s %s %s', $field, $operator, $this->escapeIdentifier($inputParams));
             }
 
-            return sprintf('%s %s %s', $field, $operator, trim($replaceOperator ?: $inputParams));
-        } elseif (is_string($inputParams) && $inputParams[0] == '@') {
+            if ($replaceOperator && strpos($replaceOperator, '%') !== false) {
+                return $this->prepare(($field . $operator . $replaceOperator), $inputParams);
+            }
+
+            if (is_bool($inputParams)) {
+                return sprintf('%s %s %s', $field, $operator, $inputParams ? 'TRUE' : 'FALSE');
+            }
+
+            return sprintf('%s %s %s', $field, $operator, $replaceOperator ?: $inputParams);
+        } elseif (is_string($inputParams) && $inputParams && $inputParams[0] == '@') {
             // eg: ('a.id', '@any...'), ('a.id !=<>', '@any...')
-            [$field, $operator] = Util::split('~^([`"]?[\w\.]+[`"]?$)\s*([!]?=|[<>]=?)\s*~', $input,
+            [$field, $operator] = Util::split('~^([`"]?[\w\.]+[`"]?)\s*([!]?=|[<>]=?)\s*~', $input,
                 $size=2, $splitFlags);
             if ($operator == null) {
                 $operator = '='; // @default=equal
             }
 
-            return sprintf('%s %s %s', $this->escapeIdentifier($field), $operator,
-                $this->escapeIdentifier($inputParams));
-        } elseif ($input != null && $inputParams !== null && !is_array($inputParams)) {
+            return sprintf('%s %s %s', $this->escapeIdentifier($field), $operator, $this->escapeIdentifier($inputParams));
+        } /* elseif ($input != null && $inputParams !== null && !is_array($inputParams)) {
             // eg: ('id', any...), ('id !=<>', any...)
             [$field, $operator] = Util::split('~^([`"]?[\w\.]+[`"]?|$)\s*([!]?=|[<>]=?)\s*~', $input,
                 $size=2, $splitFlags);
@@ -636,7 +649,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return sprintf('%s %s %s', $this->escapeIdentifier($field), $operator,
                 ($inputParams instanceof Sql) ? $this->escapeIdentifier($inputParams)
                     : $this->escape($inputParams));
-        }
+        } */
 
         $inputParams = (array) $inputParams;
         if (empty($inputParams) || strpbrk($input, ':?%') === false) {
