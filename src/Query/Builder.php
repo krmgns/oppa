@@ -235,12 +235,11 @@ final class Builder
      * @param  string|array $field
      * @param  string       $as
      * @param  string       $type
-     * @param  bool         $escapeField
      * @param  bool         $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
-    public function selectJson($field, string $as, string $type = 'object', bool $escapeField = true, bool $reset = true): self
+    public function selectJson($field, string $as, string $type = 'object', bool $reset = true): self
     {
         if (!in_array($type, ['object', 'array'])) {
             throw new BuilderException("Given JSON type '{$type}' is not implemented!");
@@ -265,11 +264,26 @@ final class Builder
                     $server, $serverVersion, $serverVersionMin));
             }
 
-            $toField = function ($field) use ($escapeField) {
-                return $escapeField || strpos($field, '.') ? $this->agent->escapeIdentifier($field) : $field;
+            $toField = function ($field) {
+                switch ($field) {
+                    case 'null':
+                        return null;
+                    case 'true':
+                    case 'false':
+                        return ($field == 'true') ? true : false;
+                    default:
+                        if (is_numeric($field)) {
+                            $field = strpos($field, '.') === false ? intval($field) : floatval($field);
+                        } elseif ($field && $field[0] == '@') {
+                            $field = $this->agent->escapeIdentifier($field);
+                        } else {
+                            $field = $this->agent->escape($field);
+                        }
+                }
+                return $field;
             };
 
-            $toJson = function ($values) use (&$toJson, &$toField, $escapeField, $fnJsonArray, $fnJsonObject) {
+            $toJson = function ($values) use (&$toJson, &$toField, $fnJsonArray, $fnJsonObject) {
                 $json = [];
                 foreach ($values as $key => $value) {
                     $keyType = gettype($key);
@@ -279,12 +293,12 @@ final class Builder
                         $json[] = is_string($key) ? $this->agent->quote(trim($key)) .', '. $toJson($value)
                             : $toJson($value);
                     } elseif ($keyType == 'integer') {
-                        // eg: ['uid: u.id' or 'uid' => ' u.id', 'user' => ['id: u.id' or 'id' => 'u.id', ...], ...]
+                        // eg: ['uid: @u.id' or 'uid' => '@u.id', 'user' => ['id: @u.id' or 'id' => '@u.id', ...], ...]
                         if ($valueType == 'string' && strpbrk($value, ',:')) {
                             if (strpos($value, ',')) {
                                 $json[] = $toJson(Util::split(',', $value));
                             } elseif (strpos($value, ':')) {
-                                @ [$key, $value] = Util::split(':', $value, 2);
+                                [$key, $value] = Util::split(':', $value, 2);
                                 if (!isset($key, $value)) {
                                     throw new BuilderException('Field name and value must be given fo JSON objects!');
                                 }
@@ -296,7 +310,7 @@ final class Builder
                                 $json[] = $this->agent->quote(trim($key)) .', '. $toField($value);
                             }
                         } else {
-                            // eg: ['u.id', 'u.name', 1, 2, 3, ..]
+                            // eg: ['u.id', '@u.name', 1, 2, 3, true, ...]
                             if ($valueType == 'integer') {
                                 $value = $toField($value);
                             }
@@ -308,7 +322,7 @@ final class Builder
                             $json[] = $value;
                         }
                     } elseif ($keyType == 'string') {
-                        // eg: ['uid' => 'u.id']
+                        // eg: ['uid' => '@u.id']
                         if (!isset($json[0])) {
                             $json[0] = $fnJsonObject; // tick
                         }
@@ -331,11 +345,11 @@ final class Builder
         }
 
         $json = [];
-        $jsonJoin = false;
+        $jsonJoins = false;
         if (is_string($field)) {
             foreach (Util::split(',', $field) as $field) {
                 if ($type == 'object') {
-                    // eg: 'id: id, ...'
+                    // eg: 'id: @id, ...'
                     [$key, $value] = Util::split(':', $field, 2);
                     if (!isset($key, $value)) {
                         throw new BuilderException('Field name and value must be given fo JSON objects!');
@@ -352,7 +366,7 @@ final class Builder
             foreach ($field as $key => $value) {
                 $keyType = gettype($key);
                 if ($type == 'object') {
-                    // eg: ['id' => 'id', ... or 0 => 'id: id, ...', ...]
+                    // eg: ['id' => '@id', ... or 0 => 'id: @id, ...', ...]
                     if ($keyType == 'integer') {
                         $value = Util::split(',', $value);
                     } elseif ($keyType != 'string') {
@@ -361,27 +375,27 @@ final class Builder
 
                     if (is_array($value)) {
                         if ($keyType == 'string') {
-                            // eg: ['id' => 'id', ...]
+                            // eg: ['id' => '@id', ...]
                             $key = $this->agent->quote(trim($key));
                             $json[$keyIndex][$key] = $toJson($value);
                         } else {
-                            // eg: [0 => 'id: id, ...', ...]
+                            // eg: [0 => 'id: @id, ...', ...]
                             $value = $toJson($value);
                             $value = preg_replace('~json(?:_build)?_(?:object|array)\((.+)\)$~', '\1', $value); // :(
                             $json[$keyIndex][] = [$value];
                         }
-                        $jsonJoin = true;
+                        $jsonJoins = true;
                         continue;
                     } elseif (is_string($value)) {
                         $key = $this->agent->quote(trim($key));
                         $json[$keyIndex][$key] = $toJson(Util::split(',', $value));
-                        $jsonJoin = true;
+                        $jsonJoins = true;
                         continue;
                     }
 
                     $json[] = $key .', '. $toField($value);
                 } elseif ($type == 'array') {
-                    // eg: ['id', 'name', ...]
+                    // eg: ['@id', '@name', ...]
                     if ($keyType != 'integer') {
                         throw new BuilderException("Field name must be int, {$keyType} given!");
                     }
@@ -397,12 +411,12 @@ final class Builder
         $as = $this->agent->quoteField($as);
         $fn = ($type == 'object') ? $fnJsonObject : $fnJsonArray;
 
-        if ($jsonJoin) {
-            $jsonJoin = [];
+        if ($jsonJoins) {
+            $jsonJoins = [];
             foreach ($json[0] as $key => $value) {
-                $jsonJoin[] = is_array($value) ? join(', ', $value) : $key .', '. $value;
+                $jsonJoins[] = is_array($value) ? join(', ', $value) : $key .', '. $value;
             }
-            $json = $jsonJoin;
+            $json = $jsonJoins;
         }
 
         return $this->push('select', sprintf('%s(%s) AS %s', $fn, join(', ', $json), $as));
@@ -413,12 +427,11 @@ final class Builder
      * @param  string|array $field
      * @param  string       $as
      * @param  string       $type
-     * @param  bool         $escapeField
      * @return self
      */
-    public function selectJsonMore($field, string $as, string $type = 'object', bool $escapeField = true): self
+    public function selectJsonMore($field, string $as, string $type = 'object'): self
     {
-        return $this->selectJson($field, $as, $type, $escapeField, false);
+        return $this->selectJson($field, $as, $type, false);
     }
 
     /**
