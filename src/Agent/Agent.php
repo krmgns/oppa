@@ -494,6 +494,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 gettype($input)));
         }
 
+        // all
+        if ($input == '*') {
+            return $input;
+        }
+
         // functions, parentheses etc are not allowed
         if (strpos($input, '(') !== false) {
             throw new AgentException('Found parentheses in input, complex identifiers not allowed!');
@@ -501,7 +506,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         // trim all non-word characters
         $input = preg_replace('~^[^\w]|[^\w]$~', '', $input);
-        if ($input == '' || $input == '*') {
+        if ($input == '') {
             return $input;
         }
 

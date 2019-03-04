@@ -1606,6 +1606,10 @@ final class Builder
      */
     private function prepareField($field, bool $join = true)
     {
+        if ($field == '*') {
+            return $field;
+        }
+
         if ($field instanceof Builder || $field instanceof Sql) {
             return '('. $field->toString() .')';
         } elseif ($field instanceof Identifier) {
