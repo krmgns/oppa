@@ -592,6 +592,13 @@ abstract class Agent extends AgentCrud implements AgentInterface
     {
         $splitFlags = 2; // PREG_SPLIT_DELIM_CAPTURE
 
+        // eg: ('@id = ? ... @name = ?', ['1', 'foo', ...])
+        if (substr_count($input, '@') > 1) {
+            $input = preg_replace_callback('~@([\w.]+)~', function ($match) {
+                return $this->escapeIdentifier($match[1]);
+            }, $input);
+        }
+
         // eg: ('@a.id ', '@b.id'), ('@a.id', '123'), ('@c.postId', '@b.id'), ('@a.id !=<> or none', '@b.id'), ...
         if ($input[0] == '@') {
             // eg: ('a.id', 'any...'), ('a.id !=<>', 'any...')
@@ -602,6 +609,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     : $this->escape($inputParams);
             } elseif ($inputParams instanceof Identifier) {
                 $inputParams = $this->escapeIdentifier($inputParams);
+            } elseif (is_array($inputParams)) {
+                $inputParams = $inputParams[0] ?? null;
             }
 
             if (!is_scalar($inputParams)) {
@@ -614,10 +623,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
             if ($operator == null) {
                 $operator = '='; // @default=equal
             }
+
             if ($replaceOperator != null) {
-                $replaceOperator = trim((string) $replaceOperator);
+                $replaceOperator = trim($replaceOperator);
                 if ($replaceOperator == '%s') {
-                    $inputParams = (string) (is_bool($inputParams) ? (int) $inputParams : $inputParams); // save for bools
+                    $inputParams = (string) (is_bool($inputParams) ? (int) $inputParams : $inputParams); // safe for bools
                 }
             }
 
@@ -626,8 +636,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 return sprintf('%s %s %s', $field, $operator, $this->escapeIdentifier($inputParams));
             }
 
-            if ($replaceOperator && strpos($replaceOperator, '%') !== false) {
-                return $this->prepare(($field . $operator . $replaceOperator), $inputParams);
+            if ($replaceOperator && strpbrk($replaceOperator, ':?%') !== false) {
+                return $this->prepare(($field .' '. trim($operator) .' '. $replaceOperator), $inputParams);
             }
 
             if (is_bool($inputParams)) {
