@@ -858,11 +858,11 @@ final class Builder
      * @param  string|array|Builder $field
      * @param  string|array         $arguments
      * @param  bool                 $ilike
-     * @param  string               $op
      * @param  bool                 $not
+     * @param  string               $op
      * @return self
      */
-    public function whereLike($field, $arguments, bool $ilike = false, string $op = '', bool $not = false): self
+    public function whereLike($field, $arguments, bool $ilike = false, bool $not = false, string $op = ''): self
     {
         // @note to me..
         // 'foo%'  Anything starts with "foo"
@@ -873,47 +873,61 @@ final class Builder
         // 'f%o'   Anything starts with "f" and ends with "o"
 
         $arguments = (array) $arguments;
-        switch (count($arguments)) {
+        $searchArguments = array_slice($arguments, 0, 3);
+
+        if ($arguments != null) {
+            // eg: (??, ['%', 'apple', '%', 'id']), (%n, ['%', 'apple', '%', 'id'])
+            $field = $this->agent->prepare($field, array_slice($arguments, 3));
+        }
+
+        $search = '';
+        switch (count($searchArguments)) {
             case 1: // none, eg: 'apple', ['apple']
-                [$start, $search, $end] = ['', $arguments[0], ''];
+                [$end, $search, $start] = ['', $searchArguments[0], ''];
                 break;
-            case 2: // start/end, eg: ['apple', '%'], ['%', 'apple']
-                if ($arguments[0] == '%') {
-                    [$start, $search, $end] = ['%', $arguments[1], ''];
-                } elseif ($arguments[1] == '%') {
-                    [$start, $search, $end] = ['', $arguments[0], '%'];
+            case 2: // start/end, eg: ['%', 'apple'], ['apple', '%']
+                if ($searchArguments[0] == '%') {
+                    [$end, $search, $start] = ['%', $searchArguments[1], ''];
+                } elseif ($searchArguments[1] == '%') {
+                    [$end, $search, $start] = ['', $searchArguments[0], '%'];
                 }
                 break;
             case 3: // both, eg: ['%', 'apple', '%']
-                [$start, $search, $end] = $arguments;
+                [$end, $search, $start] = $searchArguments;
                 break;
         }
 
-        $search = trim((string) ($search ?? ''));
+        $search = trim((string) $search);
         if ($search == '') {
             throw new BuilderException('Like search cannot be empty!');
         }
 
-        $op = self::OP_OR;
-        $not = $not ? ' NOT ' : ' ';
-        $fields = $this->agent->escapeIdentifier($field, false);
+        $not = $not ? 'NOT ' : '';
+
+        if (is_string($field) && strpos($field, '(') === false) {
+            $field = $this->prepareField($field, false);
+        }
+
         $search = $end . $this->agent->escape($search, '%sl', false) . $start;
 
-        if ($ilike) {
+        $where = [];
+        $fields = (array) $field;
+        if (!$ilike) {
             foreach ($fields as $field) {
-                if ($this->agent->isMysql()) {
-                    $this->where("lower({$field}){$not}LIKE lower('{$search}')", null, $op);
-                } elseif ($this->agent->isPgsql()) {
-                    $this->where("{$field}{$not}ILIKE '{$search}'", null, $op);
-                }
+                $where[] = sprintf("%s %sLIKE '%s'", $field, $not, $search);
             }
         } else {
             foreach ($fields as $field) {
-                $this->where("{$field}{$not}LIKE '{$search}'", null, $op);
+                if ($this->agent->isMysql()) {
+                    $where[] = sprintf("lower(%s) %sLIKE lower('%s')", $field, $not, $search);
+                } elseif ($this->agent->isPgsql()) {
+                    $where[] = sprintf("%s %sILIKE '%s'", $field, $not, $search);
+                }
             }
         }
+        $where = count($where) > 1 ? '('. join(' OR ', $where) .')' : join(' OR ', $where);
 
-        return $this;
+        return $this->where($where);
     }
 
     /**
