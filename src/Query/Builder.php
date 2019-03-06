@@ -1516,7 +1516,7 @@ final class Builder
                 if ($this->has('where')) {
                     $wheres = $this->query['where'];
                     if (count($wheres) == 1) {
-                        $string = $ns . 'WHERE '. $nt . $wheres[0][0] . $n;
+                        $string = $ns . 'WHERE '. $nt . $wheres[0][0];
                     } else {
                         $ws = []; $wsp = 0;
                         foreach ($wheres as $i => $where) {
