@@ -485,13 +485,15 @@ abstract class Agent extends AgentCrud implements AgentInterface
             $input = array_map([$this, 'escapeIdentifier'], $input);
 
             return $join ? join(', ', $input) : $input;
+        } elseif ($input instanceof Sql) {
+            return $input->toString();
         } elseif ($input instanceof Identifier) {
             $input = $input->toString();
         }
 
         if (!is_string($input)) {
-            throw new AgentException(sprintf('String, array and Query\Sql type identifiers accepted only, %s given!',
-                gettype($input)));
+            throw new AgentException(sprintf('String, array and Query\Sql,Identifier type identifiers'.
+                ' accepted only, %s given!', gettype($input)));
         }
 
         // all

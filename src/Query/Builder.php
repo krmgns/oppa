@@ -435,6 +435,17 @@ final class Builder
     }
 
     /**
+     * Select random.
+     * @param  string|array|Builder $field
+     * @return self
+     */
+    public function selectRandom($field): self
+    {
+        return $this->push('select', $this->prepareField($field))
+            ->push('where', [[$this->sql('random() < 0.01'), '']]);
+    }
+
+    /**
      * From
      * @param  string|Builder $field
      * @param  string         $as
@@ -1503,29 +1514,33 @@ final class Builder
                 break;
             case 'where':
                 if ($this->has('where')) {
-                    $ws = []; $wsp = 0;
                     $wheres = $this->query['where'];
-                    foreach ($wheres as $i => $where) {
-                        [$where, $op] = $where;
-                        $nx = $wheres[$i + 1] ?? null;
-                        $nxn = isset($wheres[$i + 2]);
-                        $nxOp = strtoupper($nx[1] ?? '');
-                        $ws[] = $where;
-                        if ($nx) {
-                            $ws[] = $op;
+                    if (count($wheres) == 1) {
+                        $string = $ns . 'WHERE '. $nt . $wheres[0][0] . $n;
+                    } else {
+                        $ws = []; $wsp = 0;
+                        foreach ($wheres as $i => $where) {
+                            [$where, $op] = $where;
+                            $nx = $wheres[$i + 1] ?? null;
+                            $nxn = isset($wheres[$i + 2]);
+                            $nxOp = strtoupper($nx[1] ?? '');
+                            $ws[] = $where;
+                            if ($nx) {
+                                $ws[] = $op;
+                            }
+                            if ($op != $nxOp && $nxOp && $nxn) {
+                                $ws[] = '(';
+                                $wsp++;
+                            }
                         }
-                        if ($op != $nxOp && $nxOp && $nxn) {
-                            $ws[] = '(';
-                            $wsp++;
-                        }
-                    }
 
-                    $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
-                    $string = $string . str_repeat(')', $wsp); // close parentheses
-                    if ($this->isSub) {
-                        $n = $n.$t; $nt = $n.$s;
+                        $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
+                        $string = $string . str_repeat(')', $wsp); // close parentheses
+                        if ($this->isSub) {
+                            $n = $n.$t; $nt = $n.$s;
+                        }
+                        $string = $ns . 'WHERE ('. $nt . $string . $n . ')';
                     }
-                    $string = $ns . 'WHERE ('. $nt . $string . $n . ')';
                 }
                 break;
             case 'groupBy':
