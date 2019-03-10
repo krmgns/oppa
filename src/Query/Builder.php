@@ -894,17 +894,17 @@ final class Builder
         $search = '';
         switch (count($searchArguments)) {
             case 1: // none, eg: 'apple', ['apple']
-                [$end, $search, $start] = ['', $searchArguments[0], ''];
+                [$start, $search, $end] = ['', $searchArguments[0], ''];
                 break;
             case 2: // start/end, eg: ['%', 'apple'], ['apple', '%']
                 if ($searchArguments[0] == '%') {
-                    [$end, $search, $start] = ['%', $searchArguments[1], ''];
+                    [$start, $search, $end] = ['%', $searchArguments[1], ''];
                 } elseif ($searchArguments[1] == '%') {
-                    [$end, $search, $start] = ['', $searchArguments[0], '%'];
+                    [$start, $search, $end] = ['', $searchArguments[0], '%'];
                 }
                 break;
             case 3: // both, eg: ['%', 'apple', '%']
-                [$end, $search, $start] = $searchArguments;
+                [$start, $search, $end] = $searchArguments;
                 break;
         }
 
@@ -951,7 +951,7 @@ final class Builder
      */
     public function whereNotLike($field, $arguments, bool $ilike = false, string $op = ''): self
     {
-        return $this->whereLike($field, $arguments, $ilike, $op, true);
+        return $this->whereLike($field, $arguments, $ilike, true, $op);
     }
 
     /**
@@ -959,12 +959,13 @@ final class Builder
      * @param  string|array|Builder $field
      * @param  string               $search
      * @param  bool                 $ilike
+     * @param  bool                 $not
      * @param  string               $op
      * @return self
      */
-    public function whereLikeStart($field, string $search, bool $ilike = false, string $op = ''): self
+    public function whereLikeStart($field, string $search, bool $ilike = false, bool $not = false, string $op = ''): self
     {
-        return $this->whereLike($field, ['%', $search, ''], $ilike, $op);
+        return $this->whereLike($field, ['%', $search, ''], $ilike, $not, $op);
     }
 
     /**
@@ -972,12 +973,13 @@ final class Builder
      * @param  string|array|Builder $field
      * @param  string               $search
      * @param  bool                 $ilike
+     * @param  bool                 $not
      * @param  string               $op
      * @return self
      */
-    public function whereLikeEnd($field, string $search, bool $ilike = false, string $op = ''): self
+    public function whereLikeEnd($field, string $search, bool $ilike = false, bool $not = false, string $op = ''): self
     {
-        return $this->whereLike($field, ['', $search, '%'], $ilike, $op);
+        return $this->whereLike($field, ['', $search, '%'], $ilike, $not, $op);
     }
 
     /**
@@ -985,12 +987,13 @@ final class Builder
      * @param  string|array|Builder $field
      * @param  string               $search
      * @param  bool                 $ilike
+     * @param  bool                 $not
      * @param  string               $op
      * @return self
      */
-    public function whereLikeBoth($field, string $search, bool $ilike = false, string $op = ''): self
+    public function whereLikeBoth($field, string $search, bool $ilike = false, bool $not = false, string $op = ''): self
     {
-        return $this->whereLike($field, ['%', $search, '%'], $ilike, $op);
+        return $this->whereLike($field, ['%', $search, '%'], $ilike, $not, $op);
     }
 
     /**
@@ -1146,12 +1149,13 @@ final class Builder
      * @param  string|array|Builder $field
      * @param  string|array         $arguments
      * @param  bool                 $ilike
+     * @param  bool                 $not
      * @param  string               $op
      * @return self
      */
-    public function searchLike($field, $arguments, bool $ilike = false, string $op = ''): self
+    public function searchLike($field, $arguments, bool $ilike = false, bool $not = false, string $op = ''): self
     {
-        return $this->whereLike($field, $arguments, $ilike, $op);
+        return $this->whereLike($field, $arguments, $ilike, $not, $op);
     }
 
     /**
