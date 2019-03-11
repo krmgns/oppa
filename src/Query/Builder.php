@@ -1137,8 +1137,13 @@ final class Builder
             }
 
             $search = join(' ', $search);
-            $query = ($mode == '') ? "to_tsvector({$field}) @@ to_tsquery('{$search}')"
-                : "to_tsvector('{$mode}', {$field}) @@ to_tsquery('{$mode}', '{$search}')";
+            if ($mode == 'raw') {
+                $query = "({$field})::tsvector @@ ('{$search}')::tsquery";
+            } else if ($mode == '') {
+                $query = "to_tsvector({$field}) @@ to_tsquery('{$search}')";
+            } else {
+                $query = "to_tsvector('{$mode}', {$field}) @@ to_tsquery('{$mode}', '{$search}')";
+            }
         }
 
         return $this->push('where', [[$query, $op ?: self::OP_AND]]);
