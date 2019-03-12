@@ -1372,17 +1372,25 @@ final class Builder
     public function count(): ?int
     {
         // no where, count all simply
-        $where = $this->query['where'] ?? '';
-        if ($where == '') {
+        $where = $this->query['where'] ?? null;
+        if ($where == null) {
             return $this->agent->count($this->table);
         }
 
-        $from = $this->toString();
+        $from = '';
+        if ($this->query) {
+            $isSub = $this->isSub;
+            $this->isSub = true;
+            $from = $this->toString();
+            $this->isSub = $isSub; // restore
+        }
+
         if ($from == '') {
             $from = "SELECT 1 FROM {$this->table} WHERE ". join(' ', $where);
         }
+        $from = trim($from);
 
-        $result = (array) $this->agent->get("SELECT count(*) AS count FROM ({$from}) AS tmp");
+        $result = (array) $this->agent->get("SELECT count(*) AS count FROM (\n\t{$from}\n) AS tmp");
 
         return isset($result['count']) ? intval($result['count']) : null;
     }
