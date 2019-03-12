@@ -117,7 +117,7 @@ final class Mysql extends Agent
         }
 
         // start connection profile
-        $this->profiler && $this->profiler->start(Profiler::CONNECTION);
+        $this->profiler && $this->profiler->start('connection');
 
         $resourceStatus =@ $resource->real_connect($host, $username, $password, $name, $port, $socket);
         if (!$resourceStatus) {
@@ -126,7 +126,7 @@ final class Mysql extends Agent
         }
 
         // finish connection profile
-        $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
+        $this->profiler && $this->profiler->end('connection');
 
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
@@ -255,9 +255,9 @@ final class Mysql extends Agent
         }
 
         // query & query profile
-        $this->profiler && $this->profiler->start(Profiler::QUERY);
+        $this->profiler && $this->profiler->start('query');
         $result =@ $resource->query($query);
-        $this->profiler && $this->profiler->stop(Profiler::QUERY);
+        $this->profiler && $this->profiler->end('query');
 
         if (!$result) {
             $error = $this->parseQueryError($query);

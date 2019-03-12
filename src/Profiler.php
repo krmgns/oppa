@@ -36,14 +36,6 @@ use Oppa\Exception\InvalidKeyException;
 final class Profiler
 {
     /**
-     * Profile keys.
-     * @const string
-     */
-    public const CONNECTION  = 'connection',
-                 QUERY       = 'query',
-                 TRANSACTION = 'transaction'; // @notimplemented
-
-    /**
      * Profiles.
      * @var array
      */
@@ -91,7 +83,7 @@ final class Profiler
      */
     public function addQuery(string $query): void
     {
-        $this->profiles[self::QUERY][++$this->queryCount]['string'] = $query;
+        $this->profiles['query'][++$this->queryCount]['string'] = $query;
     }
 
     /**
@@ -101,7 +93,7 @@ final class Profiler
      */
     public function getQuery(int $i): ?array
     {
-        return $this->profiles[self::QUERY][$i] ?? null;
+        return $this->profiles['query'][$i] ?? null;
     }
 
     /**
@@ -111,27 +103,17 @@ final class Profiler
      */
     public function getQueryString(int $i): ?string
     {
-        return $this->profiles[self::QUERY][$i]['string'] ?? null;
+        return $this->profiles['query'][$i]['string'] ?? null;
     }
 
     /**
-     * Get last query.
-     * @param  string|null $key
-     * @return array|float|string|null
+     * Get query time.
+     * @param  int $i
+     * @return ?float
      */
-    public function getLastQuery(string $key = null)
+    public function getQueryTime(int $i): ?float
     {
-        return $key ? $this->profiles[self::QUERY][$this->queryCount][$key] ?? null
-            : $this->profiles[self::QUERY][$this->queryCount] ?? null;
-    }
-
-    /**
-     * Get last query string.
-     * @return ?string
-     */
-    public function getLastQueryString(): ?string
-    {
-        return $this->getLastQuery('string');
+        return $this->profiles['query'][$i]['time'] ?? null;
     }
 
     /**
@@ -144,6 +126,35 @@ final class Profiler
     }
 
     /**
+     * Get last query.
+     * @param  string|null $key
+     * @return array|string|float|null
+     */
+    public function getLastQuery(string $key = null)
+    {
+        return $key ? $this->profiles['query'][$this->queryCount][$key] ?? null
+            : $this->profiles['query'][$this->queryCount] ?? null;
+    }
+
+    /**
+     * Get last query string.
+     * @return ?string
+     */
+    public function getLastQueryString(): ?string
+    {
+        return $this->getLastQuery('string');
+    }
+
+    /**
+     * Get last query time.
+     * @return ?float
+     */
+    public function getLastQueryTime(): ?float
+    {
+        return $this->getLastQuery('time');
+    }
+
+    /**
      * Start.
      * @param  string $key
      * @return void
@@ -151,57 +162,55 @@ final class Profiler
      */
     public function start(string $key): void
     {
-        $startTime = microtime(true);
+        $start = microtime(true);
         switch ($key) {
-            case self::CONNECTION:
-            case self::TRANSACTION:
-                $this->profiles[$key]['start'] = $startTime;
-                $this->profiles[$key]['stop'] = 0.00;
-                $this->profiles[$key]['total'] = 0.00;
+            case 'connection':
+                $this->profiles[$key] = [
+                    'start' => $start, 'end' => 0.00, 'time' => 0.00
+                ];
                 break;
-            case self::QUERY:
+            case 'query':
                 $i = $this->queryCount;
                 if (isset($this->profiles[$key][$i])) {
                     $this->profiles[$key][$i] += [
-                        'start' => $startTime, 'stop' => 0.00, 'total' => 0.00
+                        'start' => $start, 'end' => 0.00, 'time' => 0.00
                     ];
                 }
                 break;
             default:
-                throw new InvalidKeyException("Unimplemented key '{$key}' given!");
+                throw new InvalidKeyException("Unimplemented key '{$key}' given, available keys are"
+                    ." 'connection,query' only!");
         }
     }
 
     /**
-     * Stop.
+     * End.
      * @param  string $key
      * @return void
      * @throws Oppa\Exception\InvalidKeyException
      */
-    public function stop(string $key): void
+    public function end(string $key): void
     {
         if (!isset($this->profiles[$key])) {
-            throw new InvalidKeyException("Could not find a profile with given key '{$key}'!");
+            throw new InvalidKeyException("Could not find a profile with given '{$key}' key!");
         }
 
-        $stopTime = microtime(true);
+        $end = microtime(true);
         switch ($key) {
-            case self::CONNECTION:
-            case self::TRANSACTION:
-                $this->profiles[$key]['stop'] = $stopTime;
-                $this->profiles[$key]['total'] = (float) number_format(
-                    $stopTime - $this->profiles[$key]['start'], 10);
+            case 'connection':
+                $this->profiles[$key]['end'] = $end;
+                $this->profiles[$key]['time'] = round($end - $this->profiles[$key]['start'], 10);
                 break;
-            case self::QUERY:
+            case 'query':
                 $i = $this->queryCount;
                 if (isset($this->profiles[$key][$i])) {
-                    $this->profiles[$key][$i]['stop'] = $stopTime;
-                    $this->profiles[$key][$i]['total'] = (float) number_format(
-                        $stopTime - $this->profiles[$key][$i]['start'], 10);
+                    $this->profiles[$key][$i]['end'] = $end;
+                    $this->profiles[$key][$i]['time'] = round($end - $this->profiles[$key][$i]['start'], 10);
                 }
                 break;
             default:
-                throw new InvalidKeyException("Unimplemented key '{$key}' given!");
+                throw new InvalidKeyException("Unimplemented key '{$key}' given, available keys are"
+                    ." 'connection,query' only!");
         }
     }
 

@@ -125,7 +125,7 @@ final class Pgsql extends Agent
         }
 
         // start connection profile
-        $this->profiler && $this->profiler->start(Profiler::CONNECTION);
+        $this->profiler && $this->profiler->start('connection');
 
         $resource =@ pg_connect($connectionString);
         $resourceStatus = pg_connection_status($resource);
@@ -140,7 +140,7 @@ final class Pgsql extends Agent
         }
 
         // finish connection profile
-        $this->profiler && $this->profiler->stop(Profiler::CONNECTION);
+        $this->profiler && $this->profiler->end('connection');
 
         // log with info level
         $this->logger && $this->logger->log(Logger::INFO, sprintf('New connection via %s addr.', Util::getIp()));
@@ -250,9 +250,9 @@ final class Pgsql extends Agent
         pg_set_error_verbosity($resource, PGSQL_ERRORS_VERBOSE);
 
         // query & query profile
-        $this->profiler && $this->profiler->start(Profiler::QUERY);
+        $this->profiler && $this->profiler->start('query');
         $result =@ pg_query($resource, $query);
-        $this->profiler && $this->profiler->stop(Profiler::QUERY);
+        $this->profiler && $this->profiler->end('query');
 
         if (!$result) {
             $error = $this->parseQueryError($query);
