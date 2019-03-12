@@ -280,6 +280,11 @@ final class Mysql extends Agent
             }
         }
 
+        // insert,update,delete
+        if ($result === true) {
+            $result = new \mysqli_result($resource);
+        }
+
         return $this->result->process(new Resource($result), $limit, $fetchType);
     }
 

@@ -68,7 +68,8 @@ final class Mysql extends Result
         $rowsCount = 0;
         $rowsAffected = $resourceObject->affected_rows;
         if ($result->getType() == Resource::TYPE_MYSQL_RESULT) {
-            $rowsCount = $resultObject->num_rows;
+            // insert,update,delete has no num_rows..
+            $rowsCount =@ $resultObject->num_rows ?? 0;
         }
 
         $i = 0;
