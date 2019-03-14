@@ -482,8 +482,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
     public function escapeIdentifier($input, bool $join = true)
     {
         if (is_array($input)) {
-            $input = array_map([$this, 'escapeIdentifier'], $input);
-
+            $input = array_map([$this, 'escapeIdentifier'], array_filter($input));
             return $join ? join(', ', $input) : $input;
         } elseif ($input instanceof Sql) {
             return $input->toString();
@@ -496,8 +495,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 ' accepted only, %s given!', gettype($input)));
         }
 
-        // all
-        if ($input == '*') {
+        $input = trim($input);
+        if ($input == '' || $input == '*') {
             return $input;
         }
 
