@@ -155,6 +155,38 @@ final class Profiler
     }
 
     /**
+     * Get total time.
+     * @param  bool $indexed
+     * @return float|string|null
+     */
+    public function getTotalTime(bool $indexed = false)
+    {
+        if ($this->profiles == null) {
+            return null;
+        }
+
+        $totalTime = 0.00;
+        $totalTimeIndexed = '';
+        if (isset($this->profiles['connection'])) {
+            $totalTime += $this->profiles['connection']['time'];
+            if ($indexed) {
+                $totalTimeIndexed .= "connection({$totalTime})";
+            }
+        }
+
+        if (isset($this->profiles['query'])) {
+            foreach ($this->profiles['query'] as $i => $profile) {
+                $totalTime += $profile['time'];
+                if ($indexed) {
+                    $totalTimeIndexed .= " query{$i}({$profile['time']})";
+                }
+            }
+        }
+
+        return !$indexed ? $totalTime : $totalTimeIndexed;
+    }
+
+    /**
      * Start.
      * @param  string $key
      * @return void
@@ -198,14 +230,14 @@ final class Profiler
         $end = microtime(true);
         switch ($key) {
             case 'connection':
-                $this->profiles[$key]['end'] = $end;
-                $this->profiles[$key]['time'] = round($end - $this->profiles[$key]['start'], 10);
+                $this->profiles['connection']['end'] = $end;
+                $this->profiles['connection']['time'] = round($end - $this->profiles['connection']['start'], 10);
                 break;
             case 'query':
                 $i = $this->queryCount;
-                if (isset($this->profiles[$key][$i])) {
-                    $this->profiles[$key][$i]['end'] = $end;
-                    $this->profiles[$key][$i]['time'] = round($end - $this->profiles[$key][$i]['start'], 10);
+                if (isset($this->profiles['query'][$i])) {
+                    $this->profiles['query'][$i]['end'] = $end;
+                    $this->profiles['query'][$i]['time'] = round($end - $this->profiles['query'][$i]['start'], 10);
                 }
                 break;
             default:
