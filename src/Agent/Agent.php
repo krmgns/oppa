@@ -407,7 +407,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
             }
 
-            if (in_array($inputFormat, ['%d', '%i', '%f', '%F'])) {
+            if (is_string($input) && in_array($inputFormat, ['%d', '%i', '%f', '%F'])) {
                 $input = $this->unquote($input);
             }
 
