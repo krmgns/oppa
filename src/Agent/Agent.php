@@ -401,11 +401,16 @@ abstract class Agent extends AgentCrud implements AgentInterface
             } elseif ($inputFormat == '%sl') {
                 return $this->escapeLikeString((string) $input, $quote);
             } elseif ($inputFormat == '%b') {
-                if (!is_bool($input)) {
-                    throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
+                if (is_bool($input)) {
+                    return $input ? 'TRUE' : 'FALSE';
                 }
-                return $input ? 'TRUE' : 'FALSE';
+                throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
             }
+
+            if (in_array($inputFormat, ['%d', '%i', '%f', '%F'])) {
+                $input = $this->unquote($input);
+            }
+
             return sprintf($inputFormat, $input);
         }
 
@@ -625,11 +630,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 $operator = '='; // @default=equal
             }
 
-            if ($replaceOperator != null) {
-                $replaceOperator = trim($replaceOperator);
-                if ($replaceOperator == '%s') {
-                    $inputParams = (string) (is_bool($inputParams) ? (int) $inputParams : $inputParams); // safe for bools
-                }
+            $replaceOperator = trim((string) $replaceOperator);
+            if ($replaceOperator == '%s') {
+                $inputParams = (string) (is_bool($inputParams) ? (int) $inputParams : $inputParams); // safe for bools
             }
 
             $field = $this->escapeIdentifier($field);
@@ -638,7 +641,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
 
             if ($replaceOperator && strpbrk($replaceOperator, ':?%') !== false) {
-                return $this->prepare(($field .' '. trim($operator) .' '. $replaceOperator), $inputParams);
+                $input = ($field .' '. trim($operator) .' '. $replaceOperator);
+                return $this->prepare($input, $inputParams);
             }
 
             if (is_bool($inputParams)) {
