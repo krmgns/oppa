@@ -672,14 +672,12 @@ final class Builder
     {
         $op = self::OP_OR;
 
-        if (empty($arguments)) {
-            // just update last where op
-            if ($this->has('where')) {
-                $this->query['where'][count($this->query['where']) - 1][1] = $op;
-            }
-
-            return $this;
+        // just update last where op
+        if (isset($this->query['where'])) {
+            $this->query['where'][count($this->query['where']) - 1][1] = $op;
         }
+
+        if (empty($arguments)) return $this;
 
         $query = $arguments[0] ?? null;
         $queryParams = $arguments[1] ?? null;
@@ -696,14 +694,12 @@ final class Builder
     {
         $op = self::OP_AND;
 
-        if (empty($arguments)) {
-            // just update last where op
-            if ($this->has('where')) {
-                $this->query['where'][count($this->query['where']) - 1][1] = $op;
-            }
-
-            return $this;
+        // just update last where op
+        if (isset($this->query['where'])) {
+            $this->query['where'][count($this->query['where']) - 1][1] = $op;
         }
+
+        if (empty($arguments)) return $this;
 
         $query = $arguments[0] ?? null;
         $queryParams = $arguments[1] ?? null;
@@ -1414,20 +1410,18 @@ final class Builder
     {
         $ret = '';
 
-        if (!empty($this->query)) {
-            if (isset($this->query['select'])) {
-                $ret = $this->toQueryString('select', $pretty, $isSub);
-            } elseif (isset($this->query['insert'])) {
-                $ret = $this->toQueryString('insert', $pretty, $isSub);
-            } elseif (isset($this->query['update'])) {
-                $ret = $this->toQueryString('update', $pretty, $isSub);
-            } elseif (isset($this->query['delete'])) {
-                $ret = $this->toQueryString('delete', $pretty, $isSub);
-            }
+        if (isset($this->query['select'])) {
+            $ret = $this->toQueryString('select', $pretty, $isSub);
+        } elseif (isset($this->query['insert'])) {
+            $ret = $this->toQueryString('insert', $pretty, $isSub);
+        } elseif (isset($this->query['update'])) {
+            $ret = $this->toQueryString('update', $pretty, $isSub);
+        } elseif (isset($this->query['delete'])) {
+            $ret = $this->toQueryString('delete', $pretty, $isSub);
         }
 
         $isSub = $isSub ?: $this->isSub;
-        if ($ret != '' && $isSub && $pretty) {
+        if ($ret != '' && $pretty && $isSub) {
             $ret .= "\n\t";
         }
 
@@ -1462,7 +1456,7 @@ final class Builder
         $ret = '';
         switch ($key) {
             case 'select':
-                $select = $pretty ? $n . $t . join(', '. $n . $t, $this->query['select'])
+                $select = $pretty ? $n . $t . join((', '. $n . $t), $this->query['select'])
                     : join(', ', $this->query['select']);
 
                 $ret = sprintf("SELECT %s%s {$n}{$t}FROM %s",
@@ -1482,7 +1476,7 @@ final class Builder
                 );
                 break;
             case 'from':
-                if ($this->has('from')) {
+                if (isset($this->query['from'])) {
                     $from = $this->query['from'];
                     if ($pretty) {
                         $tmp = explode("\n", $from);
@@ -1505,7 +1499,7 @@ final class Builder
                 }
                 break;
             case 'insert':
-                if ($this->has('insert')) {
+                if (isset($this->query['insert'])) {
                     $data = $this->query['insert'];
 
                     $keys = $this->agent->escapeIdentifier(array_keys($data[0]));
@@ -1519,7 +1513,7 @@ final class Builder
                 }
                 break;
             case 'update':
-                if ($this->has('update')) {
+                if (isset($this->query['update'])) {
                     $data = $this->query['update'];
 
                     $set = [];
@@ -1536,7 +1530,7 @@ final class Builder
                 }
                 break;
             case 'delete':
-                if ($this->has('delete')) {
+                if (isset($this->query['delete'])) {
                     $ret = trim(
                         "DELETE FROM {$this->table}"
                         . $this->toQueryString('where', $pretty)
@@ -1546,7 +1540,7 @@ final class Builder
                 }
                 break;
             case 'where':
-                if ($this->has('where')) {
+                if (isset($this->query['where'])) {
                     $wheres = $this->query['where'];
                     if (count($wheres) == 1) {
                         $ret = $ns . 'WHERE ('. ($pretty ? $ns . $s . $wheres[0][0] . $ns : $wheres[0][0]) .')';
@@ -1577,24 +1571,24 @@ final class Builder
                 }
                 break;
             case 'groupBy':
-                if ($this->has('groupBy')) {
+                if (isset($this->query['groupBy'])) {
                     $ret = $ns .'GROUP BY '. join(', ', $this->query['groupBy']);
                 }
                 break;
             case 'orderBy':
-                if ($this->has('orderBy')) {
+                if (isset($this->query['orderBy'])) {
                     $ret = $ns .'ORDER BY '. join(', ', $this->query['orderBy']);
                 }
                 break;
             case 'limit':
-                if ($this->has('limit')) {
+                if (isset($this->query['limit'])) {
                     $ret = isset($this->query['limit'][1])
                         ? $ns .'LIMIT '. $this->query['limit'][0] .' OFFSET '. $this->query['limit'][1]
                         : $ns .'LIMIT '. $this->query['limit'][0];
                 }
                 break;
             case 'join':
-                if ($this->has('join')) {
+                if (isset($this->query['join'])) {
                     $ret = '';
                     foreach ($this->query['join'] as $join) {
                         $ret .= $ns . $join;
@@ -1602,12 +1596,12 @@ final class Builder
                 }
                 break;
             case 'having':
-                if ($this->has('having')) {
+                if (isset($this->query['having'])) {
                     $ret = $ns .'HAVING ('. join(' ', $this->query['having']). ')';
                 }
                 break;
             case 'aggregate':
-                if ($this->has('aggregate')) {
+                if (isset($this->query['aggregate'])) {
                     $ret = ', '. join(', ', $this->query['aggregate']);
                 }
                 break;
