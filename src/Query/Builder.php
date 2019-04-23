@@ -195,20 +195,19 @@ final class Builder
     {
         $reset && $this->reset();
 
+        // handle trivial selects
+        if ($field === 1 || $field === '1') {
+            return $this->push('select', '1');
+        } elseif ($field === true) {
+            return $this->push('select', 'TRUE');
+        }
+
         // handle other query object
         if ($field instanceof Builder || $field instanceof Sql) {
             if ($as == null) {
                 throw new BuilderException('Alias required!');
             }
-
             return $this->push('select', '('. $field->toString() .') AS '. $this->agent->quoteField($as));
-        }
-
-        // handle trivial selects
-        if ($field === '1' || $field === 1) {
-            return $this->push('select', '1');
-        } elseif ($field === true) {
-            return $this->push('select', 'TRUE');
         }
 
         $field = $this->prepareField($field);
@@ -1386,13 +1385,14 @@ final class Builder
         }
 
         if ($from == '') {
-            $from = "SELECT 1 FROM {$this->table} WHERE ". join(' ', $where);
+            $from = "SELECT 1 FROM {$this->table} ". trim($this->toQueryString('where', false));
         }
         $from = trim($from);
 
-        $result = (array) $this->agent->get("SELECT count(*) AS count FROM (\n\t{$from}\n) AS tmp");
+        $query = "SELECT count(*) AS count FROM (\n\t{$from}\n) AS tmp";
+        $result = $this->agent->get($query, null, 'object');
 
-        return isset($result['count']) ? intval($result['count']) : null;
+        return isset($result->count) ? intval($result->count) : null;
     }
 
     /**
@@ -1407,38 +1407,42 @@ final class Builder
     /**
      * To string.
      * @param  bool $pretty
+     * @param  bool $isSub
      * @return string
      */
-    public function toString(bool $pretty = true): string
+    public function toString(bool $pretty = true, bool $isSub = false): string
     {
-        $string = '';
+        $ret = '';
+
         if (!empty($this->query)) {
             if (isset($this->query['select'])) {
-                $string = $this->toQueryString('select', $pretty);
+                $ret = $this->toQueryString('select', $pretty, $isSub);
             } elseif (isset($this->query['insert'])) {
-                $string = $this->toQueryString('insert', $pretty);
+                $ret = $this->toQueryString('insert', $pretty, $isSub);
             } elseif (isset($this->query['update'])) {
-                $string = $this->toQueryString('update', $pretty);
+                $ret = $this->toQueryString('update', $pretty, $isSub);
             } elseif (isset($this->query['delete'])) {
-                $string = $this->toQueryString('delete', $pretty);
+                $ret = $this->toQueryString('delete', $pretty, $isSub);
             }
         }
 
-        if ($string != '' && $this->isSub) {
-            $string .= "\n\t";
+        $isSub = $isSub ?: $this->isSub;
+        if ($ret != '' && $isSub && $pretty) {
+            $ret .= "\n\t";
         }
 
-        return $string;
+        return $ret;
     }
 
     /**
      * To query string.
      * @param  string $key
      * @param  bool   $pretty
+     * @param  bool   $isSub
      * @return ?string
      * @throws Oppa\Query\BuilderException
      */
-    public function toQueryString(string $key, bool $pretty = true): ?string
+    public function toQueryString(string $key, bool $pretty = true, bool $isSub = false): ?string
     {
         if ($this->table == null) {
             throw new BuilderException(
@@ -1446,27 +1450,29 @@ final class Builder
         }
 
         $s = ''; $n = $t = $nt = ''; $ns = ' ';
+        $isSub = $isSub ?: $this->isSub;
+        // $isSub = $pretty = false;
         if ($pretty) {
-            $s = "\t"; $n = "\n"; $t = "\t"; $nt = $n.$t; $ns = $n;
-            if ($this->isSub) {
-                $ns = $nt.$t; $t = $t.$t;
+            $s = "\t"; $n = "\n"; $t = "\t"; $nt = $n . $t; $ns = $n;
+            if ($isSub) {
+                $ns = $nt . $t; $t = $t . $t;
             }
         }
 
-        $string = '';
+        $ret = '';
         switch ($key) {
             case 'select':
                 $select = $pretty ? $n . $t . join(', '. $n . $t, $this->query['select'])
                     : join(', ', $this->query['select']);
 
-                $string = sprintf("SELECT %s%s {$n}{$t}FROM %s",
+                $ret = sprintf("SELECT %s%s {$n}{$t}FROM %s",
                     $select,
                     $this->toQueryString('aggregate', $pretty),
                     $this->toQueryString('from', $pretty)
                 );
 
-                $string = trim(
-                    $string
+                $ret = trim(
+                    $ret
                     . $this->toQueryString('join', $pretty)
                     . $this->toQueryString('where', $pretty)
                     . $this->toQueryString('groupBy', $pretty)
@@ -1477,15 +1483,25 @@ final class Builder
                 break;
             case 'from':
                 if ($this->has('from')) {
+                    $from = $this->query['from'];
                     if ($pretty) {
-                        $from = preg_split('~^\((.+)\)+\s*(?:AS\s+(.+))~s', $this->query['from'], 2, 3);
-                        $from = '('. $nt . $t . implode($nt . $t, explode($n, $from[0])) . $nt .') AS '. $from[1];
+                        $tmp = explode("\n", $from);
+                        $tmp = array_map(function ($line) use ($t) {
+                            if ($line = trim($line)) {
+                                $line = ctype_upper($line[0]) || $line[0] == ')'
+                                    ? $t . $t . $line : $t . $t . $t . $line;
+                            }
+                            return $line;
+                        }, $tmp);
+                        $from = implode("\n", $tmp);
+                        $from = preg_split('~^\s*\((.+)\)+\s*(?:AS\s+(.+))~s', $from, 2, 3);
+                        $from = '('. $nt . $t . $from[0] . $nt .') AS '. $from[1];
                     } else {
-                        $from = $this->query['from'];
+                        $from = preg_replace('~\s+~', ' ', $from);
                     }
-                    $string = $from;
+                    $ret = $from;
                 } else {
-                    $string = $this->table;
+                    $ret = $this->table;
                 }
                 break;
             case 'insert':
@@ -1498,7 +1514,7 @@ final class Builder
                         $values[] = '('. $this->agent->escape(array_values($dat)) .')';
                     }
 
-                    $string = "INSERT INTO {$this->table} {$nt}({$keys}) {$nt}VALUES ".
+                    $ret = "INSERT INTO {$this->table} {$nt}({$keys}) {$nt}VALUES ".
                         join(', ', $values);
                 }
                 break;
@@ -1511,7 +1527,7 @@ final class Builder
                         $set[] = $this->agent->escapeIdentifier($key) .' = '. $this->agent->escape($value);
                     }
 
-                    $string = trim(
+                    $ret = trim(
                         "UPDATE {$this->table} SET {$nt}". join(', ', $set)
                         . $this->toQueryString('where', $pretty)
                         . $this->toQueryString('orderBy', $pretty)
@@ -1521,7 +1537,7 @@ final class Builder
                 break;
             case 'delete':
                 if ($this->has('delete')) {
-                    $string = trim(
+                    $ret = trim(
                         "DELETE FROM {$this->table}"
                         . $this->toQueryString('where', $pretty)
                         . $this->toQueryString('orderBy', $pretty)
@@ -1533,7 +1549,7 @@ final class Builder
                 if ($this->has('where')) {
                     $wheres = $this->query['where'];
                     if (count($wheres) == 1) {
-                        $string = $ns . 'WHERE '. $nt . $wheres[0][0];
+                        $ret = $ns . 'WHERE ('. ($pretty ? $ns . $s . $wheres[0][0] . $ns : $wheres[0][0]) .')';
                     } else {
                         $ws = []; $wsp = 0;
                         foreach ($wheres as $i => $where) {
@@ -1551,55 +1567,55 @@ final class Builder
                             }
                         }
 
-                        $string = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
-                        $string = $string . str_repeat(')', $wsp); // close parentheses
-                        if ($this->isSub) {
-                            $n = $n.$t; $nt = $n.$s;
+                        $ret = preg_replace('~ (OR|AND) \( +(["`])?~i', ' \1 (\2', join(' ', $ws)); // :(
+                        $ret = $ret . str_repeat(')', $wsp); // close parentheses
+                        if ($isSub) {
+                            $n = $n . $t; $nt = $n . $s;
                         }
-                        $string = $ns . 'WHERE ('. $nt . $string . $n . ')';
+                        $ret = $ns . 'WHERE ('. $nt . $ret . $n . ')';
                     }
                 }
                 break;
             case 'groupBy':
                 if ($this->has('groupBy')) {
-                    $string = $ns .'GROUP BY '. join(', ', $this->query['groupBy']);
+                    $ret = $ns .'GROUP BY '. join(', ', $this->query['groupBy']);
                 }
                 break;
             case 'orderBy':
                 if ($this->has('orderBy')) {
-                    $string = $ns .'ORDER BY '. join(', ', $this->query['orderBy']);
+                    $ret = $ns .'ORDER BY '. join(', ', $this->query['orderBy']);
                 }
                 break;
             case 'limit':
                 if ($this->has('limit')) {
-                    $string = isset($this->query['limit'][1])
+                    $ret = isset($this->query['limit'][1])
                         ? $ns .'LIMIT '. $this->query['limit'][0] .' OFFSET '. $this->query['limit'][1]
                         : $ns .'LIMIT '. $this->query['limit'][0];
                 }
                 break;
             case 'join':
                 if ($this->has('join')) {
-                    $string = '';
+                    $ret = '';
                     foreach ($this->query['join'] as $join) {
-                        $string .= $ns . $join;
+                        $ret .= $ns . $join;
                     }
                 }
                 break;
             case 'having':
                 if ($this->has('having')) {
-                    $string = $ns .'HAVING ('. join(' ', $this->query['having']). ')';
+                    $ret = $ns .'HAVING ('. join(' ', $this->query['having']). ')';
                 }
                 break;
             case 'aggregate':
                 if ($this->has('aggregate')) {
-                    $string = ', '. join(', ', $this->query['aggregate']);
+                    $ret = ', '. join(', ', $this->query['aggregate']);
                 }
                 break;
             default:
                 throw new BuilderException("Unknown key '{$key}' given");
         }
 
-        return $string ?: null;
+        return $ret ?: null;
     }
 
     /**

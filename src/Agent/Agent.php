@@ -619,7 +619,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 $inputParams = $inputParams[0] ?? null;
             }
 
-            if (!is_scalar($inputParams)) {
+            if ($inputParams !== null && !is_scalar($inputParams)) {
                 throw new AgentException(sprintf('Scalar type replacement required, %s given!',
                     gettype($inputParams)));
             }
@@ -677,7 +677,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     : $this->escape($inputParams));
         } */
 
-        $inputParams = (array) $inputParams;
+        // 'null' not replaced and gives error
+        $inputParams = (array) ($inputParams !== null ? $inputParams : [$inputParams]);
         if (empty($inputParams) || strpbrk($input, ':?%') === false) {
             return $input;
         }
