@@ -683,8 +683,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return $input;
         }
 
-        // available named word limits: :foo, :foo123, :foo_bar
-        if (preg_match_all('~(?<!:):(\w+)~', $input, $match)) {
+        // available named param formats: :foo, :foo123, :foo_bar (but not 'x::int')
+        if (preg_match_all('~(?![:]):(\w+)~', $input, $match)) {
             $operators = $match[1] ?? null;
             if ($operators != null) {
                 $keys = $values = [];
@@ -704,9 +704,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
         }
 
-        // available indicator: "??, ?"
-        // available operators with type definition: "%sl, %s, %i, %f, %F, %v, %n"
-        if (preg_match_all('~\?\?|\?|%sl|%[sifFbvn]~', $input, $match)) {
+        // available indicator: ??, ? (but not 'x::jsonb ?| array...')
+        // available operators with type definition: %sl, %s, %i, %f, %F, %v, %n
+        if (preg_match_all('~\?\?|\?(?![|])|%sl|%[sifFbvn]~', $input, $match)) {
             $operators = $match[0] ?? null;
             if ($operators != null) {
                 $inputParams = array_values($inputParams);
