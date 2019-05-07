@@ -612,7 +612,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         // eg: ('@id = ? ... @name = ?', ['1', 'foo', ...])
         if (substr_count($input, '@') > 1) {
-            $input = preg_replace_callback('~@([\w.]+)~', function ($match) {
+            $input = preg_replace_callback('~@([\w.\[\]]+)~', function ($match) {
                 return $this->escapeIdentifier($match[1]);
             }, $input);
         }
@@ -636,7 +636,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     gettype($inputParams)));
             }
 
-            [$field, $operator, $replaceOperator] = Util::split('~^@([\w\.]+)\s*([!]?=[<>]?)?\s*(.*)~',
+            $s=[$field, $operator, $replaceOperator] = Util::split('~^@([\w\.\[\]]+)\s*([!]?=[<>]?)?\s*(.*)~',
                 $input, $size=3, $splitFlags);
             if ($operator == null) {
                 $operator = '='; // @default=equal
