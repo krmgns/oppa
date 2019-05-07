@@ -32,5 +32,5 @@ namespace Oppa\Query;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @note    Used to escape in Agent escape methods, and also in Builder to know identifiers to escape.
  */
-final class Identifier extends Sql
+final class Identifier extends RawSql
 {}

@@ -510,8 +510,8 @@ abstract class Agent extends AgentCrud implements AgentInterface
             throw new AgentException('Found parentheses in input, complex identifiers not allowed!');
         }
 
-        // trim all non-word characters
-        $input = preg_replace('~^[^\w]|[^\w]$~', '', $input);
+        // trim all non-word (and array brackets) characters
+        $input = preg_replace('~^[^\w\[\]]|[^\w\[\]]$~', '', $input);
         if ($input == '') {
             return $input;
         }
@@ -535,7 +535,19 @@ abstract class Agent extends AgentCrud implements AgentInterface
             return implode('.', array_map([$this, 'escapeIdentifier'], explode('.', $input)));
         }
 
-        return $this->quoteField($input);
+        // array fields
+        $bracket = null;
+        if ($bracketPos = strpos($input, '[')) {
+            $bracket = substr($input, $bracketPos);
+            $input = substr($input, 0, $bracketPos);
+        }
+
+        $input = $this->quoteField($input);
+        if ($bracket != null) {
+            $input .= $bracket; // append back
+        }
+
+        return $input;
     }
 
     /**
