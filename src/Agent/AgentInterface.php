@@ -72,28 +72,30 @@ interface AgentInterface
 
     /**
      * Select.
-     * @param  string       $table
-     * @param  string|array $fields
-     * @param  string       $where
-     * @param  array        $whereParams
-     * @param  int|string   $fetchType
+     * @param  string            $table
+     * @param  string|array|null $fields
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @param  array|string|null $order
+     * @param  int|string|null   $fetchType
      * @return any
      */
-    public function select(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null);
+    public function select(string $table, $fields = null, $where = null, $whereParams = null,
+        $order = null, $fetchType = null);
 
     /**
      * Select all.
-     * @param  string       $table
-     * @param  string|array $fields
-     * @param  string       $where
-     * @param  array        $whereParams
-     * @param  int|string   $fetchType
-     * @param  int|array    $limit
+     * @param  string            $table
+     * @param  string|array|null $fields
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @param  array|string|null $order
+     * @param  int|array|null    $limit
+     * @param  int|string|null   $fetchType
      * @return ?array
      */
-    public function selectAll(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null, $limit = null): ?array;
+    public function selectAll(string $table, $fields = null, $where = null, $whereParams = null,
+        $order = null, $limit = null, $fetchType = null): ?array;
 
     /**
      * Insert.
@@ -115,56 +117,54 @@ interface AgentInterface
 
     /**
      * Update.
-     * @param  string    $table
-     * @param  array     $data
-     * @param  string    $where
-     * @param  array     $whereParams
+     * @param  string            $table
+     * @param  array             $data
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    public function update(string $table, array $data, string $where = null,
-        array $whereParams = null): int;
+    public function update(string $table, array $data, $where = null, $whereParams = null): int;
 
     /**
      * Update all.
-     * @param  string $table
-     * @param  array  $data
-     * @param  string $where
-     * @param  array  $whereParams
-     * @param  int    $limit
+     * @param  string            $table
+     * @param  array             $data
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @param  int|null          $limit
      * @return int
      * @throws Oppa\Exception\InvalidValueException
      */
-    public function updateAll(string $table, array $data, string $where = null,
-        array $whereParams = null, int $limit = null): int;
+    public function updateAll(string $table, array $data, $where = null, $whereParams = null,
+        int $limit = null): int;
 
     /**
      * Delete.
-     * @param  string    $table
-     * @param  string    $where
-     * @param  array     $whereParams
+     * @param  string            $table
+     * @param  string|array|null where
+     * @param  any|null          $whereParams
      * @return int
      */
-    public function delete(string $table, string $where = null,
-        array $whereParams = null): int;
+    public function delete(string $table, $where = null, $whereParams = null): int;
 
     /**
      * Delete all.
-     * @param  string    $table
-     * @param  string    $where
-     * @param  array     $whereParams
-     * @param  int|array $limit
+     * @param  string            $table
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @param  int|array|null    $limit
      * @return int
      */
-    public function deleteAll(string $table, string $where = null,
-        array $whereParams = null, $limit = null): int;
+    public function deleteAll(string $table, $where = null, $whereParams = null,
+        $limit = null): int;
 
     /**
      * Count.
-     * @param  string $table
-     * @param  string $where
-     * @param  array  $whereParams
+     * @param  string            $table
+     * @param  string|array|null where
+     * @param  any|null          $whereParams
      * @return ?int
      */
-    public function count(string $table, string $where = null, array $whereParams = null): ?int;
+    public function count(string $table, $where = null, $whereParams = null): ?int;
 }

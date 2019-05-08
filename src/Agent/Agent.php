@@ -277,23 +277,24 @@ abstract class Agent extends AgentCrud implements AgentInterface
     /**
      * Where.
      * @param  string|array $where
-     * @param  array        $whereParams
+     * @param  any|null     $whereParams
      * @param  string|null  $op
      * @return ?string
      * @throws Oppa\Agent\AgentException
      */
-    public final function where($where = null, array $whereParams = null, string $op = null): ?string
+    public final function where($where, $whereParams = null, string $op = null): ?string
     {
         if ($where != null) {
-            $whereType = gettype($where);
-            if ($whereType == 'array') {
+            if (is_array($where)) {
                 $op = strtoupper($op ?: 'AND');
                 if (!in_array($op, ['AND', 'OR'])) {
                     throw new AgentException("Invalid operator '{$op}' given");
                 }
                 $where = join(' '. $op .' ', $where);
-            } elseif ($whereType != 'string') {
-                throw new AgentException("Invalid where type '{$whereType}' given");
+            }
+
+            if (!is_string($where)) {
+                throw new AgentException(sprintf("Invalid where type '%s' given", gettype($where)));
             }
 
             $where = ($whereParams != null) ? 'WHERE ('. $this->prepare($where, $whereParams) .')'
@@ -305,21 +306,42 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
+     * Order.
+     * @param  string|array $order
+     * @return ?string
+     */
+    public final function order($order): ?string
+    {
+        if ($order != null) {
+            if (is_array($order)) {
+                @ [$field, $op] = $order;
+
+                return trim('ORDER BY '. $this->escapeIdentifier($field) .' '. strtoupper($op ?: ''));
+            }
+
+            return 'ORDER BY '. $this->escapeIdentifier($order);
+        }
+
+        return null;
+    }
+
+    /**
      * Limit.
      * @param  int|array $limit
      * @return ?string
      */
     public final function limit($limit): ?string
     {
-        if (is_array($limit)) {
-            @ [$limit, $offset] = array_map('abs', $limit);
+        if ($limit !== null) {
+            if (is_array($limit)) {
+                @ [$limit, $offset] = array_map('abs', $limit);
 
-            return ($offset !== null) ? 'LIMIT '. $limit .' OFFSET '. $offset : 'LIMIT '. $limit;
-        }
+                return ($offset !== null) ? 'LIMIT '. $limit .' OFFSET '. $offset : 'LIMIT '. $limit;
+            }
 
-        if ($limit || $limit === 0 || $limit === '0') {
-            return 'LIMIT '. abs($limit);
-
+            if ($limit || $limit === 0 || $limit === '0') {
+                return 'LIMIT '. abs($limit);
+            }
         }
 
         return null;
@@ -601,14 +623,14 @@ abstract class Agent extends AgentCrud implements AgentInterface
      * That's it!..
      *
      * Prepare.
-     * @param  string        $input       Raw SQL complete/not complete.
-     * @param  string|array  $inputParams Binding parameters.
+     * @param  string $input       Raw SQL complete/not complete.
+     * @param  any    $inputParams Binding parameters.
      * @return string
      * @throws Oppa\Agent\AgentException
      */
     public final function prepare(string $input, $inputParams = null): string
     {
-        $splitFlags = 2; // PREG_SPLIT_DELIM_CAPTURE
+        $splitFlags = 2; // delim capture
 
         // eg: ('@id = ? ... @name = ?', ['1', 'foo', ...])
         if (substr_count($input, '@') > 1) {

@@ -41,10 +41,10 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function select(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null)
+    public final function select(string $table, $fields = null, $where = null, $whereParams = null,
+        $order = null, $fetchType = null)
     {
-        $return = $this->selectAll($table, $fields, $where, $whereParams, $fetchType, 1);
+        $return = $this->selectAll($table, $fields, $where, $whereParams, $order, 1, $fetchType);
 
         return $return[0] ?? null;
     }
@@ -52,17 +52,18 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function selectAll(string $table, $fields = null, string $where = null,
-        array $whereParams = null, $fetchType = null, $limit = null): ?array
+    public final function selectAll(string $table, $fields = null, $where = null, $whereParams = null,
+        $order = null, $limit = null, $fetchType = null): ?array
     {
         if ($fields == null) {
             $fields = '*';
         }
 
-        $query = sprintf('SELECT %s FROM %s %s %s',
+        $query = sprintf('SELECT %s FROM %s %s %s %s',
             $this->escapeIdentifier($fields),
             $this->escapeIdentifier($table),
             $this->where($where, $whereParams),
+            $this->order($order),
             $this->limit($limit)
         );
 
@@ -110,8 +111,7 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function update(string $table, array $data, string $where = null,
-        array $whereParams = null): int
+    public final function update(string $table, array $data, $where = null, $whereParams = null): int
     {
         return $this->updateAll($table, $data, $where, $whereParams, 1);
     }
@@ -119,8 +119,8 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function updateAll(string $table, array $data, string $where = null,
-        array $whereParams = null, int $limit = null): int
+    public final function updateAll(string $table, array $data, $where = null, $whereParams = null,
+        int $limit = null): int
     {
         if (empty($data)) {
             throw new InvalidValueException('Empty data given!');
@@ -131,12 +131,16 @@ abstract class AgentCrud
             $set[] = sprintf('%s = %s', $this->escapeIdentifier($key), $this->escape($value));
         }
 
-        $query = sprintf('UPDATE %s SET %s %s %s',
+        $query = sprintf('UPDATE %s SET %s %s',
             $this->escapeIdentifier($table),
             join(', ', $set),
-            $this->where($where, $whereParams),
-            $this->limit($limit)
+            $this->where($where, $whereParams)
         );
+
+        // only mysql
+        if ($limit != null && $this->isMysql()) {
+            $query .= ' '. $this->limit($limit);
+        }
 
         return $this->query($query)->getRowsAffected();
     }
@@ -144,7 +148,7 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function delete(string $table, string $where = null, array $whereParams = null): int
+    public final function delete(string $table, $where = null, $whereParams = null): int
     {
         return $this->deleteAll($table, $where, $whereParams, 1);
     }
@@ -152,7 +156,7 @@ abstract class AgentCrud
     /**
      * @inheritDoc Oppa\Agent\AgentInterface
      */
-    public final function deleteAll(string $table, string $where = null, array $whereParams = null,
+    public final function deleteAll(string $table, $where = null, $whereParams = null,
         $limit = null): int
     {
         $query = sprintf(
