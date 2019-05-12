@@ -297,7 +297,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 throw new AgentException(sprintf("Invalid where type '%s' given", gettype($where)));
             }
 
-            $where = ($whereParams != null) ? 'WHERE ('. $this->prepare($where, $whereParams) .')'
+            $where = ($whereParams !== null) ? 'WHERE ('. $this->prepare($where, $whereParams) .')'
                 : 'WHERE ('. $where .')';
 
         }

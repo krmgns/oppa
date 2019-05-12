@@ -62,7 +62,7 @@ abstract class AgentCrud
         $query = sprintf('SELECT %s FROM %s %s %s %s',
             $this->escapeIdentifier($fields),
             $this->escapeIdentifier($table),
-            $this->where($where, $whereParams),
+            $this->where($where, [$whereParams]),
             $this->order($order),
             $this->limit($limit)
         );
@@ -134,7 +134,7 @@ abstract class AgentCrud
         $query = sprintf('UPDATE %s SET %s %s',
             $this->escapeIdentifier($table),
             join(', ', $set),
-            $this->where($where, $whereParams)
+            $this->where($where, [$whereParams])
         );
 
         // only mysql
@@ -162,7 +162,7 @@ abstract class AgentCrud
         $query = sprintf(
             'DELETE FROM %s %s %s',
             $this->escapeIdentifier($table),
-            $this->where($where, $whereParams),
+            $this->where($where, [$whereParams]),
             $this->limit($limit)
         );
 
