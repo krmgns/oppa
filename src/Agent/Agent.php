@@ -275,6 +275,44 @@ abstract class Agent extends AgentCrud implements AgentInterface
     }
 
     /**
+     * Count.
+     * @param  string            $table
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @param  string|null       $whereOp
+     * @return ?int
+     */
+    public function count(string $table, $where = null, $whereParams = null, string $whereOp = null): ?int
+    {
+        $query = $this->prepare('SELECT count(*) AS count FROM %n %v', [
+            $table, $this->where($where, $whereParams, $whereOp)
+        ]);
+
+        $result = (object) $this->get($query);
+
+        return isset($result->count) ? intval($result->count) : null;
+    }
+
+    /**
+     * Count query.
+     * @param  string            $query
+     * @param  string|array|null $where
+     * @param  any|null          $whereParams
+     * @return ?int
+     */
+    public function countQuery(string $query, $where = null, $whereParams = null): ?int
+    {
+        if ($where != null) {
+            $query = $this->prepare($query, $where, $whereParams);
+        }
+        $query = sprintf("SELECT count(*) AS count FROM (\n\t%s\n) AS tmp", trim($query));
+
+        $result = (object) $this->get($query);
+
+        return isset($result->count) ? intval($result->count) : null;
+    }
+
+    /**
      * Where.
      * @param  string|array $where
      * @param  any|null     $whereParams

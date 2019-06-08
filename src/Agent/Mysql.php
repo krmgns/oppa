@@ -289,25 +289,6 @@ final class Mysql extends Agent
     }
 
     /**
-     * Count.
-     * @param  string            $table
-     * @param  string|array|null $where
-     * @param  any|null          $whereParams
-     * @param  string|null       $whereOp
-     * @return ?int
-     */
-    public function count(string $table, $where = null, $whereParams = null, string $whereOp = null): ?int
-    {
-        $query = $this->prepare('SELECT count(*) AS count FROM %n %v', [
-            $table, $this->where($where, $whereParams, $whereOp)
-        ]);
-
-        $result = (object) $this->get($query);
-
-        return isset($result->count) ? intval($result->count) : null;
-    }
-
-    /**
      * Parse connection error.
      * @return array
      */
