@@ -566,7 +566,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
         }
 
         // trim all non-word (and array brackets) characters
-        $input = preg_replace('~^[^\w\[\]]|[^\w\[\]]$~', '', $input);
+        $input = preg_replace('~^[^\w\[\]]|[^\w\[\]\*]$~', '', $input);
         if ($input == '') {
             return $input;
         }
