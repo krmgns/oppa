@@ -136,7 +136,6 @@ abstract class AgentCrud
             join(', ', $set),
             $this->where($where, (array) $whereParams)
         );
-        prs($query,1);
 
         // only mysql
         if ($limit != null && $this->isMysql()) {
