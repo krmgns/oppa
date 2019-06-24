@@ -105,7 +105,7 @@ abstract class AgentCrud
 
         $return = $this->query($query)->getIds();
 
-        return $return ? $return : null;
+        return $return ?: null;
     }
 
     /**
@@ -160,11 +160,15 @@ abstract class AgentCrud
         $limit = null): int
     {
         $query = sprintf(
-            'DELETE FROM %s %s %s',
+            'DELETE FROM %s %s',
             $this->escapeIdentifier($table),
-            $this->where($where, (array) $whereParams),
-            $this->limit($limit)
+            $this->where($where, (array) $whereParams)
         );
+
+        // only mysql
+        if ($limit != null && $this->isMysql()) {
+            $query .= ' '. $this->limit($limit);
+        }
 
         return $this->query($query)->getRowsAffected();
     }
