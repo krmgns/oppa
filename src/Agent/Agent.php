@@ -691,7 +691,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     gettype($inputParams)));
             }
 
-            $s=[$field, $operator, $replaceOperator] = Util::split('~^@([\w\.\[\]]+)\s*([!]?=[<>]?)?\s*(.*)~',
+            [$field, $operator, $replaceOperator] = Util::split('~^@([\w\.\[\]]+)\s*([!]?=[<>]?|[<>]=?)?\s*(.*)~',
                 $input, $size=3, $splitFlags);
             if ($operator == null) {
                 $operator = '='; // @default=equal
