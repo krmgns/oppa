@@ -511,12 +511,12 @@ final class Builder
      */
     public function join(string $to, string $as, string $on, $onParams = null, string $type = ''): self
     {
-        return $this->push('join', sprintf('%sJOIN %s AS %s ON (%s)',
+        return $this->push('join', sprintf('%sJOIN %s%s ON (%s)',
             $type ? strtoupper($type) .' ' : '',
             $this->prepareField($to),
-            $this->agent->quoteField($as),
-            $this->agent->prepareIdentifier($on, $onParams))
-        );
+            $as ? ' AS '. $this->agent->quoteField($as) : '',
+            $this->agent->prepareIdentifier($on, $onParams)
+        ));
     }
 
     /**
