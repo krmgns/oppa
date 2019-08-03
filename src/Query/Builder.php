@@ -434,6 +434,15 @@ final class Builder
     }
 
     /**
+     * Select more json.
+     * @alias of selectJsonMore().
+     */
+    public function selectMoreJson(...$arguments): self
+    {
+        return $this->selectJsonMore(...$arguments);
+    }
+
+    /**
      * Select random.
      * @param  string|array|Builder $field
      * @return self
@@ -1145,17 +1154,12 @@ final class Builder
     }
 
     /**
-     * Search like (alias of whereLike()).
-     * @param  string|array|Builder $field
-     * @param  string|array         $arguments
-     * @param  bool                 $ilike
-     * @param  bool                 $not
-     * @param  string               $op
-     * @return self
+     * Search like.
+     * @alias of whereLike()
      */
-    public function searchLike($field, $arguments, bool $ilike = false, bool $not = false, string $op = ''): self
+    public function searchLike(...$arguments): self
     {
-        return $this->whereLike($field, $arguments, $ilike, $not, $op);
+        return $this->whereLike(...$arguments);
     }
 
     /**
