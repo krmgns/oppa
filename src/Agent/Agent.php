@@ -779,7 +779,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         // available indicator: ??, ? (but not 'x::jsonb ?| array...')
         // available operators with type definition: %sl, %s, %i, %f, %F, %v, %n
-        if (preg_match_all('~\?\?|\?(?![|])|%sl|%[sifFbvn]~', $input, $match)) {
+        if (preg_match_all('~\?\?|\?(?![|])|%sl|%[sifFbvn](?![\w])~', $input, $match)) {
             $operators = $match[0] ?? null;
             if ($operators != null) {
                 $inputParams = array_values($inputParams);
