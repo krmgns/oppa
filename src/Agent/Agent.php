@@ -584,7 +584,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
 
         // aliases
         if (strpos($input, ' ')) {
-            return preg_replace_callback('~([^\s]+)\s+(AS\s+)?(\w+)~i', function ($match) {
+            return preg_replace_callback('~([^\s]+)\s+(AS\s+)?([^\s]+)~i', function ($match) {
                 return $this->escapeIdentifier($match[1]) . (
                     ($as = trim($match[2])) ? ' '. strtoupper($as) .' ' : ' '
                 ) . $this->escapeIdentifier($match[3]);
