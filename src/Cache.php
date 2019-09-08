@@ -74,16 +74,17 @@ final class Cache
      */
     public function read(string $file, &$contents = null, bool $json = true, int $ttl = null): bool
     {
-        $this->checkDirectory() && $ok = $this->checkFile($file);
+        $ok = $this->checkDirectory() && $this->checkFile($file);
+        if (!$ok) {
+            return false;
+        }
 
-        if ($ok) { // file exists
-            if (filemtime($file) < time() - ($ttl ?? self::TTL)) {
-                $contents = null;
+        if (filemtime($file) < time() - ($ttl ?? self::TTL)) {
+            $contents = null;
 
-                unlink($file); // do gc
+            unlink($file); // gc
 
-                return false;
-            }
+            return false;
         }
 
         $contents = file_get_contents($file);
@@ -103,7 +104,10 @@ final class Cache
      */
     public function write(string $file, $contents, bool $json = true): bool
     {
-        $this->checkDirectory() && $this->checkFile($file);
+        $ok = $this->checkDirectory() && $this->checkFile($file);
+        if (!$ok) {
+            return false;
+        }
 
         if ($json) {
             $contents = json_encode($contents);
