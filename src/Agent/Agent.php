@@ -448,6 +448,11 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public function escape($input, string $inputFormat = null, bool $quote = true)
     {
+        // no escape raws sql inputs like NOW(), ROUND(total) etc.
+        if ($input instanceof Sql) {
+            return $input->toString();
+        }
+
         $inputType = gettype($input);
 
         // in/not in statements
@@ -487,11 +492,6 @@ abstract class Agent extends AgentCrud implements AgentInterface
             case 'double':
                 return sprintf('%F', $input); // %F = non-locale aware
             default:
-                // no escape raws sql inputs like NOW(), ROUND(total) etc.
-                if ($input instanceof Sql) {
-                    return $input->toString();
-                }
-
                 throw new AgentException("Unimplemented '{$inputType}' type encountered!");
         }
 
@@ -750,8 +750,10 @@ abstract class Agent extends AgentCrud implements AgentInterface
                     : $this->escape($inputParams));
         } */
 
-        // 'null' not replaced and gives error
-        $inputParams = (array) ($inputParams !== null ? $inputParams : [$inputParams]);
+        // 'null' not replaced, gives error, and Sql object issue
+        $inputParams = (array) (
+            !is_null($inputParams) && !is_object($inputParams) ? $inputParams : [$inputParams]
+        );
         if (empty($inputParams) || strpbrk($input, ':?%') === false) {
             return $input;
         }

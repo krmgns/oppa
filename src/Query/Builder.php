@@ -656,7 +656,8 @@ final class Builder
         }
 
         if ($queryParams !== null) {
-            if (!is_array($queryParams) && !is_scalar($queryParams) && !($queryParams instanceof Identifier)) {
+            if (!is_array($queryParams) && !is_scalar($queryParams)
+                && !($queryParams instanceof Sql || $queryParams instanceof Identifier)) {
                 throw new BuilderException(sprintf('Array, scalar and Query\Identifier params are accepted only, %s given!',
                     gettype($queryParams)));
             }
