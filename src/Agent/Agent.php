@@ -463,7 +463,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
                 return $this->escapeLikeString((string) $input, $quote);
             } elseif ($inputFormat == '%b') {
                 if (is_bool($input)) {
-                    return $input ? 'TRUE' : 'FALSE';
+                    return $input ? 'true' : 'false';
                 }
                 throw new AgentException("Boolean types accepted only for %b operator, {$inputType} given!");
             }
@@ -483,7 +483,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             case 'integer':
                 return $input;
             case 'boolean':
-                return $input ? 'TRUE' : 'FALSE';
+                return $input ? 'true' : 'false';
             case 'double':
                 return sprintf('%F', $input); // %F = non-locale aware
             default:
@@ -719,7 +719,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
             }
 
             if (is_bool($inputParams)) {
-                return sprintf('%s %s %s', $field, $operator, $inputParams ? 'TRUE' : 'FALSE');
+                return sprintf('%s %s %s', $field, $operator, $inputParams ? 'true' : 'false');
             }
 
             return sprintf('%s %s %s', $field, $operator, $replaceOperator ?: $inputParams);

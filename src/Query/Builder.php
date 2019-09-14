@@ -199,7 +199,7 @@ final class Builder
         if ($field === 1 || $field === '1') {
             return $this->push('select', '1');
         } elseif ($field === true) {
-            return $this->push('select', 'TRUE');
+            return $this->push('select', 'true');
         }
 
         // handle other query object
