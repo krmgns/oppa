@@ -434,15 +434,6 @@ final class Builder
     }
 
     /**
-     * Select more json.
-     * @alias of selectJsonMore().
-     */
-    public function selectMoreJson(...$arguments): self
-    {
-        return $this->selectJsonMore(...$arguments);
-    }
-
-    /**
      * Select random.
      * @param  string|array|Builder $field
      * @return self
