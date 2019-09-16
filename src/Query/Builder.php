@@ -200,6 +200,8 @@ final class Builder
             return $this->push('select', '1');
         } elseif ($field === true) {
             return $this->push('select', 'true');
+        } elseif ($field === 'count(*)') {
+            return $this->push('select', 'count(*)');
         }
 
         // handle other query object
