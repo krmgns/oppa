@@ -69,7 +69,7 @@ abstract class AgentCrud
 
         $return = $this->query($query, null, null, $fetchType)->getData();
 
-        return $return ? $return : null;
+        return $return ?: null;
     }
 
     /**
