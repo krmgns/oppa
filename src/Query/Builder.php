@@ -111,6 +111,18 @@ final class Builder
     }
 
     /**
+     * New.
+     * @param  Oppa\Link\Link|null $link
+     * @param  string|null         $table
+     * @param  bool                $isSub
+     * @return Oppa\Query\Builder
+     */
+    public function new(Link $link = null, string $table = null, bool $isSub = false): Builder
+    {
+        return new Builder($link ?? $this->link, $table ?? $this->table, $isSub ?? $this->isSub);
+    }
+
+    /**
      * Set link.
      * @param  Oppa\Link\Link $link
      * @return self
@@ -185,9 +197,9 @@ final class Builder
 
     /**
      * Select.
-     * @param  string|array|Builder $field
-     * @param  string               $as
-     * @param  bool                 $reset
+     * @param  string|array|Builder|Sql $field
+     * @param  string                   $as
+     * @param  bool                     $reset
      * @return self
      * @throws Oppa\Query\BuilderException
      */
@@ -209,7 +221,12 @@ final class Builder
             if ($as == null) {
                 throw new BuilderException('Alias required!');
             }
-            return $this->push('select', '('. $field->toString() .') AS '. $this->agent->quoteField($as));
+
+            if ($field instanceof Builder) {
+                return $this->push('select', '('. $field->toString() .') AS '. $this->agent->quoteField($as));
+            } else {
+                return $this->push('select', $field->toString() .' AS '. $this->agent->quoteField($as));
+            }
         }
 
         $field = $this->prepareField($field);
@@ -222,8 +239,8 @@ final class Builder
 
     /**
      * Select more.
-     * @param  string|Builder $field
-     * @param  string|null    $as
+     * @param  string|array|Builder|Sql $field
+     * @param  string|null              $as
      * @return self
      */
     public function selectMore($field, string $as = null): self
@@ -504,45 +521,45 @@ final class Builder
 
     /**
      * Join.
-     * @param  string   $to
-     * @param  string   $as
-     * @param  string   $on
-     * @param  any|null $onParams
+     * @param  string     $to
+     * @param  string     $as
+     * @param  string|Sql $on
+     * @param  any|null   $onParams
      * @param  string   $type
      * @return self
      */
-    public function join(string $to, string $as, string $on, $onParams = null, string $type = ''): self
+    public function join(string $to, string $as, $on, $onParams = null, string $type = ''): self
     {
         return $this->push('join', sprintf('%sJOIN %s%s ON (%s)',
             $type ? strtoupper($type) .' ' : '',
             $this->prepareField($to),
             $as ? ' AS '. $this->agent->quoteField($as) : '',
-            $this->agent->prepareIdentifier($on, $onParams)
+            is_string($on) ? $this->agent->prepareIdentifier($on, $onParams) : $on->toString()
         ));
     }
 
     /**
      * Join left.
-     * @param  string   $to
-     * @param  string   $as
-     * @param  string   $on
-     * @param  any|null $onParams
+     * @param  string     $to
+     * @param  string     $as
+     * @param  string|Sql $on
+     * @param  any|null   $onParams
      * @return self
      */
-    public function joinLeft(string $to, string $as, string $on, $onParams = null): self
+    public function joinLeft(string $to, string $as, $on, $onParams = null): self
     {
         return $this->join($to, $as, $on, $onParams, 'LEFT');
     }
 
     /**
      * Right right.
-     * @param  string   $to
-     * @param  string   $as
-     * @param  string   $on
-     * @param  any|null $onParams
+     * @param  string     $to
+     * @param  string     $as
+     * @param  string|Sql $on
+     * @param  any|null   $onParams
      * @return self
      */
-    public function joinRight(string $to, string $as, string $on, $onParams = null): self
+    public function joinRight(string $to, string $as, $on, $onParams = null): self
     {
         return $this->join($to, $as, $on, $onParams, 'RIGHT');
     }
@@ -605,12 +622,19 @@ final class Builder
             throw new BuilderException('Query required!');
         }
 
-        // sub-where
-        if ($queryParams instanceof Builder) {
-            // $opr argument is empty, should be exists in query (eg: id = )
-            $query = $this->prepare($query, '', $queryParams);
+        $op = $op ? strtoupper($op) : self::OP_AND;
+        if ($op != self::OP_OR && $op != self::OP_AND) {
+            throw new BuilderException('Available ops: OR, AND');
+        }
 
-            return $this->push('where', $query);
+        // subs
+        if ($query instanceof Sql) {
+            $query = '('. $query->toString() .')';
+            return $this->push('where', [[$query, $op]]);
+        }
+        if ($queryParams instanceof Builder) {
+            $query = $this->prepare($query, '', $queryParams);
+            return $this->push('where', [[$query, $op]]);
         }
 
         if (is_array($query)) {
@@ -628,11 +652,6 @@ final class Builder
                     // eg: ['id' => 1]
                     $query = '?? = '. ($params instanceof Identifier ? '??' : '?');
                     $queryParams = [$field, $params];
-                }
-
-                $op = $op ? strtoupper($op) : self::OP_AND;
-                if ($op != self::OP_OR && $op != self::OP_AND) {
-                    throw new BuilderException('Available ops: OR, AND');
                 }
 
                 $query = $this->agent->prepare($query, $queryParams);
@@ -657,11 +676,6 @@ final class Builder
         }
 
         $query = $this->agent->prepare($query, $queryParams);
-
-        $op = $op ? strtoupper($op) : self::OP_AND;
-        if ($op != self::OP_OR && $op != self::OP_AND) {
-            throw new BuilderException('Available ops: OR, AND');
-        }
 
         return $this->push('where', [[$query, $op]]);
     }
