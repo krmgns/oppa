@@ -751,9 +751,7 @@ abstract class Agent extends AgentCrud implements AgentInterface
         } */
 
         // 'null' not replaced, gives error, and Sql object issue
-        $inputParams = (array) (
-            !is_null($inputParams) && !is_object($inputParams) ? $inputParams : [$inputParams]
-        );
+        $inputParams = (array) (!is_null($inputParams) && !is_object($inputParams) ? $inputParams : []);
         if (empty($inputParams) || strpbrk($input, ':?%') === false) {
             return $input;
         }
