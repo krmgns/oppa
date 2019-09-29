@@ -1255,8 +1255,10 @@ final class Builder
      */
     public function limit(int $limit, int $offset = null): self
     {
-        $this->query['limit'] = ($offset === null)
-            ? [abs($limit)] : [abs($limit), abs($offset)];
+        $this->query['limit'] = abs($limit);
+        if ($offset !== null) {
+            $this->query['offset'] = abs($offset);
+        }
 
         return $this;
     }
@@ -1268,11 +1270,10 @@ final class Builder
      */
     public function offset(int $offset): self
     {
-        if (!isset($this->query['limit'][0])) {
+        if (!isset($this->query['limit'])) {
             throw new BuilderException('Limit not set yet, call limit() first');
         }
-
-        $this->query['limit'][1] = abs($offset);
+        $this->query['offset'] = abs($offset);
 
         return $this;
     }
@@ -1594,9 +1595,9 @@ final class Builder
                 break;
             case 'limit':
                 if (isset($this->query['limit'])) {
-                    $ret = isset($this->query['limit'][1])
-                        ? $ns .'LIMIT '. $this->query['limit'][0] .' OFFSET '. $this->query['limit'][1]
-                        : $ns .'LIMIT '. $this->query['limit'][0];
+                    $ret = isset($this->query['offset'])
+                        ? $ns .'LIMIT '. $this->query['limit'] .' OFFSET '. $this->query['offset']
+                        : $ns .'LIMIT '. $this->query['limit'];
                 }
                 break;
             case 'join':
