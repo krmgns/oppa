@@ -371,16 +371,14 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function limit($limit): ?string
     {
-        if ($limit !== null) {
+        if ($limit != null) {
             if (is_array($limit)) {
                 @ [$limit, $offset] = array_map('abs', $limit);
 
                 return ($offset !== null) ? 'LIMIT '. $limit .' OFFSET '. $offset : 'LIMIT '. $limit;
             }
 
-            if ($limit || $limit === 0 || $limit === '0') {
-                return 'LIMIT '. abs($limit);
-            }
+            return 'LIMIT '. abs($limit);
         }
 
         return null;
