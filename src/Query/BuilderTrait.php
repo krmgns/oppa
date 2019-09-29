@@ -434,53 +434,16 @@ trait BuilderTrait
      */
     public function esc(...$arguments)
     {
-        $this->agent->escape(...$arguments);
+        return $this->agent->escape(...$arguments);
     }
 
     /**
-     * Esc id.
-     * @alias of agent.escapeIdentifier()
+     * Esc name.
+     * @alias of agent.escapeName()
      */
-    public function escId(...$arguments)
+    public function escName(...$arguments)
     {
-        $this->agent->escapeIdentifier(...$arguments);
-    }
-
-    /**
-     * Esc field.
-     * @alias of agent.escapeIdentifier()
-     */
-    public function escField(...$arguments)
-    {
-        $this->agent->escapeIdentifier(...$arguments);
-    }
-
-    /**
-     * Id.
-     * @alias of identifier()
-     */
-    public function id(string $name): Identifier
-    {
-        return $this->identifier($name);
-    }
-
-    /**
-     * Field.
-     * @alias of identifier()
-     */
-    public function field(string $name): Identifier
-    {
-        return $this->identifier($name);
-    }
-
-    /**
-     * Identifier.
-     * @param  string $name
-     * @return Oppa\Query\Identifier
-     */
-    public function identifier(string $name): Identifier
-    {
-        return new Identifier($name);
+        return $this->agent->escapeName(...$arguments);
     }
 
     /**
@@ -491,5 +454,15 @@ trait BuilderTrait
     public function sql(string $input): Sql
     {
         return new Sql($input);
+    }
+
+    /**
+     * Name.
+     * @param  string $name
+     * @return Oppa\Query\Identifier
+     */
+    public function name(string $name): Identifier
+    {
+        return new Identifier($name);
     }
 }
