@@ -1679,18 +1679,16 @@ final class Builder
             return $field;
         }
 
-        if ($field instanceof Builder || $field instanceof Sql) {
-            return '('. $field->toString() .')';
-        } elseif ($field instanceof Identifier) {
-            return $this->agent->escapeIdentifier($field);
-        }
-
         if (is_string($field)) {
             $field = Util::split(',', trim($field));
         }
 
         if (is_array($field)) {
             return $this->agent->escapeIdentifier($field, $join);
+        } elseif ($field instanceof Identifier) {
+            return $this->agent->escapeIdentifier($field);
+        } elseif ($field instanceof Builder || $field instanceof Sql) {
+            return '('. $field->toString() .')';
         }
 
         throw new BuilderException(sprintf('String, array or Builder type fields are accepted only,'.
