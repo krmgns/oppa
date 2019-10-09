@@ -90,27 +90,25 @@ final class Linker
         // set type as single as default
         $type = Link::TYPE_SINGLE;
 
-        // get config as array
+        // get config array, and database directives from config
         $config = $this->config->toArray();
-
-        // get database directives from given config
-        $database = ($config['database'] ?? []);
+        $database = $config['database'] ?? [];
 
         // is master/slave active?
-        if (true === $this->config->get('sharding')) {
-            $master = ($database['master'] ?? []);
-            $slaves = ($database['slaves'] ?? []);
+        if ($this->config->get('sharding') === true) {
+            $master = $database['master'] ?? [];
+            $slaves = $database['slaves'] ?? [];
             switch ($host) {
-                // act: master as default
+                // master as default
                 case null:
                 case Link::TYPE_MASTER:
                     $type = Link::TYPE_MASTER;
                     $database = array_merge($database, $master);
                     break;
-                //  act: slave
+                //  slave
                 case Link::TYPE_SLAVE:
                     $type = Link::TYPE_SLAVE;
-                    if (!empty($slaves)) {
+                    if ($slaves != null) {
                         $database = array_merge($database, Util::arrayRand($slaves));
                     }
                     break;
@@ -272,27 +270,24 @@ final class Linker
 
         $host = trim((string) $host);
         // with master/slave directives
-        if (true === $this->config->get('sharding')) {
+        if ($this->config->get('sharding') === true) {
             // e.g: getLink(), getLink('master'), getLink('master.mysql.local')
             if ($host == '' || $host == Link::TYPE_MASTER) {
-                return Util::arrayRand(
-                    array_filter($this->links, function($link) {
-                        return $link->getType() == Link::TYPE_MASTER;
+                return Util::arrayRand(array_filter($this->links, function($link) {
+                    return ($link->getType() == Link::TYPE_MASTER);
                 }));
             }
             // e.g: getLink(), getLink('slave'), getLink('slave1.mysql.local')
             elseif ($host == Link::TYPE_SLAVE) {
-                return Util::arrayRand(
-                    array_filter($this->links, function($link) {
-                        return $link->getType() == Link::TYPE_SLAVE;
+                return Util::arrayRand(array_filter($this->links, function($link) {
+                    return ($link->getType() == Link::TYPE_SLAVE);
                 }));
             }
         } else {
             // e.g: getLink()
             if ($host == '') {
-                return Util::arrayRand(
-                    array_filter($this->links, function($link) {
-                        return $link->getType() == Link::TYPE_SINGLE;
+                return Util::arrayRand(array_filter($this->links, function($link) {
+                    return ($link->getType() == Link::TYPE_SINGLE);
                 }));
             }
         }

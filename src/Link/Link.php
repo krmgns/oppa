@@ -188,7 +188,8 @@ final class Link
     public function status(): ?int
     {
         if ($this->agent != null) {
-            return $this->agent->isConnected() ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
+            return $this->agent->isConnected()
+                ? self::STATUS_CONNECTED : self::STATUS_DISCONNECTED;
         }
 
         return null;
@@ -197,7 +198,7 @@ final class Link
     /**
      * Attach agent.
      * @return void
-     * @throws \RuntimeException
+     * @throws Oppa\Link\LinkException
      */
     private function attachAgent(): void
     {
