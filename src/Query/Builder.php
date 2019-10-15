@@ -474,7 +474,7 @@ final class Builder
                     if ($operator == null) {
                         $operator = '='; // @default=equal
                     }
-                    $query = '?? '. $operator .' '. ($params instanceof Identifier ? '??' : $escapeOperator ?: '?');
+                    $query = '?? '. $operator .' '. ($params instanceof Identifier ? '??' : ($escapeOperator ?: '?'));
                     $queryParams = [$field, $params];
                 } else {
                     // eg: ['id' => 1]
