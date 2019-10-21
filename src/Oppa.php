@@ -32,4 +32,27 @@ namespace Oppa;
  * @author  Kerem Güneş <k-gun@mail.com>
  */
 final class Oppa
-{}
+{
+    /**
+     * Instance.
+     * @var Oppa\Database
+     */
+    private static $instance;
+
+    /**
+     * Get instance.
+     * @param  array $config
+     * @param  bool  $connect
+     * @return Oppa\Database
+     */
+    public static function getInstance(array $config, bool $connect = true): Database
+    {
+        if (self::$instance == null) {
+            self::$instance = new Database($config);
+            if ($connect) {
+                self::$instance->connect();
+            }
+        }
+        return self::$instance;
+    }
+}
