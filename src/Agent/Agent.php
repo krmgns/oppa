@@ -187,10 +187,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function getLogger(): ?Logger
     {
-        if (!$this->logger) {
+        if ($this->logger == null) {
             trigger_error("Logger is not found, did you set 'query_log' option as 'true'?");
         }
-
         return $this->logger;
     }
 
@@ -200,10 +199,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function getMapper(): ?Mapper
     {
-        if (!$this->mapper) {
+        if ($this->mapper == null) {
             trigger_error("Mapper is not found, did you set 'map_result' option as 'true'?");
         }
-
         return $this->mapper;
     }
 
@@ -213,10 +211,9 @@ abstract class Agent extends AgentCrud implements AgentInterface
      */
     public final function getProfiler(): ?Profiler
     {
-        if (!$this->profiler) {
+        if ($this->profiler == null) {
             trigger_error("Profiler is not found, did you set 'profile' option as 'true'?");
         }
-
         return $this->profiler;
     }
 

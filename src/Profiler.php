@@ -156,34 +156,38 @@ final class Profiler
 
     /**
      * Get total time.
-     * @param  bool $indexed
+     * @param  bool $timeOnly
      * @return float|string|null
      */
-    public function getTotalTime(bool $indexed = false)
+    public function getTotalTime(bool $timeOnly = true)
     {
         if ($this->profiles == null) {
             return null;
         }
 
         $totalTime = 0.00;
-        $totalTimeIndexed = '';
+        $totalTimeString = '';
         if (isset($this->profiles['connection'])) {
             $totalTime += $this->profiles['connection']['time'];
-            if ($indexed) {
-                $totalTimeIndexed .= "connection({$totalTime})";
+            if (!$timeOnly) {
+                $totalTimeString .= "connection({$totalTime})";
             }
         }
 
         if (isset($this->profiles['query'])) {
             foreach ($this->profiles['query'] as $i => $profile) {
                 $totalTime += $profile['time'];
-                if ($indexed) {
-                    $totalTimeIndexed .= " query{$i}({$profile['time']})";
+                if (!$timeOnly) {
+                    $totalTimeString .= " query({$i}, {$profile['time']})";
                 }
             }
         }
 
-        return !$indexed ? $totalTime : $totalTimeIndexed;
+        if (!$timeOnly) {
+            $totalTimeString .= " total({$totalTime})";
+        }
+
+        return $timeOnly ? $totalTime : $totalTimeString;
     }
 
     /**
