@@ -47,7 +47,7 @@ abstract class Result implements ResultInterface
      * Resource.
      * @var Oppa\Resource
      */
-    protected $result;
+    protected $resource;
 
     /**
      * Fetch type.
@@ -62,7 +62,7 @@ abstract class Result implements ResultInterface
     protected $fetchLimit = ResultInterface::LIMIT;
 
     /**
-     * Fetch object.
+     * Fetch object (aka DTO. @link https://en.wikipedia.org/wiki/Data_transfer_object).
      * @var string
      */
     protected $fetchObject = 'stdClass';
@@ -110,12 +110,12 @@ abstract class Result implements ResultInterface
     }
 
     /**
-     * Get result.
+     * Get resource.
      * @return ?Oppa\Resource
      */
-    public final function getResult(): ?Resource
+    public final function getResource(): ?Resource
     {
-        return $this->result;
+        return $this->resource;
     }
 
     /**
@@ -124,7 +124,7 @@ abstract class Result implements ResultInterface
      */
     public final function free(): void
     {
-        $this->result && $this->result->free();
+        $this->resource && $this->resource->free();
     }
 
     /**

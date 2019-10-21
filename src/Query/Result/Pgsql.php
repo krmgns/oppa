@@ -49,35 +49,35 @@ final class Pgsql extends Result
      * Process.
      * If query action contains "select", then process returned result.
      * If query action contains "update/delete" etc, then process affected result.
-     * @param  Oppa\Resource $result
+     * @param  Oppa\Resource $resource
      * @param  int           $limit
      * @param  int|string    $fetchType
      * @param  string        $query @internal
      * @return Oppa\Query\Result\ResultInterface
      * @throws Oppa\Exception\InvalidResourceException, Oppa\Exception\InvalidValueException
      */
-    public function process(Resource $result, int $limit = null, $fetchType = null,
+    public function process(Resource $resource, int $limit = null, $fetchType = null,
         string $query = null): ResultInterface
     {
-        $resource = $this->agent->getResource();
-        if ($resource->getType() != Resource::TYPE_PGSQL_LINK) {
+        $agentResource = $this->agent->getResource();
+        if ($agentResource->getType() != Resource::TYPE_PGSQL_LINK) {
             throw new InvalidResourceException('Process resource must be type of pgsql link!');
         }
 
         $resourceObject = $resource->getObject();
-        $resultObject = $result->getObject();
+        $agentResourceObject = $agentResource->getObject();
 
         $rowsCount = 0;
         $rowsAffected = 0;
-        if ($result->getType() == Resource::TYPE_PGSQL_RESULT) {
-            $rowsCount = pg_num_rows($resultObject);
-            $rowsAffected = pg_affected_rows($resultObject);
+        if ($resource->getType() == Resource::TYPE_PGSQL_RESULT) {
+            $rowsCount = pg_num_rows($resourceObject);
+            $rowsAffected = pg_affected_rows($resourceObject);
         }
 
         $i = 0;
         // if results
         if ($rowsCount > 0) {
-            $this->result = $result;
+            $this->resource = $resource;
 
             if ($limit === null) {
                 $limit = $this->fetchLimit;
@@ -90,22 +90,22 @@ final class Pgsql extends Result
 
             switch ($fetchType) {
                 case Result::AS_OBJECT:
-                    while ($i < $limit && $row = pg_fetch_object($resultObject, null, $this->fetchObject)) {
+                    while ($i < $limit && $row = pg_fetch_object($resourceObject, null, $this->fetchObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASC:
-                    while ($i < $limit && $row = pg_fetch_assoc($resultObject)) {
+                    while ($i < $limit && $row = pg_fetch_assoc($resourceObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_NUM:
-                    while ($i < $limit && $row = pg_fetch_array($resultObject, null, PGSQL_NUM)) {
+                    while ($i < $limit && $row = pg_fetch_array($resourceObject, null, PGSQL_NUM)) {
                         $this->data[$i++] = $row;
                     }
                     break;
                 case ResultInterface::AS_ARRAY_ASCNUM:
-                    while ($i < $limit && $row = pg_fetch_array($resultObject)) {
+                    while ($i < $limit && $row = pg_fetch_array($resourceObject)) {
                         $this->data[$i++] = $row;
                     }
                     break;
@@ -117,7 +117,7 @@ final class Pgsql extends Result
 
             // map result data if mapper exists
             if ($mapper =@ $this->agent->getMapper()) {
-                $fieldTable = pg_field_table($resultObject, 0);
+                $fieldTable = pg_field_table($resourceObject, 0);
                 if ($fieldTable) {
                     $this->data = $mapper->map($fieldTable, $this->data);
                 }
@@ -131,7 +131,7 @@ final class Pgsql extends Result
 
         // last insert id
         if ($query && stripos($query, 'INSERT') === 0) {
-            $result = pg_query($resourceObject, 'SELECT lastval() AS id');
+            $result = pg_query($agentResourceObject, 'SELECT lastval() AS id');
             if ($result) {
                 $id = (int) pg_fetch_result($result, 'id');
                 if ($id) {
