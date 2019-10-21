@@ -336,7 +336,6 @@ final class Pgsql extends Agent
     {
         $return = ['sql_state' => null, 'code' => null, 'message' => 'Unknown error.'];
         if ($error = error_get_last()) {
-            // $error = explode("\n", $error['message']);
             $error = $error['message'];
             // search for sql state & message
             preg_match('~ERROR:\s+(?<sql_state>[0-9A-Z]+?):\s+(?<message>[^\n]+)~', $error, $match);
@@ -345,8 +344,8 @@ final class Pgsql extends Agent
                 $return['message'] = ucfirst(str_replace('&quot;', '', $match['message'])) .'.';
                 // line & query details etc.
                 if (preg_match('~LINE\s+(?<line>\d+):\s+~', $error, $match)) {
-                    $return['message'] = sprintf('%s, line %d. Query: %s%s.', trim($return['message'], '.'),
-                        $match['line'], "\n", $query);
+                    $return['message'] = sprintf('%s, line %d. Query: %s.', trim($return['message'], '.'),
+                        $match['line'], $query);
                 }
             }
         }

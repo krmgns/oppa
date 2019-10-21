@@ -351,9 +351,9 @@ final class Mysql extends Agent
             if ($errno == 1064) {
                 preg_match('~syntax to use near (?<query>.+) at line (?<line>\d+)~sm', $error, $match);
                 if (isset($match['query'], $match['line'])) {
-                    $return['message'] = sprintf('Syntax error at or near %s, line %d. Query: %s%s.',
+                    $return['message'] = sprintf('Syntax error at or near %s, line %d. Query: %s.',
                         trim(substr($match['query'], 1, (int) ceil(strlen($match['query']) / 2))),
-                        $match['line'], "\n", $query);
+                        $match['line'], $query);
                 } else {
                     $return['message'] = $error;
                 }

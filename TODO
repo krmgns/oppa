@@ -1,0 +1,8 @@
+Todos for v/4.0;
+- use php/7.4 (?)
+- lower namespace
+- drop SqlState\{MysqlClientError,MysqlServerError}
+- change abstract => final SqlState\{*}
+- drop Exception\Error
+- drop all methods that use Util::generateDeprecatedMessage(), drop generateDeprecatedMessage()
+- extend Exception\{*} from OppaException (?)
