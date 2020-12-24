@@ -1,3 +1,5 @@
+NOTICE: This library is archived for the sake of [froq-database](https://github.com/froq/froq-database), use that library instead.
+
 ## Oppa
 
 Providing an easy interface, aims to simplify database CRUD operations/transactions that you tire. Oppa has also an Active Record implementation interface that sometimes make the things easier for you.
